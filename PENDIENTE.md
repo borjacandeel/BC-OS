@@ -9,6 +9,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - ARM64 únicamente. Base Arch Linux ARM.
 
 ## En curso
+- [ ] Pack de iconos completo (macOS minimal) con subagente permanente `icon-designer` → `icons/` + integración en `shell/` (Icons.qml/AppIcon.qml). Pasos: agente, contexto, diseño, revisión independiente, implementación. Subir a main.
 - [ ] Release alpha: sesión local no puede crear releases (403) ni enviar >500 MB. Se construye en Actions (`image.yml`, `build/build-all.sh`) con `publicar=true` → prerelease `v0.1.0-alpha`. Verificar resultado en Actions.
 - [ ] Layout de BC Shell responsive (hoy fijo a 1586x992, se solapa en 1280x800). Dock/Archivos/Centro de control sin funcionalidad.
 - [ ] LÍMITE HOY: trabajar hasta las 20:30 (Europe/Madrid, 2026-11-13). A esa hora: terminar lo que esté en marcha, subir a main y parar. Sin tareas nuevas.

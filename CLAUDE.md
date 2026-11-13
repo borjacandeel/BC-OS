@@ -5,3 +5,4 @@
 3. Usar siempre la skill `0-palabras`.
 4. Subir siempre todo a `main`. Nunca force-push.
 5. Todo texto visible para el usuario de BC OS en castellano (es_ES) por defecto.
+6. Cualquier icono nuevo o modificado se delega al subagente `icon-designer` y debe cumplir `icons/SPEC.md` y pasar `icons/scripts/lint`.
