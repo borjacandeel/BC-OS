@@ -1,0 +1,2638 @@
+{
+  "name": "BC",
+  "version": "0.1.0",
+  "stroke": 1.5,
+  "kinds": {
+    "symbolic": {
+      "viewBox": "0 0 24 24",
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ]
+    },
+    "color": {
+      "viewBox": "0 0 48 48",
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ]
+    },
+    "app": {
+      "viewBox": "0 0 1024 1024",
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ]
+    }
+  },
+  "categories": [
+    {
+      "id": "navigation",
+      "label": "Navegación",
+      "context": "Actions",
+      "lote": "A",
+      "count": 21
+    },
+    {
+      "id": "actions",
+      "label": "Acciones",
+      "context": "Actions",
+      "lote": "A",
+      "count": 37
+    },
+    {
+      "id": "status",
+      "label": "Barra de menús y estado",
+      "context": "Status",
+      "lote": "A",
+      "count": 34
+    },
+    {
+      "id": "dialogs",
+      "label": "Diálogos",
+      "context": "Status",
+      "lote": "A",
+      "count": 10
+    },
+    {
+      "id": "apps",
+      "label": "Apps del sistema",
+      "context": "Apps",
+      "lote": "B",
+      "count": 1
+    },
+    {
+      "id": "places",
+      "label": "Lugares y carpetas",
+      "context": "Places",
+      "lote": "C",
+      "count": 0
+    },
+    {
+      "id": "mimetypes",
+      "label": "Archivos y MIME",
+      "context": "MimeTypes",
+      "lote": "C",
+      "count": 0
+    },
+    {
+      "id": "devices",
+      "label": "Dispositivos",
+      "context": "Devices",
+      "lote": "C",
+      "count": 0
+    }
+  ],
+  "icons": [
+    {
+      "name": "bookmark-new",
+      "label": "Marcador",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "bookmark-new-fill-symbolic",
+        "regular": "bookmark-new-symbolic"
+      },
+      "tags": [
+        "marcador",
+        "bookmark",
+        "guardar"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/bookmark-new-symbolic.svg"
+    },
+    {
+      "name": "browser-download",
+      "label": "Descargar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "browser-download-symbolic"
+      },
+      "tags": [
+        "bajar",
+        "download",
+        "guardar"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/browser-download-symbolic.svg"
+    },
+    {
+      "name": "document-edit",
+      "label": "Editar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "document-edit-symbolic"
+      },
+      "tags": [
+        "lápiz",
+        "editar",
+        "pencil",
+        "edit"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/document-edit-symbolic.svg"
+    },
+    {
+      "name": "document-new",
+      "label": "Nuevo documento",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "document-new-symbolic"
+      },
+      "tags": [
+        "nuevo",
+        "archivo",
+        "new",
+        "file"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/document-new-symbolic.svg"
+    },
+    {
+      "name": "document-send",
+      "label": "Subir",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "document-send-symbolic"
+      },
+      "tags": [
+        "subir",
+        "upload",
+        "enviar"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/document-send-symbolic.svg"
+    },
+    {
+      "name": "edit-clear",
+      "label": "Borrar texto",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "edit-clear-symbolic"
+      },
+      "tags": [
+        "limpiar",
+        "clear",
+        "x"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/edit-clear-symbolic.svg"
+    },
+    {
+      "name": "edit-copy",
+      "label": "Copiar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "edit-copy-symbolic"
+      },
+      "tags": [
+        "duplicar",
+        "copy"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/edit-copy-symbolic.svg"
+    },
+    {
+      "name": "edit-cut",
+      "label": "Cortar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "edit-cut-symbolic"
+      },
+      "tags": [
+        "tijeras",
+        "cut",
+        "scissors"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/edit-cut-symbolic.svg"
+    },
+    {
+      "name": "edit-delete",
+      "label": "Borrar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "edit-delete-fill-symbolic",
+        "regular": "edit-delete-symbolic"
+      },
+      "tags": [
+        "papelera",
+        "eliminar",
+        "delete",
+        "trash"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/edit-delete-symbolic.svg"
+    },
+    {
+      "name": "edit-find",
+      "label": "Buscar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "edit-find-symbolic"
+      },
+      "tags": [
+        "lupa",
+        "buscar",
+        "search",
+        "find"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/edit-find-symbolic.svg"
+    },
+    {
+      "name": "edit-paste",
+      "label": "Pegar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "edit-paste-symbolic"
+      },
+      "tags": [
+        "portapapeles",
+        "paste",
+        "clipboard"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/edit-paste-symbolic.svg"
+    },
+    {
+      "name": "edit-redo",
+      "label": "Rehacer",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "edit-redo-symbolic"
+      },
+      "tags": [
+        "rehacer",
+        "redo"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/edit-redo-symbolic.svg"
+    },
+    {
+      "name": "edit-undo",
+      "label": "Deshacer",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "edit-undo-symbolic"
+      },
+      "tags": [
+        "deshacer",
+        "undo"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/edit-undo-symbolic.svg"
+    },
+    {
+      "name": "emblem-shared",
+      "label": "Compartir",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "emblem-shared-symbolic"
+      },
+      "tags": [
+        "compartir",
+        "share",
+        "enviar"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/emblem-shared-symbolic.svg"
+    },
+    {
+      "name": "folder-new",
+      "label": "Nueva carpeta",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "folder-new-symbolic"
+      },
+      "tags": [
+        "carpeta",
+        "nueva",
+        "new folder"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/folder-new-symbolic.svg"
+    },
+    {
+      "name": "list-add",
+      "label": "Añadir",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "list-add-symbolic"
+      },
+      "tags": [
+        "más",
+        "nuevo",
+        "add",
+        "plus"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/list-add-symbolic.svg"
+    },
+    {
+      "name": "list-remove",
+      "label": "Quitar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "list-remove-symbolic"
+      },
+      "tags": [
+        "menos",
+        "minus",
+        "remove"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/list-remove-symbolic.svg"
+    },
+    {
+      "name": "media-playback-pause",
+      "label": "Pausa",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "media-playback-pause-symbolic"
+      },
+      "tags": [
+        "pausa",
+        "pause"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/media-playback-pause-symbolic.svg"
+    },
+    {
+      "name": "media-playback-start",
+      "label": "Reproducir",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "media-playback-start-symbolic"
+      },
+      "tags": [
+        "play",
+        "reproducir",
+        "música"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/media-playback-start-symbolic.svg"
+    },
+    {
+      "name": "media-skip-backward",
+      "label": "Pista anterior",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "media-skip-backward-symbolic"
+      },
+      "tags": [
+        "anterior",
+        "skip",
+        "atrás"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/media-skip-backward-symbolic.svg"
+    },
+    {
+      "name": "media-skip-forward",
+      "label": "Siguiente pista",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "media-skip-forward-symbolic"
+      },
+      "tags": [
+        "siguiente",
+        "skip",
+        "adelante"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/media-skip-forward-symbolic.svg"
+    },
+    {
+      "name": "object-select",
+      "label": "Seleccionado",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "object-select-symbolic"
+      },
+      "tags": [
+        "check",
+        "tick",
+        "marca",
+        "ok"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/object-select-symbolic.svg"
+    },
+    {
+      "name": "preferences-system",
+      "label": "Ajustes",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "preferences-system-symbolic"
+      },
+      "tags": [
+        "ajustes",
+        "configuración",
+        "sliders",
+        "settings"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/preferences-system-symbolic.svg"
+    },
+    {
+      "name": "starred",
+      "label": "Favorito",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "starred-fill-symbolic",
+        "regular": "starred-symbolic"
+      },
+      "tags": [
+        "estrella",
+        "star",
+        "favorito"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/starred-symbolic.svg"
+    },
+    {
+      "name": "system-lock-screen",
+      "label": "Bloquear",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "system-lock-screen-fill-symbolic",
+        "regular": "system-lock-screen-symbolic"
+      },
+      "tags": [
+        "candado",
+        "bloqueo",
+        "lock"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/system-lock-screen-symbolic.svg"
+    },
+    {
+      "name": "system-log-out",
+      "label": "Cerrar sesión",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "system-log-out-symbolic"
+      },
+      "tags": [
+        "salir",
+        "logout",
+        "sesión"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/system-log-out-symbolic.svg"
+    },
+    {
+      "name": "system-shutdown",
+      "label": "Apagar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "system-shutdown-symbolic"
+      },
+      "tags": [
+        "apagar",
+        "energía",
+        "power",
+        "shutdown"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/system-shutdown-symbolic.svg"
+    },
+    {
+      "name": "view-conceal",
+      "label": "Ocultar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "view-conceal-symbolic"
+      },
+      "tags": [
+        "ojo",
+        "ocultar",
+        "hide"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/view-conceal-symbolic.svg"
+    },
+    {
+      "name": "view-filter",
+      "label": "Filtrar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "view-filter-symbolic"
+      },
+      "tags": [
+        "filtro",
+        "filter"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/view-filter-symbolic.svg"
+    },
+    {
+      "name": "view-fullscreen",
+      "label": "Pantalla completa",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "view-fullscreen-symbolic"
+      },
+      "tags": [
+        "fullscreen",
+        "expandir"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/view-fullscreen-symbolic.svg"
+    },
+    {
+      "name": "view-refresh",
+      "label": "Refrescar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "view-refresh-symbolic"
+      },
+      "tags": [
+        "actualizar",
+        "recargar",
+        "refresh",
+        "reload"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/view-refresh-symbolic.svg"
+    },
+    {
+      "name": "view-restore",
+      "label": "Salir de pantalla completa",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "view-restore-symbolic"
+      },
+      "tags": [
+        "fullscreen",
+        "reducir"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/view-restore-symbolic.svg"
+    },
+    {
+      "name": "view-reveal",
+      "label": "Mostrar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "view-reveal-symbolic"
+      },
+      "tags": [
+        "ojo",
+        "ver",
+        "mostrar",
+        "eye"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/view-reveal-symbolic.svg"
+    },
+    {
+      "name": "view-sort-ascending",
+      "label": "Orden ascendente",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "view-sort-ascending-symbolic"
+      },
+      "tags": [
+        "ordenar",
+        "sort",
+        "ascendente"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/view-sort-ascending-symbolic.svg"
+    },
+    {
+      "name": "view-sort-descending",
+      "label": "Orden descendente",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "view-sort-descending-symbolic"
+      },
+      "tags": [
+        "ordenar",
+        "sort",
+        "descendente"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/view-sort-descending-symbolic.svg"
+    },
+    {
+      "name": "zoom-in",
+      "label": "Acercar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "zoom-in-symbolic"
+      },
+      "tags": [
+        "zoom",
+        "ampliar",
+        "lupa"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/zoom-in-symbolic.svg"
+    },
+    {
+      "name": "zoom-out",
+      "label": "Alejar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "zoom-out-symbolic"
+      },
+      "tags": [
+        "zoom",
+        "reducir",
+        "lupa"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/zoom-out-symbolic.svg"
+    },
+    {
+      "name": "utilities-terminal",
+      "label": "Terminal",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "utilities-terminal"
+      },
+      "tags": [
+        "terminal",
+        "consola",
+        "shell",
+        "línea de comandos"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "file": "dist/svg/utilities-terminal.svg"
+    },
+    {
+      "name": "dialog-error",
+      "label": "Error",
+      "category": "dialogs",
+      "context": "Status",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "dialog-error"
+      },
+      "tags": [
+        "diálogo",
+        "aviso",
+        "fallo"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/dialog-error.svg"
+    },
+    {
+      "name": "dialog-information",
+      "label": "Información",
+      "category": "dialogs",
+      "context": "Status",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "dialog-information"
+      },
+      "tags": [
+        "diálogo",
+        "aviso",
+        "info"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/dialog-information.svg"
+    },
+    {
+      "name": "dialog-positive",
+      "label": "Correcto",
+      "category": "dialogs",
+      "context": "Status",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "dialog-positive"
+      },
+      "tags": [
+        "diálogo",
+        "aviso",
+        "éxito",
+        "ok"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/dialog-positive.svg"
+    },
+    {
+      "name": "dialog-question",
+      "label": "Pregunta",
+      "category": "dialogs",
+      "context": "Status",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "dialog-question"
+      },
+      "tags": [
+        "diálogo",
+        "aviso",
+        "ayuda"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/dialog-question.svg"
+    },
+    {
+      "name": "dialog-warning",
+      "label": "Aviso",
+      "category": "dialogs",
+      "context": "Status",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "dialog-warning"
+      },
+      "tags": [
+        "diálogo",
+        "aviso",
+        "advertencia"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/dialog-warning.svg"
+    },
+    {
+      "name": "dialog-error",
+      "label": "Error",
+      "category": "dialogs",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "dialog-error-symbolic"
+      },
+      "tags": [
+        "diálogo",
+        "aviso",
+        "fallo"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/dialog-error-symbolic.svg"
+    },
+    {
+      "name": "dialog-information",
+      "label": "Información",
+      "category": "dialogs",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "dialog-information-symbolic"
+      },
+      "tags": [
+        "diálogo",
+        "aviso",
+        "info"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/dialog-information-symbolic.svg"
+    },
+    {
+      "name": "dialog-positive",
+      "label": "Correcto",
+      "category": "dialogs",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "dialog-positive-symbolic"
+      },
+      "tags": [
+        "diálogo",
+        "aviso",
+        "éxito",
+        "ok"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/dialog-positive-symbolic.svg"
+    },
+    {
+      "name": "dialog-question",
+      "label": "Pregunta",
+      "category": "dialogs",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "dialog-question-symbolic"
+      },
+      "tags": [
+        "diálogo",
+        "aviso",
+        "ayuda"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/dialog-question-symbolic.svg"
+    },
+    {
+      "name": "dialog-warning",
+      "label": "Aviso",
+      "category": "dialogs",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "dialog-warning-symbolic"
+      },
+      "tags": [
+        "diálogo",
+        "aviso",
+        "advertencia"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/dialog-warning-symbolic.svg"
+    },
+    {
+      "name": "go-bottom",
+      "label": "Ir abajo",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "go-bottom-symbolic"
+      },
+      "tags": [
+        "final de lista",
+        "bottom"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/go-bottom-symbolic.svg"
+    },
+    {
+      "name": "go-down",
+      "label": "Bajar",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "go-down-symbolic"
+      },
+      "tags": [
+        "flecha",
+        "abajo",
+        "down",
+        "arrow"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/go-down-symbolic.svg"
+    },
+    {
+      "name": "go-home",
+      "label": "Inicio",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "go-home-fill-symbolic",
+        "regular": "go-home-symbolic"
+      },
+      "tags": [
+        "casa",
+        "home",
+        "carpeta personal"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/go-home-symbolic.svg"
+    },
+    {
+      "name": "go-next",
+      "label": "Siguiente",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "go-next-symbolic"
+      },
+      "tags": [
+        "flecha",
+        "derecha",
+        "next",
+        "arrow"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/go-next-symbolic.svg"
+    },
+    {
+      "name": "go-previous",
+      "label": "Anterior",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "go-previous-symbolic"
+      },
+      "tags": [
+        "flecha",
+        "izquierda",
+        "atrás",
+        "back",
+        "arrow"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/go-previous-symbolic.svg"
+    },
+    {
+      "name": "go-top",
+      "label": "Ir arriba",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "go-top-symbolic"
+      },
+      "tags": [
+        "inicio de lista",
+        "top"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/go-top-symbolic.svg"
+    },
+    {
+      "name": "go-up",
+      "label": "Subir",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "go-up-symbolic"
+      },
+      "tags": [
+        "flecha",
+        "arriba",
+        "up",
+        "arrow"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/go-up-symbolic.svg"
+    },
+    {
+      "name": "open-menu",
+      "label": "Menú",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "open-menu-symbolic"
+      },
+      "tags": [
+        "hamburguesa",
+        "menú",
+        "menu",
+        "lista"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/open-menu-symbolic.svg"
+    },
+    {
+      "name": "pan-down",
+      "label": "Chevron abajo",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "pan-down-symbolic"
+      },
+      "tags": [
+        "chevron",
+        "abajo",
+        "desplegar"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/pan-down-symbolic.svg"
+    },
+    {
+      "name": "pan-end",
+      "label": "Chevron derecha",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "pan-end-symbolic"
+      },
+      "tags": [
+        "chevron",
+        "derecha",
+        "expandir"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/pan-end-symbolic.svg"
+    },
+    {
+      "name": "pan-start",
+      "label": "Chevron izquierda",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "pan-start-symbolic"
+      },
+      "tags": [
+        "chevron",
+        "izquierda",
+        "atrás"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/pan-start-symbolic.svg"
+    },
+    {
+      "name": "pan-up",
+      "label": "Chevron arriba",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "pan-up-symbolic"
+      },
+      "tags": [
+        "chevron",
+        "arriba",
+        "contraer"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/pan-up-symbolic.svg"
+    },
+    {
+      "name": "view-grid",
+      "label": "Cuadrícula",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "view-grid-symbolic"
+      },
+      "tags": [
+        "rejilla",
+        "iconos",
+        "grid"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/view-grid-symbolic.svg"
+    },
+    {
+      "name": "view-list",
+      "label": "Lista",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "view-list-symbolic"
+      },
+      "tags": [
+        "lista",
+        "filas",
+        "list"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/view-list-symbolic.svg"
+    },
+    {
+      "name": "view-more",
+      "label": "Más opciones",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "view-more-symbolic"
+      },
+      "tags": [
+        "puntos",
+        "elipsis",
+        "más",
+        "more"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/view-more-symbolic.svg"
+    },
+    {
+      "name": "view-more-vertical",
+      "label": "Más opciones (vertical)",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "view-more-vertical-symbolic"
+      },
+      "tags": [
+        "puntos",
+        "elipsis",
+        "más",
+        "more"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/view-more-vertical-symbolic.svg"
+    },
+    {
+      "name": "view-sidebar",
+      "label": "Barra lateral",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "view-sidebar-fill-symbolic",
+        "regular": "view-sidebar-symbolic"
+      },
+      "tags": [
+        "sidebar",
+        "panel",
+        "lateral"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/view-sidebar-symbolic.svg"
+    },
+    {
+      "name": "window-close",
+      "label": "Cerrar",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "window-close-symbolic"
+      },
+      "tags": [
+        "cerrar",
+        "x",
+        "close",
+        "salir"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/window-close-symbolic.svg"
+    },
+    {
+      "name": "window-maximize",
+      "label": "Maximizar",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "window-maximize-symbolic"
+      },
+      "tags": [
+        "maximizar",
+        "maximize",
+        "ventana"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/window-maximize-symbolic.svg"
+    },
+    {
+      "name": "window-minimize",
+      "label": "Minimizar",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "window-minimize-symbolic"
+      },
+      "tags": [
+        "minimizar",
+        "minimize"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/window-minimize-symbolic.svg"
+    },
+    {
+      "name": "window-restore",
+      "label": "Restaurar",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "window-restore-symbolic"
+      },
+      "tags": [
+        "restaurar",
+        "restore",
+        "ventana"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/window-restore-symbolic.svg"
+    },
+    {
+      "name": "airplane-mode",
+      "label": "Modo avión",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "airplane-mode-symbolic"
+      },
+      "tags": [
+        "avión",
+        "airplane",
+        "vuelo"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/airplane-mode-symbolic.svg"
+    },
+    {
+      "name": "audio-input-microphone",
+      "label": "Micrófono",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "audio-input-microphone-symbolic"
+      },
+      "tags": [
+        "micro",
+        "mic",
+        "grabar"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/audio-input-microphone-symbolic.svg"
+    },
+    {
+      "name": "audio-volume-high",
+      "label": "Volumen alto",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "audio-volume-high-symbolic"
+      },
+      "tags": [
+        "volumen",
+        "altavoz",
+        "sonido",
+        "audio"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/audio-volume-high-symbolic.svg"
+    },
+    {
+      "name": "audio-volume-low",
+      "label": "Volumen bajo",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "audio-volume-low-symbolic"
+      },
+      "tags": [
+        "volumen",
+        "altavoz",
+        "sonido",
+        "audio"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/audio-volume-low-symbolic.svg"
+    },
+    {
+      "name": "audio-volume-medium",
+      "label": "Volumen medio",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "audio-volume-medium-symbolic"
+      },
+      "tags": [
+        "volumen",
+        "altavoz",
+        "sonido",
+        "audio"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/audio-volume-medium-symbolic.svg"
+    },
+    {
+      "name": "audio-volume-muted",
+      "label": "Silenciado",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "audio-volume-muted-symbolic"
+      },
+      "tags": [
+        "volumen",
+        "altavoz",
+        "sonido",
+        "audio",
+        "mute",
+        "silencio"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/audio-volume-muted-symbolic.svg"
+    },
+    {
+      "name": "battery-level-0",
+      "label": "Batería 0 %",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "battery-level-0-symbolic"
+      },
+      "tags": [
+        "batería",
+        "energía",
+        "battery"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/battery-level-0-symbolic.svg"
+    },
+    {
+      "name": "battery-level-0-charging",
+      "label": "Batería 0 % cargando",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "battery-level-0-charging-symbolic"
+      },
+      "tags": [
+        "batería",
+        "energía",
+        "battery",
+        "cargando",
+        "charging"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/battery-level-0-charging-symbolic.svg"
+    },
+    {
+      "name": "battery-level-20",
+      "label": "Batería 20 %",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "battery-level-20-symbolic"
+      },
+      "tags": [
+        "batería",
+        "energía",
+        "battery"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/battery-level-20-symbolic.svg"
+    },
+    {
+      "name": "battery-level-20-charging",
+      "label": "Batería 20 % cargando",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "battery-level-20-charging-symbolic"
+      },
+      "tags": [
+        "batería",
+        "energía",
+        "battery",
+        "cargando",
+        "charging"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/battery-level-20-charging-symbolic.svg"
+    },
+    {
+      "name": "battery-level-40",
+      "label": "Batería 40 %",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "battery-level-40-symbolic"
+      },
+      "tags": [
+        "batería",
+        "energía",
+        "battery"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/battery-level-40-symbolic.svg"
+    },
+    {
+      "name": "battery-level-40-charging",
+      "label": "Batería 40 % cargando",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "battery-level-40-charging-symbolic"
+      },
+      "tags": [
+        "batería",
+        "energía",
+        "battery",
+        "cargando",
+        "charging"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/battery-level-40-charging-symbolic.svg"
+    },
+    {
+      "name": "battery-level-60",
+      "label": "Batería 60 %",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "battery-level-60-symbolic"
+      },
+      "tags": [
+        "batería",
+        "energía",
+        "battery"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/battery-level-60-symbolic.svg"
+    },
+    {
+      "name": "battery-level-60-charging",
+      "label": "Batería 60 % cargando",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "battery-level-60-charging-symbolic"
+      },
+      "tags": [
+        "batería",
+        "energía",
+        "battery",
+        "cargando",
+        "charging"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/battery-level-60-charging-symbolic.svg"
+    },
+    {
+      "name": "battery-level-80",
+      "label": "Batería 80 %",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "battery-level-80-symbolic"
+      },
+      "tags": [
+        "batería",
+        "energía",
+        "battery"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/battery-level-80-symbolic.svg"
+    },
+    {
+      "name": "battery-level-80-charging",
+      "label": "Batería 80 % cargando",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "battery-level-80-charging-symbolic"
+      },
+      "tags": [
+        "batería",
+        "energía",
+        "battery",
+        "cargando",
+        "charging"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/battery-level-80-charging-symbolic.svg"
+    },
+    {
+      "name": "battery-level-100",
+      "label": "Batería 100 %",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "battery-level-100-symbolic"
+      },
+      "tags": [
+        "batería",
+        "energía",
+        "battery"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/battery-level-100-symbolic.svg"
+    },
+    {
+      "name": "battery-level-100-charging",
+      "label": "Batería 100 % cargando",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "battery-level-100-charging-symbolic"
+      },
+      "tags": [
+        "batería",
+        "energía",
+        "battery",
+        "cargando",
+        "charging"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/battery-level-100-charging-symbolic.svg"
+    },
+    {
+      "name": "bluetooth-active",
+      "label": "Bluetooth",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "bluetooth-active-symbolic"
+      },
+      "tags": [
+        "bluetooth",
+        "inalámbrico"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/bluetooth-active-symbolic.svg"
+    },
+    {
+      "name": "bluetooth-disabled",
+      "label": "Bluetooth desactivado",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "bluetooth-disabled-symbolic"
+      },
+      "tags": [
+        "bluetooth",
+        "desactivado"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/bluetooth-disabled-symbolic.svg"
+    },
+    {
+      "name": "control-center",
+      "label": "Centro de control",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "control-center-symbolic"
+      },
+      "tags": [
+        "ajustes rápidos",
+        "interruptores",
+        "toggles",
+        "control"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/control-center-symbolic.svg"
+    },
+    {
+      "name": "display-brightness",
+      "label": "Brillo",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "display-brightness-symbolic"
+      },
+      "tags": [
+        "brillo",
+        "pantalla",
+        "brightness"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/display-brightness-symbolic.svg"
+    },
+    {
+      "name": "do-not-disturb",
+      "label": "No molestar",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "do-not-disturb-symbolic"
+      },
+      "tags": [
+        "no molestar",
+        "concentración",
+        "silencio",
+        "dnd",
+        "luna"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/do-not-disturb-symbolic.svg"
+    },
+    {
+      "name": "microphone-sensitivity-muted",
+      "label": "Micrófono silenciado",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "microphone-sensitivity-muted-symbolic"
+      },
+      "tags": [
+        "micro",
+        "mute",
+        "silenciado"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/microphone-sensitivity-muted-symbolic.svg"
+    },
+    {
+      "name": "network-wireless-offline",
+      "label": "Wi-Fi desconectado",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "network-wireless-offline-symbolic"
+      },
+      "tags": [
+        "wifi",
+        "inalámbrica",
+        "red",
+        "señal",
+        "desconectado",
+        "offline"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/network-wireless-offline-symbolic.svg"
+    },
+    {
+      "name": "network-wireless-signal-excellent",
+      "label": "Wi-Fi señal alta",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "network-wireless-signal-excellent-symbolic"
+      },
+      "tags": [
+        "wifi",
+        "inalámbrica",
+        "red",
+        "señal"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/network-wireless-signal-excellent-symbolic.svg"
+    },
+    {
+      "name": "network-wireless-signal-none",
+      "label": "Wi-Fi sin señal",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "network-wireless-signal-none-symbolic"
+      },
+      "tags": [
+        "wifi",
+        "inalámbrica",
+        "red",
+        "señal"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/network-wireless-signal-none-symbolic.svg"
+    },
+    {
+      "name": "network-wireless-signal-ok",
+      "label": "Wi-Fi señal media",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "network-wireless-signal-ok-symbolic"
+      },
+      "tags": [
+        "wifi",
+        "inalámbrica",
+        "red",
+        "señal"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/network-wireless-signal-ok-symbolic.svg"
+    },
+    {
+      "name": "network-wireless-signal-weak",
+      "label": "Wi-Fi señal baja",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "network-wireless-signal-weak-symbolic"
+      },
+      "tags": [
+        "wifi",
+        "inalámbrica",
+        "red",
+        "señal"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/network-wireless-signal-weak-symbolic.svg"
+    },
+    {
+      "name": "notification",
+      "label": "Notificaciones",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "notification-fill-symbolic",
+        "regular": "notification-symbolic"
+      },
+      "tags": [
+        "campana",
+        "avisos",
+        "bell",
+        "notificaciones"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/notification-symbolic.svg"
+    },
+    {
+      "name": "notification-disabled",
+      "label": "Notificaciones desactivadas",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "notification-disabled-symbolic"
+      },
+      "tags": [
+        "campana",
+        "silenciar",
+        "bell"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/notification-disabled-symbolic.svg"
+    },
+    {
+      "name": "power-profile-performance",
+      "label": "Energía",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "power-profile-performance-fill-symbolic",
+        "regular": "power-profile-performance-symbolic"
+      },
+      "tags": [
+        "rayo",
+        "energía",
+        "rendimiento",
+        "bolt",
+        "power"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/power-profile-performance-symbolic.svg"
+    },
+    {
+      "name": "weather-clear",
+      "label": "Sol",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "weather-clear-fill-symbolic",
+        "regular": "weather-clear-symbolic"
+      },
+      "tags": [
+        "sol",
+        "día",
+        "claro",
+        "sun"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/weather-clear-symbolic.svg"
+    },
+    {
+      "name": "weather-clear-night",
+      "label": "Luna",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "weather-clear-night-fill-symbolic",
+        "regular": "weather-clear-night-symbolic"
+      },
+      "tags": [
+        "luna",
+        "noche",
+        "oscuro",
+        "moon"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/weather-clear-night-symbolic.svg"
+    }
+  ]
+}

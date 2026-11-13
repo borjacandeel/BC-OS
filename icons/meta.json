@@ -1,0 +1,926 @@
+{
+  "go-next": {
+    "es": "Siguiente",
+    "tags": [
+      "flecha",
+      "derecha",
+      "next",
+      "arrow"
+    ],
+    "category": "navigation"
+  },
+  "go-previous": {
+    "es": "Anterior",
+    "tags": [
+      "flecha",
+      "izquierda",
+      "atrás",
+      "back",
+      "arrow"
+    ],
+    "category": "navigation"
+  },
+  "go-up": {
+    "es": "Subir",
+    "tags": [
+      "flecha",
+      "arriba",
+      "up",
+      "arrow"
+    ],
+    "category": "navigation"
+  },
+  "go-down": {
+    "es": "Bajar",
+    "tags": [
+      "flecha",
+      "abajo",
+      "down",
+      "arrow"
+    ],
+    "category": "navigation"
+  },
+  "pan-end": {
+    "es": "Chevron derecha",
+    "tags": [
+      "chevron",
+      "derecha",
+      "expandir"
+    ],
+    "category": "navigation"
+  },
+  "pan-start": {
+    "es": "Chevron izquierda",
+    "tags": [
+      "chevron",
+      "izquierda",
+      "atrás"
+    ],
+    "category": "navigation"
+  },
+  "pan-up": {
+    "es": "Chevron arriba",
+    "tags": [
+      "chevron",
+      "arriba",
+      "contraer"
+    ],
+    "category": "navigation"
+  },
+  "pan-down": {
+    "es": "Chevron abajo",
+    "tags": [
+      "chevron",
+      "abajo",
+      "desplegar"
+    ],
+    "category": "navigation"
+  },
+  "go-home": {
+    "es": "Inicio",
+    "tags": [
+      "casa",
+      "home",
+      "carpeta personal"
+    ],
+    "category": "navigation"
+  },
+  "open-menu": {
+    "es": "Menú",
+    "tags": [
+      "hamburguesa",
+      "menú",
+      "menu",
+      "lista"
+    ],
+    "category": "navigation"
+  },
+  "view-more": {
+    "es": "Más opciones",
+    "tags": [
+      "puntos",
+      "elipsis",
+      "más",
+      "more"
+    ],
+    "category": "navigation"
+  },
+  "view-more-vertical": {
+    "es": "Más opciones (vertical)",
+    "tags": [
+      "puntos",
+      "elipsis",
+      "más",
+      "more"
+    ],
+    "category": "navigation"
+  },
+  "window-close": {
+    "es": "Cerrar",
+    "tags": [
+      "cerrar",
+      "x",
+      "close",
+      "salir"
+    ],
+    "category": "navigation"
+  },
+  "window-minimize": {
+    "es": "Minimizar",
+    "tags": [
+      "minimizar",
+      "minimize"
+    ],
+    "category": "navigation"
+  },
+  "window-maximize": {
+    "es": "Maximizar",
+    "tags": [
+      "maximizar",
+      "maximize",
+      "ventana"
+    ],
+    "category": "navigation"
+  },
+  "window-restore": {
+    "es": "Restaurar",
+    "tags": [
+      "restaurar",
+      "restore",
+      "ventana"
+    ],
+    "category": "navigation"
+  },
+  "view-sidebar": {
+    "es": "Barra lateral",
+    "tags": [
+      "sidebar",
+      "panel",
+      "lateral"
+    ],
+    "category": "navigation"
+  },
+  "view-grid": {
+    "es": "Cuadrícula",
+    "tags": [
+      "rejilla",
+      "iconos",
+      "grid"
+    ],
+    "category": "navigation"
+  },
+  "view-list": {
+    "es": "Lista",
+    "tags": [
+      "lista",
+      "filas",
+      "list"
+    ],
+    "category": "navigation"
+  },
+  "go-top": {
+    "es": "Ir arriba",
+    "tags": [
+      "inicio de lista",
+      "top"
+    ],
+    "category": "navigation"
+  },
+  "go-bottom": {
+    "es": "Ir abajo",
+    "tags": [
+      "final de lista",
+      "bottom"
+    ],
+    "category": "navigation"
+  },
+  "list-add": {
+    "es": "Añadir",
+    "tags": [
+      "más",
+      "nuevo",
+      "add",
+      "plus"
+    ],
+    "category": "actions"
+  },
+  "list-remove": {
+    "es": "Quitar",
+    "tags": [
+      "menos",
+      "minus",
+      "remove"
+    ],
+    "category": "actions"
+  },
+  "object-select": {
+    "es": "Seleccionado",
+    "tags": [
+      "check",
+      "tick",
+      "marca",
+      "ok"
+    ],
+    "category": "actions"
+  },
+  "document-edit": {
+    "es": "Editar",
+    "tags": [
+      "lápiz",
+      "editar",
+      "pencil",
+      "edit"
+    ],
+    "category": "actions"
+  },
+  "edit-delete": {
+    "es": "Borrar",
+    "tags": [
+      "papelera",
+      "eliminar",
+      "delete",
+      "trash"
+    ],
+    "category": "actions"
+  },
+  "edit-copy": {
+    "es": "Copiar",
+    "tags": [
+      "duplicar",
+      "copy"
+    ],
+    "category": "actions"
+  },
+  "edit-paste": {
+    "es": "Pegar",
+    "tags": [
+      "portapapeles",
+      "paste",
+      "clipboard"
+    ],
+    "category": "actions"
+  },
+  "edit-cut": {
+    "es": "Cortar",
+    "tags": [
+      "tijeras",
+      "cut",
+      "scissors"
+    ],
+    "category": "actions"
+  },
+  "emblem-shared": {
+    "es": "Compartir",
+    "tags": [
+      "compartir",
+      "share",
+      "enviar"
+    ],
+    "category": "actions"
+  },
+  "browser-download": {
+    "es": "Descargar",
+    "tags": [
+      "bajar",
+      "download",
+      "guardar"
+    ],
+    "category": "actions"
+  },
+  "document-send": {
+    "es": "Subir",
+    "tags": [
+      "subir",
+      "upload",
+      "enviar"
+    ],
+    "category": "actions"
+  },
+  "view-refresh": {
+    "es": "Refrescar",
+    "tags": [
+      "actualizar",
+      "recargar",
+      "refresh",
+      "reload"
+    ],
+    "category": "actions"
+  },
+  "edit-undo": {
+    "es": "Deshacer",
+    "tags": [
+      "deshacer",
+      "undo"
+    ],
+    "category": "actions"
+  },
+  "edit-redo": {
+    "es": "Rehacer",
+    "tags": [
+      "rehacer",
+      "redo"
+    ],
+    "category": "actions"
+  },
+  "edit-find": {
+    "es": "Buscar",
+    "tags": [
+      "lupa",
+      "buscar",
+      "search",
+      "find"
+    ],
+    "category": "actions"
+  },
+  "edit-clear": {
+    "es": "Borrar texto",
+    "tags": [
+      "limpiar",
+      "clear",
+      "x"
+    ],
+    "category": "actions"
+  },
+  "view-filter": {
+    "es": "Filtrar",
+    "tags": [
+      "filtro",
+      "filter"
+    ],
+    "category": "actions"
+  },
+  "view-sort-ascending": {
+    "es": "Orden ascendente",
+    "tags": [
+      "ordenar",
+      "sort",
+      "ascendente"
+    ],
+    "category": "actions"
+  },
+  "view-sort-descending": {
+    "es": "Orden descendente",
+    "tags": [
+      "ordenar",
+      "sort",
+      "descendente"
+    ],
+    "category": "actions"
+  },
+  "document-new": {
+    "es": "Nuevo documento",
+    "tags": [
+      "nuevo",
+      "archivo",
+      "new",
+      "file"
+    ],
+    "category": "actions"
+  },
+  "folder-new": {
+    "es": "Nueva carpeta",
+    "tags": [
+      "carpeta",
+      "nueva",
+      "new folder"
+    ],
+    "category": "actions"
+  },
+  "zoom-in": {
+    "es": "Acercar",
+    "tags": [
+      "zoom",
+      "ampliar",
+      "lupa"
+    ],
+    "category": "actions"
+  },
+  "zoom-out": {
+    "es": "Alejar",
+    "tags": [
+      "zoom",
+      "reducir",
+      "lupa"
+    ],
+    "category": "actions"
+  },
+  "view-fullscreen": {
+    "es": "Pantalla completa",
+    "tags": [
+      "fullscreen",
+      "expandir"
+    ],
+    "category": "actions"
+  },
+  "view-restore": {
+    "es": "Salir de pantalla completa",
+    "tags": [
+      "fullscreen",
+      "reducir"
+    ],
+    "category": "actions"
+  },
+  "view-reveal": {
+    "es": "Mostrar",
+    "tags": [
+      "ojo",
+      "ver",
+      "mostrar",
+      "eye"
+    ],
+    "category": "actions"
+  },
+  "view-conceal": {
+    "es": "Ocultar",
+    "tags": [
+      "ojo",
+      "ocultar",
+      "hide"
+    ],
+    "category": "actions"
+  },
+  "starred": {
+    "es": "Favorito",
+    "tags": [
+      "estrella",
+      "star",
+      "favorito"
+    ],
+    "category": "actions"
+  },
+  "bookmark-new": {
+    "es": "Marcador",
+    "tags": [
+      "marcador",
+      "bookmark",
+      "guardar"
+    ],
+    "category": "actions"
+  },
+  "preferences-system": {
+    "es": "Ajustes",
+    "tags": [
+      "ajustes",
+      "configuración",
+      "sliders",
+      "settings"
+    ],
+    "category": "actions"
+  },
+  "system-shutdown": {
+    "es": "Apagar",
+    "tags": [
+      "apagar",
+      "energía",
+      "power",
+      "shutdown"
+    ],
+    "category": "actions"
+  },
+  "system-log-out": {
+    "es": "Cerrar sesión",
+    "tags": [
+      "salir",
+      "logout",
+      "sesión"
+    ],
+    "category": "actions"
+  },
+  "system-lock-screen": {
+    "es": "Bloquear",
+    "tags": [
+      "candado",
+      "bloqueo",
+      "lock"
+    ],
+    "category": "actions"
+  },
+  "media-playback-start": {
+    "es": "Reproducir",
+    "tags": [
+      "play",
+      "reproducir",
+      "música"
+    ],
+    "category": "actions"
+  },
+  "media-playback-pause": {
+    "es": "Pausa",
+    "tags": [
+      "pausa",
+      "pause"
+    ],
+    "category": "actions"
+  },
+  "media-skip-forward": {
+    "es": "Siguiente pista",
+    "tags": [
+      "siguiente",
+      "skip",
+      "adelante"
+    ],
+    "category": "actions"
+  },
+  "media-skip-backward": {
+    "es": "Pista anterior",
+    "tags": [
+      "anterior",
+      "skip",
+      "atrás"
+    ],
+    "category": "actions"
+  },
+  "network-wireless-signal-none": {
+    "es": "Wi-Fi sin señal",
+    "tags": [
+      "wifi",
+      "inalámbrica",
+      "red",
+      "señal"
+    ],
+    "category": "status"
+  },
+  "network-wireless-signal-weak": {
+    "es": "Wi-Fi señal baja",
+    "tags": [
+      "wifi",
+      "inalámbrica",
+      "red",
+      "señal"
+    ],
+    "category": "status"
+  },
+  "network-wireless-signal-ok": {
+    "es": "Wi-Fi señal media",
+    "tags": [
+      "wifi",
+      "inalámbrica",
+      "red",
+      "señal"
+    ],
+    "category": "status"
+  },
+  "network-wireless-signal-excellent": {
+    "es": "Wi-Fi señal alta",
+    "tags": [
+      "wifi",
+      "inalámbrica",
+      "red",
+      "señal"
+    ],
+    "category": "status"
+  },
+  "network-wireless-offline": {
+    "es": "Wi-Fi desconectado",
+    "tags": [
+      "wifi",
+      "inalámbrica",
+      "red",
+      "señal",
+      "desconectado",
+      "offline"
+    ],
+    "category": "status"
+  },
+  "airplane-mode": {
+    "es": "Modo avión",
+    "tags": [
+      "avión",
+      "airplane",
+      "vuelo"
+    ],
+    "category": "status"
+  },
+  "battery-level-0": {
+    "es": "Batería 0 %",
+    "tags": [
+      "batería",
+      "energía",
+      "battery"
+    ],
+    "category": "status"
+  },
+  "battery-level-0-charging": {
+    "es": "Batería 0 % cargando",
+    "tags": [
+      "batería",
+      "energía",
+      "battery",
+      "cargando",
+      "charging"
+    ],
+    "category": "status"
+  },
+  "battery-level-20": {
+    "es": "Batería 20 %",
+    "tags": [
+      "batería",
+      "energía",
+      "battery"
+    ],
+    "category": "status"
+  },
+  "battery-level-20-charging": {
+    "es": "Batería 20 % cargando",
+    "tags": [
+      "batería",
+      "energía",
+      "battery",
+      "cargando",
+      "charging"
+    ],
+    "category": "status"
+  },
+  "battery-level-40": {
+    "es": "Batería 40 %",
+    "tags": [
+      "batería",
+      "energía",
+      "battery"
+    ],
+    "category": "status"
+  },
+  "battery-level-40-charging": {
+    "es": "Batería 40 % cargando",
+    "tags": [
+      "batería",
+      "energía",
+      "battery",
+      "cargando",
+      "charging"
+    ],
+    "category": "status"
+  },
+  "battery-level-60": {
+    "es": "Batería 60 %",
+    "tags": [
+      "batería",
+      "energía",
+      "battery"
+    ],
+    "category": "status"
+  },
+  "battery-level-60-charging": {
+    "es": "Batería 60 % cargando",
+    "tags": [
+      "batería",
+      "energía",
+      "battery",
+      "cargando",
+      "charging"
+    ],
+    "category": "status"
+  },
+  "battery-level-80": {
+    "es": "Batería 80 %",
+    "tags": [
+      "batería",
+      "energía",
+      "battery"
+    ],
+    "category": "status"
+  },
+  "battery-level-80-charging": {
+    "es": "Batería 80 % cargando",
+    "tags": [
+      "batería",
+      "energía",
+      "battery",
+      "cargando",
+      "charging"
+    ],
+    "category": "status"
+  },
+  "battery-level-100": {
+    "es": "Batería 100 %",
+    "tags": [
+      "batería",
+      "energía",
+      "battery"
+    ],
+    "category": "status"
+  },
+  "battery-level-100-charging": {
+    "es": "Batería 100 % cargando",
+    "tags": [
+      "batería",
+      "energía",
+      "battery",
+      "cargando",
+      "charging"
+    ],
+    "category": "status"
+  },
+  "audio-volume-muted": {
+    "es": "Silenciado",
+    "tags": [
+      "volumen",
+      "altavoz",
+      "sonido",
+      "audio",
+      "mute",
+      "silencio"
+    ],
+    "category": "status"
+  },
+  "audio-volume-low": {
+    "es": "Volumen bajo",
+    "tags": [
+      "volumen",
+      "altavoz",
+      "sonido",
+      "audio"
+    ],
+    "category": "status"
+  },
+  "audio-volume-medium": {
+    "es": "Volumen medio",
+    "tags": [
+      "volumen",
+      "altavoz",
+      "sonido",
+      "audio"
+    ],
+    "category": "status"
+  },
+  "audio-volume-high": {
+    "es": "Volumen alto",
+    "tags": [
+      "volumen",
+      "altavoz",
+      "sonido",
+      "audio"
+    ],
+    "category": "status"
+  },
+  "audio-input-microphone": {
+    "es": "Micrófono",
+    "tags": [
+      "micro",
+      "mic",
+      "grabar"
+    ],
+    "category": "status"
+  },
+  "microphone-sensitivity-muted": {
+    "es": "Micrófono silenciado",
+    "tags": [
+      "micro",
+      "mute",
+      "silenciado"
+    ],
+    "category": "status"
+  },
+  "bluetooth-active": {
+    "es": "Bluetooth",
+    "tags": [
+      "bluetooth",
+      "inalámbrico"
+    ],
+    "category": "status"
+  },
+  "bluetooth-disabled": {
+    "es": "Bluetooth desactivado",
+    "tags": [
+      "bluetooth",
+      "desactivado"
+    ],
+    "category": "status"
+  },
+  "weather-clear": {
+    "es": "Sol",
+    "tags": [
+      "sol",
+      "día",
+      "claro",
+      "sun"
+    ],
+    "category": "status"
+  },
+  "display-brightness": {
+    "es": "Brillo",
+    "tags": [
+      "brillo",
+      "pantalla",
+      "brightness"
+    ],
+    "category": "status"
+  },
+  "weather-clear-night": {
+    "es": "Luna",
+    "tags": [
+      "luna",
+      "noche",
+      "oscuro",
+      "moon"
+    ],
+    "category": "status"
+  },
+  "do-not-disturb": {
+    "es": "No molestar",
+    "tags": [
+      "no molestar",
+      "concentración",
+      "silencio",
+      "dnd",
+      "luna"
+    ],
+    "category": "status"
+  },
+  "notification": {
+    "es": "Notificaciones",
+    "tags": [
+      "campana",
+      "avisos",
+      "bell",
+      "notificaciones"
+    ],
+    "category": "status"
+  },
+  "notification-disabled": {
+    "es": "Notificaciones desactivadas",
+    "tags": [
+      "campana",
+      "silenciar",
+      "bell"
+    ],
+    "category": "status"
+  },
+  "control-center": {
+    "es": "Centro de control",
+    "tags": [
+      "ajustes rápidos",
+      "interruptores",
+      "toggles",
+      "control"
+    ],
+    "category": "status"
+  },
+  "power-profile-performance": {
+    "es": "Energía",
+    "tags": [
+      "rayo",
+      "energía",
+      "rendimiento",
+      "bolt",
+      "power"
+    ],
+    "category": "status"
+  },
+  "dialog-information": {
+    "es": "Información",
+    "tags": [
+      "diálogo",
+      "aviso",
+      "info"
+    ],
+    "category": "dialogs"
+  },
+  "dialog-warning": {
+    "es": "Aviso",
+    "tags": [
+      "diálogo",
+      "aviso",
+      "advertencia"
+    ],
+    "category": "dialogs"
+  },
+  "dialog-error": {
+    "es": "Error",
+    "tags": [
+      "diálogo",
+      "aviso",
+      "fallo"
+    ],
+    "category": "dialogs"
+  },
+  "dialog-positive": {
+    "es": "Correcto",
+    "tags": [
+      "diálogo",
+      "aviso",
+      "éxito",
+      "ok"
+    ],
+    "category": "dialogs"
+  },
+  "dialog-question": {
+    "es": "Pregunta",
+    "tags": [
+      "diálogo",
+      "aviso",
+      "ayuda"
+    ],
+    "category": "dialogs"
+  },
+  "utilities-terminal": {
+    "es": "Terminal",
+    "tags": [
+      "terminal",
+      "consola",
+      "shell",
+      "línea de comandos"
+    ],
+    "category": "apps"
+  }
+}

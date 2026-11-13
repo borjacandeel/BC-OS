@@ -1,0 +1,17 @@
+{
+  "name": "bc-os-icons",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Pack de iconos de BC OS (macOS minimal).",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "lint": "node scripts/lint.mjs",
+    "check": "node scripts/lint.mjs && node scripts/build.mjs"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "2.6.2",
+    "svg-path-bbox": "2.1.0",
+    "svgo": "3.3.2"
+  }
+}

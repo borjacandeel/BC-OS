@@ -12,6 +12,8 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] Pack de iconos completo (macOS minimal) con subagente permanente `icon-designer` → `icons/` + integración en `shell/` (Icons.qml/AppIcon.qml). Pasos: agente, contexto, diseño, revisión independiente, implementación. Subir a main.
 - [x] Release alpha PUBLICADA vía Actions: https://github.com/borjacandeel/BC-OS/releases/tag/v0.1.0-alpha (zip VDI 1.24 GB + SHA256SUMS). Pendiente: que el creador la pruebe en VirtualBox ARM64.
 - [ ] CI shell: arreglados módulos QML; faltaba plugin SVG (qt6-svg) → verificar run verde.
+- [x] Iconos LOTE A (icon-designer): AUDIT.md, SPEC.md, build/lint/preview en `icons/` (`npm run check`), 102 iconos UI (navegación, acciones, estado, diálogos) + muestra de app `utilities-terminal`. Integración en `shell/` la hace el agente principal (mapa de nombres en `icons/AUDIT.md` §2.1).
+- [ ] Iconos LOTE B (apps squircle 1024 + Dock, SPEC §7) y LOTE C (lugares, MIME, dispositivos, SPEC §4): pendientes, usar `icons/SPEC.md`, `templates/app-template.svg` y `npm run check`.
 - [ ] Layout de BC Shell responsive (hoy fijo a 1586x992, se solapa en 1280x800). Dock/Archivos/Centro de control sin funcionalidad.
 - [ ] LÍMITE HOY: trabajar hasta las 20:30 (Europe/Madrid, 2026-11-13). A esa hora: terminar lo que esté en marcha, subir a main y parar. Sin tareas nuevas.
 - [ ] Subagente `instalador` escribiendo `build/installer/bc-install` (probado vía losetup + QEMU). Después: ISO live (squashfs + hook initramfs + xorriso EFI).
