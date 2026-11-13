@@ -54,7 +54,8 @@ sh "echo 'bc:bcos' | chpasswd"
 install -m440 "$HERE/overlay/etc/sudoers.d/10-wheel" "$R/etc/sudoers.d/10-wheel"
 
 # Servicios mínimos
-sh "systemctl enable NetworkManager systemd-timesyncd systemd-resolved nftables"
+sh "systemctl enable NetworkManager systemd-timesyncd systemd-resolved nftables sshd"
+install -D -m644 "$HERE/overlay/etc/ssh/sshd_config.d/10-bcos.conf" "$R/etc/ssh/sshd_config.d/10-bcos.conf"
 install -D -m644 "$HERE/overlay/etc/systemd/zram-generator.conf" "$R/etc/systemd/zram-generator.conf"
 install -D -m644 "$HERE/overlay/etc/nftables.conf" "$R/etc/nftables.conf"
 
