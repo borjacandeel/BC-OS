@@ -45,6 +45,8 @@ jobs:
           if-no-files-found: error
           compression-level: 0
           retention-days: 14
+      - name: Preparar notas
+        run: sed -i 's/@VERSION@/${{ inputs.version }}/g' build/RELEASE-NOTES.md
       - name: Publicar prerelease
         if: ${{ inputs.publicar }}
         uses: softprops/action-gh-release@v2

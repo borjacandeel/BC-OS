@@ -1,9 +1,9 @@
-## BC OS 0.1.0-alpha (ARM64) — prerrelease, solo pruebas
+## BC OS @VERSION@ (ARM64) — prerrelease, solo pruebas
 
 Imagen de disco arrancable (UEFI, ARM64). **No es una ISO ni tiene instalador todavía.**
 
 ### Probar en VirtualBox (Mac Apple Silicon)
-1. Descomprime `BC-OS-0.1.0-alpha-ARM64.vdi.zip`.
+1. Descomprime `BC-OS-@VERSION@-ARM64.vdi.zip`.
 2. VirtualBox → Nueva: Tipo Linux, versión Arch Linux (ARM 64-bit), 2 GB RAM mínimo, 2 CPU.
 3. Disco: usar disco existente → el `.vdi`. Activa EFI en Sistema. Gráficos: VMSVGA, 128 MB.
 4. Arranca. Autologin como `bc` (contraseña `bcos`, solo alpha) y se abre BC Shell.
