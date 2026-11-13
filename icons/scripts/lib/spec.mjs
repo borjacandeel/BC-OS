@@ -48,6 +48,10 @@ export const PALETTE = {
     '#B49CFF', '#6B4FE0', // violeta Fotos
     '#FFFFFF', '#E4E9F2', // papel
     '#F5F5F7', '#C3CCDB', // plata
+    '#5BE0C8', '#16A085', // teal   Tienda
+    '#FFA66B', '#EB5B1E', // naranja Calculadora
+    '#8E9BFF', '#3A45C4', // índigo Editor
+    '#FF8FC2', '#D6336C', // magenta Mission Control
   ],
 };
 export const ALLOWED_COLORS = new Set(Object.values(PALETTE).flat().map((c) => c.toUpperCase()));

@@ -115,3 +115,37 @@ Revisado `shell/qml` (TopBar, Dock, FilesWindow, ControlCenter, NotificationCard
 ## Notas de método
 - Alineación a keylines y área viva: no se detectaron incumplimientos en symbolic (el lint ya lo bloquea); el problema está en el peso y en los hints, no en la rejilla.
 - No se han modificado iconos ni `dist/`. No se ha tocado `PENDIENTE.md` (la actualiza el agente principal).
+
+---
+
+## Estado tras la corrección (2026-11-13, icon-designer)
+
+`npm run check`: lint 271 archivos, 0 errores, 0 avisos; build 183 iconos, 204 SVG, 67 hints.
+
+**Resuelto**
+- P0-1: `web-browser` rediseñado como globo con meridianos y ecuador (sin aguja ni brújula), @32/@16 incluidos.
+- P0-2: `system-software-install` ahora es caja con flecha de entrada, sin asa ni sonrisa; fondo teal.
+- P0-3: fondos papel/plata con borde oscuro `#000000` .10 (ancho 6) en las 3 resoluciones; extremo claro `#F5F5F7`. Documentado en SPEC §7.4.
+- P1-1: rediseñados calendario (anillas + cuadrícula, azul de marca), reloj (cronómetro), música (auriculares), lanzador (3x3 blanco sobre grafito), notas (libreta con agujeros, sin banda), configuración (engranaje de 6 dientes), mission control (tres tiles asimétricos), calculadora (teclas cuadradas y `=` destacada).
+- P1-2: `document-send`/`browser-download` (bandeja), `edit-clear` (cuña de borrar), `user-desktop` (monitor con barra de dock), `power-profile-performance` (velocímetro).
+- P1-3: paleta de apps con 14 familias y máximo 2 apps por familia (teal, naranja, índigo y magenta nuevos).
+- P1-4: trazo de glifo >= 56 (>= 80 en @16) en todas las apps.
+- P1-5: `@16` para `battery-level-*` (12), `audio-volume-low|medium|high`, `network-wireless-signal-*`, `edit-find`, `weather-clear[-fill]`.
+- P1-6 (parcial): `@16` de las 9 carpetas y lugares con glifo grande.
+- P1-7: `-fill` de `folder-download|music|pictures|videos|remote` y `user-trash`.
+- P1-8: octógono de error con lados rectos (color y symbolic).
+- P1-10: MIME sin colores de estado (audio verde, script azul, paquete grafito); PDF conserva rojo por convención.
+- P1-11 (parcial): papelera llena con papeles azules que sobresalen; Archivos y Tienda se separan por color (azul/teal).
+- P1-12 (parcial): el lint comprueba trazo mínimo de app, máximo 2 apps por familia y `@16` obligatorio en los symbolic críticos.
+- P1-13 (parcial): añadidos `user-trash-symbolic`, `power-profile-balanced|power-saver`, `network-wired`, `view-app-grid`, `document-open|save|properties`, `window-new`, `drive-removable-media`, `dialog-password`, `camera-photo`, `system-users` (symbolic) y `x-office-document`, `x-office-spreadsheet`, `text-html` (color).
+- P2-12: contadores de AUDIT actualizados.
+
+**No resuelto (con motivo)**
+- P1-6 resto: `@16` de `application-pdf`, `text-x-script`, `application-x-executable`, `drive-*`, `phone`, `printer` color. Requiere rediseñar la etiqueta por tipo, no un ajuste.
+- P1-9: normalizar trazos de glifos color a 3 / 4.4. Toca unos 40 SVG color; se hará junto a la revisión de MIME.
+- P1-2 `computer`/`video-display`: solo se separó `user-desktop`; portátil y monitor con peana ya difieren entre sí.
+- P1-8 resto: info, correcto y pregunta siguen siendo círculos; se distinguen por glifo y color (el error ya difiere por forma).
+- P1-12 (2) y (4): no hay chequeo de elementos paralelos ni umbral numérico del octógono.
+- P1-13 resto: `folder-open`, `folder-publicshare`, `network-workgroup`, `system-search` (el shell mapea a `edit-find`), `drive-harddisk-solidstate`, `video-camera`, `accessibility`, `dialog-password` color.
+- `@16` de `airplane-mode`, micrófono, impresora y teclado: ya cumplen la separación mínima de 3; sin hint hasta que el shell lo pida.
+- P2-1 a P2-11: sin tocar (pulido).

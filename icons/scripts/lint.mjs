@@ -21,6 +21,7 @@ const warn = (f, m) => { warnings++; console.warn(`aviso  ${rel(f)}: ${m}`); };
 const FORBIDDEN_TAGS = ['style', 'filter', 'script', 'image', 'text', 'foreignObject', 'metadata', 'mask', 'pattern', 'use', 'symbol', 'title', 'desc'];
 const FORBIDDEN_ATTR = /\b(transform|gradientTransform|patternTransform|style|class|data-[\w-]+|xml:space)\s*=|\b(sodipodi|inkscape|dc|cc|rdf):/;
 const num = (v) => parseFloat(v);
+const HINT_REQUIRED = [/^battery-level-/, /^audio-volume-(low|medium|high)-/, /^network-wireless-signal-/, /^edit-find-/, /^weather-clear(-fill)?-symbolic/];
 
 function bboxOfElement(tag, a) {
   switch (tag) {
@@ -108,6 +109,19 @@ for (const s of sources) {
     if (/stroke-width="(?!0)/.test(svg) && !draw.some((e) => e.attrs.stroke)) warn(f, 'stroke-width sin stroke');
   }
 
+  // --- REVIEW P1-4: trazo mínimo de los glifos de app (SPEC §7.3) ---
+  if (s.kind === 'app' && !/lint-allow:\s*stroke/.test(svg)) {
+    const min = s.hint === 16 ? 80 : 56;
+    for (const e of draw) {
+      const a = e.attrs;
+      if (!('stroke-width' in a) || !a.stroke || a.stroke === 'none') continue;
+      if (a.stroke === '#000000' || (a.stroke === '#FFFFFF' && a['stroke-opacity'] === '.14')) continue; // sombras y borde de luz
+      if (num(a['stroke-width']) < min) err(f, `<${e.tag}> stroke-width ${a['stroke-width']} < ${min} (SPEC §7.3; <!-- lint-allow: stroke motivo --> si es deliberado)`);
+    }
+  }
+  // --- REVIEW P1-5: hints @16 obligatorios en symbolic críticos (SPEC §3.5) ---
+  if (s.kind === 'symbolic' && !s.hint && HINT_REQUIRED.some((re) => re.test(s.stem)) && !byKey.has(`${s.kind}|${s.category}|${s.stem}@16`) && !sources.some((o) => o.hint === 16 && o.kind === s.kind && o.stem === s.stem)) warn(f, 'falta la variante @16 (SPEC §3.5)');
+
   // --- zona viva (geometría; el trazo añade STROKE/2) ---
   const justified = /lint-allow:\s*bounds/.test(svg);
   const [lo, hi] = K.live;
@@ -136,6 +150,16 @@ for (const s of sources) {
   }
 }
 
+// REVIEW P1-3/P1-12: como máximo 2 apps del Dock por familia de fondo (SPEC §7.4)
+{
+  const fam = new Map();
+  for (const s of sources.filter((x) => x.kind === 'app' && !x.hint)) {
+    const m = fs.readFileSync(s.file, 'utf8').match(/<linearGradient id="bg"[^>]*><stop offset="0" stop-color="(#\w+)"\/><stop offset="1" stop-color="(#\w+)"/);
+    if (!m) continue;
+    const k = m[1] + m[2]; fam.set(k, [...(fam.get(k) || []), s.base]);
+  }
+  for (const [k, v] of fam) if (v.length > 2 && !v.every((n) => /^(papel|plata)$/.test(n))) { errors++; console.error(`ERROR  familia de color ${k}: ${v.length} apps (${v.join(', ')}); máximo 2`); }
+}
 // meta.json sin icono
 const bases = new Set(sources.map((s) => s.base));
 if (i0 < 0) for (const k of Object.keys(META)) if (!bases.has(k)) { warnings++; console.warn(`aviso  meta.json: «${k}» no tiene SVG`); }

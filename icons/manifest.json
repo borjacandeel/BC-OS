@@ -44,28 +44,28 @@
       "label": "Navegación",
       "context": "Actions",
       "lote": "A",
-      "count": 21
+      "count": 23
     },
     {
       "id": "actions",
       "label": "Acciones",
       "context": "Actions",
       "lote": "A",
-      "count": 37
+      "count": 40
     },
     {
       "id": "status",
       "label": "Barra de menús y estado",
       "context": "Status",
       "lote": "A",
-      "count": 34
+      "count": 37
     },
     {
       "id": "dialogs",
       "label": "Diálogos",
       "context": "Status",
       "lote": "A",
-      "count": 10
+      "count": 11
     },
     {
       "id": "apps",
@@ -79,21 +79,21 @@
       "label": "Lugares y carpetas",
       "context": "Places",
       "lote": "C",
-      "count": 20
+      "count": 21
     },
     {
       "id": "mimetypes",
       "label": "Archivos y MIME",
       "context": "MimeTypes",
       "lote": "C",
-      "count": 9
+      "count": 12
     },
     {
       "id": "devices",
       "label": "Dispositivos",
       "context": "Devices",
       "lote": "C",
-      "count": 19
+      "count": 22
     }
   ],
   "icons": [
@@ -195,6 +195,79 @@
         48
       ],
       "file": "dist/svg/document-new-symbolic.svg"
+    },
+    {
+      "name": "document-open",
+      "label": "Abrir",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "document-open-symbolic"
+      },
+      "tags": [
+        "abrir",
+        "archivo",
+        "open"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/document-open-symbolic.svg"
+    },
+    {
+      "name": "document-properties",
+      "label": "Propiedades",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "document-properties-symbolic"
+      },
+      "tags": [
+        "propiedades",
+        "información",
+        "properties",
+        "archivo"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/document-properties-symbolic.svg"
+    },
+    {
+      "name": "document-save",
+      "label": "Guardar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "document-save-symbolic"
+      },
+      "tags": [
+        "guardar",
+        "save",
+        "archivo"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/document-save-symbolic.svg"
     },
     {
       "name": "document-send",
@@ -339,6 +412,9 @@
         24,
         32,
         48
+      ],
+      "hints": [
+        16
       ],
       "file": "dist/svg/edit-find-symbolic.svg"
     },
@@ -1631,7 +1707,7 @@
     },
     {
       "name": "drive-removable-media",
-      "label": "Disco externo",
+      "label": "Medio extraíble",
       "category": "devices",
       "context": "Devices",
       "kind": "color",
@@ -1640,10 +1716,11 @@
         "regular": "drive-removable-media"
       },
       "tags": [
-        "externo",
-        "portátil",
+        "tarjeta",
+        "sd",
+        "extraíble",
         "removable",
-        "disco"
+        "media"
       ],
       "sizes": [
         16,
@@ -1840,6 +1917,31 @@
       "file": "dist/svg/audio-headphones-symbolic.svg"
     },
     {
+      "name": "camera-photo",
+      "label": "Cámara",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "camera-photo-symbolic"
+      },
+      "tags": [
+        "cámara",
+        "foto",
+        "camera",
+        "photo"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/camera-photo-symbolic.svg"
+    },
+    {
       "name": "computer",
       "label": "Equipo",
       "category": "devices",
@@ -1890,6 +1992,32 @@
         48
       ],
       "file": "dist/svg/drive-harddisk-symbolic.svg"
+    },
+    {
+      "name": "drive-removable-media",
+      "label": "Medio extraíble",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "drive-removable-media-symbolic"
+      },
+      "tags": [
+        "tarjeta",
+        "sd",
+        "extraíble",
+        "removable",
+        "media"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/drive-removable-media-symbolic.svg"
     },
     {
       "name": "drive-removable-media-usb",
@@ -2012,6 +2140,32 @@
         48
       ],
       "file": "dist/svg/printer-symbolic.svg"
+    },
+    {
+      "name": "system-users",
+      "label": "Usuarios",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "system-users-symbolic"
+      },
+      "tags": [
+        "usuarios",
+        "cuentas",
+        "personas",
+        "users",
+        "accounts"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/system-users-symbolic.svg"
     },
     {
       "name": "video-display",
@@ -2215,6 +2369,31 @@
         48
       ],
       "file": "dist/svg/dialog-information-symbolic.svg"
+    },
+    {
+      "name": "dialog-password",
+      "label": "Contraseña",
+      "category": "dialogs",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "dialog-password-symbolic"
+      },
+      "tags": [
+        "contraseña",
+        "clave",
+        "password",
+        "autenticación"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/dialog-password-symbolic.svg"
     },
     {
       "name": "dialog-positive",
@@ -2453,6 +2632,33 @@
       "file": "dist/svg/package-x-generic.svg"
     },
     {
+      "name": "text-html",
+      "label": "Página web",
+      "category": "mimetypes",
+      "context": "MimeTypes",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "text-html"
+      },
+      "tags": [
+        "html",
+        "web",
+        "página",
+        "hypertext"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/text-html.svg"
+    },
+    {
       "name": "text-x-generic",
       "label": "Texto",
       "category": "mimetypes",
@@ -2535,6 +2741,62 @@
         256
       ],
       "file": "dist/svg/video-x-generic.svg"
+    },
+    {
+      "name": "x-office-document",
+      "label": "Documento de texto",
+      "category": "mimetypes",
+      "context": "MimeTypes",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "x-office-document"
+      },
+      "tags": [
+        "documento",
+        "texto",
+        "word",
+        "office",
+        "document"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/x-office-document.svg"
+    },
+    {
+      "name": "x-office-spreadsheet",
+      "label": "Hoja de cálculo",
+      "category": "mimetypes",
+      "context": "MimeTypes",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "x-office-spreadsheet"
+      },
+      "tags": [
+        "hoja",
+        "cálculo",
+        "excel",
+        "tabla",
+        "spreadsheet"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/x-office-spreadsheet.svg"
     },
     {
       "name": "go-bottom",
@@ -2830,6 +3092,32 @@
       "file": "dist/svg/pan-up-symbolic.svg"
     },
     {
+      "name": "view-app-grid",
+      "label": "Aplicaciones",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "view-app-grid-symbolic"
+      },
+      "tags": [
+        "lanzador",
+        "launchpad",
+        "apps",
+        "cuadrícula",
+        "grid"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/view-app-grid-symbolic.svg"
+    },
+    {
       "name": "view-grid",
       "label": "Cuadrícula",
       "category": "navigation",
@@ -3025,6 +3313,31 @@
       "file": "dist/svg/window-minimize-symbolic.svg"
     },
     {
+      "name": "window-new",
+      "label": "Ventana nueva",
+      "category": "navigation",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "window-new-symbolic"
+      },
+      "tags": [
+        "ventana",
+        "nueva",
+        "window",
+        "new"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/window-new-symbolic.svg"
+    },
+    {
       "name": "window-restore",
       "label": "Restaurar",
       "category": "navigation",
@@ -3101,6 +3414,9 @@
         128,
         256
       ],
+      "hints": [
+        16
+      ],
       "file": "dist/svg/folder-cloud.svg"
     },
     {
@@ -3126,6 +3442,9 @@
         128,
         256
       ],
+      "hints": [
+        16
+      ],
       "file": "dist/svg/folder-documents.svg"
     },
     {
@@ -3150,6 +3469,9 @@
         64,
         128,
         256
+      ],
+      "hints": [
+        16
       ],
       "file": "dist/svg/folder-download.svg"
     },
@@ -3177,6 +3499,9 @@
         128,
         256
       ],
+      "hints": [
+        16
+      ],
       "file": "dist/svg/folder-music.svg"
     },
     {
@@ -3202,6 +3527,9 @@
         64,
         128,
         256
+      ],
+      "hints": [
+        16
       ],
       "file": "dist/svg/folder-pictures.svg"
     },
@@ -3230,6 +3558,9 @@
         128,
         256
       ],
+      "hints": [
+        16
+      ],
       "file": "dist/svg/folder-remote.svg"
     },
     {
@@ -3256,6 +3587,9 @@
         128,
         256
       ],
+      "hints": [
+        16
+      ],
       "file": "dist/svg/folder-videos.svg"
     },
     {
@@ -3280,6 +3614,9 @@
         64,
         128,
         256
+      ],
+      "hints": [
+        16
       ],
       "file": "dist/svg/user-desktop.svg"
     },
@@ -3307,6 +3644,9 @@
         64,
         128,
         256
+      ],
+      "hints": [
+        16
       ],
       "file": "dist/svg/user-home.svg"
     },
@@ -3392,6 +3732,7 @@
       "kind": "symbolic",
       "viewBox": "0 0 24 24",
       "variants": {
+        "fill": "folder-download-fill-symbolic",
         "regular": "folder-download-symbolic"
       },
       "tags": [
@@ -3415,6 +3756,7 @@
       "kind": "symbolic",
       "viewBox": "0 0 24 24",
       "variants": {
+        "fill": "folder-music-fill-symbolic",
         "regular": "folder-music-symbolic"
       },
       "tags": [
@@ -3439,6 +3781,7 @@
       "kind": "symbolic",
       "viewBox": "0 0 24 24",
       "variants": {
+        "fill": "folder-pictures-fill-symbolic",
         "regular": "folder-pictures-symbolic"
       },
       "tags": [
@@ -3463,6 +3806,7 @@
       "kind": "symbolic",
       "viewBox": "0 0 24 24",
       "variants": {
+        "fill": "folder-remote-fill-symbolic",
         "regular": "folder-remote-symbolic"
       },
       "tags": [
@@ -3488,6 +3832,7 @@
       "kind": "symbolic",
       "viewBox": "0 0 24 24",
       "variants": {
+        "fill": "folder-videos-fill-symbolic",
         "regular": "folder-videos-symbolic"
       },
       "tags": [
@@ -3553,6 +3898,34 @@
         48
       ],
       "file": "dist/svg/user-home-symbolic.svg"
+    },
+    {
+      "name": "user-trash",
+      "label": "Papelera",
+      "category": "places",
+      "context": "Places",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "user-trash-fill-symbolic",
+        "regular": "user-trash-symbolic"
+      },
+      "tags": [
+        "papelera",
+        "vacía",
+        "basura",
+        "trash",
+        "bin",
+        "empty"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/user-trash-symbolic.svg"
     },
     {
       "name": "airplane-mode",
@@ -3625,6 +3998,9 @@
         32,
         48
       ],
+      "hints": [
+        16
+      ],
       "file": "dist/svg/audio-volume-high-symbolic.svg"
     },
     {
@@ -3650,6 +4026,9 @@
         32,
         48
       ],
+      "hints": [
+        16
+      ],
       "file": "dist/svg/audio-volume-low-symbolic.svg"
     },
     {
@@ -3674,6 +4053,9 @@
         24,
         32,
         48
+      ],
+      "hints": [
+        16
       ],
       "file": "dist/svg/audio-volume-medium-symbolic.svg"
     },
@@ -3726,6 +4108,9 @@
         32,
         48
       ],
+      "hints": [
+        16
+      ],
       "file": "dist/svg/battery-level-0-symbolic.svg"
     },
     {
@@ -3752,6 +4137,9 @@
         32,
         48
       ],
+      "hints": [
+        16
+      ],
       "file": "dist/svg/battery-level-0-charging-symbolic.svg"
     },
     {
@@ -3775,6 +4163,9 @@
         24,
         32,
         48
+      ],
+      "hints": [
+        16
       ],
       "file": "dist/svg/battery-level-20-symbolic.svg"
     },
@@ -3802,6 +4193,9 @@
         32,
         48
       ],
+      "hints": [
+        16
+      ],
       "file": "dist/svg/battery-level-20-charging-symbolic.svg"
     },
     {
@@ -3825,6 +4219,9 @@
         24,
         32,
         48
+      ],
+      "hints": [
+        16
       ],
       "file": "dist/svg/battery-level-40-symbolic.svg"
     },
@@ -3852,6 +4249,9 @@
         32,
         48
       ],
+      "hints": [
+        16
+      ],
       "file": "dist/svg/battery-level-40-charging-symbolic.svg"
     },
     {
@@ -3875,6 +4275,9 @@
         24,
         32,
         48
+      ],
+      "hints": [
+        16
       ],
       "file": "dist/svg/battery-level-60-symbolic.svg"
     },
@@ -3902,6 +4305,9 @@
         32,
         48
       ],
+      "hints": [
+        16
+      ],
       "file": "dist/svg/battery-level-60-charging-symbolic.svg"
     },
     {
@@ -3925,6 +4331,9 @@
         24,
         32,
         48
+      ],
+      "hints": [
+        16
       ],
       "file": "dist/svg/battery-level-80-symbolic.svg"
     },
@@ -3952,6 +4361,9 @@
         32,
         48
       ],
+      "hints": [
+        16
+      ],
       "file": "dist/svg/battery-level-80-charging-symbolic.svg"
     },
     {
@@ -3975,6 +4387,9 @@
         24,
         32,
         48
+      ],
+      "hints": [
+        16
       ],
       "file": "dist/svg/battery-level-100-symbolic.svg"
     },
@@ -4001,6 +4416,9 @@
         24,
         32,
         48
+      ],
+      "hints": [
+        16
       ],
       "file": "dist/svg/battery-level-100-charging-symbolic.svg"
     },
@@ -4150,6 +4568,32 @@
       "file": "dist/svg/microphone-sensitivity-muted-symbolic.svg"
     },
     {
+      "name": "network-wired",
+      "label": "Red por cable",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "network-wired-symbolic"
+      },
+      "tags": [
+        "ethernet",
+        "cable",
+        "red",
+        "wired",
+        "lan"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/network-wired-symbolic.svg"
+    },
+    {
       "name": "network-wireless-offline",
       "label": "Wi-Fi desconectado",
       "category": "status",
@@ -4199,6 +4643,9 @@
         32,
         48
       ],
+      "hints": [
+        16
+      ],
       "file": "dist/svg/network-wireless-signal-excellent-symbolic.svg"
     },
     {
@@ -4223,6 +4670,9 @@
         24,
         32,
         48
+      ],
+      "hints": [
+        16
       ],
       "file": "dist/svg/network-wireless-signal-none-symbolic.svg"
     },
@@ -4249,6 +4699,9 @@
         32,
         48
       ],
+      "hints": [
+        16
+      ],
       "file": "dist/svg/network-wireless-signal-ok-symbolic.svg"
     },
     {
@@ -4273,6 +4726,9 @@
         24,
         32,
         48
+      ],
+      "hints": [
+        16
       ],
       "file": "dist/svg/network-wireless-signal-weak-symbolic.svg"
     },
@@ -4327,6 +4783,31 @@
       "file": "dist/svg/notification-disabled-symbolic.svg"
     },
     {
+      "name": "power-profile-balanced",
+      "label": "Perfil equilibrado",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "power-profile-balanced-symbolic"
+      },
+      "tags": [
+        "energía",
+        "equilibrado",
+        "balanced",
+        "power"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/power-profile-balanced-symbolic.svg"
+    },
+    {
       "name": "power-profile-performance",
       "label": "Energía",
       "category": "status",
@@ -4354,6 +4835,32 @@
       "file": "dist/svg/power-profile-performance-symbolic.svg"
     },
     {
+      "name": "power-profile-power-saver",
+      "label": "Ahorro de energía",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "power-profile-power-saver-symbolic"
+      },
+      "tags": [
+        "energía",
+        "ahorro",
+        "hoja",
+        "power saver",
+        "eco"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/power-profile-power-saver-symbolic.svg"
+    },
+    {
       "name": "weather-clear",
       "label": "Sol",
       "category": "status",
@@ -4376,6 +4883,10 @@
         24,
         32,
         48
+      ],
+      "hints": [
+        16,
+        16
       ],
       "file": "dist/svg/weather-clear-symbolic.svg"
     },

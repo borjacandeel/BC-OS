@@ -66,7 +66,7 @@ Una categoría puede existir en varios `kind` (p.ej. `places` en `color` y en `s
 `transform`, `style`, `class`, `id` (en symbolic), `data-*`, metadatos de editor (`sodipodi`, `inkscape`, `<metadata>`), `<style>`, `<filter>`, `<mask>`, `<use>`, `<image>`, `<text>`, `<title>`, colores fijos (`#hex`, `rgb()`), `fill`/`stroke` distintos de `currentColor`/`none`.
 
 ### 3.5 Hinting 16 / 32
-Todos los symbolic deben verse nítidos a 16. Si a 16 un icono se empasta (separaciones < 3, más de 3 barras...), se añade `<stem>@16.svg` con la silueta simplificada. Ejemplos candidatos: baterías cargando, wifi. Los `@32` se reservan para iconos `color` y `app`.
+Todos los symbolic deben verse nítidos a 16. Llevan `@16` obligatorio (el lint avisa si falta): `battery-level-*` (con y sin carga), `audio-volume-low|medium|high`, `network-wireless-signal-*`, `edit-find`, `weather-clear[-fill]`. Si a 16 un icono se empasta (separaciones < 3, más de 3 barras...), se añade `<stem>@16.svg` con la silueta simplificada. Ejemplos candidatos: baterías cargando, wifi. Los `@32` se reservan para iconos `color` y `app`.
 
 ## 4. Iconos color (48x48): diálogos, lugares, MIME, dispositivos
 
@@ -78,6 +78,8 @@ Todos los symbolic deben verse nítidos a 16. Si a 16 un icono se empasta (separ
 - Formas: info = círculo; aviso = triángulo con vértices redondeados (radio de esquina 5.5); error = octógono redondeado (radio 5); correcto = círculo; pregunta = círculo. Se distinguen por forma y color.
 - Documentos MIME (lote C): hoja 30x38 con esquina doblada de 9 (radio 3), etiqueta de tipo (texto convertido en path, nunca `<text>`) o glifo blanco 4.4.
 - Carpetas (lote C): silueta original en azul del sistema, degradado `#7CC0FF`→`#3B9BFF`→`#1E7BF0` (pestaña y delantera con tonos distintos), con símbolo grabado del mismo lenguaje que los de UI (trazo 3, `#FFFFFF` opacidad .85 sobre delantera).
+- Colores solo de la paleta §6. MIME: el color del glifo identifica el tipo y no usa colores de estado: audio verde, código azul, vídeo violeta, paquete grafito; PDF conserva el rojo por convención universal.
+- Octógono de error: lados rectos, esquinas redondeadas con `Q` de radio nominal 6 (color) o 2.2 (symbolic).
 - Colores solo de la paleta §6. Se permiten `opacity`, `fill-opacity`, `stroke-opacity`, degradados lineales y radiales.
 
 ## 5. Resumen de reglas de formato (todos los kinds)
@@ -126,7 +128,7 @@ Nada de texturas, ruido, reflejos duros ni skeuomorfismo. Nunca más de un highl
 
 ### 7.3 Glifo
 - Zona segura: cuadrado de 520x520 centrado (252 a 772). Glifos anchos hasta 560. Todo el glifo en blanco `#FFFFFF` (o `#0B1220`/color de marca sobre fondos "papel").
-- Trazos: grosor mínimo 56 (equivale al 1.5 de UI x ~37), `stroke-linecap/linejoin="round"`. Secundario: mismo blanco con opacidad .7 (nunca menos de .55). Rellenos: formas llenas con esquinas redondeadas ≥ 24.
+- Trazos: grosor mínimo 56 en 1024 y 80 en `@16` (lo comprueba el lint; una excepción necesita `<!-- lint-allow: stroke motivo -->`). Grosor general 56 a 64 (equivale al 1.5 de UI x ~37), `stroke-linecap/linejoin="round"`. Secundario: mismo blanco con opacidad .7 (nunca menos de .55). Rellenos: formas llenas con esquinas redondeadas ≥ 24.
 - Metáfora clara y única por app, sin texto (los textos, como los números del Calendario, se convierten a path).
 - Hinting: a 16 y 32 px se publica `<stem>@16.svg`/`<stem>@32.svg` con el glifo simplificado (menos elementos, trazo mínimo 80 para @16, sin degradados sutiles).
 
@@ -136,20 +138,28 @@ Familia común de saturación/luminosidad: tono claro arriba (L≈72%), oscuro a
 | Color | Arriba | Abajo | Apps |
 |---|---|---|---|
 | azul | `#5CB0FF` | `#1B6FF0` | Archivos (`system-file-manager`) |
-| cian | `#67D3FF` | `#1A8CF2` | Tienda (`system-software-install`), Navegador (`web-browser`) |
-| grafito | `#B4BDCC` | `#5E6A80` | Configuración (`preferences-system`), Calculadora |
+| cian | `#67D3FF` | `#1A8CF2` | Navegador (`web-browser`) |
+| teal | `#5BE0C8` | `#16A085` | Tienda (`system-software-install`) |
+| grafito | `#B4BDCC` | `#5E6A80` | Configuración (`preferences-system`), Lanzador (`bc-launcher`) |
 | verde | `#6BE591` | `#1FA84F` | Monitor de actividad (`utilities-system-monitor`) |
-| noche | `#3A4660` | `#0B1220` | Terminal (`utilities-terminal`, hecho), Reloj |
-| rojo | `#FF8F87` | `#E8453C` | Música (`multimedia-audio-player`) |
+| noche | `#3A4660` | `#0B1220` | Terminal (`utilities-terminal`) |
+| rojo | `#FF8F87` | `#E8453C` | Reloj (`preferences-system-time`) |
+| naranja | `#FFA66B` | `#EB5B1E` | Calculadora (`accessories-calculator`) |
 | ámbar | `#FFD27D` | `#F29A1F` | Notas (`accessories-notes`) |
-| violeta | `#B49CFF` | `#6B4FE0` | Editor (`accessories-text-editor`) |
-| papel | `#FFFFFF` | `#E4E9F2` | Calendario (`office-calendar`), Fotos (`multimedia-photo-viewer`) |
-| plata | `#F5F5F7` | `#C3CCDB` | reserva (ventanas, papelera) |
+| violeta | `#B49CFF` | `#6B4FE0` | Música (`multimedia-audio-player`) |
+| índigo | `#8E9BFF` | `#3A45C4` | Editor (`accessories-text-editor`) |
+| magenta | `#FF8FC2` | `#D6336C` | Mission Control (`bc-mission-control`) |
+| papel | `#F5F5F7` | `#E4E9F2` | Calendario (`office-calendar`), Fotos (`multimedia-photo-viewer`) |
+| plata | `#F5F5F7` | `#C3CCDB` | Papelera (`user-trash`, `user-trash-full`) |
+
+Regla (lint): como máximo dos apps del Dock por familia de color. Un color nuevo se añade aquí y en `PALETTE` (`spec.mjs`).
+
+**Fondos claros (papel y plata).** El borde de luz blanco no se ve sobre ventanas claras, así que en estos fondos se sustituye por un borde oscuro `#000000` con `stroke-opacity .10` y `stroke-width 6` (en los demás colores sigue siendo `#FFFFFF` .14 / 3). El extremo claro del degradado baja a `#F5F5F7`.
 
 Sobre "papel" y "plata" el glifo usa `#0B1220`, `#1F63D6`, `#E8453C` o colores de la paleta semántica.
 
 ### 7.5 Papelera del Dock
-`user-trash` y `user-trash-full` son excepción: cubo de cristal sobre el mismo squircle en "plata" (sin degradado de color), glifo en `#0B1220` con opacidad .8; `-full` añade papeles en blanco. Es el mismo archivo para Dock y Lugares (el lote C no lo duplica).
+`user-trash` y `user-trash-full` son excepción: cubo sobre el mismo squircle en "plata" (sin degradado de color), glifo en `#0B1220` con opacidad .8; `-full` añade papeles en azul `#1F63D6` que sobresalen de la tapa. Es el mismo archivo para Dock y Lugares (el lote C no lo duplica).
 
 ### 7.6 Salidas
 `dist/png/<tamaño>/<stem>.png`, `dist/icns/<stem>.icns` (tipos `icp4 icp5 icp6 ic07 ic08 ic09 ic10 ic11 ic12 ic13 ic14`, PNG embebido), tema Freedesktop `scalable/apps` + `<N>x<N>/apps`.

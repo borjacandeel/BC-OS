@@ -997,7 +997,10 @@
       "bin",
       "empty"
     ],
-    "category": "apps"
+    "category": "apps",
+    "also": [
+      "places"
+    ]
   },
   "user-trash-full": {
     "es": "Papelera llena",
@@ -1294,12 +1297,13 @@
     "category": "devices"
   },
   "drive-removable-media": {
-    "es": "Disco externo",
+    "es": "Medio extraíble",
     "tags": [
-      "externo",
-      "portátil",
+      "tarjeta",
+      "sd",
+      "extraíble",
       "removable",
-      "disco"
+      "media"
     ],
     "category": "devices"
   },
@@ -1379,5 +1383,149 @@
       "smartphone"
     ],
     "category": "devices"
+  },
+  "power-profile-balanced": {
+    "es": "Perfil equilibrado",
+    "tags": [
+      "energía",
+      "equilibrado",
+      "balanced",
+      "power"
+    ],
+    "category": "status"
+  },
+  "power-profile-power-saver": {
+    "es": "Ahorro de energía",
+    "tags": [
+      "energía",
+      "ahorro",
+      "hoja",
+      "power saver",
+      "eco"
+    ],
+    "category": "status"
+  },
+  "network-wired": {
+    "es": "Red por cable",
+    "tags": [
+      "ethernet",
+      "cable",
+      "red",
+      "wired",
+      "lan"
+    ],
+    "category": "status"
+  },
+  "view-app-grid": {
+    "es": "Aplicaciones",
+    "tags": [
+      "lanzador",
+      "launchpad",
+      "apps",
+      "cuadrícula",
+      "grid"
+    ],
+    "category": "navigation"
+  },
+  "document-open": {
+    "es": "Abrir",
+    "tags": [
+      "abrir",
+      "archivo",
+      "open"
+    ],
+    "category": "actions"
+  },
+  "document-save": {
+    "es": "Guardar",
+    "tags": [
+      "guardar",
+      "save",
+      "archivo"
+    ],
+    "category": "actions"
+  },
+  "document-properties": {
+    "es": "Propiedades",
+    "tags": [
+      "propiedades",
+      "información",
+      "properties",
+      "archivo"
+    ],
+    "category": "actions"
+  },
+  "window-new": {
+    "es": "Ventana nueva",
+    "tags": [
+      "ventana",
+      "nueva",
+      "window",
+      "new"
+    ],
+    "category": "navigation"
+  },
+  "dialog-password": {
+    "es": "Contraseña",
+    "tags": [
+      "contraseña",
+      "clave",
+      "password",
+      "autenticación"
+    ],
+    "category": "dialogs"
+  },
+  "camera-photo": {
+    "es": "Cámara",
+    "tags": [
+      "cámara",
+      "foto",
+      "camera",
+      "photo"
+    ],
+    "category": "devices"
+  },
+  "system-users": {
+    "es": "Usuarios",
+    "tags": [
+      "usuarios",
+      "cuentas",
+      "personas",
+      "users",
+      "accounts"
+    ],
+    "category": "devices"
+  },
+  "x-office-document": {
+    "es": "Documento de texto",
+    "tags": [
+      "documento",
+      "texto",
+      "word",
+      "office",
+      "document"
+    ],
+    "category": "mimetypes"
+  },
+  "x-office-spreadsheet": {
+    "es": "Hoja de cálculo",
+    "tags": [
+      "hoja",
+      "cálculo",
+      "excel",
+      "tabla",
+      "spreadsheet"
+    ],
+    "category": "mimetypes"
+  },
+  "text-html": {
+    "es": "Página web",
+    "tags": [
+      "html",
+      "web",
+      "página",
+      "hypertext"
+    ],
+    "category": "mimetypes"
   }
 }

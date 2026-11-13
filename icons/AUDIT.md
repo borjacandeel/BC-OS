@@ -46,8 +46,8 @@ Convención: `kind` symbolic = 24x24 `currentColor`; color = 48x48 paleta fija; 
 
 ### 2.2 Lote A (hecho): UI
 
-- Navegación (21): flechas (go-up/down/previous/next/top/bottom), chevrons (pan-*), go-home (+fill), open-menu, view-more (horizontal y vertical), window-close/minimize/maximize/restore, view-sidebar (+fill), view-grid, view-list.
-- Acciones (37): list-add/remove, object-select, document-edit/new/send, edit-delete (+fill), edit-copy/paste/cut/undo/redo/find/clear, emblem-shared, browser-download, view-refresh/filter/sort-ascending/sort-descending/fullscreen/restore/reveal/conceal, folder-new, zoom-in/out, starred (+fill), bookmark-new (+fill), preferences-system, system-shutdown/log-out/lock-screen (+fill), media-playback-start/pause, media-skip-forward/backward.
+- Navegación (25 archivos; +`view-app-grid`, `window-new` tras la revisión): flechas (go-up/down/previous/next/top/bottom), chevrons (pan-*), go-home (+fill), open-menu, view-more (horizontal y vertical), window-close/minimize/maximize/restore, view-sidebar (+fill), view-grid, view-list.
+- Acciones (44 archivos; +`document-open|save|properties` tras la revisión): list-add/remove, object-select, document-edit/new/send, edit-delete (+fill), edit-copy/paste/cut/undo/redo/find/clear, emblem-shared, browser-download, view-refresh/filter/sort-ascending/sort-descending/fullscreen/restore/reveal/conceal, folder-new, zoom-in/out, starred (+fill), bookmark-new (+fill), preferences-system, system-shutdown/log-out/lock-screen (+fill), media-playback-start/pause, media-skip-forward/backward.
 - Estado y barra de menús (34): wifi 0-3 y desconectado, batería 6 niveles x (normal, cargando), volumen 4 estados, micrófono (2), bluetooth (2), brillo, sol, luna, no molestar, notificaciones (3), centro de control, energía/bolt, modo avión.
 - Diálogos: información, aviso, error, correcto, pregunta, en 2 versiones: color 48 (`dialog-*`) y symbolic 24 (`dialog-*-symbolic`).
 
@@ -72,11 +72,11 @@ Un icono `app` por cada una (categoría `apps`, carpeta `src/app/apps/`). Nombre
 | `accessories-notes` | Notas | no |
 | `multimedia-photo-viewer` | Fotos | no |
 
-Extras de Dock a considerar: indicador de app abierta (punto, lo dibuja el shell), icono de lanzador/apps (`view-app-grid`, symbolic en lote B o A.2).
+Extras de Dock a considerar: indicador de app abierta (punto, lo dibuja el shell), icono de lanzador/apps (`view-app-grid`, symbolic: HECHO).
 
 ### 2.4 Lote C (HECHO): lugares, MIME, dispositivos
 
-Entregado: 10 lugares color (`folder`, `user-home`, `user-desktop`, `folder-documents|download|pictures|music|videos|remote|cloud`) + 16 symbolic de sidebar (regular y `-fill` donde hay silueta cerrada), 9 MIME color, 10 dispositivos color + 9 symbolic, hints `folder@16` y `text-x-generic@16`. Pendiente de este inventario: `folder-open`, `folder-publicshare`, `x-office-*`, `text-html`, `network-workgroup`; papelera la entrega el lote B.
+Entregado: 10 lugares color (`folder`, `user-home`, `user-desktop`, `folder-documents|download|pictures|music|videos|remote|cloud`) + 16 symbolic de sidebar (regular y `-fill` donde hay silueta cerrada), 9 MIME color, 10 dispositivos color + 9 symbolic, hints `folder@16` y `text-x-generic@16`. Tras la revisión se añadieron `x-office-document`, `x-office-spreadsheet`, `text-html`, `user-trash[-fill]-symbolic`, los `-fill` de lugares y los `@16` de las 9 carpetas/lugares. Pendiente: `folder-open`, `folder-publicshare`, `network-workgroup`; la papelera de app la entrega el lote B.
 
 - Lugares (kind color 48 + symbolic `-fill` para sidebar): `folder`, `user-home`, `user-desktop`, `folder-documents`, `folder-download`, `folder-pictures`, `folder-music`, `folder-videos`, `folder-remote` (red), `folder-cloud` (nube), `folder-publicshare`, `folder-open`, `user-trash` / `user-trash-full` (comparte archivo con lote B), `network-workgroup`.
 - MIME (color 48, documento con esquina doblada y etiqueta): `text-x-generic`, `text-x-script` (código), `image-x-generic`, `audio-x-generic`, `video-x-generic`, `package-x-generic` (comprimido), `application-pdf`, `application-x-executable`, `application-octet-stream` (desconocido), `x-office-document`, `x-office-spreadsheet`, `text-html`, `inode-directory` (alias de `folder`).
