@@ -1,0 +1,6 @@
+target/
+build-*/
+*.img
+*.vdi
+*.qcow2
+.claude/worktrees/

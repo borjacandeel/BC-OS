@@ -1,0 +1,10 @@
+NAME="BC OS"
+PRETTY_NAME="BC OS 0.1.0 (Fundación)"
+ID=bcos
+ID_LIKE=arch
+BUILD_ID=rolling
+VERSION="0.1.0"
+VERSION_ID="0.1.0"
+ANSI_COLOR="38;2;213;220;232"
+HOME_URL="https://github.com/borjacandeel/BC-OS"
+LOGO=bcos

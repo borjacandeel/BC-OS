@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# Configura un rootfs Arch Linux ARM como BC OS: español, usuarios, /home, /root, servicios.
+# Uso: configure-rootfs.sh <rootfs>
+set -euo pipefail
+R="${1:?uso: $0 <rootfs>}"
+HERE="$(cd "$(dirname "$0")" && pwd)"
+source "$HERE/lib/chroot.sh"
+bc_binfmt; bc_mount "$R"; trap 'bc_umount "$R"' EXIT
+sh() { bc_chroot "$R" bash -c "$*"; }
+
+# Identidad
+install -m644 "$HERE/overlay/etc/os-release" "$R/etc/os-release"
+install -m644 "$HERE/overlay/etc/issue" "$R/etc/issue"
+echo "bcos" > "$R/etc/hostname"
+printf '127.0.0.1 localhost\n::1 localhost\n127.0.1.1 bcos\n' > "$R/etc/hosts"
+
+# Idioma, teclado, zona horaria (español de España)
+sed -i 's/^#\(es_ES.UTF-8\)/\1/; s/^#\(en_US.UTF-8\)/\1/' "$R/etc/locale.gen"
+sh locale-gen
+printf 'LANG=es_ES.UTF-8\nLC_MESSAGES=es_ES.UTF-8\nLANGUAGE=es_ES:en_US\n' > "$R/etc/locale.conf"
+printf 'KEYMAP=es\n' > "$R/etc/vconsole.conf"
+ln -sf /usr/share/zoneinfo/Europe/Madrid "$R/etc/localtime"
+
+# Directorios de usuario en español (plantilla para todos los usuarios nuevos)
+S="$R/etc/skel"
+mkdir -p "$S/Escritorio" "$S/Documentos" "$S/Descargas" "$S/Imágenes" "$S/Música" "$S/Vídeos" "$S/Público" "$S/Plantillas" "$S/.config"
+cat > "$S/.config/user-dirs.dirs" <<'E'
+XDG_DESKTOP_DIR="$HOME/Escritorio"
+XDG_DOCUMENTS_DIR="$HOME/Documentos"
+XDG_DOWNLOAD_DIR="$HOME/Descargas"
+XDG_MUSIC_DIR="$HOME/Música"
+XDG_PICTURES_DIR="$HOME/Imágenes"
+XDG_PUBLICSHARE_DIR="$HOME/Público"
+XDG_TEMPLATES_DIR="$HOME/Plantillas"
+XDG_VIDEOS_DIR="$HOME/Vídeos"
+E
+echo "es_ES" > "$S/.config/user-dirs.locale"
+install -m644 "$HERE/overlay/etc/skel/.bashrc" "$S/.bashrc"
+
+# /root para root (0700), /home para usuarios (0755)
+chmod 755 "$R/home"; chmod 700 "$R/root"
+cp -a "$S/." "$R/root/" 2>/dev/null || true; chmod 700 "$R/root"
+
+# Usuarios: se elimina el usuario por defecto 'alarm'; se bloquea root; usuario 'bc' con cambio de contraseña obligatorio
+sh "userdel -r alarm 2>/dev/null || true"
+sh "passwd -l root"
+sh "id bc >/dev/null 2>&1 || useradd -m -G wheel,audio,video,input -s /bin/bash -c 'Usuario BC' bc"
+sh "echo 'bc:bcos' | chpasswd && chage -d 0 bc"
+install -m440 "$HERE/overlay/etc/sudoers.d/10-wheel" "$R/etc/sudoers.d/10-wheel"
+
+# Servicios mínimos
+sh "systemctl enable NetworkManager systemd-timesyncd systemd-resolved nftables"
+install -D -m644 "$HERE/overlay/etc/systemd/zram-generator.conf" "$R/etc/systemd/zram-generator.conf"
+install -D -m644 "$HERE/overlay/etc/nftables.conf" "$R/etc/nftables.conf"
+
+install -D -m644 "$HERE/overlay/etc/mkinitcpio.conf.d/bcos.conf" "$R/etc/mkinitcpio.conf.d/bcos.conf"
+sh "mkinitcpio -P"
+printf 'LABEL=bc-root / ext4 rw,noatime 0 1\nLABEL=BC-ESP /boot vfat rw,noatime,umask=0077 0 2\n' > "$R/etc/fstab"
+
+bc_umount "$R"; trap - EXIT
+rm -f "$R/etc/resolv.conf"; ln -s ../run/systemd/resolve/stub-resolv.conf "$R/etc/resolv.conf"
+echo "Rootfs configurado: $R"

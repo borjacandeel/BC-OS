@@ -9,7 +9,9 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - ARM64 únicamente. Base Arch Linux ARM.
 
 ## En curso
-- [ ] Fase 1: rootfs ALARM aarch64 actualizado en chroot (qemu-user) — `pacman -Syu`.
+- [ ] Fase 2: pila gráfica en la imagen (labwc, Qt6 runtime, seatd, fuentes Inter) + autostart de BC Shell + autologin/greeter.
+- [ ] Integrar `shell/` (captura en `shell/docs/captura-es.png`) y `core/` en la imagen.
+- [ ] Subagente `bc-core-ci` (core/ Rust + workflows) en curso.
 
 ## Pendiente (orden)
 ### Fase 0 — Viabilidad
@@ -20,7 +22,6 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] ADRs: estrategia de imagen, compositor, arranque.
 
 ### Fase 1 — Base
-- [ ] Estructura del repo + documentación obligatoria (README, ROADMAP, ARCHITECTURE, CONTRIBUTING, SECURITY, CHANGELOG, LICENSE, docs/*).
 - [ ] Script reproducible `build/mkimage.sh`: rootfs ALARM → imagen GPT (ESP + ext4) → VDI/VMDK/raw.
 - [ ] systemd-boot + initramfs con virtio/ahci/nvme.
 - [ ] Locale `es_ES.UTF-8`, teclado `es`, zona `Europe/Madrid`, zram, NetworkManager.
@@ -38,6 +39,11 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] Benchmarks, instalador, releases.
 
 ## Hecho
+- Fase 1 HITO 1: imagen raw GPT ARM64 (`build/mkimage.sh`) arranca en QEMU UEFI hasta `bcos login:` (systemd 7.3.4 ALARM, es_ES, zram, nftables, NetworkManager). Usuario `bc`/`bcos` con cambio de contraseña obligatorio; root bloqueado; /home/bc y /root con carpetas en español.
+- Docs completas, design system y tokens (subagente docs) en main.
+- BC Shell prototipo QML con ctest 3/3 (subagente shell) en main.
+- Rootfs ALARM aarch64 descargado, verificado (md5) y actualizado con pacman -Syu en chroot (`/home/user/bcwork/root`).
+- Imagen de referencia subida a main.
 - README.md con todo el contexto del proyecto.
 - Logos oficiales en `assets/branding/`.
 - Toolchain instalado en el contenedor: qemu-system-arm, qemu-user-static, AAVMF, Qt 6.4 (host), mtools, dosfstools.
