@@ -9,6 +9,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - ARM64 únicamente. Base Arch Linux ARM.
 
 ## En curso
+- [ ] BUG VirtualBox (reportado por el creador con capturas): systemd-boot y kernel OK, pero "Failed to start File System Check on /dev/disk/by-label/bc-root" → emergency (root bloqueado). NO reproducido en QEMU (ni con reloj 2020). Mitigación 0.1.1-alpha: `fsck.mode=skip` + ext4 con journal. Pendiente causa raíz (pedir al creador `journalctl`/prueba con rd.debug) y probar con VirtualBox ARM64.
 - [ ] Pack de iconos completo (macOS minimal) con subagente permanente `icon-designer` → `icons/` + integración en `shell/` (Icons.qml/AppIcon.qml). Pasos: agente, contexto, diseño, revisión independiente, implementación. Subir a main.
 - [x] Release alpha PUBLICADA vía Actions: https://github.com/borjacandeel/BC-OS/releases/tag/v0.1.0-alpha (zip VDI 1.24 GB + SHA256SUMS). Pendiente: que el creador la pruebe en VirtualBox ARM64.
 - [ ] CI shell: arreglados módulos QML; faltaba plugin SVG (qt6-svg) → verificar run verde.

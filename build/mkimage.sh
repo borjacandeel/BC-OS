@@ -27,7 +27,7 @@ mcopy -i "$ESP" "$HERE/overlay/boot/loader/entries/bcos.conf" ::/loader/entries/
 # Root ext4 poblada con mke2fs -d
 ROOT_MIB=$((SIZE - ESP_MIB - 2))
 ROOTIMG="$TMP/root.img"; truncate -s "${ROOT_MIB}M" "$ROOTIMG"
-mkfs.ext4 -q -L bc-root -d "$TMP/root" -O ^has_journal,^metadata_csum_seed "$ROOTIMG"
+mkfs.ext4 -q -L bc-root -d "$TMP/root" "$ROOTIMG"
 
 # Ensamblado GPT
 truncate -s "${SIZE}M" "$OUT"
