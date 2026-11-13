@@ -50,7 +50,7 @@ sh "userdel -r alarm 2>/dev/null || true"
 sh "passwd -l root"
 sh "userdel -r bc 2>/dev/null || true"
 sh "useradd -m -G wheel,audio,video,input -s /bin/bash -c 'Usuario BC' bc"
-sh "echo 'bc:bcos' | chpasswd && chage -d 0 bc"
+sh "echo 'bc:bcos' | chpasswd"
 install -m440 "$HERE/overlay/etc/sudoers.d/10-wheel" "$R/etc/sudoers.d/10-wheel"
 
 # Servicios mínimos
