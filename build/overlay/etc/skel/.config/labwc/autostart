@@ -1,0 +1,1 @@
+bc-shell >/dev/null 2>&1 &

@@ -11,3 +11,15 @@ polkit
 pipewire
 pipewire-pulse
 wireplumber
+# Pila gráfica (Fase 2)
+labwc
+seatd
+mesa
+qt6-base
+qt6-declarative
+qt6-wayland
+qt6-svg
+inter-font
+ttf-dejavu
+xdg-user-dirs
+foot

@@ -36,6 +36,10 @@ XDG_VIDEOS_DIR="$HOME/Vídeos"
 E
 echo "es_ES" > "$S/.config/user-dirs.locale"
 install -m644 "$HERE/overlay/etc/skel/.bashrc" "$S/.bashrc"
+grep -q bc-session "$S/.bash_profile" || cat "$HERE/overlay/etc/skel/.bash_profile" >> "$S/.bash_profile"
+mkdir -p "$S/.config/labwc"; install -m644 "$HERE"/overlay/etc/skel/.config/labwc/* "$S/.config/labwc/"
+install -m755 "$HERE/overlay/usr/bin/bc-session" "$R/usr/bin/bc-session"
+install -D -m644 "$HERE/overlay/etc/systemd/system/getty@tty1.service.d/autologin.conf" "$R/etc/systemd/system/getty@tty1.service.d/autologin.conf"
 
 # /root para root (0700), /home para usuarios (0755)
 chmod 755 "$R/home"; chmod 700 "$R/root"
@@ -44,7 +48,8 @@ cp -a "$S/." "$R/root/" 2>/dev/null || true; chmod 700 "$R/root"
 # Usuarios: se elimina el usuario por defecto 'alarm'; se bloquea root; usuario 'bc' con cambio de contraseña obligatorio
 sh "userdel -r alarm 2>/dev/null || true"
 sh "passwd -l root"
-sh "id bc >/dev/null 2>&1 || useradd -m -G wheel,audio,video,input -s /bin/bash -c 'Usuario BC' bc"
+sh "userdel -r bc 2>/dev/null || true"
+sh "useradd -m -G wheel,audio,video,input -s /bin/bash -c 'Usuario BC' bc"
 sh "echo 'bc:bcos' | chpasswd && chage -d 0 bc"
 install -m440 "$HERE/overlay/etc/sudoers.d/10-wheel" "$R/etc/sudoers.d/10-wheel"
 

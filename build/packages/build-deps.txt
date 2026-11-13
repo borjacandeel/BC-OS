@@ -1,0 +1,6 @@
+cmake
+ninja
+gcc
+make
+pkgconf
+qt6-tools
