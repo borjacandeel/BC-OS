@@ -42,6 +42,7 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 | `0.1.0-alpha` | publicada | Primera imagen ARM64: arranca en QEMU; en VirtualBox falla el `fsck` del root (ver abajo). |
 | `0.1.1-alpha` | publicada | Mitigación del `fsck`; en VirtualBox arrancaba a pantalla negra (labwc sin 3D). |
 | `0.1.2-alpha` | publicada | **Arranca en VirtualBox ARM64** con BC Shell (render por software) y SSH activado. El shell es una maqueta. |
+| `0.1.3-alpha` | publicada | Shell con Dock y Archivos reales, iconos BC, fondo BC, instalador `bc-install` y animación de arranque con el logo. **Arranca en VirtualBox ARM64, también con la animación (confirmado por el creador).** |
 | `0.2.0` | planificada | BC Shell funcional (Dock, lanzador, Centro de control). |
 | `0.3.0` → `1.0.0` | planificadas | Apps nativas, instalador, beta y primera estable. Son hitos, no promesas. |
 
