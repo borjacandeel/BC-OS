@@ -10,7 +10,7 @@ Item {
     width: size
     height: size
 
-    readonly property var palette: ({
+    readonly property var gradients: ({
         archivos: ["#58b8ff", "#1f6fe8"],
         ajustes: ["#c9ced8", "#7b8392"],
         monitor: ["#1b2230", "#05080f"],
@@ -25,8 +25,8 @@ Item {
         anchors.fill: parent
         radius: root.size * 0.235
         gradient: Gradient {
-            GradientStop { position: 0.0; color: (root.palette[root.kind] || ["#888", "#444"])[0] }
-            GradientStop { position: 1.0; color: (root.palette[root.kind] || ["#888", "#444"])[1] }
+            GradientStop { position: 0.0; color: (root.gradients[root.kind] || ["#888", "#444"])[0] }
+            GradientStop { position: 1.0; color: (root.gradients[root.kind] || ["#888", "#444"])[1] }
         }
         border.width: 1
         border.color: Qt.rgba(1, 1, 1, 0.18)
