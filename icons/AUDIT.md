@@ -51,7 +51,7 @@ Convención: `kind` symbolic = 24x24 `currentColor`; color = 48x48 paleta fija; 
 - Estado y barra de menús (34): wifi 0-3 y desconectado, batería 6 niveles x (normal, cargando), volumen 4 estados, micrófono (2), bluetooth (2), brillo, sol, luna, no molestar, notificaciones (3), centro de control, energía/bolt, modo avión.
 - Diálogos: información, aviso, error, correcto, pregunta, en 2 versiones: color 48 (`dialog-*`) y symbolic 24 (`dialog-*-symbolic`).
 
-### 2.3 Lote B (pendiente): apps, squircle 1024
+### 2.3 Lote B (HECHO): apps, squircle 1024 (16 iconos + variantes @32 y @16 de cada uno; `bc-launcher` = Lanzador en plata, `bc-mission-control` = Mission Control en noche; `multimedia-photo-viewer` = Fotos)
 
 Un icono `app` por cada una (categoría `apps`, carpeta `src/app/apps/`). Nombre Freedesktop objetivo, etiqueta es_ES y color de fondo (ver SPEC §7.4):
 

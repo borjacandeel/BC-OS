@@ -458,14 +458,19 @@
     "category": "actions"
   },
   "preferences-system": {
-    "es": "Ajustes",
+    "es": "Configuración",
     "tags": [
       "ajustes",
-      "configuración",
+      "engranaje",
+      "settings",
+      "preferences",
       "sliders",
-      "settings"
+      "configuración"
     ],
-    "category": "actions"
+    "category": "actions",
+    "also": [
+      "apps"
+    ]
   },
   "system-shutdown": {
     "es": "Apagar",
@@ -920,6 +925,180 @@
       "consola",
       "shell",
       "línea de comandos"
+    ],
+    "category": "apps"
+  },
+  "system-file-manager": {
+    "es": "Archivos",
+    "tags": [
+      "archivos",
+      "finder",
+      "carpeta",
+      "files",
+      "folder",
+      "explorador"
+    ],
+    "category": "apps"
+  },
+  "utilities-system-monitor": {
+    "es": "Monitor del sistema",
+    "tags": [
+      "actividad",
+      "pulso",
+      "rendimiento",
+      "cpu",
+      "monitor",
+      "activity"
+    ],
+    "category": "apps"
+  },
+  "system-software-install": {
+    "es": "Tienda",
+    "tags": [
+      "tienda",
+      "bolsa",
+      "software",
+      "instalar",
+      "store",
+      "apps"
+    ],
+    "category": "apps"
+  },
+  "web-browser": {
+    "es": "Navegador",
+    "tags": [
+      "brújula",
+      "web",
+      "internet",
+      "browser",
+      "compass"
+    ],
+    "category": "apps"
+  },
+  "multimedia-audio-player": {
+    "es": "Música",
+    "tags": [
+      "música",
+      "audio",
+      "reproductor",
+      "nota",
+      "music",
+      "player"
+    ],
+    "category": "apps"
+  },
+  "user-trash": {
+    "es": "Papelera",
+    "tags": [
+      "papelera",
+      "vacía",
+      "basura",
+      "trash",
+      "bin",
+      "empty"
+    ],
+    "category": "apps"
+  },
+  "user-trash-full": {
+    "es": "Papelera llena",
+    "tags": [
+      "papelera",
+      "llena",
+      "basura",
+      "trash",
+      "bin",
+      "full"
+    ],
+    "category": "apps"
+  },
+  "accessories-text-editor": {
+    "es": "Editor de texto",
+    "tags": [
+      "editor",
+      "texto",
+      "escribir",
+      "text",
+      "editor"
+    ],
+    "category": "apps"
+  },
+  "accessories-calculator": {
+    "es": "Calculadora",
+    "tags": [
+      "calculadora",
+      "números",
+      "calculator"
+    ],
+    "category": "apps"
+  },
+  "preferences-system-time": {
+    "es": "Reloj",
+    "tags": [
+      "reloj",
+      "hora",
+      "tiempo",
+      "clock",
+      "time"
+    ],
+    "category": "apps"
+  },
+  "office-calendar": {
+    "es": "Calendario",
+    "tags": [
+      "calendario",
+      "fecha",
+      "agenda",
+      "calendar",
+      "date"
+    ],
+    "category": "apps"
+  },
+  "accessories-notes": {
+    "es": "Notas",
+    "tags": [
+      "notas",
+      "apuntes",
+      "bloc",
+      "notes",
+      "memo"
+    ],
+    "category": "apps"
+  },
+  "multimedia-photo-viewer": {
+    "es": "Fotos",
+    "tags": [
+      "fotos",
+      "imágenes",
+      "galería",
+      "photos",
+      "pictures",
+      "gallery"
+    ],
+    "category": "apps"
+  },
+  "bc-launcher": {
+    "es": "Lanzador",
+    "tags": [
+      "lanzador",
+      "aplicaciones",
+      "cuadrícula",
+      "launcher",
+      "apps",
+      "grid",
+      "launchpad"
+    ],
+    "category": "apps"
+  },
+  "bc-mission-control": {
+    "es": "Mission Control",
+    "tags": [
+      "ventanas",
+      "escritorios",
+      "espacios",
+      "mission",
+      "control",
+      "windows",
+      "spaces"
     ],
     "category": "apps"
   }

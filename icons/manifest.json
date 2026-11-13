@@ -72,7 +72,7 @@
       "label": "Apps del sistema",
       "context": "Apps",
       "lote": "B",
-      "count": 1
+      "count": 17
     },
     {
       "id": "places",
@@ -631,7 +631,7 @@
     },
     {
       "name": "preferences-system",
-      "label": "Ajustes",
+      "label": "Configuración",
       "category": "actions",
       "context": "Actions",
       "kind": "symbolic",
@@ -641,9 +641,11 @@
       },
       "tags": [
         "ajustes",
-        "configuración",
+        "engranaje",
+        "settings",
+        "preferences",
         "sliders",
-        "settings"
+        "configuración"
       ],
       "sizes": [
         16,
@@ -993,6 +995,495 @@
       "file": "dist/svg/zoom-out-symbolic.svg"
     },
     {
+      "name": "accessories-calculator",
+      "label": "Calculadora",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "accessories-calculator"
+      },
+      "tags": [
+        "calculadora",
+        "números",
+        "calculator"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/accessories-calculator.svg"
+    },
+    {
+      "name": "accessories-notes",
+      "label": "Notas",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "accessories-notes"
+      },
+      "tags": [
+        "notas",
+        "apuntes",
+        "bloc",
+        "notes",
+        "memo"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/accessories-notes.svg"
+    },
+    {
+      "name": "accessories-text-editor",
+      "label": "Editor de texto",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "accessories-text-editor"
+      },
+      "tags": [
+        "editor",
+        "texto",
+        "escribir",
+        "text"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/accessories-text-editor.svg"
+    },
+    {
+      "name": "bc-launcher",
+      "label": "Lanzador",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "bc-launcher"
+      },
+      "tags": [
+        "lanzador",
+        "aplicaciones",
+        "cuadrícula",
+        "launcher",
+        "apps",
+        "grid",
+        "launchpad"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/bc-launcher.svg"
+    },
+    {
+      "name": "bc-mission-control",
+      "label": "Mission Control",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "bc-mission-control"
+      },
+      "tags": [
+        "ventanas",
+        "escritorios",
+        "espacios",
+        "mission",
+        "control",
+        "windows",
+        "spaces"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/bc-mission-control.svg"
+    },
+    {
+      "name": "multimedia-audio-player",
+      "label": "Música",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "multimedia-audio-player"
+      },
+      "tags": [
+        "música",
+        "audio",
+        "reproductor",
+        "nota",
+        "music",
+        "player"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/multimedia-audio-player.svg"
+    },
+    {
+      "name": "multimedia-photo-viewer",
+      "label": "Fotos",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "multimedia-photo-viewer"
+      },
+      "tags": [
+        "fotos",
+        "imágenes",
+        "galería",
+        "photos",
+        "pictures",
+        "gallery"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/multimedia-photo-viewer.svg"
+    },
+    {
+      "name": "office-calendar",
+      "label": "Calendario",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "office-calendar"
+      },
+      "tags": [
+        "calendario",
+        "fecha",
+        "agenda",
+        "calendar",
+        "date"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/office-calendar.svg"
+    },
+    {
+      "name": "preferences-system",
+      "label": "Configuración",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "preferences-system"
+      },
+      "tags": [
+        "ajustes",
+        "engranaje",
+        "settings",
+        "preferences",
+        "sliders",
+        "configuración"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/preferences-system.svg"
+    },
+    {
+      "name": "preferences-system-time",
+      "label": "Reloj",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "preferences-system-time"
+      },
+      "tags": [
+        "reloj",
+        "hora",
+        "tiempo",
+        "clock",
+        "time"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/preferences-system-time.svg"
+    },
+    {
+      "name": "system-file-manager",
+      "label": "Archivos",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "system-file-manager"
+      },
+      "tags": [
+        "archivos",
+        "finder",
+        "carpeta",
+        "files",
+        "folder",
+        "explorador"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/system-file-manager.svg"
+    },
+    {
+      "name": "system-software-install",
+      "label": "Tienda",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "system-software-install"
+      },
+      "tags": [
+        "tienda",
+        "bolsa",
+        "software",
+        "instalar",
+        "store",
+        "apps"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/system-software-install.svg"
+    },
+    {
+      "name": "user-trash",
+      "label": "Papelera",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "user-trash"
+      },
+      "tags": [
+        "papelera",
+        "vacía",
+        "basura",
+        "trash",
+        "bin",
+        "empty"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/user-trash.svg"
+    },
+    {
+      "name": "user-trash-full",
+      "label": "Papelera llena",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "user-trash-full"
+      },
+      "tags": [
+        "papelera",
+        "llena",
+        "basura",
+        "trash",
+        "bin",
+        "full"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/user-trash-full.svg"
+    },
+    {
+      "name": "utilities-system-monitor",
+      "label": "Monitor del sistema",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "utilities-system-monitor"
+      },
+      "tags": [
+        "actividad",
+        "pulso",
+        "rendimiento",
+        "cpu",
+        "monitor",
+        "activity"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/utilities-system-monitor.svg"
+    },
+    {
       "name": "utilities-terminal",
       "label": "Terminal",
       "category": "apps",
@@ -1017,7 +1508,43 @@
         512,
         1024
       ],
+      "hints": [
+        16,
+        32
+      ],
       "file": "dist/svg/utilities-terminal.svg"
+    },
+    {
+      "name": "web-browser",
+      "label": "Navegador",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "web-browser"
+      },
+      "tags": [
+        "brújula",
+        "web",
+        "internet",
+        "browser",
+        "compass"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/web-browser.svg"
     },
     {
       "name": "dialog-error",

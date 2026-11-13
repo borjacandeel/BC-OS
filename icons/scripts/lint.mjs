@@ -70,7 +70,7 @@ for (const s of sources) {
   const key = `${s.stem}@${s.hint || ''}`;
   if (seen.has(key)) err(f, `nombre duplicado con ${rel(seen.get(key))}`); else seen.set(key, f);
   if (!s.hint && !META[s.base]) err(f, `falta «${s.base}» en icons/meta.json (etiqueta es_ES y tags)`);
-  if (META[s.base] && !s.hint && META[s.base].category !== s.category) err(f, `meta.json dice categoría «${META[s.base].category}»`);
+  if (META[s.base] && !s.hint && ![META[s.base].category, ...(META[s.base].also || [])].includes(s.category)) err(f, `meta.json dice categoría «${META[s.base].category}»`);
 
   // --- estructura SVG ---
   if (!/^<svg\b/.test(svg.trim())) { err(f, 'no empieza por <svg>'); continue; }

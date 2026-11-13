@@ -169,7 +169,7 @@ Sobre "papel" y "plata" el glifo usa `#0B1220`, `#1F63D6`, `#E8453C` o colores d
   "go-home": { "es": "Inicio", "tags": ["casa", "home"], "category": "navigation" }
 }
 ```
-La clave es el nombre base (sin `-symbolic` ni `-fill`). `es` es la etiqueta visible en castellano (es_ES); `tags` mezcla castellano e inglés para el buscador; `category` debe coincidir con la carpeta.
+La clave es el nombre base (sin `-symbolic` ni `-fill`). Si el mismo nombre existe en dos categorías (p.ej. `preferences-system`: symbolic en `actions` y app en `apps`), `category` es la principal y `also` lista las demás. `es` es la etiqueta visible en castellano (es_ES); `tags` mezcla castellano e inglés para el buscador; `category` debe coincidir con la carpeta.
 
 ## 10. Formato de `icons/manifest.json` (generado por `build`)
 
