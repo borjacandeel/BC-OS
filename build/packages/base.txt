@@ -28,3 +28,5 @@ cryptsetup
 dosfstools
 rsync
 libnewt
+# Arranque animado (tema bcos)
+plymouth

@@ -1,0 +1,151 @@
+# Tema Plymouth BC OS: logo BC con fade-in y respiración, barra fina de progreso #2F7BFF.
+# Sin 3D: solo sprites 2D (framebuffer/DRM simple).
+
+sw = Window.GetWidth();
+sh = Window.GetHeight();
+
+Window.SetBackgroundTopColor(0.016, 0.067, 0.122);     # #04111F
+Window.SetBackgroundBottomColor(0.016, 0.067, 0.122);
+
+# Escala según la pantalla: logo ~ 26 % del ancho (entre 220 y 420 px)
+logo_img = Image("logo.png");
+lw = sw * 0.26;
+if (lw < 220) lw = 220;
+if (lw > 420) lw = 420;
+scale = lw / logo_img.GetWidth();
+logo_img = logo_img.Scale(lw, logo_img.GetHeight() * scale);
+shine_img = Image("logo-plata.png").Scale(logo_img.GetWidth(), logo_img.GetHeight());
+
+glow_size = sh * 1.1;
+glow_img = Image("glow.png").Scale(glow_size, glow_size);
+
+cx = sw / 2;
+logo_x = cx - logo_img.GetWidth() / 2;
+logo_y = sh * 0.46 - logo_img.GetHeight() / 2;
+
+glow = Sprite(glow_img);
+glow.SetX(cx - glow_size / 2);
+glow.SetY(sh * 0.46 - glow_size / 2);
+glow.SetZ(-10);
+glow.SetOpacity(0);
+
+logo = Sprite(logo_img);
+logo.SetX(logo_x);
+logo.SetY(logo_y);
+logo.SetZ(10);
+logo.SetOpacity(0);
+
+shine = Sprite(shine_img);
+shine.SetX(logo_x);
+shine.SetY(logo_y);
+shine.SetZ(11);
+shine.SetOpacity(0);
+
+# Barra de progreso inferior
+bar_w = 320;
+if (sw < 480) bar_w = sw * 0.6;
+bar_h = 4;
+bar_x = cx - bar_w / 2;
+bar_y = sh * 0.80;
+
+track_img = Image("bar-track.png").Scale(bar_w, bar_h);
+track = Sprite(track_img);
+track.SetX(bar_x);
+track.SetY(bar_y);
+track.SetZ(20);
+track.SetOpacity(0);
+
+fill_src = Image("bar-fill.png");
+fill = Sprite();
+fill.SetX(bar_x);
+fill.SetY(bar_y);
+fill.SetZ(21);
+fill.SetOpacity(0);
+
+# Mensajes y contraseña
+msg = Sprite();
+msg.SetZ(30);
+pw_label = Sprite();
+pw_label.SetZ(30);
+bullets = [];
+bullet_img = Image("bullet.png");
+
+fun center_text(sprite, text, y, alpha) {
+  img = Image.Text(text, 0.75, 0.78, 0.84, alpha);
+  sprite.SetImage(img);
+  sprite.SetX(cx - img.GetWidth() / 2);
+  sprite.SetY(y);
+}
+
+frame = 0;
+progress_target = 0;
+progress_now = 0;
+last_w = 0;
+
+fun refresh() {
+  frame++;
+  t = frame / 50.0;                       # segundos aprox. (~50 Hz)
+
+  # Fade-in de 1,2 s con suavizado
+  fade = t / 1.2;
+  if (fade > 1) fade = 1;
+  fade = fade * fade * (3 - 2 * fade);
+
+  # Respiración lenta (periodo ~3,2 s) y brillo plata sutil
+  breath = (Math.Sin(t * 2.0) + 1) / 2;
+  glow.SetOpacity(fade * (0.55 + 0.45 * breath));
+  logo.SetOpacity(fade * (0.90 + 0.10 * breath));
+  shine.SetOpacity(fade * 0.30 * breath);
+
+  # Barra: aparece tras 0,6 s y avanza suave hacia el progreso real
+  bar_fade = (t - 0.6) / 0.8;
+  if (bar_fade < 0) bar_fade = 0;
+  if (bar_fade > 1) bar_fade = 1;
+  track.SetOpacity(bar_fade);
+  progress_now = progress_now + (progress_target - progress_now) * 0.08;
+  w = Math.Int(bar_w * progress_now);
+  if (w < 4) w = 4;
+  if (w != last_w) {
+    fill.SetImage(fill_src.Scale(w, bar_h));
+    last_w = w;
+  }
+  fill.SetOpacity(bar_fade);
+}
+Plymouth.SetRefreshFunction(refresh);
+
+fun progress_cb(duration, progress) {
+  if (progress > 1) progress = 1;
+  if (progress > progress_target) progress_target = progress;
+}
+Plymouth.SetBootProgressFunction(progress_cb);
+
+# Mensajes de estado (en castellano cuando el sistema los envía así)
+fun message_cb(text) {
+  center_text(msg, text, bar_y + 28, 0.9);
+}
+Plymouth.SetMessageFunction(message_cb);
+Plymouth.SetUpdateStatusFunction(message_cb);
+
+# Contraseña de cifrado (instalación con LUKS)
+fun password_cb(prompt, count) {
+  center_text(pw_label, "Introduce la contraseña de cifrado", bar_y - 70, 1.0);
+  for (i = 0; bullets[i]; i++) bullets[i] = NULL;
+  for (i = 0; i < count && i < 24; i++) {
+    bullets[i] = Sprite(bullet_img);
+    bullets[i].SetX(cx - (count * 16) / 2 + i * 16);
+    bullets[i].SetY(bar_y - 40);
+    bullets[i].SetZ(31);
+  }
+}
+Plymouth.SetDisplayPasswordFunction(password_cb);
+
+fun normal_cb() {
+  pw_label.SetOpacity(0);
+  for (i = 0; bullets[i]; i++) bullets[i] = NULL;
+}
+Plymouth.SetDisplayNormalFunction(normal_cb);
+
+fun quit_cb() {
+  progress_target = 1;
+}
+Plymouth.SetQuitFunction(quit_cb);

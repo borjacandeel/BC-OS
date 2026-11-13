@@ -66,6 +66,12 @@ install -D -m644 "$HERE/overlay/etc/nftables.conf" "$R/etc/nftables.conf"
 
 sh "pacman -Scc --noconfirm"
 install -D -m644 "$HERE/overlay/etc/mkinitcpio.conf.d/bcos.conf" "$R/etc/mkinitcpio.conf.d/bcos.conf"
+# Arranque animado: tema Plymouth bcos (debe ser el tema por defecto ANTES de generar el initramfs)
+if [[ -d "$R/usr/share/plymouth" ]]; then
+  install -d "$R/usr/share/plymouth/themes/bcos"
+  install -m644 "$HERE"/plymouth/bcos/* "$R/usr/share/plymouth/themes/bcos/"
+  sh "plymouth-set-default-theme bcos"
+fi
 sh "mkinitcpio -P"
 printf 'LABEL=bc-root / ext4 rw,noatime 0 1\nLABEL=BC-ESP /boot vfat rw,noatime,umask=0077 0 2\n' > "$R/etc/fstab"
 

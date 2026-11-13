@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=BC OS
+Description=Arranque de BC OS: logo BC animado y barra de progreso
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/bcos
+ScriptFile=/usr/share/plymouth/themes/bcos/bcos.script
