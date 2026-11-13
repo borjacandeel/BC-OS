@@ -98,64 +98,78 @@
 <context>
     <name>FilesWindow</name>
     <message>
-        <location filename="../qml/FilesWindow.qml" line="17"/>
-        <location filename="../qml/FilesWindow.qml" line="63"/>
+        <location filename="../qml/FilesWindow.qml" line="18"/>
         <source>Inicio</source>
         <translation>Home</translation>
     </message>
     <message>
-        <location filename="../qml/FilesWindow.qml" line="18"/>
+        <location filename="../qml/FilesWindow.qml" line="19"/>
         <source>Escritorio</source>
         <translation>Desktop</translation>
     </message>
     <message>
-        <location filename="../qml/FilesWindow.qml" line="19"/>
-        <location filename="../qml/FilesWindow.qml" line="66"/>
+        <location filename="../qml/FilesWindow.qml" line="20"/>
         <source>Documentos</source>
         <translation>Documents</translation>
     </message>
     <message>
-        <location filename="../qml/FilesWindow.qml" line="20"/>
+        <location filename="../qml/FilesWindow.qml" line="21"/>
         <source>Descargas</source>
         <translation>Downloads</translation>
     </message>
     <message>
-        <location filename="../qml/FilesWindow.qml" line="21"/>
+        <location filename="../qml/FilesWindow.qml" line="22"/>
         <source>Imágenes</source>
         <translation>Pictures</translation>
     </message>
     <message>
-        <location filename="../qml/FilesWindow.qml" line="22"/>
+        <location filename="../qml/FilesWindow.qml" line="23"/>
         <source>Música</source>
         <translation>Music</translation>
     </message>
     <message>
-        <location filename="../qml/FilesWindow.qml" line="25"/>
+        <location filename="../qml/FilesWindow.qml" line="201"/>
+        <source>La carpeta no existe o no se puede leer</source>
+        <translation>The folder does not exist or cannot be read</translation>
+    </message>
+    <message>
+        <location filename="../qml/FilesWindow.qml" line="202"/>
+        <source>Sin resultados</source>
+        <translation>No results</translation>
+    </message>
+    <message>
+        <location filename="../qml/FilesWindow.qml" line="202"/>
+        <source>Carpeta vacía</source>
+        <translation>Empty folder</translation>
+    </message>
+    <message>
+        <location filename="../qml/FilesWindow.qml" line="208"/>
+        <source>Ningún nombre contiene «%1»</source>
+        <translation>No name contains “%1”</translation>
+    </message>
+    <message>
         <source>Proyectos</source>
-        <translation>Projects</translation>
+        <translation type="vanished">Projects</translation>
     </message>
     <message>
-        <location filename="../qml/FilesWindow.qml" line="26"/>
         <source>Trabajo</source>
-        <translation>Work</translation>
+        <translation type="vanished">Work</translation>
     </message>
     <message>
-        <location filename="../qml/FilesWindow.qml" line="27"/>
         <source>Personal</source>
-        <translation>Personal</translation>
+        <translation type="vanished">Personal</translation>
     </message>
     <message>
-        <location filename="../qml/FilesWindow.qml" line="28"/>
         <source>Fotos</source>
-        <translation>Photos</translation>
+        <translation type="vanished">Photos</translation>
     </message>
     <message>
-        <location filename="../qml/FilesWindow.qml" line="74"/>
+        <location filename="../qml/FilesWindow.qml" line="112"/>
         <source>Buscar</source>
         <translation>Search</translation>
     </message>
     <message>
-        <location filename="../qml/FilesWindow.qml" line="104"/>
+        <location filename="../qml/FilesWindow.qml" line="149"/>
         <source>Papelera</source>
         <translation>Trash</translation>
     </message>
@@ -169,11 +183,27 @@
     </message>
     <message>
         <location filename="../qml/Main.qml" line="18"/>
+        <location filename="../qml/Main.qml" line="22"/>
         <source>Actualizaciones</source>
         <translation>Updates</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="74"/>
+        <location filename="../qml/Main.qml" line="23"/>
+        <source>BC OS está al día</source>
+        <translation>BC OS is up to date</translation>
+    </message>
+    <message>
+        <location filename="../qml/Main.qml" line="41"/>
+        <source>En desarrollo</source>
+        <translation>In development</translation>
+    </message>
+    <message>
+        <location filename="../qml/Main.qml" line="42"/>
+        <source>No se pudo abrir la aplicación</source>
+        <translation>Could not open the application</translation>
+    </message>
+    <message>
+        <location filename="../qml/Main.qml" line="111"/>
         <source>LIGERO. POTENTE. FLUIDO.</source>
         <translation>LIGHTWEIGHT. POWERFUL. FLUID.</translation>
     </message>

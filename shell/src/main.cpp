@@ -8,6 +8,8 @@
 #include <QTranslator>
 #include <QtQml/qqml.h>
 #include "appconfig.h"
+#include "filebrowser.h"
+#include "launcher.h"
 
 static int g_warnings = 0;
 static QtMessageHandler g_prev = nullptr;
@@ -29,7 +31,8 @@ int main(int argc, char *argv[]) {
     QCommandLineOption oTitle("expect-title", "Título de notificación esperado", "texto");
     QCommandLineOption oReduced("reduced-motion", "Movimiento reducido");
     QCommandLineOption oFixed("fixed-time", "Hora fija ISO-8601", "iso");
-    p.addOptions({oLang, oShot, oCheck, oTitle, oReduced, oFixed});
+    QCommandLineOption oSize("size", "Tamaño de ventana, p. ej. 1280x800", "AxA");
+    p.addOptions({oLang, oShot, oCheck, oTitle, oReduced, oFixed, oSize});
     p.process(app);
 
     QSettings st;
@@ -48,12 +51,24 @@ int main(int argc, char *argv[]) {
     AppConfig cfg(lang, reduced, fixed);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "AppConfig", &cfg);
 
+    Launcher launcher;
+    FileBrowser files;
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Launcher", &launcher);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Files", &files);
+
     g_prev = qInstallMessageHandler(countingHandler);
     QQmlApplicationEngine engine;
     engine.load(QUrl("qrc:/BCShell/Main.qml"));
     if (engine.rootObjects().isEmpty()) return 2;
     auto *win = qobject_cast<QQuickWindow *>(engine.rootObjects().first());
     if (!win) return 2;
+
+    if (p.isSet(oSize)) {
+        const QStringList wh = p.value(oSize).split('x');
+        if (wh.size() == 2 && wh[0].toInt() > 0 && wh[1].toInt() > 0) {
+            win->resize(wh[0].toInt(), wh[1].toInt());
+        } else { qCritical() << "--size inválido"; return 2; }
+    }
 
     if (p.isSet(oShot) || p.isSet(oCheck)) {
         QTimer::singleShot(1500, &app, [&] {

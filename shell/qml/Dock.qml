@@ -10,16 +10,17 @@ Item {
     property real hoverX: -1000
     readonly property real magnification: Theme.reducedMotion ? 0.0 : 0.5
     readonly property var apps: [
-        { kind: "archivos", name: qsTr("Archivos"), running: true },
-        { kind: "ajustes", name: qsTr("Configuración"), running: false },
-        { kind: "monitor", name: qsTr("Monitor"), running: false },
-        { kind: "terminal", name: qsTr("Terminal"), running: true },
-        { kind: "tienda", name: qsTr("Tienda"), running: false },
-        { kind: "navegador", name: qsTr("Navegador"), running: false },
-        { kind: "musica", name: qsTr("Música"), running: false },
-        { kind: "papelera", name: qsTr("Papelera"), running: false }
+        { kind: "archivos", name: qsTr("Archivos") },
+        { kind: "ajustes", name: qsTr("Configuración") },
+        { kind: "monitor", name: qsTr("Monitor") },
+        { kind: "terminal", name: qsTr("Terminal") },
+        { kind: "tienda", name: qsTr("Tienda") },
+        { kind: "navegador", name: qsTr("Navegador") },
+        { kind: "musica", name: qsTr("Música") },
+        { kind: "papelera", name: qsTr("Papelera") }
     ]
-    signal launched(string kind)
+    property var running: []
+    signal launched(string kind, string name)
 
     Rectangle {
         anchors.fill: parent
@@ -73,7 +74,7 @@ Item {
                 z: cell.factor
             }
             Rectangle {
-                visible: cell.modelData.running
+                visible: dock.running.indexOf(cell.modelData.kind) >= 0
                 width: 6; height: 6; radius: 3
                 color: Theme.white
                 opacity: 0.9
@@ -82,7 +83,8 @@ Item {
             }
             MouseArea {
                 anchors.fill: parent
-                onClicked: dock.launched(cell.modelData.kind)
+                cursorShape: Qt.PointingHandCursor
+                onClicked: dock.launched(cell.modelData.kind, cell.modelData.name)
             }
             Accessible.name: cell.modelData.name
             Accessible.role: Accessible.Button

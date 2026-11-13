@@ -5,10 +5,11 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Qml Quick LinguistTools)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Qml Quick LinguistTools Test)
 qt_standard_project_setup()
 
-qt_add_executable(bc-shell src/main.cpp src/appconfig.h src/appconfig.cpp)
+qt_add_executable(bc-shell src/main.cpp src/appconfig.h src/appconfig.cpp
+    src/launcher.h src/launcher.cpp src/filebrowser.h src/filebrowser.cpp)
 
 set(BC_QML_FILES
     qml/Main.qml qml/Theme.qml qml/Icons.qml qml/Icon.qml qml/Wallpaper.qml
@@ -44,3 +45,13 @@ add_test(NAME carga_en COMMAND bc-shell --check --lang en --expect-title "Update
 add_test(NAME movimiento_reducido COMMAND bc-shell --check --lang es_ES --reduced-motion
          --expect-title "Actualizaciones")
 set_tests_properties(carga_es carga_en movimiento_reducido PROPERTIES ENVIRONMENT "${BC_ENV}")
+
+qt_add_executable(tst_shell tests/tst_shell.cpp src/launcher.h src/launcher.cpp src/filebrowser.h src/filebrowser.cpp)
+target_link_libraries(tst_shell PRIVATE Qt6::Core Qt6::Gui Qt6::Test)
+add_test(NAME modelo_archivos_y_lanzador COMMAND tst_shell)
+set_tests_properties(modelo_archivos_y_lanzador PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+foreach(sz 1280x800 1920x1080 1024x640)
+    add_test(NAME responsive_${sz} COMMAND bc-shell --check --lang es_ES --size ${sz}
+             --expect-title "Actualizaciones" --screenshot ${CMAKE_BINARY_DIR}/captura-${sz}.png)
+    set_tests_properties(responsive_${sz} PROPERTIES ENVIRONMENT "${BC_ENV}")
+endforeach()

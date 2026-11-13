@@ -13,6 +13,7 @@ QtObject {
     readonly property string bolt: "M13.5 2L4.5 13.5h6.5L10 22l9-12h-6.5z"
     readonly property string chevronRight: "M9 5l7 7-7 7"
     readonly property string chevronLeft: "M15 5l-7 7 7 7"
+    readonly property string chevronUp: "M5 15l7-7 7 7"
     readonly property string closeX: "M6 6l12 12 M18 6L6 18"
     readonly property string refresh: "M20.2 12a8.2 8.2 0 0 1-14.3 5.5 M3.8 12a8.2 8.2 0 0 1 14.3-5.5 M18.5 2.8v4.2h-4.2 M5.5 21.2V17h4.2"
     readonly property string home: "M3 11.2L12 3.5l9 7.7 M5.2 9.8V20h5v-6h3.6v6h5V9.8"
