@@ -1,0 +1,91 @@
+import QtQuick
+import BCShell
+
+// BC Dock: flotante, con magnificación animada por proximidad del puntero.
+Item {
+    id: dock
+    width: 810
+    height: 103
+
+    property real hoverX: -1000
+    readonly property real magnification: Theme.reducedMotion ? 0.0 : 0.5
+    readonly property var apps: [
+        { kind: "archivos", name: qsTr("Archivos"), running: true },
+        { kind: "ajustes", name: qsTr("Configuración"), running: false },
+        { kind: "monitor", name: qsTr("Monitor"), running: false },
+        { kind: "terminal", name: qsTr("Terminal"), running: true },
+        { kind: "tienda", name: qsTr("Tienda"), running: false },
+        { kind: "navegador", name: qsTr("Navegador"), running: false },
+        { kind: "musica", name: qsTr("Música"), running: false },
+        { kind: "papelera", name: qsTr("Papelera"), running: false }
+    ]
+    signal launched(string kind)
+
+    Rectangle {
+        anchors.fill: parent
+        radius: 30
+        color: Theme.panelFillSoft
+        border.width: 1
+        border.color: Theme.hairline
+        Rectangle {
+            anchors.fill: parent
+            radius: parent.radius
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.10) }
+                GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.02) }
+            }
+        }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        anchors.topMargin: -60
+        hoverEnabled: true
+        acceptedButtons: Qt.NoButton
+        onPositionChanged: (m) => dock.hoverX = m.x
+        onExited: dock.hoverX = -1000
+    }
+
+    Repeater {
+        model: dock.apps
+        delegate: Item {
+            id: cell
+            required property var modelData
+            required property int index
+            readonly property real centerX: 27 + 35 + index * 98
+            readonly property real dist: Math.abs(dock.hoverX - centerX)
+            readonly property real prox: dock.hoverX < 0 ? 0 : Math.max(0, 1 - dist / 140)
+            property real factor: 1 + dock.magnification * prox * prox
+            Behavior on factor { NumberAnimation { duration: Theme.dur(110); easing.type: Theme.easing } }
+
+            x: centerX - 35
+            y: 15
+            width: 70
+            height: 70
+
+            AppIcon {
+                kind: cell.modelData.kind
+                size: 70
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.bottom: parent.bottom
+                transformOrigin: Item.Bottom
+                scale: cell.factor
+                z: cell.factor
+            }
+            Rectangle {
+                visible: cell.modelData.running
+                width: 6; height: 6; radius: 3
+                color: Theme.white
+                opacity: 0.9
+                x: 32
+                y: 77
+            }
+            MouseArea {
+                anchors.fill: parent
+                onClicked: dock.launched(cell.modelData.kind)
+            }
+            Accessible.name: cell.modelData.name
+            Accessible.role: Accessible.Button
+        }
+    }
+}
