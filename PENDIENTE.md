@@ -9,6 +9,8 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - ARM64 únicamente. Base Arch Linux ARM.
 
 ## En curso
+- [x] HITO 3 (creador, 21:08): 0.1.2-alpha arranca en VirtualBox ARM64 con BC Shell. Feedback: "casi no va nada, es como una imagen, faltan muchas cosas".
+- [ ] PRIORIDAD: BC Shell REAL. Orden: (1) layout responsive a cualquier resolución, (2) Dock lanza apps reales (foot/terminal, archivos), (3) Archivos lista el directorio real (FolderListModel), (4) Centro de control/barra con estado real (wpctl, nmcli, batería vía BC Core D-Bus), (5) gestión de ventanas (iconos de Dock con apps abiertas), (6) integrar iconos `icons/` (paso 5), (7) animaciones.
 - [x] Instalador `build/installer/bc-install` (subagente): probado en QEMU, sin cifrado y con LUKS2, arranca. Sin probar: asistente interactivo (solo bash -n), VirtualBox. Integrado en imagen (/usr/bin/bc-install) y paquetes cryptsetup/dosfstools/rsync/libnewt añadidos → saldrá en 0.1.3-alpha.
 - [ ] ISO live con instalador: pendiente (squashfs + hook initramfs + xorriso EFI). Hoy se instala desde la imagen en marcha: `sudo bc-install`.
 - [ ] Build 0.1.2-alpha FALLÓ en Actions: `rm -rf $R` tras mkimage recorrió /sys y /dev aún montados (bind) → mount busy, borró /dev/null del runner. Fix: bc_umount con respaldo lazy y `rm -rf --one-file-system`. Relanzar build.

@@ -16,11 +16,11 @@ Sistema operativo Linux ARM64 creado por <b>Borja Candel</b>, en español por de
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/bc-os-qemu-aarch64.png" alt="BC Shell arrancando en la imagen ARM64 (QEMU)" width="880">
-  <br><sub>Captura real: BC Shell sobre labwc (Wayland) en la imagen ARM64, arrancada en QEMU con UEFI. Render por software.</sub>
+  <img src="docs/screenshots/bc-os-virtualbox-arm64.png" alt="BC OS 0.1.2-alpha en VirtualBox ARM64" width="880">
+  <br><sub>Captura real (aportada por el creador): BC OS 0.1.2-alpha en VirtualBox ARM64, BC Shell sobre labwc (Wayland), render por software.</sub>
 </p>
 
-> **Estado honesto:** alpha muy temprana. Hay una imagen ARM64 que arranca y un shell que se ve así, pero **el shell aún es un prototipo visual** (Dock, Archivos y Centro de control no son funcionales), **no hay instalador ni ISO todavía** y la imagen **no está validada en VirtualBox ARM64** (ver [problemas conocidos](#problemas-conocidos)).
+> **Estado honesto:** alpha muy temprana. Hay una imagen ARM64 que arranca y un shell que se ve así, pero **el shell aún es un prototipo visual** (Dock, Archivos y Centro de control no son funcionales), **no hay instalador ni ISO todavía** y la imagen **solo `0.1.2-alpha` ha arrancado en VirtualBox ARM64** (ver [problemas conocidos](#problemas-conocidos)).
 
 ---
 
@@ -40,7 +40,8 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 | Versión | Estado | Qué trae |
 |---|---|---|
 | `0.1.0-alpha` | publicada | Primera imagen ARM64: arranca en QEMU; en VirtualBox falla el `fsck` del root (ver abajo). |
-| `0.1.1-alpha` | en construcción | Mitigación del fallo de arranque (`fsck.mode=skip`, ext4 con journal). **Sin validar en VirtualBox.** |
+| `0.1.1-alpha` | publicada | Mitigación del `fsck`; en VirtualBox arrancaba a pantalla negra (labwc sin 3D). |
+| `0.1.2-alpha` | publicada | **Arranca en VirtualBox ARM64** con BC Shell (render por software) y SSH activado. El shell es una maqueta. |
 | `0.2.0` | planificada | BC Shell funcional (Dock, lanzador, Centro de control). |
 | `0.3.0` → `1.0.0` | planificadas | Apps nativas, instalador, beta y primera estable. Son hitos, no promesas. |
 
@@ -59,7 +60,8 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 
 ## Problemas conocidos
 
-- **VirtualBox:** con `0.1.0-alpha` el kernel arranca pero `systemd-fsck` falla sobre `bc-root` y cae a modo emergencia (root bloqueado). No se reproduce en QEMU. `0.1.1-alpha` aplica una mitigación; la causa raíz sigue sin identificar.
+- **VirtualBox:** `0.1.0` y `0.1.1` fallaban (`fsck` en 0.1.0; labwc sin EGL/3D en 0.1.1). `0.1.2-alpha` lo resuelve con render por software.
+- **BC Shell es una maqueta:** casi nada responde todavía; los botones, el Dock y el Centro de control no hacen nada real. Es la siguiente prioridad.
 - El layout del shell está diseñado para 1586×992 y se solapa en pantallas menores.
 - Sin instalador ni ISO. Contraseña por defecto pública (solo alpha).
 - Rendimiento no medido; los objetivos de abajo son metas, no resultados.
@@ -86,11 +88,11 @@ Decisiones y motivos: [`ARCHITECTURE.md`](ARCHITECTURE.md) y [`docs/adr/`](docs/
 
 | Componente | Estado |
 |---|---|
-| Imagen ARM64 (arranque UEFI, sesión gráfica automática) | ✅ arranca en QEMU · ⚠️ falla en VirtualBox (0.1.0) |
+| Imagen ARM64 (arranque UEFI, sesión gráfica automática) | ✅ arranca en QEMU y en VirtualBox ARM64 (0.1.2) |
 | BC Shell (barra, Dock, Archivos, Centro de control, notificación) | 🟡 prototipo visual, tests `ctest` 3/3 |
 | BC Core (6 servicios D-Bus) | ✅ `fmt`, `clippy`, 23 tests; probado en bus de sesión |
 | Pack de iconos | 🟡 lote A (UI, 102 iconos); lotes B (apps) y C (lugares/MIME/dispositivos) en curso |
-| Instalador (`bc-install`) | 🟡 en desarrollo, no publicado |
+| Instalador (`bc-install`) | 🟡 probado en QEMU (con y sin LUKS); en la imagen desde 0.1.3 |
 | ISO con instalador | ⛔ pendiente |
 | Benchmarks / optimización | ⛔ pendiente |
 
