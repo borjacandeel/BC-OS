@@ -5,6 +5,7 @@ import QtQuick.Shapes
 Item {
     id: root
     clip: true
+    readonly property bool ready: wp.status === Image.Ready
 
     Rectangle {
         anchors.fill: parent
@@ -84,5 +85,16 @@ Item {
             }
             PathSvg { path: "M600 -200 L1500 -200 L1500 480 L600 480 Z" }
         }
+    }
+
+    // Fondo por defecto de BC OS (el vectorial de arriba queda de respaldo si falla la carga).
+    Image {
+        id: wp
+        anchors.fill: parent
+        source: "qrc:/BCShell/assets/wallpaper-default.png"
+        fillMode: Image.PreserveAspectCrop
+        asynchronous: true
+        smooth: true
+        visible: status === Image.Ready
     }
 }

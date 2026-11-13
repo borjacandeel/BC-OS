@@ -9,6 +9,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - ARM64 únicamente. Base Arch Linux ARM.
 
 ## En curso
+- [x] Wallpaper por defecto (creador, 21:17): logo BC centrado sobre azul noche, embebido en el shell (`shell/assets/wallpaper-default.png`, copia en `assets/wallpapers/bc-default.png`); ctest 7/7; el fondo vectorial queda de respaldo y el lema BC se oculta cuando carga. Falta: selector de fondos en Configuración y instalar en /usr/share/backgrounds/bcos.
 - [ ] TAREA PROGRAMADA: sábado 2026-11-14 03:00 (Madrid), trigger `trig_013KkEZCuJr82FMndmg84bFq` (sesión nueva sin repo adjunto; clona con add_repo). Objetivo: BC OS funcional, todo inicia solo, prerelease listo para probar en VM. Publicación sin MCP: escribir versión en `build/PUBLICAR` (dispara image.yml).
 - [x] `shell-real-1` hecho (main 4a996f9): responsive 1024x640+, Dock lanza `foot` real y marca apps en ejecución (/proc), Archivos con directorio real (modelo C++), ctest 7/7. Sin probar con ratón ni en VirtualBox. Falta: Centro de control real, Configuración/Monitor/Tienda/Navegador/Música/Papelera (solo 'En desarrollo'), magnificación del Dock verificada.
 - [ ] Agente en curso (21:15): `arranque-animado` (Plymouth con logo BC). Verificar que no rompe el arranque antes de publicar.

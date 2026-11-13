@@ -102,7 +102,7 @@ Window {
         transformOrigin: Item.BottomLeft
         x: Math.round(41 * root.u)
         y: root.height - height - Math.round(22 * root.u)
-        visible: x + width * root.u + root.margin < dock.x + dock.width * (1 - root.u) / 2
+        visible: !(wallpaper.item && wallpaper.item.ready) && x + width * root.u + root.margin < dock.x + dock.width * (1 - root.u) / 2
         sourceComponent: Component {
             Column {
                 spacing: 22
