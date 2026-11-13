@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  rust:
+    name: BC Core (Rust, ARM64 nativo)
+    runs-on: ubuntu-24.04-arm
+    defaults:
+      run:
+        working-directory: core
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verificar arquitectura
+        run: test "$(uname -m)" = "aarch64"
+      - name: Instalar Rust estable
+        run: |
+          rustup toolchain install stable --profile minimal -c rustfmt -c clippy
+          rustup default stable
+      - uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            core/target
+          key: cargo-arm64-${{ hashFiles('core/Cargo.lock', 'core/**/Cargo.toml') }}
+          restore-keys: cargo-arm64-
+      - name: Formato
+        run: cargo fmt --all --check
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Tests
+        run: cargo test --workspace
+      - name: Compilación release
+        run: cargo build --workspace --release
+      - name: Subir binarios
+        uses: actions/upload-artifact@v4
+        with:
+          name: bc-core-aarch64
+          path: |
+            core/target/release/bc-daemon
+            core/target/release/bc-*-service
+          if-no-files-found: error
+
+  qt:
+    name: BC Shell (Qt 6, ARM64 nativo)
+    runs-on: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@v4
+      - name: Comprobar si existe shell/
+        id: shell
+        run: |
+          if [ -f shell/CMakeLists.txt ]; then echo "existe=true" >> "$GITHUB_OUTPUT"; else echo "existe=false" >> "$GITHUB_OUTPUT"; echo "shell/CMakeLists.txt aún no existe: se omite la compilación Qt."; fi
+      - name: Instalar dependencias Qt 6
+        if: steps.shell.outputs.existe == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends cmake ninja-build g++ \
+            qt6-base-dev qt6-declarative-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
+            qt6-wayland-dev qml6-module-qtquick qml6-module-qtquick-controls \
+            qml6-module-qtquick-layouts qml6-module-qtquick-window xvfb
+      - name: Configurar
+        if: steps.shell.outputs.existe == 'true'
+        run: cmake -S shell -B shell/build -G Ninja -DCMAKE_BUILD_TYPE=Release
+      - name: Compilar
+        if: steps.shell.outputs.existe == 'true'
+        run: cmake --build shell/build
+      - name: Tests
+        if: steps.shell.outputs.existe == 'true'
+        run: QT_QPA_PLATFORM=offscreen ctest --test-dir shell/build --output-on-failure

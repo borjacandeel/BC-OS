@@ -1,0 +1,14 @@
+[package]
+name = "bc-hardware-service"
+description = "Servicio D-Bus org.bcos.Hardware1: CPU, baterías y temperaturas"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+bc-common.workspace = true
+zbus.workspace = true
+tokio.workspace = true
+tracing.workspace = true

@@ -1,0 +1,22 @@
+[Unit]
+Description=BC OS — Servicio de ajustes
+Documentation=https://github.com/borjacandeel/BC-OS
+
+[Service]
+Type=dbus
+BusName=org.bcos.Settings
+ExecStartPre=/usr/bin/mkdir -p %E/bcos
+ExecStart=/usr/bin/bc-settings-service
+Restart=on-failure
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_UNIX
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+ReadWritePaths=%E/bcos
+
+[Install]
+WantedBy=default.target

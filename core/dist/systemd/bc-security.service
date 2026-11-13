@@ -1,0 +1,20 @@
+[Unit]
+Description=BC OS — Servicio de seguridad (solo lectura)
+Documentation=https://github.com/borjacandeel/BC-OS
+
+[Service]
+Type=dbus
+BusName=org.bcos.Security
+ExecStart=/usr/bin/bc-security-service
+Restart=on-failure
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_UNIX
+LockPersonality=yes
+
+[Install]
+WantedBy=default.target

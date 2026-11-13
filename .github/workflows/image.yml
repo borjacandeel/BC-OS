@@ -1,0 +1,52 @@
+name: Imagen ARM64
+
+# Construye la imagen de BC OS y genera su SHA256. NO publica ningún release.
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Etiqueta de versión de la imagen (p. ej. 0.1.0-dev)"
+        required: false
+        default: "0.1.0-dev"
+
+permissions:
+  contents: read
+
+jobs:
+  imagen:
+    name: Imagen BC OS (ARM64 nativo)
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verificar arquitectura
+        run: test "$(uname -m)" = "aarch64"
+      - name: Comprobar script de imagen
+        run: test -x build/mkimage.sh || { echo "::error::build/mkimage.sh no existe o no es ejecutable"; exit 1; }
+      - name: Instalar herramientas de imagen
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libarchive-tools dosfstools mtools e2fsprogs fdisk zstd qemu-utils rsync curl ca-certificates
+      - name: Construir imagen
+        env:
+          BC_VERSION: ${{ inputs.version }}
+        run: sudo -E build/mkimage.sh
+      - name: Generar SHA256
+        run: |
+          cd build/out 2>/dev/null || cd out
+          sha256sum BC-OS-*.img* > SHA256SUMS
+          cat SHA256SUMS
+      - name: Verificar integridad
+        run: |
+          cd build/out 2>/dev/null || cd out
+          sha256sum --check SHA256SUMS
+      - name: Guardar artefactos
+        uses: actions/upload-artifact@v4
+        with:
+          name: bc-os-arm64-${{ inputs.version }}
+          path: |
+            build/out/BC-OS-*
+            build/out/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 14

@@ -1,0 +1,21 @@
+[Unit]
+Description=BC OS — Servicio de hardware
+Documentation=https://github.com/borjacandeel/BC-OS
+
+[Service]
+Type=dbus
+BusName=org.bcos.Hardware
+ExecStart=/usr/bin/bc-hardware-service
+Restart=on-failure
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_UNIX
+LockPersonality=yes
+MemoryDenyWriteExecute=yes
+
+[Install]
+WantedBy=default.target

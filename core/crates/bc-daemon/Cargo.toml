@@ -1,0 +1,14 @@
+[package]
+name = "bc-daemon"
+description = "Servicio D-Bus org.bcos.Daemon1: estado global de BC Core"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+authors.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+bc-common.workspace = true
+zbus.workspace = true
+tokio.workspace = true
+tracing.workspace = true
