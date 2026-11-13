@@ -9,6 +9,8 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - ARM64 únicamente. Base Arch Linux ARM.
 
 ## En curso
+- [ ] TAREA PROGRAMADA: sábado 2026-11-14 03:00 (Madrid), trigger `trig_013KkEZCuJr82FMndmg84bFq` (sesión nueva sin repo adjunto; clona con add_repo). Objetivo: BC OS funcional, todo inicia solo, prerelease listo para probar en VM. Publicación sin MCP: escribir versión en `build/PUBLICAR` (dispara image.yml).
+- [ ] Agentes en curso (21:15): `shell-real-1` (responsive, Dock lanza apps, Archivos real) y `arranque-animado` (Plymouth con logo BC). Al terminar: verificar que no rompen el arranque antes de publicar.
 - [x] HITO 3 (creador, 21:08): 0.1.2-alpha arranca en VirtualBox ARM64 con BC Shell. Feedback: "casi no va nada, es como una imagen, faltan muchas cosas".
 - [ ] PRIORIDAD: BC Shell REAL. Orden: (1) layout responsive a cualquier resolución, (2) Dock lanza apps reales (foot/terminal, archivos), (3) Archivos lista el directorio real (FolderListModel), (4) Centro de control/barra con estado real (wpctl, nmcli, batería vía BC Core D-Bus), (5) gestión de ventanas (iconos de Dock con apps abiertas), (6) integrar iconos `icons/` (paso 5), (7) animaciones.
 - [x] Instalador `build/installer/bc-install` (subagente): probado en QEMU, sin cifrado y con LUKS2, arranca. Sin probar: asistente interactivo (solo bash -n), VirtualBox. Integrado en imagen (/usr/bin/bc-install) y paquetes cryptsetup/dosfstools/rsync/libnewt añadidos → saldrá en 0.1.3-alpha.
