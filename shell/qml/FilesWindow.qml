@@ -46,14 +46,14 @@ Rectangle {
             x: 145; anchors.verticalCenter: parent.verticalCenter; spacing: 5
             Repeater {
                 model: [
-                    { path: Icons.chevronLeft, on: Files.canBack, act: 0 },
-                    { path: Icons.chevronRight, on: Files.canForward, act: 1 },
-                    { path: Icons.chevronUp, on: Files.canUp, act: 2 }
+                    { name: Icons.chevronLeft, on: Files.canBack, act: 0 },
+                    { name: Icons.chevronRight, on: Files.canForward, act: 1 },
+                    { name: Icons.chevronUp, on: Files.canUp, act: 2 }
                 ]
                 Rectangle {
                     width: 39; height: 37; radius: 10
                     color: modelData.on ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.05)
-                    Icon { anchors.centerIn: parent; path: modelData.path; size: 22; strokeWidth: 2
+                    Icon { anchors.centerIn: parent; name: modelData.name; size: 22;
                            color: modelData.on ? Theme.textPrimary : Theme.textSecondary; opacity: modelData.on ? 1 : 0.5 }
                     MouseArea {
                         anchors.fill: parent; enabled: modelData.on
@@ -74,12 +74,12 @@ Rectangle {
                     delegate: Row {
                         spacing: 6
                         anchors.verticalCenter: parent.verticalCenter
-                        Icon { visible: index > 0; path: Icons.chevronRight; size: 16; strokeWidth: 2
+                        Icon { visible: index > 0; name: Icons.chevronRight; size: 16;
                                anchors.verticalCenter: parent.verticalCenter; color: Theme.textSecondary }
                         Item {
                             width: crumbLabel.width + (modelData.home ? 30 : 0); height: 30
                             anchors.verticalCenter: parent.verticalCenter
-                            Icon { visible: modelData.home; path: Icons.home; size: 22; strokeWidth: 1.9
+                            Icon { visible: modelData.home; name: Icons.home; size: 22;
                                    anchors.verticalCenter: parent.verticalCenter }
                             Text {
                                 id: crumbLabel
@@ -100,7 +100,7 @@ Rectangle {
             x: 655; width: 324; height: 38; radius: 19
             anchors.verticalCenter: parent.verticalCenter
             color: Qt.rgba(1, 1, 1, 0.10)
-            Icon { x: 15; anchors.verticalCenter: parent.verticalCenter; path: Icons.search; size: 24; strokeWidth: 1.9 }
+            Icon { x: 15; anchors.verticalCenter: parent.verticalCenter; name: Icons.search; size: 24; }
             TextInput {
                 id: search
                 x: 49; width: parent.width - 49 - 36; anchors.verticalCenter: parent.verticalCenter
@@ -115,7 +115,7 @@ Rectangle {
             Item {
                 visible: search.text !== ""
                 x: parent.width - 34; width: 28; height: 28; anchors.verticalCenter: parent.verticalCenter
-                Icon { anchors.centerIn: parent; path: Icons.closeX; size: 14; strokeWidth: 2 }
+                Icon { anchors.centerIn: parent; name: Icons.closeX; size: 14; }
                 MouseArea { anchors.fill: parent; onClicked: Files.filter = "" }
             }
         }
@@ -135,7 +135,7 @@ Rectangle {
                 x: 12; y: 14 + index * 46.5
                 width: 213; height: 46; radius: Theme.radiusControl
                 color: Files.path === Files.placePath(modelData.key) ? Theme.accentSelected : (hov.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent")
-                Icon { x: 16; anchors.verticalCenter: parent.verticalCenter; path: modelData.icon; size: 24; strokeWidth: 1.8
+                Icon { x: 16; anchors.verticalCenter: parent.verticalCenter; name: modelData.icon; size: 24;
                        filled: Files.path === Files.placePath(modelData.key) }
                 Text { x: 59; anchors.verticalCenter: parent.verticalCenter; text: modelData.name
                        color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 16 }
@@ -145,7 +145,7 @@ Rectangle {
         Rectangle { x: 12; y: 313; width: 213; height: 1; color: Theme.hairline }
         Rectangle {
             x: 12; y: 332; width: 213; height: 46; radius: Theme.radiusControl; color: "transparent"
-            Icon { x: 16; anchors.verticalCenter: parent.verticalCenter; path: Icons.trash; size: 24; strokeWidth: 1.8 }
+            Icon { x: 16; anchors.verticalCenter: parent.verticalCenter; name: Icons.trash; size: 24; }
             Text { x: 59; anchors.verticalCenter: parent.verticalCenter; text: qsTr("Papelera")
                    color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 16 }
         }

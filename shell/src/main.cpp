@@ -19,6 +19,8 @@ static void countingHandler(QtMsgType t, const QMessageLogContext &c, const QStr
 }
 
 int main(int argc, char *argv[]) {
+    // IconCache lee los SVG de los recursos (qrc:) con XMLHttpRequest para teñirlos.
+    qputenv("QML_XHR_ALLOW_FILE_READ", "1");
     QGuiApplication app(argc, argv);
     app.setApplicationName("bc-shell");
     app.setOrganizationName("BC-OS");

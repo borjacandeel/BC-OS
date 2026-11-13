@@ -28,9 +28,8 @@ Rectangle {
         width: 109; height: 127; radius: Theme.radiusTile
         color: ta.containsMouse ? Qt.rgba(1, 1, 1, 0.11) : Theme.tileFill
         Behavior on color { ColorAnimation { duration: Theme.dur(120) } }
-        Icon { anchors.horizontalCenter: parent.horizontalCenter; y: 24; path: tile.iconPath; size: 38
-               color: tile.active ? tile.iconColor : Theme.textSecondary; strokeWidth: 2.2
-               filled: tile.iconPath === Icons.moon }
+        Icon { anchors.horizontalCenter: parent.horizontalCenter; y: 24; name: tile.iconPath; size: 38
+               color: tile.active ? tile.iconColor : Theme.textSecondary }
         Text { anchors.horizontalCenter: parent.horizontalCenter; y: 68; text: tile.label
                color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 16 }
         Text { anchors.horizontalCenter: parent.horizontalCenter; y: 92; text: tile.status
@@ -46,7 +45,7 @@ Rectangle {
         signal moved(real v)
         x: 16; width: parent.width - 32; height: 57
         Rectangle { x: 0; y: 5; width: 49; height: 49; radius: 24.5; color: Qt.rgba(1, 1, 1, 0.08) }
-        Icon { x: 12; y: 17; path: row.iconPath; size: 26; strokeWidth: 2 }
+        Icon { x: 12; y: 17; name: row.iconPath; size: 26; }
         Text { x: 64; y: 2; text: row.label; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 16 }
         Rectangle { id: track; x: 65; y: 33; width: 227; height: 5; radius: 2.5; color: Qt.rgba(1, 1, 1, 0.14)
             Rectangle { width: row.value * parent.width; height: parent.height; radius: 2.5; color: Theme.accent
@@ -57,7 +56,7 @@ Rectangle {
                 onPositionChanged: (m) => { if (pressed) row.moved(Math.max(0, Math.min(1, (m.x - 10) / track.width))) }
                 onPressed: (m) => row.moved(Math.max(0, Math.min(1, (m.x - 10) / track.width))) }
         }
-        Icon { x: 324; y: 17; path: Icons.chevronRight; size: 24; strokeWidth: 2; color: Theme.textSecondary }
+        Icon { x: 324; y: 17; name: Icons.chevronRight; size: 24; color: Theme.textSecondary }
     }
 
     Row {
@@ -76,9 +75,9 @@ Rectangle {
     Rectangle {
         x: 16; y: 314; width: parent.width - 32; height: 57; radius: Theme.radiusTile
         color: Theme.tileFill
-        Icon { x: 22; y: 16; path: Icons.bolt; size: 26; strokeWidth: 1.5; filled: true; color: Theme.white }
+        Icon { x: 22; y: 16; name: Icons.bolt; size: 26; color: Theme.white }
         Text { x: 64; anchors.verticalCenter: parent.verticalCenter; text: qsTr("Energía")
                color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 16 }
-        Icon { x: 320; y: 16; path: Icons.chevronRight; size: 24; strokeWidth: 2; color: Theme.textSecondary }
+        Icon { x: 320; y: 16; name: Icons.chevronRight; size: 24; color: Theme.textSecondary }
     }
 }

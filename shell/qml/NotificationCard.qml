@@ -14,7 +14,7 @@ Rectangle {
     property string body: qsTr("BC OS está al día")
     signal dismissed()
 
-    Icon { x: 18; y: 22; path: Icons.refresh; size: 38; strokeWidth: 2.4; color: Theme.accent }
+    Icon { x: 18; y: 22; name: Icons.refresh; size: 38; color: Theme.accent }
     Column {
         x: 75; anchors.verticalCenter: parent.verticalCenter; spacing: 3
         Text { text: card.title; color: Theme.textPrimary; font.family: Theme.fontFamily
@@ -23,7 +23,7 @@ Rectangle {
     }
     Item {
         x: parent.width - 46; y: 10; width: 36; height: 36
-        Icon { anchors.centerIn: parent; path: Icons.closeX; size: 18; strokeWidth: 2 }
+        Icon { anchors.centerIn: parent; name: Icons.closeX; size: 18; }
         MouseArea { anchors.fill: parent; onClicked: card.dismissed() }
     }
 }

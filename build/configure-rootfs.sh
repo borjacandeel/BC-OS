@@ -53,6 +53,11 @@ sh "useradd -m -G wheel,audio,video,input -s /bin/bash -c 'Usuario BC' bc"
 sh "echo 'bc:bcos' | chpasswd"
 install -m440 "$HERE/overlay/etc/sudoers.d/10-wheel" "$R/etc/sudoers.d/10-wheel"
 
+# Tema de iconos BC (Freedesktop) como tema por defecto
+mkdir -p "$R/usr/share/icons"; rm -rf "$R/usr/share/icons/BC"
+cp -a "$HERE/../icons/dist/theme/BC" "$R/usr/share/icons/BC"
+mkdir -p "$R/etc/gtk-3.0"; printf '[Settings]\ngtk-icon-theme-name=BC\n' > "$R/etc/gtk-3.0/settings.ini"
+
 # Instalador (bc-install) disponible en el sistema
 mkdir -p "$R/usr/lib/bc-install"
 cp -a "$HERE/installer/bc-install" "$HERE/installer/lang" "$R/usr/lib/bc-install/"

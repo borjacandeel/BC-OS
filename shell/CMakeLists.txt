@@ -12,7 +12,7 @@ qt_add_executable(bc-shell src/main.cpp src/appconfig.h src/appconfig.cpp
     src/launcher.h src/launcher.cpp src/filebrowser.h src/filebrowser.cpp)
 
 set(BC_QML_FILES
-    qml/Main.qml qml/Theme.qml qml/Icons.qml qml/Icon.qml qml/Wallpaper.qml
+    qml/Main.qml qml/Theme.qml qml/Icons.qml qml/IconCache.qml qml/Icon.qml qml/Wallpaper.qml
     qml/TopBar.qml qml/Dock.qml qml/AppIcon.qml qml/FilesWindow.qml
     qml/FileGlyph.qml qml/ControlCenter.qml qml/NotificationCard.qml qml/Brand.qml)
 foreach(f ${BC_QML_FILES})
@@ -20,6 +20,7 @@ foreach(f ${BC_QML_FILES})
     set_source_files_properties(${f} PROPERTIES QT_RESOURCE_ALIAS ${n})
 endforeach()
 set_source_files_properties(qml/Theme.qml qml/Icons.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+set_source_files_properties(qml/IconCache.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 
 qt_add_qml_module(bc-shell
     URI BCShell
@@ -32,6 +33,9 @@ qt_add_translations(bc-shell
     TS_FILES i18n/bcshell_es_ES.ts i18n/bcshell_en.ts
     RESOURCE_PREFIX /i18n
 )
+
+file(GLOB BC_ICON_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/assets/icons/*.svg)
+qt_add_resources(bc-shell bcicons PREFIX /BCShell/icons BASE ${CMAKE_CURRENT_SOURCE_DIR}/assets/icons FILES ${BC_ICON_FILES})
 
 target_link_libraries(bc-shell PRIVATE Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick)
 install(TARGETS bc-shell RUNTIME DESTINATION bin)

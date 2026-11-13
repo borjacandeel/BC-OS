@@ -49,14 +49,14 @@ Rectangle {
         anchors.rightMargin: 20
         anchors.verticalCenter: parent.verticalCenter
         spacing: 18
-        Icon { path: Icons.wifi; size: 22; strokeWidth: 2; anchors.verticalCenter: parent.verticalCenter }
-        Icon { path: Icons.volume; size: 22; strokeWidth: 2; anchors.verticalCenter: parent.verticalCenter }
-        Icon { path: Icons.battery; size: 26; strokeWidth: 2; anchors.verticalCenter: parent.verticalCenter }
+        Icon { name: Icons.wifi; size: 22; anchors.verticalCenter: parent.verticalCenter }
+        Icon { name: Icons.volume; size: 22; anchors.verticalCenter: parent.verticalCenter }
+        Icon { name: Icons.battery; size: 26; anchors.verticalCenter: parent.verticalCenter }
         Rectangle {
             width: 36; height: 28; radius: 9
             anchors.verticalCenter: parent.verticalCenter
             color: ccArea.containsMouse ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(1, 1, 1, 0.12)
-            Icon { anchors.centerIn: parent; path: Icons.toggles; size: 20; strokeWidth: 2 }
+            Icon { anchors.centerIn: parent; name: Icons.toggles; size: 20; }
             MouseArea {
                 id: ccArea
                 anchors.fill: parent
