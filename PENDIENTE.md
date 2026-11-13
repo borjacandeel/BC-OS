@@ -9,6 +9,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - ARM64 únicamente. Base Arch Linux ARM.
 
 ## En curso
+- [ ] AHORA (creador, 21:45): integrar el pack `icons/` en `shell/` (Icons.qml/Icon.qml/AppIcon.qml/FileGlyph.qml → tema BC, tinted on-dark/on-light, QtSvg), instalar tema en /usr/share/icons/BC. Lo demás (login, bloqueo, Centro de control real…) lo hace la tarea de las 03:00.
 - [x] Tarea sábado 03:00 AMPLIADA (creador, 21:39): flujo completo estilo macOS y todo animado: arranque Plymouth → PANEL DE LOGIN (greetd + greeter QML, avatar, contraseña con animación, apagar/reiniciar; respaldo autologin) → transición al escritorio → BC Shell → pantalla de BLOQUEO → cierre de sesión/apagado animado. Trigger `trig_013KkEZCuJr82FMndmg84bFq` (prompt actualizado).
 - [x] Wallpaper por defecto (creador, 21:17): logo BC centrado sobre azul noche, embebido en el shell (`shell/assets/wallpaper-default.png`, copia en `assets/wallpapers/bc-default.png`); ctest 7/7; el fondo vectorial queda de respaldo y el lema BC se oculta cuando carga. Falta: selector de fondos en Configuración y instalar en /usr/share/backgrounds/bcos.
 - [ ] TAREA PROGRAMADA: sábado 2026-11-14 03:00 (Madrid), trigger `trig_013KkEZCuJr82FMndmg84bFq` (sesión nueva sin repo adjunto; clona con add_repo). Objetivo: BC OS funcional, todo inicia solo, prerelease listo para probar en VM. Publicación sin MCP: escribir versión en `build/PUBLICAR` (dispara image.yml).
