@@ -3,6 +3,7 @@
 Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar algo y al terminarlo.
 
 ## Reglas de oro
+- NO subagentes: trabajar de uno en uno y en secuencia (creador, 21:47). Prevalece sobre cualquier prompt.
 - Castellano siempre.
 - Skill `0-palabras` siempre.
 - Todo se sube siempre a `main` (sin force-push).
