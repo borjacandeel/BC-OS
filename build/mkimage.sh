@@ -2,7 +2,7 @@
 # Genera la imagen raw ARM64 de BC OS (GPT: ESP FAT32 + root ext4) sin loop mounts.
 # Uso: mkimage.sh <rootfs> <salida.img> [tamaño_MiB]
 set -euo pipefail
-R="${1:?uso: $0 <rootfs> <salida.img> [MiB]}"; OUT="${2:?}"; SIZE="${3:-4096}"
+R="${1:?uso: $0 <rootfs> <salida.img> [MiB]}"; OUT="${2:?}"; SIZE="${3:-6144}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ESP_MIB=512
 TMP="$(mktemp -d)"; trap 'rm -rf "$TMP"' EXIT
@@ -28,6 +28,7 @@ mcopy -i "$ESP" "$HERE/overlay/boot/loader/entries/bcos.conf" ::/loader/entries/
 ROOT_MIB=$((SIZE - ESP_MIB - 2))
 ROOTIMG="$TMP/root.img"; truncate -s "${ROOT_MIB}M" "$ROOTIMG"
 mkfs.ext4 -q -L bc-root -d "$TMP/root" "$ROOTIMG"
+rm -rf "$TMP/root"
 
 # Ensamblado GPT
 truncate -s "${SIZE}M" "$OUT"

@@ -28,7 +28,8 @@ sed -i "s/^PRETTY_NAME=.*/PRETTY_NAME=\"BC OS $VER\"/; s/^VERSION=.*/VERSION=\"$
 bash "$HERE/configure-rootfs.sh" "$R"
 
 IMG="$OUT/BC-OS-$VER-ARM64.img"
-bash "$HERE/mkimage.sh" "$R" "$IMG" 4096
+bash "$HERE/mkimage.sh" "$R" "$IMG" 6144
+rm -rf "$R"
 qemu-img convert -f raw -O vdi "$IMG" "$OUT/BC-OS-$VER-ARM64.vdi"
 rm -f "$IMG" "$IMG.sha256"
 (cd "$OUT" && zip -q -6 "BC-OS-$VER-ARM64.vdi.zip" "BC-OS-$VER-ARM64.vdi" && rm -f "BC-OS-$VER-ARM64.vdi" && sha256sum "BC-OS-$VER-ARM64.vdi.zip" > SHA256SUMS && cat SHA256SUMS)

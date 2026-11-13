@@ -59,6 +59,7 @@ install -D -m644 "$HERE/overlay/etc/ssh/sshd_config.d/10-bcos.conf" "$R/etc/ssh/
 install -D -m644 "$HERE/overlay/etc/systemd/zram-generator.conf" "$R/etc/systemd/zram-generator.conf"
 install -D -m644 "$HERE/overlay/etc/nftables.conf" "$R/etc/nftables.conf"
 
+sh "pacman -Scc --noconfirm"
 install -D -m644 "$HERE/overlay/etc/mkinitcpio.conf.d/bcos.conf" "$R/etc/mkinitcpio.conf.d/bcos.conf"
 sh "mkinitcpio -P"
 printf 'LABEL=bc-root / ext4 rw,noatime 0 1\nLABEL=BC-ESP /boot vfat rw,noatime,umask=0077 0 2\n' > "$R/etc/fstab"
