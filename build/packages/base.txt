@@ -1,0 +1,13 @@
+# Sistema base BC OS (aarch64)
+base
+linux-aarch64
+mkinitcpio
+sudo
+nano
+networkmanager
+zram-generator
+nftables
+polkit
+pipewire
+pipewire-pulse
+wireplumber

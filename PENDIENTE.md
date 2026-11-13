@@ -38,4 +38,6 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] Benchmarks, instalador, releases.
 
 ## Hecho
+- README.md con todo el contexto del proyecto.
+- Logos oficiales en `assets/branding/`.
 - Toolchain instalado en el contenedor: qemu-system-arm, qemu-user-static, AAVMF, Qt 6.4 (host), mtools, dosfstools.
