@@ -15,7 +15,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] CI shell: arreglados módulos QML; faltaba plugin SVG (qt6-svg) → verificar run verde.
 - [x] Iconos LOTE A (icon-designer): AUDIT.md, SPEC.md, build/lint/preview en `icons/` (`npm run check`), 102 iconos UI (navegación, acciones, estado, diálogos) + muestra de app `utilities-terminal`. Integración en `shell/` la hace el agente principal (mapa de nombres en `icons/AUDIT.md` §2.1).
 - [x] Iconos LOTE B (icon-designer): 16 apps squircle 1024 en `icons/src/app/apps` con @32/@16, lint 0 errores.
-- [ ] Iconos LOTE C (lugares, MIME, dispositivos, SPEC §4): pendientes, usar `icons/SPEC.md`, `templates/app-template.svg` y `npm run check`.
+- [x] Iconos LOTE C (icon-designer): lugares, MIME y dispositivos (54 SVG color/symbolic, @16 de carpeta y texto), lint 0 errores.
 - [ ] Layout de BC Shell responsive (hoy fijo a 1586x992, se solapa en 1280x800). Dock/Archivos/Centro de control sin funcionalidad.
 - [ ] LÍMITE HOY: trabajar hasta las 20:30 (Europe/Madrid, 2026-11-13). A esa hora: terminar lo que esté en marcha, subir a main y parar. Sin tareas nuevas.
 - [ ] Subagente `instalador` escribiendo `build/installer/bc-install` (probado vía losetup + QEMU). Después: ISO live (squashfs + hook initramfs + xorriso EFI).

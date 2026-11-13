@@ -74,7 +74,9 @@ Un icono `app` por cada una (categoría `apps`, carpeta `src/app/apps/`). Nombre
 
 Extras de Dock a considerar: indicador de app abierta (punto, lo dibuja el shell), icono de lanzador/apps (`view-app-grid`, symbolic en lote B o A.2).
 
-### 2.4 Lote C (pendiente): lugares, MIME, dispositivos
+### 2.4 Lote C (HECHO): lugares, MIME, dispositivos
+
+Entregado: 10 lugares color (`folder`, `user-home`, `user-desktop`, `folder-documents|download|pictures|music|videos|remote|cloud`) + 16 symbolic de sidebar (regular y `-fill` donde hay silueta cerrada), 9 MIME color, 10 dispositivos color + 9 symbolic, hints `folder@16` y `text-x-generic@16`. Pendiente de este inventario: `folder-open`, `folder-publicshare`, `x-office-*`, `text-html`, `network-workgroup`; papelera la entrega el lote B.
 
 - Lugares (kind color 48 + symbolic `-fill` para sidebar): `folder`, `user-home`, `user-desktop`, `folder-documents`, `folder-download`, `folder-pictures`, `folder-music`, `folder-videos`, `folder-remote` (red), `folder-cloud` (nube), `folder-publicshare`, `folder-open`, `user-trash` / `user-trash-full` (comparte archivo con lote B), `network-workgroup`.
 - MIME (color 48, documento con esquina doblada y etiqueta): `text-x-generic`, `text-x-script` (código), `image-x-generic`, `audio-x-generic`, `video-x-generic`, `package-x-generic` (comprimido), `application-pdf`, `application-x-executable`, `application-octet-stream` (desconocido), `x-office-document`, `x-office-spreadsheet`, `text-html`, `inode-directory` (alias de `folder`).

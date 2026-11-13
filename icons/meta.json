@@ -1101,5 +1101,283 @@
       "spaces"
     ],
     "category": "apps"
+  },
+  "folder": {
+    "es": "Carpeta",
+    "tags": [
+      "carpeta",
+      "folder",
+      "directorio"
+    ],
+    "category": "places"
+  },
+  "user-home": {
+    "es": "Carpeta personal",
+    "tags": [
+      "inicio",
+      "home",
+      "casa",
+      "usuario"
+    ],
+    "category": "places"
+  },
+  "user-desktop": {
+    "es": "Escritorio",
+    "tags": [
+      "escritorio",
+      "desktop"
+    ],
+    "category": "places"
+  },
+  "folder-documents": {
+    "es": "Documentos",
+    "tags": [
+      "documentos",
+      "documents"
+    ],
+    "category": "places"
+  },
+  "folder-download": {
+    "es": "Descargas",
+    "tags": [
+      "descargas",
+      "downloads"
+    ],
+    "category": "places"
+  },
+  "folder-pictures": {
+    "es": "Imágenes",
+    "tags": [
+      "imágenes",
+      "fotos",
+      "pictures"
+    ],
+    "category": "places"
+  },
+  "folder-music": {
+    "es": "Música",
+    "tags": [
+      "música",
+      "music",
+      "audio"
+    ],
+    "category": "places"
+  },
+  "folder-videos": {
+    "es": "Vídeos",
+    "tags": [
+      "vídeos",
+      "videos",
+      "películas"
+    ],
+    "category": "places"
+  },
+  "folder-remote": {
+    "es": "Red",
+    "tags": [
+      "red",
+      "network",
+      "remoto",
+      "servidor"
+    ],
+    "category": "places"
+  },
+  "folder-cloud": {
+    "es": "Nube",
+    "tags": [
+      "nube",
+      "cloud",
+      "sincronizar"
+    ],
+    "category": "places"
+  },
+  "text-x-generic": {
+    "es": "Texto",
+    "tags": [
+      "texto",
+      "text",
+      "txt",
+      "documento"
+    ],
+    "category": "mimetypes"
+  },
+  "text-x-script": {
+    "es": "Código",
+    "tags": [
+      "código",
+      "code",
+      "script",
+      "programación"
+    ],
+    "category": "mimetypes"
+  },
+  "image-x-generic": {
+    "es": "Imagen",
+    "tags": [
+      "imagen",
+      "image",
+      "foto",
+      "png",
+      "jpg"
+    ],
+    "category": "mimetypes"
+  },
+  "audio-x-generic": {
+    "es": "Audio",
+    "tags": [
+      "audio",
+      "sonido",
+      "música",
+      "mp3"
+    ],
+    "category": "mimetypes"
+  },
+  "video-x-generic": {
+    "es": "Vídeo",
+    "tags": [
+      "vídeo",
+      "video",
+      "película",
+      "mp4"
+    ],
+    "category": "mimetypes"
+  },
+  "package-x-generic": {
+    "es": "Comprimido",
+    "tags": [
+      "comprimido",
+      "zip",
+      "archive",
+      "paquete",
+      "tar"
+    ],
+    "category": "mimetypes"
+  },
+  "application-pdf": {
+    "es": "PDF",
+    "tags": [
+      "pdf",
+      "documento",
+      "adobe"
+    ],
+    "category": "mimetypes"
+  },
+  "application-x-executable": {
+    "es": "Ejecutable",
+    "tags": [
+      "ejecutable",
+      "executable",
+      "binario",
+      "programa"
+    ],
+    "category": "mimetypes"
+  },
+  "application-octet-stream": {
+    "es": "Archivo desconocido",
+    "tags": [
+      "desconocido",
+      "binario",
+      "genérico",
+      "unknown"
+    ],
+    "category": "mimetypes"
+  },
+  "drive-harddisk": {
+    "es": "Disco duro",
+    "tags": [
+      "disco",
+      "hdd",
+      "ssd",
+      "interno",
+      "almacenamiento"
+    ],
+    "category": "devices"
+  },
+  "drive-removable-media": {
+    "es": "Disco externo",
+    "tags": [
+      "externo",
+      "portátil",
+      "removable",
+      "disco"
+    ],
+    "category": "devices"
+  },
+  "drive-removable-media-usb": {
+    "es": "Memoria USB",
+    "tags": [
+      "usb",
+      "pendrive",
+      "memoria",
+      "flash"
+    ],
+    "category": "devices"
+  },
+  "computer": {
+    "es": "Equipo",
+    "tags": [
+      "equipo",
+      "ordenador",
+      "portátil",
+      "computer",
+      "laptop"
+    ],
+    "category": "devices"
+  },
+  "video-display": {
+    "es": "Monitor",
+    "tags": [
+      "monitor",
+      "pantalla",
+      "display"
+    ],
+    "category": "devices"
+  },
+  "input-keyboard": {
+    "es": "Teclado",
+    "tags": [
+      "teclado",
+      "keyboard",
+      "teclas"
+    ],
+    "category": "devices"
+  },
+  "input-mouse": {
+    "es": "Ratón",
+    "tags": [
+      "ratón",
+      "mouse",
+      "puntero"
+    ],
+    "category": "devices"
+  },
+  "printer": {
+    "es": "Impresora",
+    "tags": [
+      "impresora",
+      "printer",
+      "imprimir"
+    ],
+    "category": "devices"
+  },
+  "audio-headphones": {
+    "es": "Auriculares",
+    "tags": [
+      "auriculares",
+      "cascos",
+      "headphones",
+      "audio"
+    ],
+    "category": "devices"
+  },
+  "phone": {
+    "es": "Móvil",
+    "tags": [
+      "móvil",
+      "teléfono",
+      "phone",
+      "smartphone"
+    ],
+    "category": "devices"
   }
 }

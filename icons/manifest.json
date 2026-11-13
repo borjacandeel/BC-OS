@@ -79,21 +79,21 @@
       "label": "Lugares y carpetas",
       "context": "Places",
       "lote": "C",
-      "count": 0
+      "count": 20
     },
     {
       "id": "mimetypes",
       "label": "Archivos y MIME",
       "context": "MimeTypes",
       "lote": "C",
-      "count": 0
+      "count": 9
     },
     {
       "id": "devices",
       "label": "Dispositivos",
       "context": "Devices",
       "lote": "C",
-      "count": 0
+      "count": 19
     }
   ],
   "icons": [
@@ -1547,6 +1547,497 @@
       "file": "dist/svg/web-browser.svg"
     },
     {
+      "name": "audio-headphones",
+      "label": "Auriculares",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "audio-headphones"
+      },
+      "tags": [
+        "auriculares",
+        "cascos",
+        "headphones",
+        "audio"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/audio-headphones.svg"
+    },
+    {
+      "name": "computer",
+      "label": "Equipo",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "computer"
+      },
+      "tags": [
+        "equipo",
+        "ordenador",
+        "portátil",
+        "computer",
+        "laptop"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/computer.svg"
+    },
+    {
+      "name": "drive-harddisk",
+      "label": "Disco duro",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "drive-harddisk"
+      },
+      "tags": [
+        "disco",
+        "hdd",
+        "ssd",
+        "interno",
+        "almacenamiento"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/drive-harddisk.svg"
+    },
+    {
+      "name": "drive-removable-media",
+      "label": "Disco externo",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "drive-removable-media"
+      },
+      "tags": [
+        "externo",
+        "portátil",
+        "removable",
+        "disco"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/drive-removable-media.svg"
+    },
+    {
+      "name": "drive-removable-media-usb",
+      "label": "Memoria USB",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "drive-removable-media-usb"
+      },
+      "tags": [
+        "usb",
+        "pendrive",
+        "memoria",
+        "flash"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/drive-removable-media-usb.svg"
+    },
+    {
+      "name": "input-keyboard",
+      "label": "Teclado",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "input-keyboard"
+      },
+      "tags": [
+        "teclado",
+        "keyboard",
+        "teclas"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/input-keyboard.svg"
+    },
+    {
+      "name": "input-mouse",
+      "label": "Ratón",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "input-mouse"
+      },
+      "tags": [
+        "ratón",
+        "mouse",
+        "puntero"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/input-mouse.svg"
+    },
+    {
+      "name": "phone",
+      "label": "Móvil",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "phone"
+      },
+      "tags": [
+        "móvil",
+        "teléfono",
+        "phone",
+        "smartphone"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/phone.svg"
+    },
+    {
+      "name": "printer",
+      "label": "Impresora",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "printer"
+      },
+      "tags": [
+        "impresora",
+        "printer",
+        "imprimir"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/printer.svg"
+    },
+    {
+      "name": "video-display",
+      "label": "Monitor",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "video-display"
+      },
+      "tags": [
+        "monitor",
+        "pantalla",
+        "display"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/video-display.svg"
+    },
+    {
+      "name": "audio-headphones",
+      "label": "Auriculares",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "audio-headphones-symbolic"
+      },
+      "tags": [
+        "auriculares",
+        "cascos",
+        "headphones",
+        "audio"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/audio-headphones-symbolic.svg"
+    },
+    {
+      "name": "computer",
+      "label": "Equipo",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "computer-symbolic"
+      },
+      "tags": [
+        "equipo",
+        "ordenador",
+        "portátil",
+        "computer",
+        "laptop"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/computer-symbolic.svg"
+    },
+    {
+      "name": "drive-harddisk",
+      "label": "Disco duro",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "drive-harddisk-symbolic"
+      },
+      "tags": [
+        "disco",
+        "hdd",
+        "ssd",
+        "interno",
+        "almacenamiento"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/drive-harddisk-symbolic.svg"
+    },
+    {
+      "name": "drive-removable-media-usb",
+      "label": "Memoria USB",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "drive-removable-media-usb-symbolic"
+      },
+      "tags": [
+        "usb",
+        "pendrive",
+        "memoria",
+        "flash"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/drive-removable-media-usb-symbolic.svg"
+    },
+    {
+      "name": "input-keyboard",
+      "label": "Teclado",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "input-keyboard-symbolic"
+      },
+      "tags": [
+        "teclado",
+        "keyboard",
+        "teclas"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/input-keyboard-symbolic.svg"
+    },
+    {
+      "name": "input-mouse",
+      "label": "Ratón",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "input-mouse-symbolic"
+      },
+      "tags": [
+        "ratón",
+        "mouse",
+        "puntero"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/input-mouse-symbolic.svg"
+    },
+    {
+      "name": "phone",
+      "label": "Móvil",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "phone-symbolic"
+      },
+      "tags": [
+        "móvil",
+        "teléfono",
+        "phone",
+        "smartphone"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/phone-symbolic.svg"
+    },
+    {
+      "name": "printer",
+      "label": "Impresora",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "printer-symbolic"
+      },
+      "tags": [
+        "impresora",
+        "printer",
+        "imprimir"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/printer-symbolic.svg"
+    },
+    {
+      "name": "video-display",
+      "label": "Monitor",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "video-display-symbolic"
+      },
+      "tags": [
+        "monitor",
+        "pantalla",
+        "display"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/video-display-symbolic.svg"
+    },
+    {
       "name": "dialog-error",
       "label": "Error",
       "category": "dialogs",
@@ -1797,6 +2288,253 @@
         48
       ],
       "file": "dist/svg/dialog-warning-symbolic.svg"
+    },
+    {
+      "name": "application-octet-stream",
+      "label": "Archivo desconocido",
+      "category": "mimetypes",
+      "context": "MimeTypes",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "application-octet-stream"
+      },
+      "tags": [
+        "desconocido",
+        "binario",
+        "genérico",
+        "unknown"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/application-octet-stream.svg"
+    },
+    {
+      "name": "application-pdf",
+      "label": "PDF",
+      "category": "mimetypes",
+      "context": "MimeTypes",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "application-pdf"
+      },
+      "tags": [
+        "pdf",
+        "documento",
+        "adobe"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/application-pdf.svg"
+    },
+    {
+      "name": "application-x-executable",
+      "label": "Ejecutable",
+      "category": "mimetypes",
+      "context": "MimeTypes",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "application-x-executable"
+      },
+      "tags": [
+        "ejecutable",
+        "executable",
+        "binario",
+        "programa"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/application-x-executable.svg"
+    },
+    {
+      "name": "audio-x-generic",
+      "label": "Audio",
+      "category": "mimetypes",
+      "context": "MimeTypes",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "audio-x-generic"
+      },
+      "tags": [
+        "audio",
+        "sonido",
+        "música",
+        "mp3"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/audio-x-generic.svg"
+    },
+    {
+      "name": "image-x-generic",
+      "label": "Imagen",
+      "category": "mimetypes",
+      "context": "MimeTypes",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "image-x-generic"
+      },
+      "tags": [
+        "imagen",
+        "image",
+        "foto",
+        "png",
+        "jpg"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/image-x-generic.svg"
+    },
+    {
+      "name": "package-x-generic",
+      "label": "Comprimido",
+      "category": "mimetypes",
+      "context": "MimeTypes",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "package-x-generic"
+      },
+      "tags": [
+        "comprimido",
+        "zip",
+        "archive",
+        "paquete",
+        "tar"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/package-x-generic.svg"
+    },
+    {
+      "name": "text-x-generic",
+      "label": "Texto",
+      "category": "mimetypes",
+      "context": "MimeTypes",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "text-x-generic"
+      },
+      "tags": [
+        "texto",
+        "text",
+        "txt",
+        "documento"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "hints": [
+        16
+      ],
+      "file": "dist/svg/text-x-generic.svg"
+    },
+    {
+      "name": "text-x-script",
+      "label": "Código",
+      "category": "mimetypes",
+      "context": "MimeTypes",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "text-x-script"
+      },
+      "tags": [
+        "código",
+        "code",
+        "script",
+        "programación"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/text-x-script.svg"
+    },
+    {
+      "name": "video-x-generic",
+      "label": "Vídeo",
+      "category": "mimetypes",
+      "context": "MimeTypes",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "video-x-generic"
+      },
+      "tags": [
+        "vídeo",
+        "video",
+        "película",
+        "mp4"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/video-x-generic.svg"
     },
     {
       "name": "go-bottom",
@@ -2309,6 +3047,512 @@
         48
       ],
       "file": "dist/svg/window-restore-symbolic.svg"
+    },
+    {
+      "name": "folder",
+      "label": "Carpeta",
+      "category": "places",
+      "context": "Places",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "folder"
+      },
+      "tags": [
+        "carpeta",
+        "folder",
+        "directorio"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "hints": [
+        16
+      ],
+      "file": "dist/svg/folder.svg"
+    },
+    {
+      "name": "folder-cloud",
+      "label": "Nube",
+      "category": "places",
+      "context": "Places",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "folder-cloud"
+      },
+      "tags": [
+        "nube",
+        "cloud",
+        "sincronizar"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/folder-cloud.svg"
+    },
+    {
+      "name": "folder-documents",
+      "label": "Documentos",
+      "category": "places",
+      "context": "Places",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "folder-documents"
+      },
+      "tags": [
+        "documentos",
+        "documents"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/folder-documents.svg"
+    },
+    {
+      "name": "folder-download",
+      "label": "Descargas",
+      "category": "places",
+      "context": "Places",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "folder-download"
+      },
+      "tags": [
+        "descargas",
+        "downloads"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/folder-download.svg"
+    },
+    {
+      "name": "folder-music",
+      "label": "Música",
+      "category": "places",
+      "context": "Places",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "folder-music"
+      },
+      "tags": [
+        "música",
+        "music",
+        "audio"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/folder-music.svg"
+    },
+    {
+      "name": "folder-pictures",
+      "label": "Imágenes",
+      "category": "places",
+      "context": "Places",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "folder-pictures"
+      },
+      "tags": [
+        "imágenes",
+        "fotos",
+        "pictures"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/folder-pictures.svg"
+    },
+    {
+      "name": "folder-remote",
+      "label": "Red",
+      "category": "places",
+      "context": "Places",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "folder-remote"
+      },
+      "tags": [
+        "red",
+        "network",
+        "remoto",
+        "servidor"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/folder-remote.svg"
+    },
+    {
+      "name": "folder-videos",
+      "label": "Vídeos",
+      "category": "places",
+      "context": "Places",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "folder-videos"
+      },
+      "tags": [
+        "vídeos",
+        "videos",
+        "películas"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/folder-videos.svg"
+    },
+    {
+      "name": "user-desktop",
+      "label": "Escritorio",
+      "category": "places",
+      "context": "Places",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "user-desktop"
+      },
+      "tags": [
+        "escritorio",
+        "desktop"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/user-desktop.svg"
+    },
+    {
+      "name": "user-home",
+      "label": "Carpeta personal",
+      "category": "places",
+      "context": "Places",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "user-home"
+      },
+      "tags": [
+        "inicio",
+        "home",
+        "casa",
+        "usuario"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/user-home.svg"
+    },
+    {
+      "name": "folder",
+      "label": "Carpeta",
+      "category": "places",
+      "context": "Places",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "folder-fill-symbolic",
+        "regular": "folder-symbolic"
+      },
+      "tags": [
+        "carpeta",
+        "folder",
+        "directorio"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/folder-symbolic.svg"
+    },
+    {
+      "name": "folder-cloud",
+      "label": "Nube",
+      "category": "places",
+      "context": "Places",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "folder-cloud-fill-symbolic",
+        "regular": "folder-cloud-symbolic"
+      },
+      "tags": [
+        "nube",
+        "cloud",
+        "sincronizar"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/folder-cloud-symbolic.svg"
+    },
+    {
+      "name": "folder-documents",
+      "label": "Documentos",
+      "category": "places",
+      "context": "Places",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "folder-documents-fill-symbolic",
+        "regular": "folder-documents-symbolic"
+      },
+      "tags": [
+        "documentos",
+        "documents"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/folder-documents-symbolic.svg"
+    },
+    {
+      "name": "folder-download",
+      "label": "Descargas",
+      "category": "places",
+      "context": "Places",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "folder-download-symbolic"
+      },
+      "tags": [
+        "descargas",
+        "downloads"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/folder-download-symbolic.svg"
+    },
+    {
+      "name": "folder-music",
+      "label": "Música",
+      "category": "places",
+      "context": "Places",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "folder-music-symbolic"
+      },
+      "tags": [
+        "música",
+        "music",
+        "audio"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/folder-music-symbolic.svg"
+    },
+    {
+      "name": "folder-pictures",
+      "label": "Imágenes",
+      "category": "places",
+      "context": "Places",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "folder-pictures-symbolic"
+      },
+      "tags": [
+        "imágenes",
+        "fotos",
+        "pictures"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/folder-pictures-symbolic.svg"
+    },
+    {
+      "name": "folder-remote",
+      "label": "Red",
+      "category": "places",
+      "context": "Places",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "folder-remote-symbolic"
+      },
+      "tags": [
+        "red",
+        "network",
+        "remoto",
+        "servidor"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/folder-remote-symbolic.svg"
+    },
+    {
+      "name": "folder-videos",
+      "label": "Vídeos",
+      "category": "places",
+      "context": "Places",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "folder-videos-symbolic"
+      },
+      "tags": [
+        "vídeos",
+        "videos",
+        "películas"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/folder-videos-symbolic.svg"
+    },
+    {
+      "name": "user-desktop",
+      "label": "Escritorio",
+      "category": "places",
+      "context": "Places",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "user-desktop-fill-symbolic",
+        "regular": "user-desktop-symbolic"
+      },
+      "tags": [
+        "escritorio",
+        "desktop"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/user-desktop-symbolic.svg"
+    },
+    {
+      "name": "user-home",
+      "label": "Carpeta personal",
+      "category": "places",
+      "context": "Places",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "user-home-fill-symbolic",
+        "regular": "user-home-symbolic"
+      },
+      "tags": [
+        "inicio",
+        "home",
+        "casa",
+        "usuario"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/user-home-symbolic.svg"
     },
     {
       "name": "airplane-mode",
