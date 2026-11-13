@@ -1,163 +1,132 @@
-<p align="center"><img src="assets/branding/BC-icono-midnight-180.png" width="120" alt="BC OS"></p>
+<p align="center">
+  <img src="assets/branding/BC-icono-midnight-512.png" width="140" alt="BC OS">
+</p>
 
-# BC OS
+<h1 align="center">BC OS</h1>
 
-**LIGERO. POTENTE. FLUIDO.** — *Lightweight. Powerful. Fluid.*
+<p align="center"><b>LIGERO. POTENTE. FLUIDO.</b><br>
+Sistema operativo Linux ARM64 creado por <b>Borja Candel</b>, en español por defecto.</p>
 
-Sistema operativo Linux creado por **Borja Candel**. ARM64 · Arch Linux ARM · Español por defecto · Ultraligero · Ultrafluido.
+<p align="center">
+  <img alt="Versión" src="https://img.shields.io/badge/versi%C3%B3n-0.1.x--alpha-2F7BFF">
+  <img alt="Arquitectura" src="https://img.shields.io/badge/arquitectura-ARM64-04111F">
+  <img alt="Base" src="https://img.shields.io/badge/base-Arch%20Linux%20ARM-1793D1">
+  <img alt="Idioma" src="https://img.shields.io/badge/idioma-espa%C3%B1ol%20(es__ES)-C60B1E">
+  <img alt="Estado" src="https://img.shields.io/badge/estado-alpha%20experimental-FFB340">
+</p>
 
-> Estado: **Fase 0/1 — viabilidad y base.** Aún no hay imagen publicada. Ver [`PENDIENTE.md`](PENDIENTE.md).
+<p align="center">
+  <img src="docs/screenshots/bc-os-qemu-aarch64.png" alt="BC Shell arrancando en la imagen ARM64 (QEMU)" width="880">
+  <br><sub>Captura real: BC Shell sobre labwc (Wayland) en la imagen ARM64, arrancada en QEMU con UEFI. Render por software.</sub>
+</p>
+
+> **Estado honesto:** alpha muy temprana. Hay una imagen ARM64 que arranca y un shell que se ve así, pero **el shell aún es un prototipo visual** (Dock, Archivos y Centro de control no son funcionales), **no hay instalador ni ISO todavía** y la imagen **no está validada en VirtualBox ARM64** (ver [problemas conocidos](#problemas-conocidos)).
 
 ---
 
-## 1. Misión
+## Descargar y probar
 
-Un sistema operativo Linux excepcionalmente ligero y rápido, con la elegancia y fluidez de un escritorio moderno inspirado en macOS, pero con identidad visual propia (la del creador, ver `assets/branding/`).
+Última imagen: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Cada release incluye `BC-OS-<versión>-ARM64.vdi.zip` y `SHA256SUMS`.
 
-BC OS combina: flexibilidad de Linux, consumo mínimo de recursos, escritorio acelerado por GPU, animaciones fluidas, identidad visual original, usabilidad, seguridad, estabilidad, distribución internacional y arquitectura mantenible.
+1. Descomprime el `.zip` → `.vdi`. Comprueba `shasum -a 256`.
+2. VirtualBox (Mac Apple Silicon) → **Nueva**: Linux / Arch Linux (ARM 64-bit), ≥ 2 GB RAM, 2 CPU.
+3. **Sistema → Habilitar EFI**. Disco: usar el `.vdi` existente. Gráficos: VMSVGA.
+4. Arranca. Sesión automática como `bc` (contraseña `bcos`, **solo alpha**).
 
-Debe sentirse como un **sistema operativo completo**, no como una distribución Linux modificada, un tema ni una maqueta.
+También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI AAVMF); ver [`docs/development/BUILD.md`](docs/development/BUILD.md).
 
-Prohibido usar código, marcas, iconos, fondos o recursos propietarios de Apple. Todos los recursos son originales de BC OS.
+## Versiones
 
-## 2. Idioma — requisito innegociable
-
-**Todo el sistema está en español (es_ES) por defecto**: arranque, bienvenida, inicio de sesión, bloqueo, escritorio, barra superior, Dock, Archivos, Configuración, Centro de control, Notificaciones, lanzador, tienda, instalador, errores, diálogos, menús de energía, actualizaciones, red, sonido, pantalla, usuarios y documentación de usuario.
-
-| Inglés | BC OS |
-|---|---|
-| Settings | Configuración |
-| Finder / File Manager | Archivos / Gestor de archivos |
-| Control Center | Centro de control |
-| Notifications | Notificaciones |
-| Display | Pantalla |
-| Appearance | Apariencia |
-| Network | Red |
-| Sound | Sonido |
-| Battery | Batería |
-| Applications | Aplicaciones |
-| System Monitor | Monitor del sistema |
-| Software Updates | Actualizaciones |
-
-- Idiomas iniciales: **español (España)** por defecto, **inglés** secundario.
-- Identificadores de código en inglés; todo texto visible pasa por el sistema de localización compartido (Qt Linguist `.ts` / gettext).
-- Preparado para nuevas traducciones sin reescribir aplicaciones. Unicode, distribuciones de teclado, formatos regionales, fechas, zonas horarias, alto contraste y movimiento reducido.
-
-## 3. Identidad visual
-
-Basada en los logos BC del creador (`assets/branding/`):
-
-| Token | Valor | Uso |
+| Versión | Estado | Qué trae |
 |---|---|---|
-| Azul noche | `#04111F` | fondo principal / logo sobre claro |
-| Blanco BC | `#F5F5F7` | texto y logo sobre oscuro |
-| Plata | `#F6F8FC → #D5DCE8 → #A1ADC0` | degradado del logo, acentos premium |
-| Midnight | radial `#3A4A66 → #0B1019` | fondos, icono del sistema |
+| `0.1.0-alpha` | publicada | Primera imagen ARM64: arranca en QEMU; en VirtualBox falla el `fsck` del root (ver abajo). |
+| `0.1.1-alpha` | en construcción | Mitigación del fallo de arranque (`fsck.mode=skip`, ext4 con journal). **Sin validar en VirtualBox.** |
+| `0.2.0` | planificada | BC Shell funcional (Dock, lanzador, Centro de control). |
+| `0.3.0` → `1.0.0` | planificadas | Apps nativas, instalador, beta y primera estable. Son hitos, no promesas. |
 
-El sistema de diseño completo (paleta, tipografía, espaciado, radios, sombras, transparencias, iconos, componentes, animaciones, accesibilidad, ventanas, escritorio, apps) vivirá en [`docs/design/BC-DESIGN-SYSTEM.md`](docs/design/BC-DESIGN-SYSTEM.md) con tokens reutilizables. Un único lenguaje visual para todo el sistema.
+## Capturas
 
-## 4. Plataforma
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/bc-shell-captura-es.png" alt="BC Shell"><br><sub><b>BC Shell</b> (prototipo QML, captura generada por el propio shell en pruebas).</sub></td>
+    <td width="50%"><img src="docs/design/reference/escritorio-referencia-01.webp" alt="Referencia visual"><br><sub><b>Referencia visual</b> del creador: el objetivo de diseño, no una captura del sistema.</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/icon-pack-catalogo.png" alt="Catálogo de iconos"><br><sub><b>Pack de iconos BC</b> (catálogo real, en construcción por lotes).</sub></td>
+    <td><img src="docs/screenshots/virtualbox-arranque.png" alt="Arranque en VirtualBox"><br><sub><b>VirtualBox ARM64</b>: menú de arranque de BC OS 0.1.0-alpha (systemd-boot).</sub></td>
+  </tr>
+</table>
 
-- **Solo ARM64 (AArch64)** en la versión inicial. Arquitectura extensible a otras plataformas en el futuro.
-- Host de desarrollo del creador: **Mac Apple Silicon**. Virtualización: **Oracle VirtualBox ARM64**.
-- No se asume ninguna capacidad gráfica de VirtualBox sin probarla; limitaciones y alternativas documentadas en [`docs/development/ARM64.md`](docs/development/ARM64.md).
-- Host, VM, distribución e imagen descargable se validan por separado.
+## Problemas conocidos
 
-## 5. Base del sistema
-
-Arch Linux ARM (aarch64) · kernel Linux (sin kernel propio inicialmente) · systemd · Wayland · Mesa · PipeWire · NetworkManager · zram · arranque UEFI · pacman · paquetes base mínimos.
-
-## 6. Tecnologías
-
-| Lenguaje | Uso |
-|---|---|
-| **Rust** | servicios del sistema, hardware, actualizaciones, seguridad, monitorización, procesos en segundo plano |
-| **C / C++** | integración de bajo nivel, gráficos, componentes críticos |
-| **Qt 6 / QML** | BC Shell, Dock, lanzador, Configuración, Centro de control, notificaciones, apps nativas, animaciones |
-| **Bash** | build, instalación, administración, automatización |
-| **Python** | tests, análisis de benchmarks, utilidades |
-
-Sin Electron en el núcleo. Tecnologías nativas y ligeras.
-
-## 7. BC Shell — entorno de escritorio propio
-
-- **BC Dock** — flotante inferior, magnificación, indicadores de apps abiertas, menús contextuales, minimizar al Dock, personalización, teclado.
-- **BC Barra superior** — menú de app, reloj y fecha, red, audio, batería, indicadores, acceso al Centro de control.
-- **BC Lanzador** — búsqueda, cuadrícula de apps, teclado, apertura instantánea.
-- **BC Mission Control** — vista de ventanas, escritorios virtuales, previsualizaciones.
-- **BC Centro de control** — Wi-Fi, Bluetooth, audio, brillo, pantalla, energía, ajustes rápidos.
-- **BC Notificaciones** — centro, historial, No molestar.
-- **BC Archivos** — cuadrícula/lista, barra lateral, ruta, búsqueda, operaciones, vista previa, atajos.
-- **BC Configuración** — Pantalla, Apariencia, Red, Sonido, Energía, Teclado, Ratón, Usuarios, Seguridad, Actualizaciones.
-- **BC Monitor** — CPU, RAM, GPU, temperatura, almacenamiento, procesos, red.
-- **BC Terminal** — terminal nativo rápido, compatible con shells estándar.
-- **BC Store** — gestión gráfica de software sobre pacman.
-
-Componentes independientes: el fallo de una app opcional no tumba el escritorio.
-
-## 8. Gráficos y animación
-
-- Wayland obligatorio. Se reutiliza un compositor existente (KWin / wlroots / otro justificado); no se escribe un compositor propio antes de tener el shell funcionando.
-- Aceleración GPU, frame pacing, VSync, escalado, multimonitor, 60 Hz y superiores, alternativas por software.
-- Animaciones: abrir/cerrar/minimizar/maximizar ventanas, magnificación del Dock, Mission Control, escritorios, Centro de control, notificaciones, menús, popovers, navegación en Archivos. Curvas suaves, sin blur caro por CPU, carga diferida, modo de movimiento reducido.
-- Objetivos (no garantías): 60 FPS en hardware capaz, 120 FPS donde se soporte, latencia mínima. Siempre medido antes de afirmarlo.
-
-## 9. Rendimiento
-
-Objetivos sobre una VM de referencia documentada: **RAM en reposo ≤ 700 MB**, **CPU en reposo ≈ ≤ 2 %**, pocos servicios, arranque rápido, poco disco. Scripts de benchmark automáticos (RAM, CPU, arranque, login, apertura de apps, FPS, frame time, disco, procesos, GPU). Sin sacrificar seguridad ni estabilidad.
-
-## 10. BC Core (Rust)
-
-`bc-daemon`, `bc-settings-service`, `bc-update-service`, `bc-security-service`, `bc-hardware-service`, `bc-performance-service`. D-Bus, mínimo privilegio, logs estructurados, IPC fiable, límites de módulo claros.
-
-## 11. Seguridad
-
-Permisos seguros, cortafuegos (nftables), verificación de firmas de paquetes, actualizaciones seguras, cifrado de disco opcional, separación de usuarios, servicios privilegiados mínimos, gestión segura de credenciales. Sin criptografía casera. Ver [`SECURITY.md`](SECURITY.md).
-
-## 12. Paquetes y BC Store
-
-Se mantiene pacman / repos de Arch Linux ARM. BC Store es una interfaz gráfica (buscar, explorar, instalar, eliminar, actualizar, info). Sin formato de paquete propio en la primera versión.
-
-## 13. Instalación y distribución
-
-Imagen ARM64 arrancable descargable desde **GitHub Releases** + SHA256 + notas + instrucciones + problemas conocidos. Instalador: usuario, locale español, teclado, zona horaria, red, particionado, cifrado opcional, primer arranque, marca BC OS. No se publica ninguna imagen sin probarla.
-
-Versiones (hitos, no promesas): `0.1.0` base · `0.2.0` prototipo BC Shell · `0.3.0` componentes de escritorio · `0.4.0` apps nativas · `0.5.0` sistema integrado · `0.8.0` beta · `1.0.0` primera estable.
-
-## 14. Hoja de ruta
-
-| Fase | Contenido |
-|---|---|
-| 0 Viabilidad | repo, host, VirtualBox ARM64, Arch Linux ARM, gráficos, formato de imagen, decisiones |
-| 1 Base | estructura, toolchain, sistema mínimo ARM64 arrancando en VirtualBox |
-| 2 BC Shell | sesión gráfica, barra superior, Dock, lanzador, gestión de ventanas |
-| 3 Identidad visual | design system, modo claro/oscuro, componentes, animaciones |
-| 4 Aplicaciones | Archivos, Configuración, Monitor, Terminal, Store |
-| 5 Integración | servicios, red, audio, hardware, seguridad, actualizaciones |
-| 6 Optimización | benchmarks, perfilado, renderizado, distintas VMs |
-| 7 Instalador | imagen ARM64, instalación, arranque, recuperación |
-| 8 Beta pública | docs, Releases, checksums, instrucciones, beta testing |
-
-Hitos técnicos: **(1)** sistema Linux ARM64 real arrancando en VirtualBox · **(2)** BC Shell funcionando en él · **(3)** imagen BC OS descargable y reproducible.
-
-## 15. Reglas de desarrollo
-
-Código mantenible, módulos pequeños, sin implementaciones falsas, nada sin probar, nada de hardware inventado, seguridad intacta, decisiones documentadas (`docs/adr/`), tests frecuentes, commits con sentido, español primero, solo ARM64, optimizar midiendo, builds reproducibles. Nunca credenciales en el repo. Sin force-push.
-
-Reglas de trabajo de agentes en [`CLAUDE.md`](CLAUDE.md). Tareas en [`PENDIENTE.md`](PENDIENTE.md).
-
-## 16. Estructura del repositorio
-
-```
-assets/branding/   logos e iconos oficiales BC
-build/             pipeline de imagen ARM64 (paquetes, overlay, scripts)
-core/              servicios BC Core (Rust)
-shell/             BC Shell (Qt 6 / QML)
-docs/              diseño, desarrollo, ADRs
-tools/             utilidades (diagnóstico de host, benchmarks)
-.github/workflows/ CI en runners ARM64
-```
+- **VirtualBox:** con `0.1.0-alpha` el kernel arranca pero `systemd-fsck` falla sobre `bc-root` y cae a modo emergencia (root bloqueado). No se reproduce en QEMU. `0.1.1-alpha` aplica una mitigación; la causa raíz sigue sin identificar.
+- El layout del shell está diseñado para 1586×992 y se solapa en pantallas menores.
+- Sin instalador ni ISO. Contraseña por defecto pública (solo alpha).
+- Rendimiento no medido; los objetivos de abajo son metas, no resultados.
 
 ---
 
-© Borja Candel. Licencia: ver [`LICENSE`](LICENSE) (pendiente).
+## Qué es BC OS
+
+Un Linux ARM64 **ligero, fluido y en español**, con un escritorio propio (**BC Shell**) de estética minimal inspirada en macOS pero con identidad original (logos en [`assets/branding/`](assets/branding/)). No usa código, marcas ni recursos de Apple.
+
+| Pieza | Elección |
+|---|---|
+| Base | Arch Linux ARM (aarch64), kernel Linux estándar, systemd, pacman |
+| Gráficos | Wayland · compositor **labwc** (wlroots) · Mesa; respaldo por software |
+| Shell | **BC Shell**: Qt 6 / QML |
+| Servicios | **BC Core**: Rust + D-Bus (`bc-daemon`, settings, update, security, hardware, performance) |
+| Sistema | PipeWire · NetworkManager · zram · nftables · arranque UEFI con systemd-boot |
+| Idioma | `es_ES` por defecto, inglés secundario (Qt Linguist) |
+| Imagen | GPT: ESP FAT32 + ext4, construida en CI ARM64 nativo |
+
+Decisiones y motivos: [`ARCHITECTURE.md`](ARCHITECTURE.md) y [`docs/adr/`](docs/adr/).
+
+## Estado por componente
+
+| Componente | Estado |
+|---|---|
+| Imagen ARM64 (arranque UEFI, sesión gráfica automática) | ✅ arranca en QEMU · ⚠️ falla en VirtualBox (0.1.0) |
+| BC Shell (barra, Dock, Archivos, Centro de control, notificación) | 🟡 prototipo visual, tests `ctest` 3/3 |
+| BC Core (6 servicios D-Bus) | ✅ `fmt`, `clippy`, 23 tests; probado en bus de sesión |
+| Pack de iconos | 🟡 lote A (UI, 102 iconos); lotes B (apps) y C (lugares/MIME/dispositivos) en curso |
+| Instalador (`bc-install`) | 🟡 en desarrollo, no publicado |
+| ISO con instalador | ⛔ pendiente |
+| Benchmarks / optimización | ⛔ pendiente |
+
+## Objetivos (a medir, no garantizados)
+
+RAM en reposo ≤ 700 MB · CPU en reposo ≈ ≤ 2 % · 60 FPS (120 donde se pueda) · arranque rápido. Se medirán sobre una VM de referencia documentada antes de afirmar nada.
+
+## Hoja de ruta
+
+`0` Viabilidad ✅ → `1` Base ✅ (arranca) → `2` BC Shell 🟡 → `3` Identidad visual 🟡 → `4` Apps → `5` Integración → `6` Optimización → `7` Instalador → `8` Beta pública. Detalle en [`ROADMAP.md`](ROADMAP.md) y trabajo vivo en [`PENDIENTE.md`](PENDIENTE.md).
+
+## Estructura del repositorio
+
+```
+assets/branding/    logos e iconos oficiales BC
+build/              pipeline de imagen (build-all, mkimage, rootfs, overlay)
+core/               BC Core (Rust)
+shell/              BC Shell (Qt 6 / QML)
+icons/              pack de iconos (SPEC, fuentes SVG, build, lint, catálogo)
+docs/               diseño, desarrollo, ADRs, capturas
+tools/              diagnóstico de host, utilidades
+.github/workflows/  CI en runners ARM64 (ci.yml, image.yml)
+```
+
+## Construir
+
+```bash
+sudo build/build-all.sh 0.1.1-alpha      # imagen completa (host ARM64 o x86_64 con qemu-user)
+```
+
+En GitHub: **Actions → Imagen ARM64 → Run workflow** (opción *publicar* crea un prerelease). Guía completa: [`docs/development/BUILD.md`](docs/development/BUILD.md), pruebas: [`TESTING.md`](docs/development/TESTING.md), ARM64/VirtualBox: [`ARM64.md`](docs/development/ARM64.md).
+
+## Principios
+
+Español primero · solo ARM64 · nada de afirmar lo no probado · seguridad intacta · optimizar midiendo · builds reproducibles · sin credenciales en el repo. Normas en [`CONTRIBUTING.md`](CONTRIBUTING.md) y [`SECURITY.md`](SECURITY.md). Reglas para agentes: [`CLAUDE.md`](CLAUDE.md).
+
+---
+
+<p align="center">© Borja Candel · Licencia GPL-3.0-or-later con marca y logos reservados (ver <a href="LICENSE"><code>LICENSE</code></a>)</p>
