@@ -19,7 +19,9 @@ bc_mount() {
 
 bc_umount() {
   local r="$1"
-  for d in dev sys proc; do umount -R "$r/$d" 2>/dev/null || true; done
+  for d in dev sys proc; do
+    mountpoint -q "$r/$d" && { umount -R "$r/$d" 2>/dev/null || umount -R -l "$r/$d" 2>/dev/null || true; }
+  done
 }
 
 bc_chroot() {

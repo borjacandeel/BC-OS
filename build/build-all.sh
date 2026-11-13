@@ -29,7 +29,7 @@ bash "$HERE/configure-rootfs.sh" "$R"
 
 IMG="$OUT/BC-OS-$VER-ARM64.img"
 bash "$HERE/mkimage.sh" "$R" "$IMG" 6144
-rm -rf "$R"
+if grep -q " $(realpath "$R")/" /proc/self/mountinfo; then echo "Aviso: quedan montajes en $R; no se borra"; else rm -rf --one-file-system "$R"; fi
 qemu-img convert -f raw -O vdi "$IMG" "$OUT/BC-OS-$VER-ARM64.vdi"
 rm -f "$IMG" "$IMG.sha256"
 (cd "$OUT" && zip -q -6 "BC-OS-$VER-ARM64.vdi.zip" "BC-OS-$VER-ARM64.vdi" && rm -f "BC-OS-$VER-ARM64.vdi" && sha256sum "BC-OS-$VER-ARM64.vdi.zip" > SHA256SUMS && cat SHA256SUMS)

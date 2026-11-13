@@ -9,6 +9,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - ARM64 únicamente. Base Arch Linux ARM.
 
 ## En curso
+- [ ] Build 0.1.2-alpha FALLÓ en Actions: `rm -rf $R` tras mkimage recorrió /sys y /dev aún montados (bind) → mount busy, borró /dev/null del runner. Fix: bc_umount con respaldo lazy y `rm -rf --one-file-system`. Relanzar build.
 - [x] DECISIÓN del creador (2026-11-13): se mantiene **labwc (Wayland), estilo macOS, súper ligero y animado**. NO bspwm/Hyprland. Nota técnica: labwc no anima ventanas por sí mismo; animaciones de Dock/menús/paneles las hace BC Shell (QML); animación de ventanas (abrir/cerrar/minimizar) queda como investigación (p. ej. fork con scenefx o compositor propio sobre wlroots, ADR nueva), siempre con respaldo por software para VirtualBox.
 - [ ] SSH por defecto (pedido del creador): openssh instalado y `sshd` activado SIEMPRE en la imagen; nftables abre 22/tcp; `PermitRootLogin no`. Solo alpha: contraseña `bcos` pública → riesgo si la VM está en red puenteada (el instalador/primer arranque debe forzar cambio o usar clave). VirtualBox NAT: reenvío de puertos host 2222 → invitado 22. Rebuild 0.1.2-alpha con SSH.
 - [ ] BUG VirtualBox: CAUSA confirmada con capturas del creador: labwc cae con "VMware: No 3D enabled / EGL_NOT_INITIALIZED / unable to create renderer" (vmwgfx sin 3D) → sesión tty1 muere → getty en bucle → pantalla negra. Fix en `bc-session`: WLR_RENDERER=pixman siempre + QT_QUICK_BACKEND=software + shell cae a bash con log. Build 0.1.2-alpha lanzado en Actions (publicar=true). PENDIENTE: que el creador la pruebe; si labwc con pixman falla en vmwgfx, ver WLR_DRM_DEVICES / backend headless o fbdev.
@@ -23,7 +24,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] Iconos LOTE B (icon-designer): 16 apps squircle 1024 en `icons/src/app/apps` con @32/@16, lint 0 errores.
 - [x] Iconos LOTE C (icon-designer): lugares, MIME y dispositivos (54 SVG color/symbolic, @16 de carpeta y texto), lint 0 errores.
 - [ ] Layout de BC Shell responsive (hoy fijo a 1586x992, se solapa en 1280x800). Dock/Archivos/Centro de control sin funcionalidad.
-- [ ] LÍMITE HOY: trabajar hasta las 20:30 (Europe/Madrid, 2026-11-13). A esa hora: terminar lo que esté en marcha, subir a main y parar. Sin tareas nuevas.
+- [ ] LÍMITE HOY (ampliado por el creador): trabajar hasta las 21:30 (Europe/Madrid, 2026-11-13). A esa hora: terminar lo que esté en marcha, subir a main y parar. Sin tareas nuevas.
 - [ ] Subagente `instalador` escribiendo `build/installer/bc-install` (probado vía losetup + QEMU). Después: ISO live (squashfs + hook initramfs + xorriso EFI).
 - [ ] PRIORIDAD (creador): ISO/imagen de instalación con instalador (particionado, montaje, GRUB/systemd-boot, usuario, locale, cifrado opcional) y probar en VirtualBox ARM64. Hoy: imagen raw "live-disk" arrancable; instalador sin hacer. Entregable provisional: pre-release en GitHub (requiere autorización del creador) + `VBoxManage convertfromraw`.
 - [ ] Fase 2: pila gráfica en la imagen (labwc, Qt6 runtime, seatd, fuentes Inter) + autostart de BC Shell + autologin/greeter.
