@@ -9,6 +9,8 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - ARM64 únicamente. Base Arch Linux ARM.
 
 ## En curso
+- [ ] Release alpha: sesión local no puede crear releases (403) ni enviar >500 MB. Se construye en Actions (`image.yml`, `build/build-all.sh`) con `publicar=true` → prerelease `v0.1.0-alpha`. Verificar resultado en Actions.
+- [ ] Layout de BC Shell responsive (hoy fijo a 1586x992, se solapa en 1280x800). Dock/Archivos/Centro de control sin funcionalidad.
 - [ ] LÍMITE HOY: trabajar hasta las 20:30 (Europe/Madrid, 2026-11-13). A esa hora: terminar lo que esté en marcha, subir a main y parar. Sin tareas nuevas.
 - [ ] Subagente `instalador` escribiendo `build/installer/bc-install` (probado vía losetup + QEMU). Después: ISO live (squashfs + hook initramfs + xorriso EFI).
 - [ ] PRIORIDAD (creador): ISO/imagen de instalación con instalador (particionado, montaje, GRUB/systemd-boot, usuario, locale, cifrado opcional) y probar en VirtualBox ARM64. Hoy: imagen raw "live-disk" arrancable; instalador sin hacer. Entregable provisional: pre-release en GitHub (requiere autorización del creador) + `VBoxManage convertfromraw`.
@@ -42,6 +44,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] Benchmarks, instalador, releases.
 
 ## Hecho
+- HITO 2: BC Shell corre sobre labwc en la imagen ARM64 (QEMU UEFI + virtio-gpu, render por software). Captura verificada.
 - Fase 1 HITO 1: imagen raw GPT ARM64 (`build/mkimage.sh`) arranca en QEMU UEFI hasta `bcos login:` (systemd 7.3.4 ALARM, es_ES, zram, nftables, NetworkManager). Usuario `bc`/`bcos` ; root bloqueado; /home/bc y /root con carpetas en español.
 - Docs completas, design system y tokens (subagente docs) en main.
 - BC Shell prototipo QML con ctest 3/3 (subagente shell) en main.

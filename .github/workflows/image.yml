@@ -1,52 +1,58 @@
 name: Imagen ARM64
 
-# Construye la imagen de BC OS y genera su SHA256. NO publica ningún release.
+# Construye la imagen de BC OS (runner ARM64 nativo). Solo publica un prerelease si se marca "publicar".
 on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Etiqueta de versión de la imagen (p. ej. 0.1.0-dev)"
+        description: "Versión (p. ej. 0.1.0-alpha)"
         required: false
-        default: "0.1.0-dev"
+        default: "0.1.0-alpha"
+      publicar:
+        description: "Publicar como PRERELEASE en GitHub Releases"
+        type: boolean
+        default: false
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   imagen:
     name: Imagen BC OS (ARM64 nativo)
     runs-on: ubuntu-24.04-arm
-    timeout-minutes: 120
+    timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - name: Verificar arquitectura
         run: test "$(uname -m)" = "aarch64"
-      - name: Comprobar script de imagen
-        run: test -x build/mkimage.sh || { echo "::error::build/mkimage.sh no existe o no es ejecutable"; exit 1; }
-      - name: Instalar herramientas de imagen
+      - name: Liberar disco
+        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache 2>/dev/null || true; df -h /
+      - name: Instalar herramientas
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends \
-            libarchive-tools dosfstools mtools e2fsprogs fdisk zstd qemu-utils rsync curl ca-certificates
+          sudo apt-get install -y --no-install-recommends libarchive-tools dosfstools mtools e2fsprogs fdisk zstd qemu-utils rsync curl ca-certificates zip
       - name: Construir imagen
-        env:
-          BC_VERSION: ${{ inputs.version }}
-        run: sudo -E build/mkimage.sh
-      - name: Generar SHA256
-        run: |
-          cd build/out 2>/dev/null || cd out
-          sha256sum BC-OS-*.img* > SHA256SUMS
-          cat SHA256SUMS
+        run: sudo build/build-all.sh "${{ inputs.version }}" "$RUNNER_TEMP/bcwork"
       - name: Verificar integridad
-        run: |
-          cd build/out 2>/dev/null || cd out
-          sha256sum --check SHA256SUMS
-      - name: Guardar artefactos
+        run: cd build/out && sha256sum --check SHA256SUMS
+      - name: Guardar artefacto
         uses: actions/upload-artifact@v4
         with:
           name: bc-os-arm64-${{ inputs.version }}
           path: |
-            build/out/BC-OS-*
+            build/out/*.zip
             build/out/SHA256SUMS
           if-no-files-found: error
+          compression-level: 0
           retention-days: 14
+      - name: Publicar prerelease
+        if: ${{ inputs.publicar }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ inputs.version }}
+          name: BC OS ${{ inputs.version }} (ARM64)
+          prerelease: true
+          body_path: build/RELEASE-NOTES.md
+          files: |
+            build/out/*.zip
+            build/out/SHA256SUMS
