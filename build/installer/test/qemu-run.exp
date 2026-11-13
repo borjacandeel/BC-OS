@@ -1,0 +1,46 @@
+#!/usr/bin/expect -f
+# Arranca QEMU aarch64 UEFI y automatiza la consola serie.
+# Uso: qemu-run.exp <install|boot> <disco1.img> [disco2.img] [clave_luks] [timeout_s]
+#   install : disco1 = live (arranca, ejecuta bc-test-run, se apaga), disco2 = destino
+#   boot    : disco1 = destino instalado; si hay clave_luks la envía en el prompt; espera "bcos... login:"
+set mode [lindex $argv 0]
+set d1 [lindex $argv 1]
+set d2 [lindex $argv 2]
+set luks [lindex $argv 3]
+set tmo [lindex $argv 4]
+if {$tmo eq ""} { set tmo 1800 }
+set timeout $tmo
+set w /home/user/bcwork
+exec cp /usr/share/AAVMF/AAVMF_VARS.fd $w/vars.fd
+exec truncate -s 64M $w/vars.fd
+exec cp /usr/share/AAVMF/AAVMF_CODE.fd $w/code.fd
+exec truncate -s 64M $w/code.fd
+set cmd [list qemu-system-aarch64 -M virt -cpu cortex-a72 -m 3072 -smp 4 -nographic \
+  -drive if=pflash,format=raw,readonly=on,file=$w/code.fd -drive if=pflash,format=raw,file=$w/vars.fd \
+  -drive file=$d1,format=raw,if=none,id=d0 -device virtio-blk-pci,drive=d0]
+if {$d2 ne "" && $d2 ne "-"} { lappend cmd -drive file=$d2,format=raw,if=none,id=d1 -device virtio-blk-pci,drive=d1 }
+lappend cmd -netdev user,id=n0 -device virtio-net-pci,netdev=n0
+log_user 1
+eval spawn $cmd
+if {$mode eq "install"} {
+  expect {
+    -re {BCTEST-END rc=(\d+)} { set rc $expect_out(1,string) }
+    timeout { puts "\nTIMEOUT-INSTALL"; exit 2 }
+    eof { puts "\nEOF-INSTALL"; exit 3 }
+  }
+  expect eof
+  puts "\nRESULTADO-INSTALL rc=$rc"
+  exit [expr {$rc == 0 ? 0 : 1}]
+} else {
+  if {$luks ne "" && $luks ne "-"} {
+    expect {
+      -re {(?i)(passphrase|password|contrase)[^\r\n]*:} { send -- "$luks\r" }
+      timeout { puts "\nTIMEOUT-PROMPT-LUKS"; exit 2 }
+    }
+  }
+  expect {
+    -re {bcos[a-z]* login:} { puts "\nRESULTADO-BOOT login-alcanzado"; exit 0 }
+    timeout { puts "\nTIMEOUT-BOOT"; exit 2 }
+    eof { puts "\nEOF-BOOT"; exit 3 }
+  }
+}

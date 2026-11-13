@@ -1,0 +1,440 @@
+#!/usr/bin/env bash
+# bc-install — instalador de BC OS (ARM64). Asistente interactivo (whiptail/dialog) o --auto.
+# Textos de usuario en lang/*.sh. Las contraseñas nunca se pasan por argumentos ni se registran.
+set -Eeuo pipefail
+
+HERE="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+ESP_MIB=512
+
+SOURCE=/
+UI_LANG="${BC_INSTALL_LANG:-es_ES}"
+LOG=/var/log/bc-install.log
+DRY=0 AUTO=0 ENCRYPT=0
+DISK="" USER_NAME="" PW_FILE="" LUKS_FILE=""
+HOST_NAME=bcos KEYMAP=es TZONE=Europe/Madrid LOCALE=es_ES.UTF-8
+PW="" LUKS_PW=""
+TARGET="" CRYPT_OPEN=0 CRYPT_NAME=bc-root KEYTMP="" TUI=""
+STEP_PCT=0
+
+load_lang() {
+  local f="$HERE/lang/$1.sh"
+  [[ -f "$f" ]] || f="$HERE/lang/es_ES.sh"
+  # shellcheck disable=SC1090
+  source "$f"
+}
+load_lang "$UI_LANG"
+
+say()  { printf '%s\n' "$*" >&2; }
+fmt()  { local f="$1"; shift; printf "$f" "$@"; }
+die()  { say "ERROR: $*"; exit 1; }
+log()  { printf '%s %s\n' "$(date '+%F %T')" "$*" >>"$LOG" 2>/dev/null || true; }
+
+# ---------- Argumentos ----------
+while (($#)); do
+  case "$1" in
+    --auto) AUTO=1 ;;
+    --disk) DISK="${2:?}"; shift ;;
+    --user) USER_NAME="${2:?}"; shift ;;
+    --password-file) PW_FILE="${2:?}"; shift ;;
+    --encrypt) ENCRYPT=1 ;;
+    --luks-passphrase-file) LUKS_FILE="${2:?}"; shift ;;
+    --hostname) HOST_NAME="${2:?}"; shift ;;
+    --keymap) KEYMAP="${2:?}"; shift ;;
+    --timezone) TZONE="${2:?}"; shift ;;
+    --locale) LOCALE="${2:?}"; shift ;;
+    --source) SOURCE="${2:?}"; shift ;;
+    --lang) UI_LANG="${2:?}"; load_lang "$UI_LANG"; shift ;;
+    --log) LOG="${2:?}"; shift ;;
+    --dry-run) DRY=1 ;;
+    -h|--help) printf '%b\n' "$S_USAGE"; exit 0 ;;
+    *) die "opción desconocida / unknown option: $1" ;;
+  esac
+  shift
+done
+SOURCE="${SOURCE%/}"; [[ -n "$SOURCE" ]] || SOURCE=/
+
+# ---------- Utilidades ----------
+need() { command -v "$1" >/dev/null 2>&1 || die "$(fmt "$S_NEED_TOOL" "$1")"; }
+
+run() {
+  if ((DRY)); then printf '+ %s\n' "$*"; return 0; fi
+  log "+ $*"
+  "$@" >>"$LOG" 2>&1
+}
+
+# Escribe fichero en el destino (respeta --dry-run)
+put() { # put <ruta> <modo>  (contenido por stdin)
+  local path="$1" mode="${2:-644}"
+  if ((DRY)); then printf '+ escribir %s (modo %s)\n' "$path" "$mode"; cat >/dev/null; return 0; fi
+  mkdir -p "$(dirname "$path")"; cat >"$path"; chmod "$mode" "$path"
+}
+
+progress() { STEP_PCT=$((STEP_PCT + ${2:-10})); say "[${STEP_PCT}%] $1"; log "== $1"; }
+
+part_path() { local d="$1" n="$2"; if [[ "$d" =~ [0-9]$ ]]; then printf '%sp%s' "$d" "$n"; else printf '%s%s' "$d" "$n"; fi; }
+
+wait_node() { # wait_node <dispositivo>
+  local dev="$1" i base maj
+  for i in $(seq 1 50); do [[ -b "$dev" ]] && return 0; sleep 0.2; done
+  base="$(basename "$dev")"
+  if [[ -r "/sys/class/block/$base/dev" ]]; then
+    maj="$(cat "/sys/class/block/$base/dev")"
+    mknod "$dev" b "${maj%%:*}" "${maj##*:}" 2>/dev/null || true
+  fi
+  [[ -b "$dev" ]] || die "$(fmt "$S_DISK_BAD" "$dev")"
+}
+
+# ---------- Interfaz ----------
+tui_pick() { if command -v whiptail >/dev/null 2>&1; then TUI=whiptail; elif command -v dialog >/dev/null 2>&1; then TUI=dialog; else die "$S_NEED_TUI"; fi; }
+ui_msg()    { "$TUI" --title "$S_TITLE" --msgbox "$(printf '%b' "$1")" 16 70; }
+ui_yesno()  { "$TUI" --title "$S_TITLE" --yesno "$(printf '%b' "$1")" 18 70; }
+ui_input()  { "$TUI" --title "$S_TITLE" --inputbox "$(printf '%b' "$1")" 10 70 "${2:-}" 3>&1 1>&2 2>&3; }
+ui_pass()   { "$TUI" --title "$S_TITLE" --passwordbox "$1" 10 70 3>&1 1>&2 2>&3; }
+ui_menu()   { local prompt="$1"; shift; "$TUI" --title "$S_TITLE" --menu "$prompt" 22 74 12 "$@" 3>&1 1>&2 2>&3; }
+
+ask_password() { # ask_password <etiqueta1> <etiqueta2> → stdout
+  local a b
+  while :; do
+    a="$(ui_pass "$1")" || return 1
+    b="$(ui_pass "$2")" || return 1
+    [[ -n "$a" ]] || { ui_msg "$S_PASS_EMPTY"; continue; }
+    [[ "$a" == "$b" ]] && { printf '%s' "$a"; return 0; }
+    ui_msg "$S_PASS_MISMATCH"
+  done
+}
+
+# ---------- Discos ----------
+live_disks() { # discos físicos que contienen el sistema en ejecución o el origen
+  local m src
+  for m in / /run/archiso/bootmnt /run/live/medium /run/bc-live; do
+    src="$(findmnt -no SOURCE "$m" 2>/dev/null || true)"; src="${src%%[*}"
+    [[ -b "$src" ]] || continue
+    lsblk -nsrpo NAME,TYPE "$src" 2>/dev/null | awk '$2=="disk"{print $1}'
+  done | sort -u
+}
+
+disk_mounted() { lsblk -nro MOUNTPOINTS "$1" 2>/dev/null | grep -q .; }
+
+validate_disk() {
+  [[ -b "$DISK" ]] || die "$(fmt "$S_DISK_BAD" "$DISK")"
+  if live_disks | grep -qx "$DISK"; then die "$(fmt "$S_DISK_LIVE" "$DISK")"; fi
+  if disk_mounted "$DISK"; then die "$(fmt "$S_DISK_MOUNTED" "$DISK")"; fi
+}
+
+choose_disk() {
+  local live items=() name size model
+  live="$(live_disks)"
+  while read -r name size model; do
+    grep -qx "$name" <<<"$live" && continue
+    disk_mounted "$name" && continue
+    items+=("$name" "${size} ${model//\\x20/ }")
+  done < <(lsblk -dnpr -o NAME,SIZE,MODEL -e 1,2,7,11,252 2>/dev/null)
+  ((${#items[@]})) || { ui_msg "$S_NO_DISKS"; return 1; }
+  DISK="$(ui_menu "$S_CHOOSE_DISK" "${items[@]}")" || return 1
+}
+
+# ---------- Validaciones ----------
+validate_params() {
+  [[ "$USER_NAME" =~ ^[a-z_][a-z0-9_-]{0,31}$ ]] || die "$(fmt "$S_USER_BAD" "$USER_NAME")"
+  [[ "$HOST_NAME" =~ ^[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?$ ]] || die "$(fmt "$S_HOSTNAME_BAD" "$HOST_NAME")"
+  [[ "$LOCALE" == es_ES.UTF-8 || "$LOCALE" == en_US.UTF-8 ]] || die "$(fmt "$S_LOCALE_BAD" "$LOCALE")"
+  [[ "$TZONE" =~ ^[A-Za-z0-9_+/-]+$ && "$TZONE" != *..* ]] || die "$(fmt "$S_TZ_BAD" "$TZONE")"
+  [[ -f "$SOURCE/usr/share/zoneinfo/$TZONE" ]] || die "$(fmt "$S_TZ_BAD" "$TZONE")"
+  [[ "$KEYMAP" =~ ^[A-Za-z0-9_.-]+$ ]] || die "$(fmt "$S_USER_BAD" "$KEYMAP")"
+  local f
+  for f in boot/Image usr/lib/systemd/boot/efi/systemd-bootaa64.efi; do
+    [[ -e "$SOURCE/$f" ]] || die "$(fmt "$S_NO_SRC" "$SOURCE" "$f")"
+  done
+}
+
+# ---------- Asistente interactivo ----------
+wizard() {
+  tui_pick
+  ui_msg "$S_WELCOME"
+  choose_disk || { say "$S_CANCELLED"; exit 1; }
+  validate_disk
+  local word
+  word="$(ui_input "$(fmt "$S_ERASE_PROMPT" "$DISK")")" || { say "$S_CANCELLED"; exit 1; }
+  [[ "$word" == "$S_ERASE_WORD" ]] || { say "$S_CANCELLED"; exit 1; }
+  if ui_yesno "$S_ENCRYPT_ASK"; then
+    ENCRYPT=1
+    LUKS_PW="$(ask_password "$S_PASS_LUKS" "$S_PASS_LUKS2")" || { say "$S_CANCELLED"; exit 1; }
+  fi
+  while :; do
+    HOST_NAME="$(ui_input "$S_HOSTNAME" "$HOST_NAME")" || { say "$S_CANCELLED"; exit 1; }
+    [[ "$HOST_NAME" =~ ^[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?$ ]] && break
+    ui_msg "$(fmt "$S_HOSTNAME_BAD" "$HOST_NAME")"
+  done
+  while :; do
+    USER_NAME="$(ui_input "$S_USER" "")" || { say "$S_CANCELLED"; exit 1; }
+    [[ "$USER_NAME" =~ ^[a-z_][a-z0-9_-]{0,31}$ ]] && break
+    ui_msg "$(fmt "$S_USER_BAD" "$USER_NAME")"
+  done
+  PW="$(ask_password "$(fmt "$S_PASS" "$USER_NAME")" "$S_PASS2")" || { say "$S_CANCELLED"; exit 1; }
+  KEYMAP="$(ui_menu "$S_KEYMAP" \
+    es "Español (España)" la-latin1 "Español (Latinoamérica)" us "English (US)" uk "English (UK)" \
+    fr "Français" de "Deutsch" it "Italiano" pt-latin9 "Português")" || { say "$S_CANCELLED"; exit 1; }
+  TZONE="$(ui_menu "$S_TZ" \
+    Europe/Madrid "Madrid" Atlantic/Canary "Canarias" Europe/London "Londres" Europe/Lisbon "Lisboa" \
+    America/Mexico_City "Ciudad de México" America/Bogota "Bogotá" America/Santiago "Santiago" \
+    America/Argentina/Buenos_Aires "Buenos Aires" America/New_York "Nueva York" UTC "UTC" other "$S_TZ_OTHER")" \
+    || { say "$S_CANCELLED"; exit 1; }
+  if [[ "$TZONE" == other ]]; then TZONE="$(ui_input "$S_TZ_ASK" Europe/Madrid)" || { say "$S_CANCELLED"; exit 1; }; fi
+  local enc="$S_NO"; ((ENCRYPT)) && enc="$S_YES"
+  ui_yesno "$(fmt "$S_SUMMARY" "$DISK" "$enc" "$HOST_NAME" "$USER_NAME" "$KEYMAP" "$TZONE" "$LOCALE")" \
+    || { say "$S_CANCELLED"; exit 1; }
+}
+
+load_auto_secrets() {
+  [[ -n "$DISK" && -n "$USER_NAME" && -f "$PW_FILE" ]] || die "$S_NEEDS_ARGS"
+  IFS= read -r PW <"$PW_FILE" || true
+  [[ -n "$PW" ]] || die "$S_PASS_EMPTY"
+  if ((ENCRYPT)); then
+    if [[ -n "$LUKS_FILE" ]]; then IFS= read -r LUKS_PW <"$LUKS_FILE" || true; else LUKS_PW="$PW"; fi
+    [[ -n "$LUKS_PW" ]] || die "$S_PASS_EMPTY"
+  fi
+}
+
+# ---------- Chroot (ARM64 nativo o qemu-user) ----------
+ensure_arm() {
+  [[ "$(uname -m)" == aarch64 ]] && return 0
+  if [[ -r /proc/sys/fs/binfmt_misc/qemu-aarch64 ]]; then return 0; fi
+  if [[ -f "$HERE/../lib/chroot.sh" ]]; then
+    # shellcheck disable=SC1091
+    source "$HERE/../lib/chroot.sh"; bc_binfmt; return 0
+  fi
+  die "$S_NEED_ARM"
+}
+
+inchroot() {
+  chroot "$TARGET" /usr/bin/env -i HOME=/root TERM=linux LANG=C \
+    PATH=/usr/local/sbin:/usr/local/bin:/usr/bin "$@"
+}
+crun() { if ((DRY)); then printf '+ (chroot) %s\n' "$*"; return 0; fi; log "+ (chroot) $*"; inchroot "$@" >>"$LOG" 2>&1; }
+
+mount_api() {
+  ((DRY)) && { echo "+ montar /proc /sys /dev en el destino"; return 0; }
+  mount -t proc proc "$TARGET/proc"
+  mount --rbind /sys "$TARGET/sys";  mount --make-rslave "$TARGET/sys"
+  mount --rbind /dev "$TARGET/dev";  mount --make-rslave "$TARGET/dev"
+  rm -f "$TARGET/etc/resolv.conf"; cp /etc/resolv.conf "$TARGET/etc/resolv.conf" 2>/dev/null || true
+}
+
+cleanup() {
+  local rc=$?
+  set +e
+  [[ -n "$KEYTMP" && -f "$KEYTMP" ]] && shred -u "$KEYTMP" 2>/dev/null
+  if [[ -n "$TARGET" && -d "$TARGET" && $DRY -eq 0 ]]; then
+    sync
+    umount -R "$TARGET/dev" "$TARGET/sys" "$TARGET/proc" 2>/dev/null
+    umount -R "$TARGET" 2>/dev/null
+    rmdir "$TARGET" 2>/dev/null
+  fi
+  if ((CRYPT_OPEN)) && ((DRY == 0)); then cryptsetup close "$CRYPT_NAME" 2>/dev/null; fi
+  if ((rc != 0)); then say "$(fmt "$S_FAIL" "$LOG")"; tail -n 15 "$LOG" 2>/dev/null >&2; fi
+  exit "$rc"
+}
+trap cleanup EXIT
+
+# ---------- Instalación ----------
+do_partition() {
+  progress "$P_PART" 8
+  run wipefs -a -q "$DISK"
+  local rootype=0FC63DAF-8483-4772-8E79-3D69D8477DE4
+  ((ENCRYPT)) && rootype=CA7D7CCB-63ED-4C53-861C-1742536059CC
+  if ((DRY)); then echo "+ sfdisk $DISK  (GPT: ESP ${ESP_MIB}M BC-ESP + raíz bc-root)"; else
+    sfdisk -q "$DISK" >>"$LOG" 2>&1 <<E
+label: gpt
+unit: sectors
+first-lba: 2048
+start=2048, size=$((ESP_MIB * 2048)), type=C12A7328-F81F-11D2-BA4B-00A0C93EC93B, name="BC-ESP"
+start=$((2048 + ESP_MIB * 2048)), type=$rootype, name="bc-root"
+E
+    command -v partprobe >/dev/null 2>&1 && partprobe "$DISK" >>"$LOG" 2>&1 || true
+    command -v udevadm >/dev/null 2>&1 && udevadm settle >>"$LOG" 2>&1 || true
+  fi
+  ESP_DEV="$(part_path "$DISK" 1)"; ROOT_PART="$(part_path "$DISK" 2)"
+  if ((DRY == 0)); then
+    # Algunos kernels (p. ej. loop sin partscan automático) no crean los nodos: se piden con partx.
+    [[ -b "$ESP_DEV" && -b "$ROOT_PART" ]] || { command -v partx >/dev/null 2>&1 && partx -a "$DISK" >>"$LOG" 2>&1 || true; }
+    wait_node "$ESP_DEV"; wait_node "$ROOT_PART"
+  fi
+}
+
+do_format() {
+  progress "$P_FORMAT" 7
+  run mkfs.vfat -F32 -n BC-ESP "$ESP_DEV"
+  ROOT_DEV="$ROOT_PART"
+  if ((ENCRYPT)); then
+    progress "$P_LUKS" 5
+    if ((DRY)); then
+      echo "+ cryptsetup luksFormat --type luks2 $ROOT_PART (clave por fichero temporal)"
+      echo "+ cryptsetup open $ROOT_PART $CRYPT_NAME"
+    else
+      KEYTMP="$(mktemp /run/bc-key.XXXXXX)"; chmod 600 "$KEYTMP"; printf '%s' "$LUKS_PW" >"$KEYTMP"
+      cryptsetup luksFormat --type luks2 --batch-mode --pbkdf argon2id --pbkdf-memory 262144 \
+        --key-file "$KEYTMP" "$ROOT_PART" >>"$LOG" 2>&1
+      cryptsetup open --key-file "$KEYTMP" "$ROOT_PART" "$CRYPT_NAME" >>"$LOG" 2>&1
+      CRYPT_OPEN=1; wait_node "/dev/mapper/$CRYPT_NAME"
+    fi
+    ROOT_DEV="/dev/mapper/$CRYPT_NAME"
+  fi
+  run mkfs.ext4 -F -q -L bc-root "$ROOT_DEV"
+}
+
+do_mount() {
+  progress "$P_MOUNT" 5
+  if ((DRY)); then TARGET=/mnt/bc-target.DRYRUN; else
+    TARGET="$(mktemp -d /mnt/bc-target.XXXXXX 2>/dev/null || mktemp -d /tmp/bc-target.XXXXXX)"
+  fi
+  run mount "$ROOT_DEV" "$TARGET"
+  ((DRY)) || mkdir -p "$TARGET/boot"
+  run mount -o umask=0077 "$ESP_DEV" "$TARGET/boot"
+}
+
+do_copy() {
+  progress "$P_COPY" 30
+  local ex=(--exclude='/boot/*' --exclude='/proc/*' --exclude='/sys/*' --exclude='/dev/*' --exclude='/run/*'
+    --exclude='/tmp/*' --exclude='/mnt/*' --exclude='/media/*' --exclude='/lost+found'
+    --exclude='/var/cache/pacman/pkg/*' --exclude='/var/log/journal/*' --exclude='/etc/machine-id'
+    --exclude='/var/log/bc-install.log' --exclude='/root/.bash_history')
+  if ((DRY)); then echo "+ rsync -aHAXx --numeric-ids ${ex[*]} $SOURCE/ $TARGET/"; return 0; fi
+  log "+ rsync $SOURCE/ → $TARGET/"
+  if [[ -n "$TUI" ]] && ((AUTO == 0)); then
+    rsync -aHAXx --numeric-ids --info=progress2 "${ex[@]}" "$SOURCE"/ "$TARGET"/ 2>>"$LOG" \
+      | stdbuf -oL tr '\r' '\n' | awk '/%/ {gsub("%","",$2); print $2; fflush()}' \
+      | "$TUI" --title "$S_TITLE" --gauge "$P_COPY" 8 70 0
+  else
+    rsync -aHAXx --numeric-ids "${ex[@]}" "$SOURCE"/ "$TARGET"/ >>"$LOG" 2>&1
+  fi
+  mkdir -p "$TARGET"/{proc,sys,dev,run,tmp,boot,mnt,media}; chmod 1777 "$TARGET/tmp"
+  : >"$TARGET/etc/machine-id"
+  cp "$SOURCE/boot/Image" "$TARGET/boot/Image"
+}
+
+xkb_layout() {
+  case "$1" in
+    uk) echo gb ;; la-latin1) echo latam ;; pt-latin9) echo pt ;; *) echo "${1%%-*}" ;;
+  esac
+}
+
+do_config() {
+  progress "$P_CONFIG" 10
+  mount_api
+  # Cuentas por defecto de la imagen origen: se eliminan (el usuario lo crea el instalador)
+  local u
+  for u in bc alarm; do crun bash -c "id $u >/dev/null 2>&1 && userdel -rf $u || true"; done
+  crun useradd -m -G wheel,audio,video,input -s /bin/bash "$USER_NAME"
+  if ((DRY)); then echo "+ (chroot) chpasswd <<< '$USER_NAME:<contraseña omitida>'"; else
+    printf '%s:%s\n' "$USER_NAME" "$PW" | inchroot chpasswd >>"$LOG" 2>&1
+  fi
+  crun passwd -l root
+  # Sin autologin del usuario por defecto en el sistema instalado
+  run rm -f "$TARGET/etc/systemd/system/getty@tty1.service.d/autologin.conf"
+  rmdir "$TARGET/etc/systemd/system/getty@tty1.service.d" 2>/dev/null || true
+
+  printf '%s\n' "$HOST_NAME" | put "$TARGET/etc/hostname"
+  printf '127.0.0.1 localhost\n::1 localhost\n127.0.1.1 %s\n' "$HOST_NAME" | put "$TARGET/etc/hosts"
+  ((DRY)) || sed -i "s/^#\(${LOCALE//./\\.} UTF-8\)/\1/" "$TARGET/etc/locale.gen"
+  crun locale-gen
+  printf 'LANG=%s\nLC_MESSAGES=%s\nLANGUAGE=%s\n' "$LOCALE" "$LOCALE" "${LOCALE%%.*}:en_US" | put "$TARGET/etc/locale.conf"
+  printf 'KEYMAP=%s\n' "$KEYMAP" | put "$TARGET/etc/vconsole.conf"
+  printf 'XKB_DEFAULT_LAYOUT=%s\n' "$(xkb_layout "$KEYMAP")" | put "$TARGET/etc/xdg/labwc/environment"
+  run ln -sf "/usr/share/zoneinfo/$TZONE" "$TARGET/etc/localtime"
+  crun systemctl enable NetworkManager systemd-timesyncd systemd-resolved nftables
+  run rm -f "$TARGET/etc/resolv.conf"
+  run ln -s ../run/systemd/resolve/stub-resolv.conf "$TARGET/etc/resolv.conf"
+}
+
+do_initramfs() {
+  progress "$P_INITRD" 10
+  local hooks="base systemd modconf kms keyboard sd-vconsole block filesystems fsck"
+  if ((ENCRYPT)); then
+    hooks="base systemd modconf kms keyboard sd-vconsole block sd-encrypt filesystems fsck"
+    if ((DRY == 0)) && [[ ! -x "$TARGET/usr/bin/cryptsetup" ]]; then
+      say "$S_CRYPT_PKG"
+      rm -f "$TARGET/etc/resolv.conf"; cp /etc/resolv.conf "$TARGET/etc/resolv.conf"
+      crun pacman -S --needed --noconfirm --disable-sandbox cryptsetup || die "$S_CRYPT_PKG_FAIL"
+      rm -f "$TARGET/etc/resolv.conf"; ln -s ../run/systemd/resolve/stub-resolv.conf "$TARGET/etc/resolv.conf"
+    fi
+  fi
+  printf 'MODULES=(virtio_blk virtio_pci virtio_scsi virtio_gpu nvme ahci xhci_pci vfat nls_cp437 nls_iso8859_1 ext4)\nHOOKS=(%s)\n' "$hooks" \
+    | put "$TARGET/etc/mkinitcpio.conf.d/bcos.conf"
+  crun mkinitcpio -P
+  ((DRY)) || [[ -s "$TARGET/boot/initramfs-linux.img" ]] || die "initramfs no generado"
+}
+
+do_boot() {
+  progress "$P_BOOT" 5
+  local efi="$TARGET/usr/lib/systemd/boot/efi/systemd-bootaa64.efi"
+  local root_uuid esp_uuid luks_uuid="" cmdline
+  if ((DRY)); then root_uuid="<UUID-RAIZ>"; esp_uuid="<UUID-ESP>"; luks_uuid="<UUID-LUKS>"; else
+    root_uuid="$(blkid -s UUID -o value "$ROOT_DEV")"; esp_uuid="$(blkid -s UUID -o value "$ESP_DEV")"
+    ((ENCRYPT)) && luks_uuid="$(blkid -s UUID -o value "$ROOT_PART")"
+  fi
+  printf 'UUID=%s / ext4 rw,noatime 0 1\nUUID=%s /boot vfat rw,noatime,umask=0077 0 2\n' "$root_uuid" "$esp_uuid" \
+    | put "$TARGET/etc/fstab"
+  # Nota: se usa UUID (y no LABEL) para no confundirse con el medio live, que también se llama bc-root.
+  if ((ENCRYPT)); then
+    cmdline="rd.luks.name=${luks_uuid}=${CRYPT_NAME} root=/dev/mapper/${CRYPT_NAME}"
+  else
+    cmdline="root=UUID=${root_uuid}"
+  fi
+  run mkdir -p "$TARGET/boot/EFI/BOOT" "$TARGET/boot/EFI/systemd" "$TARGET/boot/loader/entries"
+  run cp "$efi" "$TARGET/boot/EFI/BOOT/BOOTAA64.EFI"
+  run cp "$efi" "$TARGET/boot/EFI/systemd/systemd-bootaa64.efi"
+  printf 'default bcos.conf\ntimeout 2\nconsole-mode max\neditor no\n' | put "$TARGET/boot/loader/loader.conf"
+  printf 'title   BC OS\nlinux   /Image\ninitrd  /initramfs-linux.img\noptions %s rw quiet loglevel=3 console=tty0 console=ttyAMA0 lang=%s\n' \
+    "$cmdline" "${LOCALE%%.*}" | put "$TARGET/boot/loader/entries/bcos.conf"
+}
+
+# ---------- Principal ----------
+main() {
+  ((DRY)) || [[ $EUID -eq 0 ]] || die "$S_NEED_ROOT"
+  mkdir -p "$(dirname "$LOG")" 2>/dev/null || LOG=/tmp/bc-install.log
+  ((DRY)) || { : >"$LOG"; chmod 600 "$LOG"; }
+  log "bc-install inicio (auto=$AUTO dry=$DRY encrypt=$ENCRYPT disco=${DISK:-?})"
+
+  local t
+  for t in sfdisk wipefs mkfs.vfat mkfs.ext4 rsync lsblk blkid findmnt chroot mount; do ((DRY)) || need "$t"; done
+  ((ENCRYPT)) && ((DRY == 0)) && need cryptsetup
+
+  if ((AUTO)); then
+    load_auto_secrets
+    validate_params
+    ((DRY)) || validate_disk
+  else
+    ((DRY)) && die "--dry-run requiere --auto"
+    wizard
+    validate_params
+  fi
+  ((DRY)) || ensure_arm
+
+  do_partition
+  do_format
+  do_mount
+  do_copy
+  do_config
+  do_initramfs
+  do_boot
+  progress "$P_CLEAN" 20
+  trap - EXIT
+  cleanup_ok
+}
+
+cleanup_ok() {
+  set +e
+  [[ -n "$KEYTMP" && -f "$KEYTMP" ]] && shred -u "$KEYTMP" 2>/dev/null
+  if ((DRY == 0)); then
+    sync
+    umount -R "$TARGET/dev" "$TARGET/sys" "$TARGET/proc" 2>/dev/null
+    umount -R "$TARGET" || die "no se pudo desmontar $TARGET"
+    rmdir "$TARGET" 2>/dev/null
+    ((CRYPT_OPEN)) && cryptsetup close "$CRYPT_NAME"
+  fi
+  local msg; msg="$(fmt "$S_DONE" "$DISK")"
+  if [[ -n "$TUI" && $AUTO -eq 0 ]]; then ui_msg "$msg"; else printf '%b\n' "$msg"; fi
+  log "bc-install completado"
+}
+
+main
