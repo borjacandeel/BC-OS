@@ -2,6 +2,9 @@ name: Imagen ARM64
 
 # Construye la imagen de BC OS (runner ARM64 nativo). Solo publica un prerelease si se marca "publicar".
 on:
+  push:
+    branches: [main]
+    paths: ['build/PUBLICAR']
   workflow_dispatch:
     inputs:
       version:
@@ -23,6 +26,14 @@ jobs:
     timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
+      - name: Resolver versión y modo
+        id: v
+        run: |
+          if [ "${{ github.event_name }}" = "push" ]; then
+            echo "version=$(tr -d ' \n' < build/PUBLICAR)" >> "$GITHUB_OUTPUT"; echo "publicar=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "version=${{ inputs.version }}" >> "$GITHUB_OUTPUT"; echo "publicar=${{ inputs.publicar }}" >> "$GITHUB_OUTPUT"
+          fi
       - name: Verificar arquitectura
         run: test "$(uname -m)" = "aarch64"
       - name: Liberar disco
@@ -32,13 +43,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends libarchive-tools dosfstools mtools e2fsprogs fdisk zstd qemu-utils rsync curl ca-certificates zip
       - name: Construir imagen
-        run: sudo build/build-all.sh "${{ inputs.version }}" "$RUNNER_TEMP/bcwork"
+        run: sudo build/build-all.sh "${{ steps.v.outputs.version }}" "$RUNNER_TEMP/bcwork"
       - name: Verificar integridad
         run: cd build/out && sha256sum --check SHA256SUMS
       - name: Guardar artefacto
         uses: actions/upload-artifact@v4
         with:
-          name: bc-os-arm64-${{ inputs.version }}
+          name: bc-os-arm64-${{ steps.v.outputs.version }}
           path: |
             build/out/*.zip
             build/out/SHA256SUMS
@@ -46,13 +57,13 @@ jobs:
           compression-level: 0
           retention-days: 14
       - name: Preparar notas
-        run: sed -i 's/@VERSION@/${{ inputs.version }}/g' build/RELEASE-NOTES.md
+        run: sed -i 's/@VERSION@/${{ steps.v.outputs.version }}/g' build/RELEASE-NOTES.md
       - name: Publicar prerelease
-        if: ${{ inputs.publicar }}
+        if: ${{ steps.v.outputs.publicar == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ inputs.version }}
-          name: BC OS ${{ inputs.version }} (ARM64)
+          tag_name: v${{ steps.v.outputs.version }}
+          name: BC OS ${{ steps.v.outputs.version }} (ARM64)
           prerelease: true
           body_path: build/RELEASE-NOTES.md
           files: |
