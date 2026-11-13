@@ -24,3 +24,7 @@ ttf-dejavu
 xdg-user-dirs
 foot
 openssh
+cryptsetup
+dosfstools
+rsync
+libnewt

@@ -9,6 +9,8 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - ARM64 únicamente. Base Arch Linux ARM.
 
 ## En curso
+- [x] Instalador `build/installer/bc-install` (subagente): probado en QEMU, sin cifrado y con LUKS2, arranca. Sin probar: asistente interactivo (solo bash -n), VirtualBox. Integrado en imagen (/usr/bin/bc-install) y paquetes cryptsetup/dosfstools/rsync/libnewt añadidos → saldrá en 0.1.3-alpha.
+- [ ] ISO live con instalador: pendiente (squashfs + hook initramfs + xorriso EFI). Hoy se instala desde la imagen en marcha: `sudo bc-install`.
 - [ ] Build 0.1.2-alpha FALLÓ en Actions: `rm -rf $R` tras mkimage recorrió /sys y /dev aún montados (bind) → mount busy, borró /dev/null del runner. Fix: bc_umount con respaldo lazy y `rm -rf --one-file-system`. Relanzar build.
 - [x] DECISIÓN del creador (2026-11-13): se mantiene **labwc (Wayland), estilo macOS, súper ligero y animado**. NO bspwm/Hyprland. Nota técnica: labwc no anima ventanas por sí mismo; animaciones de Dock/menús/paneles las hace BC Shell (QML); animación de ventanas (abrir/cerrar/minimizar) queda como investigación (p. ej. fork con scenefx o compositor propio sobre wlroots, ADR nueva), siempre con respaldo por software para VirtualBox.
 - [ ] SSH por defecto (pedido del creador): openssh instalado y `sshd` activado SIEMPRE en la imagen; nftables abre 22/tcp; `PermitRootLogin no`. Solo alpha: contraseña `bcos` pública → riesgo si la VM está en red puenteada (el instalador/primer arranque debe forzar cambio o usar clave). VirtualBox NAT: reenvío de puertos host 2222 → invitado 22. Rebuild 0.1.2-alpha con SSH.

@@ -53,6 +53,11 @@ sh "useradd -m -G wheel,audio,video,input -s /bin/bash -c 'Usuario BC' bc"
 sh "echo 'bc:bcos' | chpasswd"
 install -m440 "$HERE/overlay/etc/sudoers.d/10-wheel" "$R/etc/sudoers.d/10-wheel"
 
+# Instalador (bc-install) disponible en el sistema
+mkdir -p "$R/usr/lib/bc-install"
+cp -a "$HERE/installer/bc-install" "$HERE/installer/lang" "$R/usr/lib/bc-install/"
+chmod 755 "$R/usr/lib/bc-install/bc-install"; ln -sf ../lib/bc-install/bc-install "$R/usr/bin/bc-install"
+
 # Servicios mínimos
 sh "systemctl enable NetworkManager systemd-timesyncd systemd-resolved nftables sshd"
 install -D -m644 "$HERE/overlay/etc/ssh/sshd_config.d/10-bcos.conf" "$R/etc/ssh/sshd_config.d/10-bcos.conf"
