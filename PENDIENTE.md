@@ -48,6 +48,9 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] Sesión Wayland (labwc) + BC Top Bar + BC Dock + Launcher (Qt6/QML, layer-shell).
 - [ ] i18n: es_ES por defecto, en secundario.
 
+### Fase 6 (adelantada) — Reducir tamaño de imagen
+- [ ] rootfs ocupa ~4,1 GB: linux-firmware 1,0 GB (innecesario en VM; dejar solo lo mínimo), módulos 205 MB, LLVM 164 MB (mesa), locales 150 MB (dejar es/en), gcc 136 MB (restos de build-deps), /boot 250 MB. Objetivo ≈2,5 GB; luego imagen de 4 GiB. El "6 GiB" es solo capacidad del disco virtual; la descarga (.zip) pesa ~1,2 GB.
+
 ### Fase 3+
 - [ ] Design system `docs/design/BC-DESIGN-SYSTEM.md` + tokens.
 - [ ] Apps: Archivos, Configuración, Monitor, Terminal, Store.
