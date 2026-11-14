@@ -18,13 +18,19 @@ else
   printf '# generado por bc-wm-mode: flotante\nfor_window [app_id=".*"] floating enable\nfor_window [class=".*"] floating enable\ngaps inner 0\ngaps outer 0\ngaps bottom 0\n' > "$D/sway-mode.conf"
 fi
 echo "$new" > "$D/layout-mode.tmp" && mv "$D/layout-mode.tmp" "$D/layout-mode"
+# Configuración final de sway = sistema + teclado + modo + usuario (sin «include», que no es fiable)
+OUT="${XDG_RUNTIME_DIR:-/tmp}/bc-sway.conf"
+{ cat /etc/bc/sway/config; [ -f /etc/bc/sway/keyboard.conf ] && cat /etc/bc/sway/keyboard.conf
+  cat "$D/sway-mode.conf"; [ -f "$D/sway-user.conf" ] && cat "$D/sway-user.conf"; true; } > "$OUT.tmp" && mv "$OUT.tmp" "$OUT"
 [ "$1" = init ] && exit 0
-if [ -n "$SWAYSOCK" ] || [ -S "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"/sway-ipc.* ] 2>/dev/null; then
+if [ -n "$SWAYSOCK" ]; then
   swaymsg reload >/dev/null 2>&1
   if [ "$new" = tiling ]; then
     swaymsg '[app_id=".*"] floating disable' >/dev/null 2>&1
+    swaymsg 'gaps inner all set 10; gaps outer all set 10; gaps bottom all set 110' >/dev/null 2>&1
   else
     swaymsg '[app_id=".*"] floating enable' >/dev/null 2>&1
+    swaymsg 'gaps inner all set 0; gaps outer all set 0; gaps bottom all set 0' >/dev/null 2>&1
   fi
 fi
 exit 0
