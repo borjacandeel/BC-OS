@@ -4,3 +4,4 @@ gcc
 make
 pkgconf
 qt6-tools
+layer-shell-qt

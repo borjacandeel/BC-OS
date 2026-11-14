@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
 find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Qml Quick Network DBus LinguistTools Test)
+find_package(LayerShellQt QUIET)
 find_library(PAM_LIBRARY pam REQUIRED)
 qt_standard_project_setup()
 
@@ -15,22 +16,24 @@ target_link_libraries(bccommon PUBLIC Qt6::Core)
 
 qt_add_executable(bc-shell src/main.cpp src/launcher.h src/launcher.cpp src/filebrowser.h src/filebrowser.cpp
     src/pamauth.h src/pamauth.cpp src/systemstatus.h src/systemstatus.cpp
-    src/notifications.h src/notifications.cpp src/sysmonitor.h src/sysmonitor.cpp src/appindex.h src/appindex.cpp src/packagestore.h src/packagestore.cpp src/windowlist.h src/windowlist.cpp)
+    src/notifications.h src/notifications.cpp src/sysmonitor.h src/sysmonitor.cpp src/appindex.h src/appindex.cpp src/packagestore.h src/packagestore.cpp
+    src/swaycontrol.h src/swaycontrol.cpp src/layerhelper.h src/layerhelper.cpp src/shellcontrol.h src/shellcontrol.cpp)
 
 set(BC_QML_FILES
-    qml/Main.qml qml/Theme.qml qml/Icons.qml qml/IconCache.qml qml/Icon.qml qml/Wallpaper.qml
-    qml/TopBar.qml qml/Dock.qml qml/AppIcon.qml qml/FilesWindow.qml
+    qml/Panel.qml qml/LayerWindow.qml qml/UiState.qml qml/AppMenus.qml qml/MenuPopup.qml qml/FilesApp.qml
+    qml/Theme.qml qml/Icons.qml qml/IconCache.qml qml/Icon.qml qml/Wallpaper.qml
+    qml/TopBar.qml qml/Dock.qml qml/AppIcon.qml
     qml/FileGlyph.qml qml/ControlCenter.qml qml/NotificationCard.qml qml/Brand.qml
     qml/LoginPanel.qml qml/PowerButton.qml qml/PowerDialog.qml qml/BigClock.qml qml/LockScreen.qml
-    qml/Splash.qml qml/SystemMenu.qml qml/AppWindow.qml qml/MonitorApp.qml qml/SettingsApp.qml qml/LauncherPanel.qml qml/StoreApp.qml)
+    qml/Splash.qml qml/AppWindow.qml qml/MonitorApp.qml qml/SettingsApp.qml qml/LauncherPanel.qml qml/StoreApp.qml)
 set(BC_GREETER_QML qml/Greeter.qml qml/LoginPanel.qml qml/PowerButton.qml qml/PowerDialog.qml qml/BigClock.qml
-    qml/Theme.qml qml/Icons.qml qml/IconCache.qml qml/Icon.qml qml/Wallpaper.qml qml/Brand.qml)
+    qml/Theme.qml qml/Icons.qml qml/IconCache.qml qml/Icon.qml qml/Wallpaper.qml qml/Brand.qml qml/UiState.qml qml/AppMenus.qml)
 foreach(f ${BC_QML_FILES} qml/Greeter.qml)
     get_filename_component(n ${f} NAME)
     set_source_files_properties(${f} PROPERTIES QT_RESOURCE_ALIAS ${n})
 endforeach()
 set_source_files_properties(qml/Theme.qml qml/Icons.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
-set_source_files_properties(qml/IconCache.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
+set_source_files_properties(qml/IconCache.qml qml/UiState.qml qml/AppMenus.qml PROPERTIES QT_QML_SINGLETON_TYPE TRUE)
 
 qt_add_qml_module(bc-shell
     URI BCShell
@@ -48,6 +51,13 @@ file(GLOB BC_ICON_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/assets/ico
 qt_add_resources(bc-shell bcicons PREFIX /BCShell/icons BASE ${CMAKE_CURRENT_SOURCE_DIR}/assets/icons FILES ${BC_ICON_FILES})
 
 target_link_libraries(bc-shell PRIVATE bccommon Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::DBus ${PAM_LIBRARY})
+if(LayerShellQt_FOUND)
+    target_link_libraries(bc-shell PRIVATE LayerShellQt::Interface)
+    target_compile_definitions(bc-shell PRIVATE BC_HAVE_LAYERSHELL)
+    message(STATUS "layer-shell-qt: sí")
+else()
+    message(WARNING "layer-shell-qt no encontrado: el panel no podrá usar wlr-layer-shell")
+endif()
 
 # Greeter para greetd
 qt_add_executable(bc-greeter src/greeter_main.cpp src/greetd.h src/greetd.cpp)
@@ -77,7 +87,7 @@ add_test(NAME movimiento_reducido COMMAND bc-shell --check --lang es_ES --reduce
 set_tests_properties(carga_es carga_en movimiento_reducido PROPERTIES ENVIRONMENT "${BC_ENV}")
 
 qt_add_executable(tst_shell tests/tst_shell.cpp src/launcher.h src/launcher.cpp src/filebrowser.h src/filebrowser.cpp
-    src/systemstatus.h src/systemstatus.cpp src/appindex.h src/appindex.cpp src/packagestore.h src/packagestore.cpp src/windowlist.h src/windowlist.cpp src/userlist.h src/userlist.cpp src/greetd.h src/greetd.cpp src/powercontrol.h src/powercontrol.cpp)
+    src/systemstatus.h src/systemstatus.cpp src/appindex.h src/appindex.cpp src/packagestore.h src/packagestore.cpp src/swaycontrol.h src/swaycontrol.cpp src/userlist.h src/userlist.cpp src/greetd.h src/greetd.cpp src/powercontrol.h src/powercontrol.cpp)
 target_link_libraries(tst_shell PRIVATE Qt6::Core Qt6::Gui Qt6::Network Qt6::Test)
 add_test(NAME modelo_archivos_y_lanzador COMMAND tst_shell)
 set_tests_properties(modelo_archivos_y_lanzador PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")

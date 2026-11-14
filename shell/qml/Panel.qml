@@ -1,0 +1,204 @@
+import QtQuick
+import QtQuick.Window
+import BCShell
+
+// Panel de BC Shell: fondo, barra superior, Dock, notificaciones y capa de ventanas emergentes,
+// cada uno como superficie wlr-layer-shell (el compositor es sway; las apps son procesos aparte).
+LayerWindow {
+    id: root
+    layer: "background"
+    edges: ["top", "bottom", "left", "right"]
+    scope: "bc-desktop"
+    width: UiState.sw
+    height: UiState.sh
+    title: qsTr("BC Shell")
+    onWidthChanged: if (width > 0) UiState.sw = width
+    onHeightChanged: if (height > 0) UiState.sh = height
+
+    readonly property real u: UiState.u
+    readonly property int loadErrors: [bar, dockLoader, popLoader].filter(l => l.status === Loader.Error).length
+    readonly property string notifTitle: qsTr("Actualizaciones")
+
+    Wallpaper { id: wall; anchors.fill: parent }
+    Loader {
+        id: brand
+        scale: root.u
+        transformOrigin: Item.BottomLeft
+        x: Math.round(41 * root.u)
+        y: root.height - height - Math.round(22 * root.u)
+        visible: !wall.ready
+        sourceComponent: Column {
+            spacing: 22
+            Brand { logoHeight: 31; withOs: true }
+            Text { text: qsTr("LIGERO. POTENTE. FLUIDO."); color: Theme.white; font.family: Theme.fontMono
+                   font.pixelSize: 16; font.letterSpacing: 3.6 }
+        }
+    }
+
+    function launch(kind, name) {
+        if (kind === "lanzador") { UiState.toggleLauncher(); return }
+        if (kind === "musica") { Notifications.push("BC OS", name, qsTr("En desarrollo"), "", 4000); return }
+        const appId = Launcher.appIdFor(kind)
+        if (kind === "papelera") {
+            if (Sway.hasApp("bc-files")) { Shell.invokeApp("files", "trash"); Sway.focusApp("bc-files") }
+            else Launcher.launch("archivos", "trash")
+            return
+        }
+        if (Sway.focusApp(appId)) return
+        const r = Launcher.launch(kind)
+        if (r === "failed") Notifications.push("BC OS", name, qsTr("No se pudo abrir la aplicación"), "", 4000)
+    }
+    function runningKinds() {
+        const ids = Sway.appIds, out = []
+        for (const k of ["archivos", "ajustes", "monitor", "terminal", "tienda", "navegador"])
+            if (ids.indexOf(Launcher.appIdFor(k)) >= 0) out.push(k)
+        return out
+    }
+
+    Connections {
+        target: UiState
+        function onCommand(kind, arg) {
+            if (kind === "sway") {
+                const id = Sway.focusedId
+                Sway.command(arg.indexOf("exec ") === 0 || id < 0 ? arg : "[con_id=" + id + "] " + arg)
+            } else if (kind === "app") {
+                Shell.invokeApp(Sway.focusedAppId.replace(/^bc-/, ""), arg)
+            } else if (kind === "bc") {
+                if (arg === "tiling") Sway.toggleTiling()
+                else if (arg === "about") Notifications.push("BC OS", qsTr("BC OS"), qsTr("Versión alpha · ARM64"), "", 4000)
+            }
+        }
+    }
+    Connections {
+        target: Shell
+        function onLauncherToggled() { UiState.toggleLauncher() }
+        function onControlCenterToggled() { UiState.toggleCenter() }
+        function onLockRequested() { UiState.run("bc:lock") }
+        function onTilingToggled() { Sway.toggleTiling() }
+        function onPowerRequested(a) { UiState.openPower(a) }
+    }
+
+    // Barra superior
+    LayerWindow {
+        layer: "top"; edges: ["top", "left", "right"]; exclusive: UiState.barH; scope: "bc-topbar"
+        width: UiState.sw; height: UiState.barH
+        shown: !UiState.splashing
+        Loader { id: bar; anchors.fill: parent; source: "TopBar.qml" }
+    }
+
+    // Dock
+    LayerWindow {
+        layer: "top"; edges: ["bottom"]; margins: [0, 0, Math.round(22 * root.u), 0]; scope: "bc-dock"
+        width: Math.round(dockLoader.width * root.u); height: Math.round(dockLoader.height * root.u)
+        shown: !UiState.splashing && !UiState.locked
+        Loader {
+            id: dockLoader
+            source: "Dock.qml"
+            scale: root.u
+            transformOrigin: Item.TopLeft
+            onLoaded: {
+                item.launched.connect((k, n) => root.launch(k, n))
+                item.running = Qt.binding(() => root.runningKinds())
+            }
+        }
+    }
+
+    // Notificación emergente
+    LayerWindow {
+        layer: "top"; edges: ["top", "right"]; margins: [UiState.barH + Math.round(14 * root.u), Math.round(14 * root.u), 0, 0]; scope: "bc-notify"
+        width: Math.round(321 * root.u); height: Math.round(80 * root.u)
+        shown: Notifications.visible && !UiState.locked && !UiState.splashing
+        NotificationCard {
+            scale: root.u
+            transformOrigin: Item.TopLeft
+            title: Notifications.title
+            body: Notifications.body
+            onDismissed: Notifications.dismiss()
+        }
+    }
+
+    // Capa emergente: Centro de control, menús, lanzador, apagado, bloqueo y pantalla de carga
+    LayerWindow {
+        layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-popups"
+        margins: [UiState.locked || UiState.splashing ? 0 : UiState.barH, 0, 0, 0]
+        keyboard: UiState.locked || UiState.launcherOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
+        width: UiState.sw; height: UiState.sh
+        shown: UiState.popupOpen || UiState.locked || UiState.splashing
+        Loader {
+            id: popLoader
+            anchors.fill: parent
+            sourceComponent: Item {
+                id: pop
+                focus: true
+                Keys.onEscapePressed: UiState.closePopups()
+                readonly property real m: Math.round(14 * root.u)
+
+                Rectangle { anchors.fill: parent; color: "#000"; opacity: UiState.dim ? 0.35 : 0
+                            Behavior on opacity { NumberAnimation { duration: Theme.dur(160) } } }
+                MouseArea { anchors.fill: parent; onClicked: UiState.closePopups() }
+
+                ControlCenter {
+                    id: center
+                    scale: root.u
+                    transformOrigin: Item.TopRight
+                    x: pop.width - pop.m - width
+                    y: pop.m + (Notifications.visible ? (80 + 10) * root.u : 0)
+                    opacity: UiState.centerOpen ? 1 : 0
+                    visible: opacity > 0
+                    Behavior on opacity { NumberAnimation { duration: Theme.dur(160); easing.type: Theme.easing } }
+                }
+                MenuPopup {
+                    id: menu
+                    readonly property var all: UiState.menu === "system" ? AppMenus.systemItems
+                        : (UiState.menu.indexOf("m") === 0 ? (AppMenus.menusFor(Sway.focusedAppId)[parseInt(UiState.menu.substring(1))] || {items: []}).items : [])
+                    items: all
+                    visible: UiState.menu !== "" && items.length > 0
+                    x: Math.max(8, Math.min(pop.width - width - 8, UiState.menuX))
+                    y: 4
+                    onActivated: (cmd) => { UiState.closePopups(); UiState.run(cmd) }
+                }
+                Item {
+                    visible: UiState.launcherOpen
+                    anchors.fill: parent
+                    LauncherPanel {
+                        id: launcher
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        y: Math.round(pop.height * 0.16)
+                        onLaunchRequested: (id, name) => {
+                            UiState.closePopups()
+                            if (!Apps.launch(id)) Notifications.push("BC OS", name, qsTr("No se pudo abrir la aplicación"), "", 4000)
+                        }
+                        onCloseRequested: UiState.closePopups()
+                    }
+                    Connections { target: UiState; function onLauncherOpenChanged() { if (UiState.launcherOpen) launcher.reset() } }
+                }
+                PowerDialog {
+                    id: powerDialog
+                    onCancelled: UiState.powerAction = ""
+                    onConfirmed: (a) => {
+                        UiState.powerAction = ""
+                        if (a === "poweroff") Power.poweroff()
+                        else if (a === "reboot") Power.reboot()
+                        else if (a === "suspend") Power.suspend()
+                        else if (a === "logout") Power.logout()
+                    }
+                }
+                Connections { target: UiState; function onPowerActionChanged() { if (UiState.powerAction !== "") powerDialog.open(UiState.powerAction) } }
+                LockScreen { active: UiState.locked; onUnlocked: UiState.locked = false }
+                Splash { }
+            }
+        }
+    }
+
+    Component.onCompleted: {
+        UiState.splashing = AppConfig.splash
+        if (!AppConfig.splash && AppConfig.demo === "") Notifications.push("BC OS", qsTr("Actualizaciones"), qsTr("BC OS está al día"), "", 600000)
+        const d = AppConfig.demo
+        if (d === "lock") UiState.locked = true
+        else if (d === "menu") UiState.openMenu("system", 12)
+        else if (d === "power") UiState.openPower("poweroff")
+        else if (d === "launcher") UiState.toggleLauncher()
+        else if (d === "centro") UiState.centerOpen = true
+        else if (d === "tienda" || d === "monitor" || d === "ajustes") launch(d, "")
+    }
+}

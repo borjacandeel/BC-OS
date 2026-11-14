@@ -1,0 +1,30 @@
+#!/bin/sh
+# Alterna BC OS entre ventanas flotantes (como macOS) y mosaico (como bspwm). Uso: bc-wm-mode toggle|tiling|floating|init|status
+D="${XDG_CONFIG_HOME:-$HOME/.config}/bc"
+mkdir -p "$D"
+cur=floating
+[ -f "$D/layout-mode" ] && cur="$(cat "$D/layout-mode")"
+case "$cur" in tiling|floating) ;; *) cur=floating ;; esac
+case "$1" in
+  toggle) [ "$cur" = tiling ] && new=floating || new=tiling ;;
+  tiling|floating) new="$1" ;;
+  init) new="$cur" ;;
+  status) echo "$cur"; exit 0 ;;
+  *) echo "uso: bc-wm-mode toggle|tiling|floating|init|status" >&2; exit 2 ;;
+esac
+if [ "$new" = tiling ]; then
+  printf '# generado por bc-wm-mode: mosaico\nfor_window [app_id=".*"] floating disable\nfor_window [class=".*"] floating disable\ngaps inner 10\ngaps outer 10\ngaps bottom 110\n' > "$D/sway-mode.conf"
+else
+  printf '# generado por bc-wm-mode: flotante\nfor_window [app_id=".*"] floating enable\nfor_window [class=".*"] floating enable\ngaps inner 0\ngaps outer 0\ngaps bottom 0\n' > "$D/sway-mode.conf"
+fi
+echo "$new" > "$D/layout-mode.tmp" && mv "$D/layout-mode.tmp" "$D/layout-mode"
+[ "$1" = init ] && exit 0
+if [ -n "$SWAYSOCK" ] || [ -S "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"/sway-ipc.* ] 2>/dev/null; then
+  swaymsg reload >/dev/null 2>&1
+  if [ "$new" = tiling ]; then
+    swaymsg '[app_id=".*"] floating disable' >/dev/null 2>&1
+  else
+    swaymsg '[app_id=".*"] floating enable' >/dev/null 2>&1
+  fi
+fi
+exit 0

@@ -17,7 +17,7 @@ Sistema operativo Linux ARM64 creado por <b>Borja Candel</b>, en español por de
 
 <p align="center">
   <img src="docs/screenshots/bc-os-escritorio.png" alt="BC OS 0.2.0-alpha: escritorio" width="880">
-  <br><sub>Captura real de BC OS 0.2.0-alpha en QEMU aarch64: BC Shell sobre labwc (Wayland), render por software, estado real de red y sonido.</sub>
+  <br><sub>Captura real de BC OS 0.2.0-alpha en QEMU aarch64: BC Shell sobre labwc (Wayland; 0.3.0 pasa a sway), render por software, estado real de red y sonido.</sub>
 </p>
 
 > **Estado honesto:** alpha. `0.2.0-alpha` ya es un escritorio funcional (login, bloqueo, Archivos con Papelera, Monitor, Configuración, Tienda, notificaciones…), verificado en QEMU aarch64; **las versiones 0.1.2 y 0.1.3 arrancaron en VirtualBox ARM64, la 0.2.0 aún no se ha probado ahí**. **No hay ISO todavía** (el instalador `bc-install` va dentro de la imagen). Ver [problemas conocidos](#problemas-conocidos).
@@ -44,7 +44,8 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 | `0.1.2-alpha` | publicada | **Arranca en VirtualBox ARM64** con BC Shell (render por software) y SSH activado. El shell es una maqueta. |
 | `0.1.3-alpha` | publicada | Shell con Dock y Archivos reales, iconos BC, fondo BC, instalador `bc-install` y animación de arranque con el logo. **Arranca en VirtualBox ARM64, también con la animación (confirmado por el creador).** |
 | `0.2.0-alpha` | publicada | **Escritorio funcional**: login (greetd), bloqueo, apagado, Centro de control real, notificaciones, Archivos + Papelera, Monitor, Configuración, Tienda, lanzador, iconos y fondo BC, BC Core y SSH. Verificada en QEMU. |
-| `0.3.0` → `1.0.0` | planificadas | Ventanas externas en el Dock, bloqueo seguro (`ext-session-lock`), tema claro, ISO con instalador, beta y primera estable. Son hitos, no promesas. |
+| `0.3.0-alpha` | en preparación | **sway**: botón mosaico/flotante en la barra (`Súper+Mayús+Espacio`), `Ctrl+Intro` terminal, `Ctrl+B` Firefox, menús globales tipo macOS por app, Dock con ventanas reales. |
+| `0.4.0` → `1.0.0` | planificadas | Ventanas externas en el Dock, bloqueo seguro (`ext-session-lock`), tema claro, ISO con instalador, beta y primera estable. Son hitos, no promesas. |
 
 ## Capturas
 
@@ -66,7 +67,7 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 ## Problemas conocidos
 
 - **VirtualBox:** `0.1.0` y `0.1.1` fallaban (`fsck`; labwc sin 3D). `0.1.2`/`0.1.3` arrancan con render por software. **`0.2.0-alpha` aún no se ha probado en VirtualBox** (sí en QEMU).
-- Las ventanas externas (Terminal, Firefox) no se minimizan/restauran desde el Dock: falta `wlrctl` en los repositorios.
+- 
 - El **bloqueo** es una superposición, no usa `ext-session-lock-v1`: otra ventana podría recibir teclado. Pendiente.
 - Contraseña por defecto pública (`bc` / `bcos`) y SSH activo: solo para pruebas en máquinas virtuales.
 - Sin tema claro, sin app de Música, sin ISO. Wi-Fi y Bluetooth sin probar con hardware real.
@@ -81,7 +82,7 @@ Un Linux ARM64 **ligero, fluido y en español**, con un escritorio propio (**BC 
 | Pieza | Elección |
 |---|---|
 | Base | Arch Linux ARM (aarch64), kernel Linux estándar, systemd, pacman |
-| Gráficos | Wayland · compositor **labwc** (wlroots) · Mesa; respaldo por software |
+| Gráficos | Wayland · compositor **sway** (wlroots; mosaico y flotante) · Mesa; respaldo por software |
 | Shell | **BC Shell**: Qt 6 / QML |
 | Servicios | **BC Core**: Rust + D-Bus (`bc-daemon`, settings, update, security, hardware, performance) |
 | Sistema | PipeWire · NetworkManager · zram · nftables · arranque UEFI con systemd-boot |

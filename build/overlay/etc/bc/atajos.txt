@@ -1,0 +1,35 @@
+ATAJOS DE TECLADO DE BC OS  (Súper = tecla Windows)
+
+Aplicaciones
+  Ctrl+Intro            Abrir terminal (también Súper+Intro)
+  Ctrl+B                Abrir Firefox (también Súper+B)
+  Súper+E               Abrir Archivos
+  Ctrl+Espacio          Lanzador de aplicaciones (también Súper+Espacio)
+  Súper+C               Centro de control
+  Ctrl+Súper+Q          Bloquear pantalla
+  Súper+Mayús+E         Cerrar sesión
+  Súper+F1              Esta lista
+
+Ventanas
+  Súper+Q / Ctrl+Q      Cerrar ventana
+  Súper+F               Pantalla completa
+  Súper+M               Minimizar  ·  Súper+Mayús+M: restaurar
+  Súper+flechas         Mover el foco  ·  con Mayús: mover la ventana
+  Alt+Tab               Siguiente ventana
+  Súper+1…4             Escritorio 1…4  ·  con Mayús: mover ahí la ventana
+  Súper+Ctrl+←/→        Escritorio anterior / siguiente
+
+Mosaico (como bspwm) y flotante (como macOS)
+  Súper+Mayús+Espacio   Alternar todo el escritorio entre mosaico y flotante
+                        (también el botón de la barra superior)
+  Súper+Mayús+F         Alternar solo esta ventana
+  Súper+H / Súper+V     Dividir en horizontal / vertical
+  Súper+T               Cambiar la disposición de la división
+  Súper+R               Redimensionar con flechas (Intro/Esc para salir)
+  Súper+Mayús+R         Recargar la configuración
+
+Otros
+  Impr                  Captura de pantalla (en Imágenes)
+  Teclas de volumen y brillo funcionan si el equipo las tiene.
+
+Personaliza: ~/.config/bc/sway-user.conf (sintaxis de sway).

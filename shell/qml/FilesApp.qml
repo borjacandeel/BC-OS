@@ -1,18 +1,13 @@
 import QtQuick
 import BCShell
 
-// BC Archivos: sidebar, ruta, búsqueda y cuadrícula.
-Rectangle {
+// BC Archivos: sidebar, ruta, búsqueda y cuadrícula (aplicación independiente).
+AppWindow {
     id: win
     width: 995
-    height: 458
-    radius: Theme.radiusWindow
-    color: Theme.panelFill
-    border.width: 1
-    border.color: Theme.hairline
-    clip: true
-
-    signal closeRequested()
+    height: 520
+    titlebarHeight: 60
+    title: qsTr("Archivos")
     property int current: -1
     readonly property var places: [
         { key: "home", name: qsTr("Inicio"), icon: Icons.home },
@@ -23,27 +18,11 @@ Rectangle {
         { key: "music", name: qsTr("Música"), icon: Icons.music }
     ]
     Connections { target: Files; function onPathChanged() { win.current = -1 } }
+    Component.onCompleted: { if (AppConfig.openArg === "trash") Files.openTrash(); else if (AppConfig.openArg !== "") Files.open(AppConfig.openArg) }
 
-    // Barra de título
-    Rectangle {
-        id: titlebar
-        width: parent.width
-        height: 60
-        color: Qt.rgba(1, 1, 1, 0.04)
-        Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: Theme.hairline }
-
+    titlebarContent: [
         Row {
-            x: 21; anchors.verticalCenter: parent.verticalCenter; spacing: 20
-            Repeater {
-                model: [Theme.close, Theme.minimize, Theme.zoom]
-                Rectangle {
-                    width: 22; height: 22; radius: 11; color: modelData
-                    MouseArea { anchors.fill: parent; enabled: index === 0; onClicked: win.closeRequested() }
-                }
-            }
-        }
-        Row {
-            x: 145; anchors.verticalCenter: parent.verticalCenter; spacing: 5
+            x: 92; anchors.verticalCenter: parent.verticalCenter; spacing: 5
             Repeater {
                 model: [
                     { name: Icons.chevronLeft, on: Files.canBack, act: 0 },
@@ -61,10 +40,10 @@ Rectangle {
                     }
                 }
             }
-        }
+        },
         Item {
             id: crumbBox
-            x: 295; width: 345; height: parent.height; clip: true
+            x: 242; width: 380; height: parent.height; clip: true
             Row {
                 id: crumbRow
                 x: Math.min(0, crumbBox.width - width)
@@ -95,9 +74,9 @@ Rectangle {
                     }
                 }
             }
-        }
+        },
         Rectangle {
-            x: 655; width: 324; height: 38; radius: 19
+            x: 640; width: 339; height: 38; radius: 19
             anchors.verticalCenter: parent.verticalCenter
             color: Qt.rgba(1, 1, 1, 0.10)
             Icon { x: 15; anchors.verticalCenter: parent.verticalCenter; name: Icons.search; size: 24; }
@@ -119,13 +98,17 @@ Rectangle {
                 MouseArea { anchors.fill: parent; onClicked: Files.filter = "" }
             }
         }
-    }
+    ]
 
+    Item {
+        id: fx
+        anchors.fill: parent
+        focus: true
     // Barra lateral
     Rectangle {
-        y: titlebar.height
+        y: 0
         width: 239
-        height: parent.height - titlebar.height
+        height: parent.height
         color: Theme.sidebarFill
         Rectangle { anchors.right: parent.right; width: 1; height: parent.height; color: Theme.hairline }
 
@@ -155,8 +138,8 @@ Rectangle {
 
     // Cuadrícula de archivos (directorio real)
     Item {
-        x: 239; y: titlebar.height
-        width: parent.width - 239; height: parent.height - titlebar.height
+        x: 239; y: 0
+        width: parent.width - 239; height: parent.height
         GridView {
             id: grid
             anchors.fill: parent
@@ -193,8 +176,8 @@ Rectangle {
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onClicked: (m) => {
                         win.current = cell.index
-                        win.forceActiveFocus()
-                        if (m.button === Qt.RightButton) { const p = mapToItem(win, m.x, m.y); win.showMenu(p.x, p.y, true) }
+                        fx.forceActiveFocus()
+                        if (m.button === Qt.RightButton) { const p = mapToItem(fx, m.x, m.y); fx.showMenu(p.x, p.y, true) }
                     }
                     onDoubleClicked: Files.activate(cell.index)
                 }
@@ -221,20 +204,31 @@ Rectangle {
     // ---- Operaciones: menú contextual, nombre y teclado ----
     property bool ctxOnItem: false
     property string nameMode: ""   // "new" | "rename"
-    focus: true
-    Keys.onDeletePressed: if (current >= 0 && !Files.inTrash) Files.trashAt(current)
-    Keys.onPressed: (e) => { if (e.key === Qt.Key_F2 && current >= 0 && !Files.inTrash) { openName("rename"); e.accepted = true } }
+    Connections {
+        target: AppActions
+        function onActionInvoked(a) {
+            if (a === "newFolder") fx.openName("new")
+            else if (a === "open") Files.activate(win.current)
+            else if (a === "rename" && win.current >= 0 && !Files.inTrash) fx.openName("rename")
+            else if (a === "trash" && win.current >= 0 && !Files.inTrash) Files.trashAt(win.current)
+            else if (a === "emptyTrash") Files.emptyTrash()
+            else if (a.indexOf("go-") === 0) { const k = a.substring(3); k === "trash" ? Files.openTrash() : Files.place(k) }
+        }
+    }
+    Shortcut { sequence: "Ctrl+Shift+N"; onActivated: fx.openName("new") }
+    Keys.onDeletePressed: if (win.current >= 0 && !Files.inTrash) Files.trashAt(win.current)
+    Keys.onPressed: (e) => { if (e.key === Qt.Key_F2 && win.current >= 0 && !Files.inTrash) { openName("rename"); e.accepted = true } }
     Connections { target: Files; function onOperationFailed(m) { Notifications.push(qsTr("Archivos"), qsTr("No se pudo completar la operación"), m, "", 4000) } }
 
     function showMenu(x, y, onItem) {
         ctxOnItem = onItem
-        ctx.x = Math.min(x, win.width - ctx.width - 6)
-        ctx.y = Math.min(y, win.height - ctx.height - 6)
+        ctx.x = Math.min(x, fx.width - ctx.width - 6)
+        ctx.y = Math.min(y, fx.height - ctx.height - 6)
         ctx.open = true
     }
     function openName(mode) {
         nameMode = mode
-        nameInput.text = mode === "rename" ? Files.nameAt(current) : qsTr("Carpeta sin título")
+        nameInput.text = mode === "rename" ? Files.nameAt(win.current) : qsTr("Carpeta sin título")
         nameDialog.open = true
         nameInput.forceActiveFocus()
         nameInput.selectAll()
@@ -243,14 +237,14 @@ Rectangle {
         if (nameMode === "new") Files.newFolder(nameInput.text)
         else Files.renameAt(current, nameInput.text)
         nameDialog.open = false
-        win.forceActiveFocus()
+        fx.forceActiveFocus()
     }
 
     MouseArea {
         z: -1
-        x: 239; y: titlebar.height; width: parent.width - 239; height: parent.height - titlebar.height
+        x: 239; y: 0; width: parent.width - 239; height: parent.height
         acceptedButtons: Qt.RightButton | Qt.LeftButton
-        onClicked: (m) => { win.current = -1; if (m.button === Qt.RightButton) win.showMenu(m.x + 239, m.y + titlebar.height, false) }
+        onClicked: (m) => { win.current = -1; if (m.button === Qt.RightButton) fx.showMenu(m.x + 239, m.y, false) }
     }
 
     Item {
@@ -289,9 +283,9 @@ Rectangle {
                             ctx.open = false
                             const a = modelData.id
                             if (a === "open") Files.activate(win.current)
-                            else if (a === "rename") win.openName("rename")
+                            else if (a === "rename") fx.openName("rename")
                             else if (a === "trash") Files.trashAt(win.current)
-                            else if (a === "new") win.openName("new")
+                            else if (a === "new") fx.openName("new")
                             else if (a === "restore") Files.restoreAt(win.current)
                             else if (a === "delete") Files.deleteAt(win.current)
                             else if (a === "empty") Files.emptyTrash()
@@ -312,12 +306,12 @@ Rectangle {
         opacity: open ? 1 : 0
         Behavior on opacity { NumberAnimation { duration: Theme.dur(140) } }
         Rectangle { anchors.fill: parent; color: Qt.rgba(0.01, 0.04, 0.10, 0.5) }
-        MouseArea { anchors.fill: parent; onClicked: { nameDialog.open = false; win.forceActiveFocus() } }
+        MouseArea { anchors.fill: parent; onClicked: { nameDialog.open = false; fx.forceActiveFocus() } }
         Rectangle {
             width: 380; height: 160; radius: 18; anchors.centerIn: parent
             color: Qt.rgba(0.10, 0.15, 0.30, 0.98); border.width: 1; border.color: Theme.hairline
             MouseArea { anchors.fill: parent }
-            Text { x: 22; y: 18; text: win.nameMode === "new" ? qsTr("Nueva carpeta") : qsTr("Cambiar nombre")
+            Text { x: 22; y: 18; text: fx.nameMode === "new" ? qsTr("Nueva carpeta") : qsTr("Cambiar nombre")
                    color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 17; font.weight: Font.DemiBold }
             Rectangle {
                 x: 22; y: 56; width: parent.width - 44; height: 38; radius: 10; color: Qt.rgba(1, 1, 1, 0.12)
@@ -327,19 +321,20 @@ Rectangle {
                     anchors.fill: parent; anchors.margins: 10
                     color: Theme.white; selectionColor: Theme.accent
                     font.family: Theme.fontFamily; font.pixelSize: 16
-                    onAccepted: win.acceptName()
-                    Keys.onEscapePressed: { nameDialog.open = false; win.forceActiveFocus() }
+                    onAccepted: fx.acceptName()
+                    Keys.onEscapePressed: { nameDialog.open = false; fx.forceActiveFocus() }
                 }
             }
             Row {
                 anchors.right: parent.right; anchors.rightMargin: 22; anchors.bottom: parent.bottom; anchors.bottomMargin: 18; spacing: 10
                 Rectangle { width: 100; height: 34; radius: 10; color: Qt.rgba(1, 1, 1, 0.14)
                     Text { anchors.centerIn: parent; text: qsTr("Cancelar"); color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 15 }
-                    MouseArea { anchors.fill: parent; onClicked: { nameDialog.open = false; win.forceActiveFocus() } } }
+                    MouseArea { anchors.fill: parent; onClicked: { nameDialog.open = false; fx.forceActiveFocus() } } }
                 Rectangle { width: 100; height: 34; radius: 10; color: Theme.accent
                     Text { anchors.centerIn: parent; text: qsTr("Aceptar"); color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 15; font.weight: Font.DemiBold }
-                    MouseArea { anchors.fill: parent; onClicked: win.acceptName() } }
+                    MouseArea { anchors.fill: parent; onClicked: fx.acceptName() } }
             }
         }
+    }
     }
 }

@@ -22,6 +22,7 @@ Rectangle {
 
     SequentialAnimation {
         running: AppConfig.splash
+        onFinished: UiState.splashing = false
         NumberAnimation { target: logo; property: "scale"; to: 1.0; duration: Theme.dur(700); easing.type: Easing.OutCubic }
         PauseAnimation { duration: Theme.dur(350) }
         NumberAnimation { target: root; property: "opacity"; to: 0; duration: Theme.dur(600); easing.type: Easing.InOutCubic }

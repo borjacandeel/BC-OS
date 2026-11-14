@@ -7,7 +7,7 @@ AppWindow {
     width: 760
     height: 560
     title: qsTr("Monitor del sistema")
-    Component.onCompleted: Monitor.active = Qt.binding(() => win.shown && win.visible)
+    Component.onCompleted: Monitor.active = Qt.binding(() => win.visible)
     Component.onDestruction: Monitor.active = false
 
     function dur(s) {

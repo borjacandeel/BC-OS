@@ -11,8 +11,11 @@ class Launcher : public QObject {
 public:
     explicit Launcher(QObject *parent = nullptr);
     QStringList running() const { return m_pids.keys(); }
-    // Devuelve: "started", "internal", "unavailable", "failed".
-    Q_INVOKABLE QString launch(const QString &kind);
+    // Devuelve: "started" o "unavailable"/"failed". Las apps de BC se lanzan como procesos propios (`bc-shell --app`).
+    Q_INVOKABLE QString launch(const QString &kind, const QString &open = QString());
+    // app_id de sway de cada tipo del Dock.
+    Q_INVOKABLE static QString appIdFor(const QString &kind);
+    static QString bcAppName(const QString &kind);
     Q_INVOKABLE bool isRunning(const QString &kind) const { return m_pids.contains(kind); }
     // Programa de la app (vacío = sin implementar). Terminal: BC_TERMINAL o foot.
     static QString programFor(const QString &kind);

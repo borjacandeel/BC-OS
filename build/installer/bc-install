@@ -339,7 +339,7 @@ do_config() {
   crun locale-gen
   printf 'LANG=%s\nLC_MESSAGES=%s\nLANGUAGE=%s\n' "$LOCALE" "$LOCALE" "${LOCALE%%.*}:en_US" | put "$TARGET/etc/locale.conf"
   printf 'KEYMAP=%s\n' "$KEYMAP" | put "$TARGET/etc/vconsole.conf"
-  printf 'XKB_DEFAULT_LAYOUT=%s\n' "$(xkb_layout "$KEYMAP")" | put "$TARGET/etc/xdg/labwc/environment"
+  printf 'input type:keyboard {\n    xkb_layout %s\n}\n' "$(xkb_layout "$KEYMAP")" | put "$TARGET/etc/bc/sway/keyboard.conf"
   run ln -sf "/usr/share/zoneinfo/$TZONE" "$TARGET/etc/localtime"
   crun systemctl enable NetworkManager systemd-timesyncd systemd-resolved nftables
   run rm -f "$TARGET/etc/resolv.conf"

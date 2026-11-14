@@ -7,7 +7,7 @@ QStringList PowerControl::commandFor(const QString &action) {
     if (action == "poweroff") return {"systemctl", "poweroff"};
     if (action == "reboot") return {"systemctl", "reboot"};
     if (action == "suspend") return {"systemctl", "suspend"};
-    if (action == "logout") return {"labwc", "--exit"};
+    if (action == "logout") return {"swaymsg", "exit"};
     return {};
 }
 

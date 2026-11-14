@@ -1,4 +1,5 @@
 #include "launcher.h"
+#include <QCoreApplication>
 #include <QFile>
 #include <QFileInfo>
 #include <QProcess>
@@ -21,15 +22,40 @@ QString Launcher::programFor(const QString &kind) {
     return {};
 }
 
-QString Launcher::launch(const QString &kind) {
-    if (kind == "archivos" || kind == "monitor" || kind == "ajustes" || kind == "tienda") return "internal";
-    const QString prog = programFor(kind);
-    if (prog.isEmpty()) return "unavailable";
+QString Launcher::bcAppName(const QString &kind) {
+    if (kind == "archivos") return "files";
+    if (kind == "monitor") return "monitor";
+    if (kind == "ajustes") return "settings";
+    if (kind == "tienda") return "store";
+    return {};
+}
+
+QString Launcher::appIdFor(const QString &kind) {
+    const QString n = bcAppName(kind);
+    if (!n.isEmpty()) return "bc-" + n;
+    if (kind == "terminal") return "foot";
+    if (kind == "navegador") return "firefox";
+    return {};
+}
+
+QString Launcher::launch(const QString &kind, const QString &open) {
+    QString exe;
+    QStringList args;
+    const QString bc = bcAppName(kind);
+    if (!bc.isEmpty()) {
+        const QString env = qEnvironmentVariable("BC_SHELL_BIN");
+        exe = env.isEmpty() ? QCoreApplication::applicationFilePath() : env;
+        args = {"--app", bc};
+        if (!open.isEmpty()) args << "--open" << open;
+    } else {
+        const QString prog = programFor(kind);
+        if (prog.isEmpty()) return "unavailable";
+        exe = QStandardPaths::findExecutable(prog);
+        if (exe.isEmpty()) return "failed";
+    }
     if (m_pids.contains(kind)) return "started";
-    const QString exe = QStandardPaths::findExecutable(prog);
-    if (exe.isEmpty()) return "failed";
     qint64 pid = 0;
-    if (!QProcess::startDetached(exe, {}, QString(), &pid) || pid <= 0) return "failed";
+    if (!QProcess::startDetached(exe, args, QString(), &pid) || pid <= 0) return "failed";
     m_pids.insert(kind, pid);
     m_timer.start();
     emit runningChanged();

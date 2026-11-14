@@ -13,7 +13,7 @@ Estado: diseño inicial. Se marca explícitamente qué está **verificado** y qu
 │ Mission Control, Centro de control, notificaciones        │
 │                                           [planificado]   │
 ├──────────────────────────────────────────────────────────┤
-│ Compositor Wayland: labwc (wlroots)       [planificado]   │
+│ Compositor Wayland: sway (wlroots)                       │
 ├──────────────────────────────────────────────────────────┤
 │ BC Core (Rust, D-Bus): bc-daemon, bc-settings-service,    │
 │ bc-update-service, bc-security-service,                   │
@@ -35,7 +35,8 @@ Detalle en `docs/adr/`:
 |---|---|
 | 0001 | Base Arch Linux ARM (aarch64), pacman, kernel de distribución |
 | 0002 | Imagen raw GPT: ESP FAT32 512 MiB (systemd-boot, kernel `Image`, initramfs) + raíz ext4; construida sin montajes loop |
-| 0003 | Compositor Wayland labwc/wlroots + shell Qt con layer-shell, en lugar de KWin |
+| 0003 | Compositor Wayland labwc/wlroots + shell Qt con layer-shell, en lugar de KWin (compositor sustituido por 0004) |
+| 0004 | sway (mosaico + flotante) y BC Shell dividido en panel layer-shell + apps |
 
 ## 3. Pipeline de construcción
 
@@ -52,15 +53,15 @@ Detalle en `docs/adr/`:
 ```
 systemd-boot → kernel → Plymouth (logo BC) → greetd
   greetd → cage (kiosco Wayland, render por software) → bc-greeter (QML, IPC greetd + PAM)
-  login correcto → greetd arranca `bc-session --greetd` → labwc → bc-shell
-  cerrar sesión (labwc --exit) → vuelve a greetd/bc-greeter
+  login correcto → greetd arranca `bc-session --greetd` → sway (`/etc/bc/sway/config`) → `bc-shell --panel`
+  cerrar sesión (`swaymsg exit`) → vuelve a greetd/bc-greeter
 ```
 
 - **Respaldo:** `bc-greeter-session` cuenta los arranques del greeter (`/run/bc-greeter/count`); tras 3 fallos seguidos marca
   `/run/bc-greeter/failed` y `bc-login-fallback.path` arranca el autologin de `getty@tty1` (que detiene greetd por `Conflicts=`).
 - **Bloqueo:** `Ctrl+Súper+Q` o menú del logo BC. Es una superposición de pantalla completa que verifica con PAM (`/etc/pam.d/bc-lock`).
   **Limitación:** no usa `ext-session-lock-v1`, así que no impide por sí sola que otra ventana reciba teclado; está en la lista de pendientes.
-- **Apagar / reiniciar / suspender / cerrar sesión:** diálogo de confirmación con cuenta atrás; ejecuta `systemctl` o `labwc --exit`.
+- **Apagar / reiniciar / suspender / cerrar sesión:** diálogo de confirmación con cuenta atrás; ejecuta `systemctl` o `swaymsg exit`.
 - **Estado del sistema** (`SystemStatus`): `wpctl` (audio), `nmcli` (red), `/sys/class/power_supply` (batería), `brightnessctl`, `bluetoothctl`.
 - **Notificaciones:** `bc-shell` implementa `org.freedesktop.Notifications` en el bus de sesión; respeta No molestar.
 - **Tienda:** interfaz sobre `pacman`; instalar y quitar usan `sudo -S` con la contraseña del usuario (solo en memoria).

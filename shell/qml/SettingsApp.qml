@@ -8,7 +8,7 @@ AppWindow {
     height: 520
     title: qsTr("Configuración")
     property int page: 0
-    Component.onCompleted: Monitor.active = Qt.binding(() => win.shown && win.visible && win.page === 5)
+    Component.onCompleted: Monitor.active = Qt.binding(() => win.visible && win.page === 5)
 
     readonly property var pages: [
         { name: qsTr("Apariencia"), icon: "preferences-system-symbolic" },

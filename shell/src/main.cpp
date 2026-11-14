@@ -1,4 +1,5 @@
 #include <QCommandLineParser>
+#include <memory>
 #include <QDebug>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -17,7 +18,9 @@
 #include "sysmonitor.h"
 #include "systemstatus.h"
 #include "userlist.h"
-#include "windowlist.h"
+#include "swaycontrol.h"
+#include "layerhelper.h"
+#include "shellcontrol.h"
 #include "filebrowser.h"
 #include "launcher.h"
 
@@ -45,7 +48,10 @@ int main(int argc, char *argv[]) {
     QCommandLineOption oNoSplash("no-splash", "Sin pantalla de carga");
     QCommandLineOption oFixed("fixed-time", "Hora fija ISO-8601", "iso");
     QCommandLineOption oSize("size", "Tamaño de ventana, p. ej. 1280x800", "AxA");
-    p.addOptions({oLang, oShot, oCheck, oTitle, oReduced, oNoSplash, oFixed, oSize});
+    QCommandLineOption oPanel("panel", "Modo panel (por defecto): barra, Dock y ventanas emergentes");
+    QCommandLineOption oApp("app", "Modo aplicación: files, monitor, settings o store", "nombre");
+    QCommandLineOption oOpen("open", "Argumento de apertura de la app (carpeta o «trash»)", "arg");
+    p.addOptions({oPanel, oApp, oOpen, oLang, oShot, oCheck, oTitle, oReduced, oNoSplash, oFixed, oSize});
     p.process(app);
 
     QSettings st;
@@ -61,42 +67,76 @@ int main(int argc, char *argv[]) {
     if (tr.load(QLocale(lang), "bcshell", "_", ":/i18n")) app.installTranslator(&tr);
     else qWarning() << "No se pudo cargar la traducción" << lang;
 
-    const bool splash = !(p.isSet(oShot) || p.isSet(oCheck)) && !p.isSet(oNoSplash);
+    const QString appName = p.value(oApp);
+    const bool appMode = !appName.isEmpty();
+    if (appMode) {
+        static const QStringList known{"files", "monitor", "settings", "store"};
+        if (!known.contains(appName)) { qCritical() << "App desconocida:" << appName; return 2; }
+        app.setDesktopFileName("bc-" + appName);  // app_id en sway
+        app.setApplicationName("bc-" + appName);
+    }
+    const bool splash = !appMode && !(p.isSet(oShot) || p.isSet(oCheck)) && !p.isSet(oNoSplash);
     AppConfig cfg(lang, reduced, fixed, nullptr, splash);
+    cfg.setOpenArg(p.value(oOpen));
     qmlRegisterSingletonInstance("BCShell", 1, 0, "AppConfig", &cfg);
 
+    // Objetos compartidos por ambos modos
     Launcher launcher;
     FileBrowser files;
-    PamAuth pam;
     AppSettings appSettings;
     SysMonitor monitor;
-    AppIndex apps({}, lang);
     PackageStore store;
-    WindowList windowList;
     SystemStatus status;
-    NotificationQueue notifications;
-    NotificationServer notifServer(&notifications);
-    notifications.setDnd(status.dnd());
-    QObject::connect(&status, &SystemStatus::changed, &notifications, [&] { notifications.setDnd(status.dnd()); });
-    PowerControl power;
     UserList users;
-    qmlRegisterSingletonInstance("BCShell", 1, 0, "PamAuth", &pam);
+    LayerHelper layer;
+    WindowControl windowControl;
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Settings", &appSettings);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Monitor", &monitor);
-    qmlRegisterSingletonInstance("BCShell", 1, 0, "Apps", &apps);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Store", &store);
-    qmlRegisterSingletonInstance("BCShell", 1, 0, "Windows", &windowList);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "SystemStatus", &status);
-    qmlRegisterSingletonInstance("BCShell", 1, 0, "Notifications", &notifications);
-    qmlRegisterSingletonInstance("BCShell", 1, 0, "Power", &power);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Users", &users);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Launcher", &launcher);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Files", &files);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Layer", &layer);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "WindowControl", &windowControl);
 
-    if (!(p.isSet(oShot) || p.isSet(oCheck))) notifServer.start();
+    // Solo del panel
+    PamAuth pam;
+    AppIndex apps({}, lang);
+    std::unique_ptr<SwayControl> swayPtr;
+    ShellControl shell;
+    NotificationQueue notifications;
+    NotificationServer notifServer(&notifications);
+    PowerControl power;
+    if (!appMode) swayPtr = std::make_unique<SwayControl>();
+    // Solo de las apps
+    NotificationClient notifClient;
+    AppActions actions(appName);
+    if (!appMode) {
+        notifications.setDnd(status.dnd());
+        QObject::connect(&status, &SystemStatus::changed, &notifications, [&] { notifications.setDnd(status.dnd()); });
+        qmlRegisterSingletonInstance("BCShell", 1, 0, "PamAuth", &pam);
+        qmlRegisterSingletonInstance("BCShell", 1, 0, "Apps", &apps);
+        qmlRegisterSingletonInstance("BCShell", 1, 0, "Sway", swayPtr.get());
+        qmlRegisterSingletonInstance("BCShell", 1, 0, "Shell", &shell);
+        qmlRegisterSingletonInstance("BCShell", 1, 0, "Notifications", &notifications);
+        qmlRegisterSingletonInstance("BCShell", 1, 0, "Power", &power);
+        qmlRegisterSingletonInstance("BCShell", 1, 0, "AppActions", &actions);
+        if (!(p.isSet(oShot) || p.isSet(oCheck))) { notifServer.start(); shell.start(); }
+    } else {
+        qmlRegisterSingletonInstance("BCShell", 1, 0, "Notifications", &notifClient);
+        qmlRegisterSingletonInstance("BCShell", 1, 0, "AppActions", &actions);
+        if (!actions.start()) qWarning() << "[app] no se pudo registrar el servicio D-Bus de la app";
+    }
+
     g_prev = qInstallMessageHandler(countingHandler);
     QQmlApplicationEngine engine;
-    engine.load(QUrl("qrc:/BCShell/Main.qml"));
+    if (appMode) {
+        const QString n = appName.left(1).toUpper() + appName.mid(1);
+        engine.load(QUrl("qrc:/BCShell/" + n + "App.qml"));
+    } else {
+        engine.load(QUrl("qrc:/BCShell/Panel.qml"));
+    }
     if (engine.rootObjects().isEmpty()) return 2;
     auto *win = qobject_cast<QQuickWindow *>(engine.rootObjects().first());
     if (!win) return 2;

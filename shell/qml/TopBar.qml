@@ -3,10 +3,8 @@ import BCShell
 
 Rectangle {
     id: bar
-    height: 41
     color: Theme.barFill
-    signal controlCenterToggled()
-    signal systemMenuRequested()
+    readonly property var menus: AppMenus.menusFor(Sway.focusedAppId)
 
     property date now: new Date()
     readonly property var loc: Qt.locale(AppConfig.language)
@@ -27,26 +25,40 @@ Rectangle {
     }
 
     Row {
+        id: leftRow
         anchors.left: parent.left
-        anchors.leftMargin: 22
+        anchors.leftMargin: 14
         anchors.verticalCenter: parent.verticalCenter
-        spacing: 26
+        spacing: 0
         Item {
-            width: brandLogo.implicitWidth + 16
+            id: logoBtn
+            width: brandLogo.implicitWidth + 24
             height: bar.height
-            anchors.verticalCenter: parent.verticalCenter
+            Rectangle { anchors.fill: parent; anchors.margins: 4; radius: 7; color: UiState.menu === "system" ? Qt.rgba(1, 1, 1, 0.18) : (logoMa.containsMouse ? Qt.rgba(1, 1, 1, 0.1) : "transparent") }
             Brand { id: brandLogo; logoHeight: 15; anchors.centerIn: parent }
-            MouseArea { anchors.fill: parent; onClicked: bar.systemMenuRequested() }
+            MouseArea { id: logoMa; anchors.fill: parent; hoverEnabled: true
+                        onClicked: UiState.openMenu("system", leftRow.x + logoBtn.x) }
+        }
+        Item {
+            width: appName.implicitWidth + 24
+            height: bar.height
+            Text { id: appName; anchors.centerIn: parent; text: AppMenus.nameFor(Sway.focusedAppId)
+                   color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 15; font.weight: Font.DemiBold }
         }
         Repeater {
-            model: [qsTr("Archivos"), qsTr("Editar"), qsTr("Ver"), qsTr("Ir"), qsTr("Ventana"), qsTr("Ayuda")]
-            Text {
-                text: modelData
-                color: Theme.textPrimary
-                font.family: Theme.fontFamily
-                font.pixelSize: 15
-                font.weight: index === 0 ? Font.DemiBold : Font.Normal
-                anchors.verticalCenter: parent.verticalCenter
+            model: bar.menus
+            delegate: Item {
+                id: mi
+                required property var modelData
+                required property int index
+                width: t.implicitWidth + 22
+                height: bar.height
+                Rectangle { anchors.fill: parent; anchors.margins: 4; radius: 7
+                            color: UiState.menu === "m" + mi.index ? Qt.rgba(1, 1, 1, 0.18) : (ma.containsMouse ? Qt.rgba(1, 1, 1, 0.1) : "transparent") }
+                Text { id: t; anchors.centerIn: parent; text: mi.modelData.title; color: Theme.textPrimary
+                       font.family: Theme.fontFamily; font.pixelSize: 15 }
+                MouseArea { id: ma; anchors.fill: parent; hoverEnabled: true
+                            onClicked: UiState.openMenu("m" + mi.index, leftRow.x + mi.x) }
             }
         }
     }
@@ -56,6 +68,13 @@ Rectangle {
         anchors.rightMargin: 20
         anchors.verticalCenter: parent.verticalCenter
         spacing: 18
+        Rectangle {
+            width: 32; height: 28; radius: 8
+            anchors.verticalCenter: parent.verticalCenter
+            color: tileArea.containsMouse ? Qt.rgba(1, 1, 1, 0.22) : (Sway.tiling ? Qt.rgba(0.18, 0.48, 0.96, 0.55) : Qt.rgba(1, 1, 1, 0.12))
+            Icon { anchors.centerIn: parent; name: Sway.tiling ? "view-grid-symbolic" : "window-restore-symbolic"; size: 18 }
+            MouseArea { id: tileArea; anchors.fill: parent; hoverEnabled: true; onClicked: Sway.toggleTiling() }
+        }
         Icon { name: Icons.networkIcon(SystemStatus.online, SystemStatus.wired, SystemStatus.signalBars(SystemStatus.signal))
                size: 22; anchors.verticalCenter: parent.verticalCenter }
         Icon { name: Icons.volumeIcon(SystemStatus.volume, SystemStatus.muted); size: 22
@@ -71,7 +90,7 @@ Rectangle {
                 id: ccArea
                 anchors.fill: parent
                 hoverEnabled: true
-                onClicked: bar.controlCenterToggled()
+                onClicked: UiState.toggleCenter()
             }
         }
         Text {

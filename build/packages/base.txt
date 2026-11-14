@@ -12,7 +12,6 @@ pipewire
 pipewire-pulse
 wireplumber
 # Pila gráfica (Fase 2)
-labwc
 seatd
 mesa
 qt6-base
@@ -40,3 +39,7 @@ pipewire-alsa
 alsa-utils
 mousepad
 xorg-xwayland
+sway
+layer-shell-qt
+grim
+swaybg

@@ -38,8 +38,10 @@ echo "es_ES" > "$S/.config/user-dirs.locale"
 install -m644 "$HERE/overlay/etc/skel/.bashrc" "$S/.bashrc"
 sed -i '/# BC OS: iniciar la sesión gráfica/,$d' "$S/.bash_profile"
 cat "$HERE/overlay/etc/skel/.bash_profile" >> "$S/.bash_profile"
-mkdir -p "$S/.config/labwc"; install -m644 "$HERE"/overlay/etc/skel/.config/labwc/* "$S/.config/labwc/"
-install -m755 "$HERE/overlay/usr/bin/bc-session" "$R/usr/bin/bc-session"
+install -m755 "$HERE/overlay/usr/bin/bc-session" "$HERE/overlay/usr/bin/bc-wm-mode" "$HERE/overlay/usr/bin/bc-ctl" "$R/usr/bin/"
+install -D -m644 "$HERE/overlay/etc/bc/sway/config" "$R/etc/bc/sway/config"
+install -m644 "$HERE/overlay/etc/bc/sway/keyboard.conf" "$R/etc/bc/sway/keyboard.conf"
+install -m644 "$HERE/overlay/etc/bc/atajos.txt" "$R/etc/bc/atajos.txt"
 install -D -m644 "$HERE/overlay/etc/systemd/system/getty@tty1.service.d/autologin.conf" "$R/etc/systemd/system/getty@tty1.service.d/autologin.conf"
 
 # /root para root (0700), /home para usuarios (0755)

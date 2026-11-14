@@ -11,7 +11,7 @@
 #include "../src/powercontrol.h"
 #include "../src/systemstatus.h"
 #include "../src/userlist.h"
-#include "../src/windowlist.h"
+#include "../src/swaycontrol.h"
 
 class TstShell : public QObject {
     Q_OBJECT
@@ -105,10 +105,11 @@ private slots:
     }
     void lanzador() {
         Launcher l;
-        QCOMPARE(l.launch("archivos"), QString("internal"));
-        QCOMPARE(l.launch("monitor"), QString("internal"));
-        QCOMPARE(l.launch("ajustes"), QString("internal"));
-        QCOMPARE(l.launch("tienda"), QString("internal"));
+        QCOMPARE(Launcher::appIdFor("archivos"), QString("bc-files"));
+        QCOMPARE(Launcher::appIdFor("terminal"), QString("foot"));
+        QCOMPARE(Launcher::appIdFor("navegador"), QString("firefox"));
+        qputenv("BC_SHELL_BIN", "/bin/true");
+        QCOMPARE(l.launch("tienda"), QString("started"));
         QCOMPARE(l.launch("musica"), QString("unavailable"));
         qputenv("BC_TERMINAL", "bc-no-existe-xyz");
         QCOMPARE(l.launch("terminal"), QString("failed"));
@@ -175,11 +176,21 @@ private slots:
         QCOMPARE(m.value("size").toString(), QString("5.00 MiB"));
         QCOMPARE(PackageStore::sudoArgs({"-S", "x"}), QStringList({"-S", "-p", "", "--", "pacman", "-S", "x"}));
     }
-    void listaDeVentanas() {
-        const QVariantList w = WindowList::parseList("foot: bc@bcos: ~\nfirefox: Mozilla Firefox\nbc-shell: BC Shell\n");
-        QCOMPARE(w.size(), 2);  // bc-shell no cuenta
+    void arbolDeSway() {
+        const QByteArray j = R"({"type":"root","nodes":[{"type":"output","nodes":[
+          {"type":"workspace","name":"1","nodes":[
+            {"type":"con","id":10,"pid":100,"app_id":"foot","name":"bc@bcos: ~","focused":true,"nodes":[],"floating_nodes":[]},
+            {"type":"con","id":11,"pid":101,"app_id":null,"window_properties":{"class":"Firefox"},"name":"Web","nodes":[],"floating_nodes":[]}],
+           "floating_nodes":[{"type":"floating_con","id":12,"pid":102,"app_id":"bc-files","name":"Archivos","nodes":[],"floating_nodes":[]}]},
+          {"type":"workspace","name":"__i3_scratch","nodes":[],"floating_nodes":[
+            {"type":"floating_con","id":13,"pid":103,"app_id":"bc-store","name":"Tienda","nodes":[],"floating_nodes":[]}]}]}]})";
+        const QVariantList w = SwayControl::parseTree(j);
+        QCOMPARE(w.size(), 4);
         QCOMPARE(w[0].toMap().value("appId").toString(), QString("foot"));
-        QCOMPARE(w[0].toMap().value("title").toString(), QString("bc@bcos: ~"));
+        QVERIFY(w[0].toMap().value("focused").toBool());
+        QCOMPARE(w[1].toMap().value("appId").toString(), QString("Firefox"));
+        QVERIFY(w[2].toMap().value("floating").toBool());
+        QVERIFY(w[3].toMap().value("minimized").toBool());
     }
     void listaDeUsuarios() {
         QTemporaryDir t;
