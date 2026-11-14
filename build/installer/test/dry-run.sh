@@ -74,7 +74,7 @@ for caso in plano cifrado; do
   mk="$(grep -n '(chroot) mkinitcpio -P' "$O" | head -n1 | cut -d: -f1)"
   [[ -n "$tema" && -n "$mk" && "$tema" -lt "$mk" ]] && ok "tema Plymouth bcos antes de mkinitcpio -P" || mal "tema Plymouth bcos antes de mkinitcpio -P"
 
-  tiene "$O" "(chroot) useradd -m -G wheel,audio,video,input -s /bin/bash borja" "usuario con grupos de la imagen"
+  tiene "$O" "(chroot) useradd -m -G wheel,audio,video,input -s /usr/bin/fish borja" "usuario con grupos de la imagen"
   tiene "$O" "(chroot) systemctl enable greetd.service bc-login-fallback.path" "greetd activado"
   tiene "$O" "(chroot) systemctl set-default graphical.target" "destino gráfico"
   fichero "$O" "/etc/bc/sway/keyboard.conf" >"$T/kb.conf"
