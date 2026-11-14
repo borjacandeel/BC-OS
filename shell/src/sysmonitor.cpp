@@ -15,7 +15,7 @@ QString slurp(const QString &path) {
 }  // namespace
 
 SysMonitor::SysMonitor(QObject *parent) : QAbstractListModel(parent) {
-    m_timer.setInterval(1500);
+    m_timer.setInterval(2000);
     connect(&m_timer, &QTimer::timeout, this, &SysMonitor::refresh);
     m_cpuCount = qMax(1, int(sysconf(_SC_NPROCESSORS_ONLN)));
     for (const QString &l : slurp("/proc/cpuinfo").split('\n')) {

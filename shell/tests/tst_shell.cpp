@@ -125,6 +125,8 @@ private slots:
         QVERIFY(!SystemStatus::parseWpctl("Could not connect").ok);
         const auto n = SystemStatus::parseNmcliDevices("lo:loopback:unmanaged:\nwlan0:wifi:connected:Casa\\:5G\neth0:ethernet:unavailable:\n");
         QVERIFY(n.hasWifi); QVERIFY(n.online); QVERIFY(!n.wired); QCOMPARE(n.connection, QString("Casa:5G"));
+        const auto x = SystemStatus::parseNmcliDevices("enp0s5:ethernet:connected (externally):enp0s5\n");
+        QVERIFY(x.online);
         const auto e = SystemStatus::parseNmcliDevices("eth0:ethernet:connected:Wired connection 1\n");
         QVERIFY(!e.hasWifi); QVERIFY(e.online); QVERIFY(e.wired);
         QCOMPARE(SystemStatus::parseNmcliSignal("no:40:Otra\nyes:78:Casa\n"), 78);

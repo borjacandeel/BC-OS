@@ -59,10 +59,11 @@ mkdir -p "$R/usr/share/icons"; rm -rf "$R/usr/share/icons/BC"
 cp -a "$HERE/../icons/dist/theme/BC" "$R/usr/share/icons/BC"
 mkdir -p "$R/etc/gtk-3.0"; printf '[Settings]\ngtk-icon-theme-name=BC\n' > "$R/etc/gtk-3.0/settings.ini"
 
-# Reducción de tamaño (imagen para máquinas virtuales UEFI; BC_KEEP_FIRMWARE=1 conserva linux-firmware)
+# Reducción de tamaño (imagen para máquinas virtuales UEFI; BC_KEEP_FIRMWARE=1 conserva todo el firmware).
+# Se quitan los firmware de GPU/CPU x86 y se mantienen los de Wi-Fi/Bluetooth (atheros, broadcom, mediatek, realtek).
 if [[ "${BC_KEEP_FIRMWARE:-0}" != "1" ]]; then
-  sh "pacman -Q linux-firmware >/dev/null 2>&1 && pacman -Rdd --noconfirm --disable-sandbox linux-firmware linux-firmware-whence 2>/dev/null || true"
-  sh "pacman -Q linux-firmware-whence >/dev/null 2>&1 && pacman -Rdd --noconfirm --disable-sandbox linux-firmware-whence || true"
+  FW="$(sh "pacman -Qq | grep -E '^linux-firmware-(amd|amdgpu|intel|nvidia|radeon|cirrus|ti|other)$' | tr '\n' ' '")"
+  [[ -n "$FW" ]] && sh "pacman -Rdd --noconfirm --disable-sandbox $FW" || true
 fi
 sh "pacman -Q gcc >/dev/null 2>&1 && pacman -Rdd --noconfirm --disable-sandbox gcc || true"
 find "$R/usr/share/locale" -mindepth 1 -maxdepth 1 ! -name 'es*' ! -name 'en*' ! -name 'locale.alias' -exec rm -rf {} + 2>/dev/null || true
@@ -83,6 +84,8 @@ sh "systemctl enable greetd.service bc-login-fallback.path && systemctl set-defa
 sh "systemctl --global enable pipewire.socket pipewire-pulse.socket wireplumber.service"
 
 # Servicios mínimos
+sh "systemctl disable systemd-networkd systemd-networkd.socket systemd-networkd-wait-online 2>/dev/null || true"
+rm -f "$R"/etc/systemd/network/*.network
 sh "systemctl enable NetworkManager systemd-timesyncd systemd-resolved nftables sshd bluetooth"
 install -D -m644 "$HERE/overlay/etc/ssh/sshd_config.d/10-bcos.conf" "$R/etc/ssh/sshd_config.d/10-bcos.conf"
 install -D -m644 "$HERE/overlay/etc/systemd/zram-generator.conf" "$R/etc/systemd/zram-generator.conf"

@@ -29,7 +29,7 @@ QStringList splitNm(const QString &line) {
 
 SystemStatus::SystemStatus(QObject *parent) : QObject(parent) {
     m_dnd = QSettings("BC-OS", "bc-shell").value("noMolestar", false).toBool();
-    m_timer.setInterval(3000);
+    m_timer.setInterval(5000);
     connect(&m_timer, &QTimer::timeout, this, &SystemStatus::refresh);
     m_timer.start();
     QTimer::singleShot(0, this, &SystemStatus::refresh);
@@ -53,7 +53,7 @@ SystemStatus::Net SystemStatus::parseNmcliDevices(const QString &out) {
         if (f.size() < 3) continue;
         const QString type = f[1], state = f[2], conn = f.value(3);
         if (type == "wifi") n.hasWifi = true;
-        if ((type == "wifi" || type == "ethernet") && state == "connected" && !n.online) {
+        if ((type == "wifi" || type == "ethernet") && state.startsWith("connected") && !n.online) {
             n.online = true;
             n.wired = (type == "ethernet");
             n.connection = conn;
@@ -133,19 +133,23 @@ void SystemStatus::refresh() {
             emit changed();
         }
     });
-    run("nmcli", {"radio", "wifi"}, [this](int code, const QString &out) {
-        const bool on = code == 0 && out.trimmed() == "enabled";
-        if (on != m_wifiEnabled) { m_wifiEnabled = on; emit changed(); }
-    });
-    run("nmcli", {"-t", "-f", "ACTIVE,SIGNAL,SSID", "device", "wifi"}, [this](int code, const QString &out) {
-        const int s = code == 0 ? parseNmcliSignal(out) : -1;
-        if (s != m_signal) { m_signal = s; emit changed(); }
-    });
-    run("bluetoothctl", {"show"}, [this](int code, const QString &out) {
-        const bool avail = code == 0 && out.contains("Controller");
-        const bool on = avail && parseBluetoothPowered(out);
-        if (avail != m_btAvailable || on != m_btOn) { m_btAvailable = avail; m_btOn = on; emit changed(); }
-    });
+    if (m_hasWifi) {
+        run("nmcli", {"radio", "wifi"}, [this](int code, const QString &out) {
+            const bool on = code == 0 && out.trimmed() == "enabled";
+            if (on != m_wifiEnabled) { m_wifiEnabled = on; emit changed(); }
+        });
+        run("nmcli", {"-t", "-f", "ACTIVE,SIGNAL,SSID", "device", "wifi"}, [this](int code, const QString &out) {
+            const int s = code == 0 ? parseNmcliSignal(out) : -1;
+            if (s != m_signal) { m_signal = s; emit changed(); }
+        });
+    }
+    if (!QDir("/sys/class/bluetooth").entryList(QDir::Dirs | QDir::NoDotAndDotDot).isEmpty()) {
+        run("bluetoothctl", {"show"}, [this](int code, const QString &out) {
+            const bool avail = code == 0 && out.contains("Controller");
+            const bool on = avail && parseBluetoothPowered(out);
+            if (avail != m_btAvailable || on != m_btOn) { m_btAvailable = avail; m_btOn = on; emit changed(); }
+        });
+    }
     run("brightnessctl", {"-c", "backlight", "-m"}, [this](int code, const QString &out) {
         bool ok = false; double frac = 0;
         if (code == 0) parseBrightnessctl(out, ok, frac);
