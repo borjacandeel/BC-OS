@@ -6,6 +6,7 @@ Rectangle {
     height: 41
     color: Theme.barFill
     signal controlCenterToggled()
+    signal systemMenuRequested()
 
     property date now: new Date()
     readonly property var loc: Qt.locale(AppConfig.language)
@@ -30,7 +31,13 @@ Rectangle {
         anchors.leftMargin: 22
         anchors.verticalCenter: parent.verticalCenter
         spacing: 26
-        Brand { logoHeight: 15; anchors.verticalCenter: parent.verticalCenter }
+        Item {
+            width: brandLogo.implicitWidth + 16
+            height: bar.height
+            anchors.verticalCenter: parent.verticalCenter
+            Brand { id: brandLogo; logoHeight: 15; anchors.centerIn: parent }
+            MouseArea { anchors.fill: parent; onClicked: bar.systemMenuRequested() }
+        }
         Repeater {
             model: [qsTr("Archivos"), qsTr("Editar"), qsTr("Ver"), qsTr("Ir"), qsTr("Ventana"), qsTr("Ayuda")]
             Text {

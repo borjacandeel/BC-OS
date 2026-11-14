@@ -6,6 +6,7 @@ Item {
     id: root
     clip: true
     readonly property bool ready: wp.status === Image.Ready
+    property string source: "qrc:/BCShell/assets/wallpaper-default.png"
 
     Rectangle {
         anchors.fill: parent
@@ -91,7 +92,7 @@ Item {
     Image {
         id: wp
         anchors.fill: parent
-        source: "qrc:/BCShell/assets/wallpaper-default.png"
+        source: root.source
         fillMode: Image.PreserveAspectCrop
         asynchronous: true
         smooth: true

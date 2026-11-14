@@ -8,6 +8,9 @@
 #include <QTranslator>
 #include <QtQml/qqml.h>
 #include "appconfig.h"
+#include "pamauth.h"
+#include "powercontrol.h"
+#include "userlist.h"
 #include "filebrowser.h"
 #include "launcher.h"
 
@@ -32,9 +35,10 @@ int main(int argc, char *argv[]) {
     QCommandLineOption oCheck("check", "Verificación: sale con error si hay avisos QML y termina");
     QCommandLineOption oTitle("expect-title", "Título de notificación esperado", "texto");
     QCommandLineOption oReduced("reduced-motion", "Movimiento reducido");
+    QCommandLineOption oNoSplash("no-splash", "Sin pantalla de carga");
     QCommandLineOption oFixed("fixed-time", "Hora fija ISO-8601", "iso");
     QCommandLineOption oSize("size", "Tamaño de ventana, p. ej. 1280x800", "AxA");
-    p.addOptions({oLang, oShot, oCheck, oTitle, oReduced, oFixed, oSize});
+    p.addOptions({oLang, oShot, oCheck, oTitle, oReduced, oNoSplash, oFixed, oSize});
     p.process(app);
 
     QSettings st;
@@ -50,11 +54,18 @@ int main(int argc, char *argv[]) {
     if (tr.load(QLocale(lang), "bcshell", "_", ":/i18n")) app.installTranslator(&tr);
     else qWarning() << "No se pudo cargar la traducción" << lang;
 
-    AppConfig cfg(lang, reduced, fixed);
+    const bool splash = !(p.isSet(oShot) || p.isSet(oCheck)) && !p.isSet(oNoSplash);
+    AppConfig cfg(lang, reduced, fixed, nullptr, splash);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "AppConfig", &cfg);
 
     Launcher launcher;
     FileBrowser files;
+    PamAuth pam;
+    PowerControl power;
+    UserList users;
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "PamAuth", &pam);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Power", &power);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Users", &users);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Launcher", &launcher);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Files", &files);
 

@@ -19,6 +19,7 @@ Window {
     property bool centerOpen: true
     property bool notifOpen: true
     property bool filesOpen: true
+    property bool locked: false
     property string notifHeading: qsTr("Actualizaciones")
     property string notifText: qsTr("BC OS está al día")
 
@@ -52,7 +53,10 @@ Window {
         anchors.right: parent.right
         height: root.topH
         source: "TopBar.qml"
-        onLoaded: item.controlCenterToggled.connect(() => root.centerOpen = !root.centerOpen)
+        onLoaded: {
+            item.controlCenterToggled.connect(() => root.centerOpen = !root.centerOpen)
+            item.systemMenuRequested.connect(() => sysMenu.open = !sysMenu.open)
+        }
     }
 
     // Archivos: centrado en el hueco libre a la izquierda del panel derecho, sobre el Dock.
@@ -129,5 +133,39 @@ Window {
             item.launched.connect((kind, name) => root.launch(kind, name))
             item.running = Qt.binding(() => Launcher.running.concat(root.filesOpen ? ["archivos"] : []))
         }
+    }
+
+    Shortcut { sequence: "Ctrl+Meta+Q"; onActivated: root.locked = true }
+
+    SystemMenu {
+        id: sysMenu
+        onAboutRequested: root.showNotice(qsTr("BC OS"), qsTr("Versión alpha · ARM64"))
+        onSettingsRequested: root.launch("ajustes", qsTr("Configuración"))
+        onLockRequested: root.locked = true
+        onPowerRequested: (action) => powerDialog.open(action)
+    }
+
+    PowerDialog {
+        id: powerDialog
+        onConfirmed: (a) => {
+            if (a === "poweroff") Power.poweroff()
+            else if (a === "reboot") Power.reboot()
+            else if (a === "suspend") Power.suspend()
+            else if (a === "logout") Power.logout()
+        }
+    }
+
+    LockScreen {
+        id: lockScreen
+        active: root.locked
+        onUnlocked: root.locked = false
+    }
+
+    Splash { }
+
+    Component.onCompleted: {
+        if (AppConfig.demo === "lock") locked = true
+        else if (AppConfig.demo === "menu") sysMenu.open = true
+        else if (AppConfig.demo === "power") powerDialog.open("poweroff")
     }
 }

@@ -1527,5 +1527,37 @@
       "hypertext"
     ],
     "category": "mimetypes"
+  },
+  "system-reboot": {
+    "es": "Reiniciar",
+    "tags": [
+      "reiniciar",
+      "reboot",
+      "restart",
+      "energía"
+    ],
+    "category": "actions"
+  },
+  "system-suspend": {
+    "es": "Suspender",
+    "tags": [
+      "suspender",
+      "dormir",
+      "suspend",
+      "sleep",
+      "energía"
+    ],
+    "category": "actions"
+  },
+  "preferences-system-power": {
+    "es": "Energía",
+    "tags": [
+      "energía",
+      "rayo",
+      "batería",
+      "power",
+      "bolt"
+    ],
+    "category": "status"
   }
 }

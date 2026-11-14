@@ -5,17 +5,26 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Qml Quick LinguistTools Test)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Qml Quick Network LinguistTools Test)
+find_library(PAM_LIBRARY pam REQUIRED)
 qt_standard_project_setup()
 
-qt_add_executable(bc-shell src/main.cpp src/appconfig.h src/appconfig.cpp
-    src/launcher.h src/launcher.cpp src/filebrowser.h src/filebrowser.cpp)
+add_library(bccommon STATIC src/appconfig.h src/appconfig.cpp src/powercontrol.h src/powercontrol.cpp
+    src/userlist.h src/userlist.cpp)
+target_link_libraries(bccommon PUBLIC Qt6::Core)
+
+qt_add_executable(bc-shell src/main.cpp src/launcher.h src/launcher.cpp src/filebrowser.h src/filebrowser.cpp
+    src/pamauth.h src/pamauth.cpp)
 
 set(BC_QML_FILES
     qml/Main.qml qml/Theme.qml qml/Icons.qml qml/IconCache.qml qml/Icon.qml qml/Wallpaper.qml
     qml/TopBar.qml qml/Dock.qml qml/AppIcon.qml qml/FilesWindow.qml
-    qml/FileGlyph.qml qml/ControlCenter.qml qml/NotificationCard.qml qml/Brand.qml)
-foreach(f ${BC_QML_FILES})
+    qml/FileGlyph.qml qml/ControlCenter.qml qml/NotificationCard.qml qml/Brand.qml
+    qml/LoginPanel.qml qml/PowerButton.qml qml/PowerDialog.qml qml/BigClock.qml qml/LockScreen.qml
+    qml/Splash.qml qml/SystemMenu.qml)
+set(BC_GREETER_QML qml/Greeter.qml qml/LoginPanel.qml qml/PowerButton.qml qml/PowerDialog.qml qml/BigClock.qml
+    qml/Theme.qml qml/Icons.qml qml/IconCache.qml qml/Icon.qml qml/Wallpaper.qml qml/Brand.qml)
+foreach(f ${BC_QML_FILES} qml/Greeter.qml)
     get_filename_component(n ${f} NAME)
     set_source_files_properties(${f} PROPERTIES QT_RESOURCE_ALIAS ${n})
 endforeach()
@@ -26,7 +35,7 @@ qt_add_qml_module(bc-shell
     URI BCShell
     VERSION 1.0
     QML_FILES ${BC_QML_FILES}
-    RESOURCES assets/BC-logo-blanco.svg assets/wallpaper-default.png
+    RESOURCES assets/BC-logo-blanco.svg assets/wallpaper-default.png assets/wallpaper-login.png
 )
 
 qt_add_translations(bc-shell
@@ -37,8 +46,24 @@ qt_add_translations(bc-shell
 file(GLOB BC_ICON_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/assets/icons/*.svg)
 qt_add_resources(bc-shell bcicons PREFIX /BCShell/icons BASE ${CMAKE_CURRENT_SOURCE_DIR}/assets/icons FILES ${BC_ICON_FILES})
 
-target_link_libraries(bc-shell PRIVATE Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick)
-install(TARGETS bc-shell RUNTIME DESTINATION bin)
+target_link_libraries(bc-shell PRIVATE bccommon Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick ${PAM_LIBRARY})
+
+# Greeter para greetd
+qt_add_executable(bc-greeter src/greeter_main.cpp src/greetd.h src/greetd.cpp)
+qt_add_qml_module(bc-greeter
+    URI BCShell
+    VERSION 1.0
+    OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/greeter_qml/BCShell
+    QML_FILES ${BC_GREETER_QML}
+    RESOURCES assets/BC-logo-blanco.svg assets/wallpaper-default.png assets/wallpaper-login.png
+)
+qt_add_translations(bc-greeter
+    TS_FILES i18n/bcshell_es_ES.ts i18n/bcshell_en.ts
+    RESOURCE_PREFIX /i18n
+)
+qt_add_resources(bc-greeter bcicons_g PREFIX /BCShell/icons BASE ${CMAKE_CURRENT_SOURCE_DIR}/assets/icons FILES ${BC_ICON_FILES})
+target_link_libraries(bc-greeter PRIVATE bccommon Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::Network)
+install(TARGETS bc-shell bc-greeter RUNTIME DESTINATION bin)
 
 enable_testing()
 set(BC_ENV "QT_QPA_PLATFORM=offscreen" "QT_QUICK_BACKEND=software")
@@ -54,6 +79,13 @@ qt_add_executable(tst_shell tests/tst_shell.cpp src/launcher.h src/launcher.cpp 
 target_link_libraries(tst_shell PRIVATE Qt6::Core Qt6::Gui Qt6::Test)
 add_test(NAME modelo_archivos_y_lanzador COMMAND tst_shell)
 set_tests_properties(modelo_archivos_y_lanzador PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+add_test(NAME greeter_login_ok COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/greeter_protocol.sh
+         $<TARGET_FILE:bc-greeter> ${CMAKE_CURRENT_SOURCE_DIR}/tests/fake_greetd.py bc:bcos 0)
+add_test(NAME greeter_login_clave_mala COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests/greeter_protocol.sh
+         $<TARGET_FILE:bc-greeter> ${CMAKE_CURRENT_SOURCE_DIR}/tests/fake_greetd.py bc:mala 10)
+add_test(NAME greeter_captura COMMAND bc-greeter --check --size 1280x800 --lang es_ES
+         --screenshot ${CMAKE_BINARY_DIR}/captura-greeter.png)
+set_tests_properties(greeter_captura PROPERTIES ENVIRONMENT "${BC_ENV}")
 foreach(sz 1280x800 1920x1080 1024x640)
     add_test(NAME responsive_${sz} COMMAND bc-shell --check --lang es_ES --size ${sz}
              --expect-title "Actualizaciones" --screenshot ${CMAKE_BINARY_DIR}/captura-${sz}.png)

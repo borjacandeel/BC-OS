@@ -51,14 +51,14 @@
       "label": "Acciones",
       "context": "Actions",
       "lote": "A",
-      "count": 40
+      "count": 42
     },
     {
       "id": "status",
       "label": "Barra de menús y estado",
       "context": "Status",
       "lote": "A",
-      "count": 37
+      "count": 38
     },
     {
       "id": "dialogs",
@@ -807,6 +807,31 @@
       "file": "dist/svg/system-log-out-symbolic.svg"
     },
     {
+      "name": "system-reboot",
+      "label": "Reiniciar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "system-reboot-symbolic"
+      },
+      "tags": [
+        "reiniciar",
+        "reboot",
+        "restart",
+        "energía"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/system-reboot-symbolic.svg"
+    },
+    {
       "name": "system-shutdown",
       "label": "Apagar",
       "category": "actions",
@@ -830,6 +855,32 @@
         48
       ],
       "file": "dist/svg/system-shutdown-symbolic.svg"
+    },
+    {
+      "name": "system-suspend",
+      "label": "Suspender",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "system-suspend-symbolic"
+      },
+      "tags": [
+        "suspender",
+        "dormir",
+        "suspend",
+        "sleep",
+        "energía"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/system-suspend-symbolic.svg"
     },
     {
       "name": "view-conceal",
@@ -4859,6 +4910,33 @@
         48
       ],
       "file": "dist/svg/power-profile-power-saver-symbolic.svg"
+    },
+    {
+      "name": "preferences-system-power",
+      "label": "Energía",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "preferences-system-power-fill-symbolic",
+        "regular": "preferences-system-power-symbolic"
+      },
+      "tags": [
+        "energía",
+        "rayo",
+        "batería",
+        "power",
+        "bolt"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/preferences-system-power-symbolic.svg"
     },
     {
       "name": "weather-clear",
