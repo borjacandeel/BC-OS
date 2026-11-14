@@ -26,7 +26,7 @@ Mosaico (como bspwm) y flotante (como macOS)
   Súper+Mayús+Espacio   Alternar todo el escritorio entre mosaico y flotante
                         (también el botón de la barra superior)
   Súper+Mayús+F         Alternar solo esta ventana
-  Súper+H / Súper+V     Dividir en horizontal / vertical
+  Súper+H / Súper+Mayús+V Dividir en horizontal / vertical
   Súper+T               Cambiar la disposición de la división
   Súper+R               Redimensionar con flechas (Intro/Esc para salir)
   Súper+Mayús+R         Recargar la configuración

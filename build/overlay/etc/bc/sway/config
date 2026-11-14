@@ -74,7 +74,7 @@ bindsym Alt+Shift+Tab focus prev
 
 # Mosaico (como bspwm): dividir y cambiar disposición
 bindsym $mod+h splith
-bindsym $mod+v splitv
+bindsym $mod+Shift+v splitv
 bindsym $mod+t layout toggle split
 bindsym $mod+r mode "redimensionar"
 mode "redimensionar" {
