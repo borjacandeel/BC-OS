@@ -7,6 +7,7 @@
 #include "../src/appindex.h"
 #include "../src/clipboardhistory.h"
 #include "../src/updatechecker.h"
+#include "../src/sessionlist.h"
 #include "../src/sysmonitor.h"
 #include "../src/greetd.h"
 #include "../src/launcher.h"
@@ -210,6 +211,30 @@ private slots:
         QCOMPARE(SysMonitor::cpuNameFromInfo(""), QString("ARM64"));
         QCOMPARE(SysMonitor::osNameFromRelease("NAME=\"BC OS\"\nPRETTY_NAME=\"BC OS 0.4.1-beta\"\n"), QString("BC OS 0.4.1-beta"));
         QCOMPARE(SysMonitor::osNameFromRelease(""), QString("BC OS"));
+    }
+    void sesiones() {
+        QTemporaryDir d, st;
+        QVERIFY(d.isValid() && st.isValid());
+        auto w = [&](const char *n, const char *body) { QFile f(d.filePath(n)); QVERIFY(f.open(QIODevice::WriteOnly)); f.write(body); };
+        w("bc.desktop", "[Desktop Entry]\nName=BC OS\nExec=bc-session --greetd\nX-BC-Order=1\n");
+        w("dotfiles.desktop", "[Desktop Entry]\nName=Dotfiles (bspwm)\nExec=bc-session-bspwm --greetd\nX-BC-Type=x11\nX-BC-Order=2\n");
+        w("mal id.desktop", "[Desktop Entry]\nName=Mal\nExec=x\n");
+        SessionList s(d.path(), st.path());
+        QCOMPARE(s.sessions().size(), 2);
+        QCOMPARE(s.currentId(), QString("bc"));
+        QCOMPARE(s.currentCommand(), QStringList({"bc-session", "--greetd"}));
+        s.setCurrent(1);
+        QCOMPARE(s.currentId(), QString("dotfiles"));
+        QVERIFY(s.currentEnv().contains("XDG_SESSION_TYPE=x11"));
+        QVERIFY(s.remember("borja", "dotfiles"));
+        QVERIFY(!s.remember("../x", "dotfiles"));
+        QVERIFY(!s.remember("borja", "inexistente"));
+        s.setCurrent(0);
+        s.selectFor("borja");
+        QCOMPARE(s.currentId(), QString("dotfiles"));
+        s.rememberLast("bc");
+        SessionList s2(d.path(), st.path());
+        QCOMPARE(s2.currentId(), QString("bc"));
     }
     void historialPortapapeles() {
         const auto l = ClipboardHistory::parseList("12\thola mundo\n11\t[[ binary data 12 KiB png 10x10 ]]\nabc\tno numerico\n10\t   \n9\tadiós\n");

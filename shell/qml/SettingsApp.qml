@@ -94,6 +94,25 @@ AppWindow {
             Rectangle { width: 260; height: 40; radius: 12; color: Theme.accent
                         Text { anchors.centerIn: parent; text: qsTr("Abrir el asistente de bienvenida"); color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14 }
                         MouseArea { anchors.fill: parent; onClicked: Launcher.run("bc-ctl", ["welcome"]) } }
+            Label { text: qsTr("Entorno al iniciar sesión") }
+            Row {
+                spacing: 12
+                Repeater {
+                    model: Sessions.sessions
+                    delegate: Rectangle {
+                        required property var modelData
+                        readonly property bool sel: Sessions.runningId === modelData.id
+                        width: 250; height: 66; radius: 14
+                        color: sel ? Theme.accentSelected : Theme.tileFill
+                        border.width: sel ? 2 : 0; border.color: Theme.accent
+                        Column { anchors.centerIn: parent; spacing: 4
+                                 Label { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.name; font.weight: Font.DemiBold }
+                                 Hint { anchors.horizontalCenter: parent.horizontalCenter; width: 230; horizontalAlignment: Text.AlignHCenter; text: modelData.comment } }
+                        MouseArea { anchors.fill: parent; onClicked: { if (Sessions.remember(Sessions.currentUserName(), modelData.id)) { envNote.text = qsTr("Se usará «%1» la próxima vez que inicies sesión.").arg(modelData.name) } } }
+                    }
+                }
+            }
+            Hint { id: envNote; text: qsTr("Elige el entorno y cierra sesión para cambiar: en el login también puedes escogerlo.") }
             Label { text: qsTr("Estilo de escritorio") }
             Row {
                 spacing: 12

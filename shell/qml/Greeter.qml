@@ -14,6 +14,8 @@ Window {
 
     property int userIndex: 0
     readonly property var userList: Users.users
+    onUserIndexChanged: if (userList.length > 0) Sessions.selectFor(current.name)
+    Component.onCompleted: Sessions.selectFor(current.name)
     readonly property var current: userList.length > 0 ? userList[Math.min(userIndex, userList.length - 1)] : ({ name: "bc", display: "BC" })
 
     Wallpaper { anchors.fill: parent; source: "qrc:/BCShell/assets/wallpaper-login.png" }
@@ -48,6 +50,30 @@ Window {
         transformOrigin: Item.Top
         onSubmitted: (password) => Greetd.login(win.current.name, password)
         Component.onCompleted: focusField()
+    }
+
+    // Entorno de escritorio: BC OS (sway) o Dotfiles (bspwm); se recuerda la última elección y la que cada usuario fija en Configuración
+    Row {
+        visible: Sessions.sessions.length > 1
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.top: panel.bottom
+        anchors.topMargin: (win.userList.length > 1 ? 62 : 10) * panel.scale
+        spacing: 8
+        opacity: win.enter
+        Repeater {
+            model: Sessions.sessions
+            delegate: Rectangle {
+                required property var modelData
+                required property int index
+                readonly property bool sel: index === Sessions.current
+                height: 30; width: st.implicitWidth + 28; radius: 15
+                color: sel ? Qt.rgba(1, 1, 1, 0.9) : Qt.rgba(1, 1, 1, 0.14)
+                Behavior on color { ColorAnimation { duration: Theme.dur(120) } }
+                Text { id: st; anchors.centerIn: parent; text: modelData.name; color: sel ? Theme.midnight : Theme.white
+                       font.family: Theme.fontFamily; font.pixelSize: 13; font.weight: sel ? Font.DemiBold : Font.Normal }
+                MouseArea { anchors.fill: parent; onClicked: { Sessions.current = index; panel.focusField() } }
+            }
+        }
     }
 
     // Selector de usuario (solo si hay más de uno).

@@ -12,6 +12,7 @@
 #include "appsettings.h"
 #include "greetd.h"
 #include "powercontrol.h"
+#include "sessionlist.h"
 #include "userlist.h"
 
 static int g_warnings = 0;
@@ -55,20 +56,27 @@ int main(int argc, char *argv[]) {
     PowerControl power;
     UserList users(p.value(oPasswd));
     AppSettings appSettings;
+    SessionList sessions;
     qmlRegisterSingletonInstance("BCShell", 1, 0, "AppConfig", &cfg);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Greetd", &greetd);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Power", &power);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Users", &users);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Settings", &appSettings);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Sessions", &sessions);
+    auto applySession = [&] { greetd.setSession(sessions.currentCommand(), sessions.currentEnv()); };
+    QObject::connect(&sessions, &SessionList::currentChanged, &app, applySession);
+    applySession();
 
     const QString counter = qEnvironmentVariable("BC_GREETER_DIR", "/run/bc-greeter") + "/count";
     QObject::connect(&greetd, &GreetdClient::succeeded, &app, [&] {
+        sessions.rememberLast(sessions.currentId());
         QFile f(counter);
         if (f.open(QIODevice::WriteOnly | QIODevice::Truncate)) f.write("0\n");
     });
 
     g_prev = qInstallMessageHandler(countingHandler);
     QQmlApplicationEngine engine;
+    QObject::connect(&engine, &QQmlEngine::quit, &app, [] { QCoreApplication::exit(0); });   // Qt.quit() de QML
     engine.load(QUrl("qrc:/BCShell/Greeter.qml"));
     if (engine.rootObjects().isEmpty()) return 2;
     auto *win = qobject_cast<QQuickWindow *>(engine.rootObjects().first());

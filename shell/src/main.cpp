@@ -23,6 +23,7 @@
 #include "shellcontrol.h"
 #include "clipboardhistory.h"
 #include "updatechecker.h"
+#include "sessionlist.h"
 #include "filebrowser.h"
 #include "launcher.h"
 
@@ -91,6 +92,7 @@ int main(int argc, char *argv[]) {
     SystemStatus status;
     UserList users;
     LayerHelper layer;
+    SessionList sessionList;
     WindowControl windowControl;
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Settings", &appSettings);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Monitor", &monitor);
@@ -100,6 +102,7 @@ int main(int argc, char *argv[]) {
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Launcher", &launcher);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Files", &files);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Layer", &layer);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Sessions", &sessionList);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "WindowControl", &windowControl);
 
     // Solo del panel
