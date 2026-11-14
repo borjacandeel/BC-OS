@@ -13,6 +13,8 @@ public:
     QStringList running() const { return m_pids.keys(); }
     // Devuelve: "started" o "unavailable"/"failed". Las apps de BC se lanzan como procesos propios (`bc-shell --app`).
     Q_INVOKABLE QString launch(const QString &kind, const QString &open = QString());
+    // Ejecuta un programa suelto sin vigilarlo (p. ej. bc-ctl)
+    Q_INVOKABLE static bool run(const QString &program, const QStringList &args);
     // app_id de sway de cada tipo del Dock.
     Q_INVOKABLE static QString appIdFor(const QString &kind);
     static QString bcAppName(const QString &kind);

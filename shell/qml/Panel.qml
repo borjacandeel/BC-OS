@@ -38,7 +38,7 @@ LayerWindow {
 
     // Widgets (reloj, calendario, uso): columna derecha del fondo, bajo la barra superior
     Widgets {
-        visible: UiState.widgets
+        visible: UiState.widgets && !UiState.minimal
         scale: root.u
         transformOrigin: Item.TopRight
         x: root.width - Math.round(24 * root.u) - width
@@ -86,8 +86,11 @@ LayerWindow {
         function onOptionChanged(key, value) {
             if (key === "widgets") UiState.widgets = value === "1"
             else if (key === "mode") UiState.mode = value === "-" ? "" : value
+            else if (key === "accent") AppConfig.setAccent(value)
+            else if (key === "wallpaper" && value !== "-") Sway.command("output * bg \"" + value + "\" fill #04111F")
         }
-        function onStyleChanged(st) { UiState.closePopups(); UiState.style = st === "win" ? "win" : "mac" }
+        function onStyleChanged(st) { UiState.closePopups(); UiState.style = (st === "win" || st === "minimal") ? st : "mac" }
+        function onWelcomeRequested() { UiState.closePopups(); UiState.welcomeOpen = true }
         function onLauncherToggled() { UiState.toggleLauncher() }
         function onControlCenterToggled() { UiState.toggleCenter() }
         function onLockRequested() { UiState.run("bc:lock") }
@@ -106,6 +109,8 @@ LayerWindow {
         shown: (UiState.mode === "night" || UiState.mode === "relax") && !UiState.locked
         Rectangle { anchors.fill: parent; color: "#ff8a2a"; opacity: UiState.mode === "night" ? 0.16 : 0.07 }
     }
+
+    Timer { id: welcomeTimer; interval: 3500; onTriggered: if (!UiState.locked) UiState.welcomeOpen = true }
 
     // Barra superior
     LayerWindow {
@@ -131,7 +136,7 @@ LayerWindow {
     LayerWindow {
         layer: "top"; edges: ["bottom"]; margins: [0, 0, Math.round(22 * root.u), 0]; scope: "bc-dock"
         width: Math.round(dockLoader.width * root.u); height: Math.round(dockLoader.height * root.u)
-        shown: !UiState.splashing && !UiState.locked && !UiState.win
+        shown: !UiState.splashing && !UiState.locked && !UiState.win && !UiState.minimal
         Loader {
             id: dockLoader
             source: "Dock.qml"
@@ -161,8 +166,8 @@ LayerWindow {
     // Capa emergente: Centro de control, menús, lanzador, apagado, bloqueo y pantalla de carga
     LayerWindow {
         layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-popups"
-        margins: [UiState.locked || UiState.splashing ? 0 : UiState.topInset, 0, UiState.win && !UiState.locked && !UiState.splashing ? UiState.taskH : 0, 0]
-        keyboard: UiState.locked || UiState.launcherOpen || UiState.startOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
+        margins: [UiState.locked || UiState.splashing || UiState.welcomeOpen ? 0 : UiState.topInset, 0, UiState.win && !UiState.locked && !UiState.splashing ? UiState.taskH : 0, 0]
+        keyboard: UiState.locked || UiState.welcomeOpen || UiState.launcherOpen || UiState.startOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
         width: UiState.sw; height: UiState.sh
         shown: UiState.popupOpen || UiState.locked || UiState.splashing
         Loader {
@@ -213,6 +218,12 @@ LayerWindow {
                     }
                     Connections { target: UiState; function onLauncherOpenChanged() { if (UiState.launcherOpen) launcher.reset() } }
                 }
+                Welcome {
+                    anchors.fill: parent
+                    visible: UiState.welcomeOpen
+                    onVisibleChanged: if (visible) { step = 0; forceActiveFocus() }
+                    onFinished: UiState.welcomeOpen = false
+                }
                 StartMenu {
                     id: startMenu
                     visible: UiState.startOpen
@@ -246,6 +257,7 @@ LayerWindow {
         UiState.style = Settings.desktopStyle
         UiState.widgets = Settings.widgets
         UiState.mode = Settings.mode
+        if (AppConfig.splash && !Settings.welcomed) welcomeTimer.start()
         if (AppConfig.demo === "win") UiState.style = "win"
         if (!AppConfig.splash && AppConfig.demo === "") Notifications.push("BC OS", qsTr("Actualizaciones"), qsTr("BC OS está al día"), "", 600000)
         const d = AppConfig.demo
@@ -254,6 +266,7 @@ LayerWindow {
         else if (d === "power") UiState.openPower("poweroff")
         else if (d === "launcher") UiState.toggleLauncher()
         else if (d === "centro") UiState.centerOpen = true
+        else if (d === "bienvenida") UiState.welcomeOpen = true
         else if (d === "inicio") { UiState.style = "win"; UiState.toggleLauncher() }
         else if (d === "tienda" || d === "monitor" || d === "ajustes") launch(d, "")
     }

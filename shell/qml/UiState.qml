@@ -14,6 +14,8 @@ QtObject {
 
     property string style: "mac"               // "mac" (barra superior + Dock) o "win" (barra de tareas + menú Inicio)
     readonly property bool win: style === "win"
+    readonly property bool minimal: style === "minimal"
+    property bool welcomeOpen: false
     readonly property int taskH: 48
     readonly property int topInset: win ? 0 : barH
     property bool startOpen: false
@@ -31,7 +33,7 @@ QtObject {
     property real menuX: 12
     property bool locked: false
     property string powerAction: ""
-    readonly property bool popupOpen: centerOpen || launcherOpen || startOpen || menu !== "" || powerAction !== ""
+    readonly property bool popupOpen: welcomeOpen || centerOpen || launcherOpen || startOpen || menu !== "" || powerAction !== ""
     readonly property bool dim: launcherOpen || powerAction !== ""
 
     function closePopups() { centerOpen = false; launcherOpen = false; startOpen = false; menu = ""; powerAction = "" }

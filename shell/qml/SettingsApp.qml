@@ -91,16 +91,20 @@ AppWindow {
             Row2 { label: qsTr("Widgets en el escritorio"); value: ""
                    Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
                             on: Settings.widgets; onToggled: (v) => Settings.widgets = v } }
+            Rectangle { width: 260; height: 40; radius: 12; color: Theme.accent
+                        Text { anchors.centerIn: parent; text: qsTr("Abrir el asistente de bienvenida"); color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14 }
+                        MouseArea { anchors.fill: parent; onClicked: Launcher.run("bc-ctl", ["welcome"]) } }
             Label { text: qsTr("Estilo de escritorio") }
             Row {
                 spacing: 12
                 Repeater {
-                    model: [{ id: "mac", name: qsTr("macOS"), desc: qsTr("Barra superior y Dock") },
-                            { id: "win", name: qsTr("Windows"), desc: qsTr("Barra de tareas y menú Inicio") }]
+                    model: [{ id: "mac", name: qsTr("BC"), desc: qsTr("Barra superior y Dock") },
+                            { id: "win", name: qsTr("Windows"), desc: qsTr("Barra de tareas y menú Inicio") },
+                            { id: "minimal", name: qsTr("Minimal"), desc: qsTr("Solo la barra superior") }]
                     delegate: Rectangle {
                         required property var modelData
                         readonly property bool sel: Settings.desktopStyle === modelData.id
-                        width: 220; height: 76; radius: 14
+                        width: 160; height: 76; radius: 14
                         color: sel ? Theme.accentSelected : Theme.tileFill
                         border.width: sel ? 2 : 0; border.color: Theme.accent
                         Column { anchors.centerIn: parent; spacing: 4

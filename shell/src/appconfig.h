@@ -10,6 +10,7 @@ class AppConfig : public QObject {
     Q_PROPERTY(bool splash READ splash CONSTANT)
     Q_PROPERTY(QString demo READ demo CONSTANT)
     Q_PROPERTY(QString openArg READ openArg CONSTANT)
+    Q_PROPERTY(QString accent READ accent NOTIFY accentChanged)
 public:
     AppConfig(QString language, bool reducedMotion, QString fixedTime, QObject *parent = nullptr, bool splash = false);
     QString language() const { return m_language; }
@@ -17,9 +18,14 @@ public:
     QString fixedTime() const { return m_fixedTime; }
     bool splash() const { return m_splash; }
     // Solo para capturas de prueba: BC_DEMO=lock|menu|power.
+    QString accent() const { return m_accent; }
+    Q_INVOKABLE void setAccent(const QString &c);
     QString openArg() const { return m_openArg; }
     void setOpenArg(const QString &a) { m_openArg = a; }
     QString demo() const { return qEnvironmentVariable("BC_DEMO"); }
+
+signals:
+    void accentChanged();
 
 private:
     QString m_language;
@@ -27,4 +33,5 @@ private:
     QString m_fixedTime;
     bool m_splash;
     QString m_openArg;
+    QString m_accent = "#2F7BF5";
 };

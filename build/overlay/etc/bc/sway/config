@@ -12,8 +12,7 @@ font pango:Inter 1
 focus_follows_mouse yes
 popup_during_fullscreen smart
 xwayland enable
-# El fondo lo pinta sway (swaybg) con la misma imagen que usa BC Shell: sin parpadeos al arrancar ni al recargar
-output * bg /usr/share/bc/wallpaper-default.png fill #04111F
+# El fondo (swaybg) lo añade bc-wm-mode al generar la configuración: el elegido en Configuración o el predeterminado
 seat * xcursor_theme macOS 24
 workspace_auto_back_and_forth no
 

@@ -22,6 +22,11 @@ QString Launcher::programFor(const QString &kind) {
     return {};
 }
 
+bool Launcher::run(const QString &program, const QStringList &args) {
+    const QString exe = QStandardPaths::findExecutable(program);
+    return !exe.isEmpty() && QProcess::startDetached(exe, args);
+}
+
 QString Launcher::bcAppName(const QString &kind) {
     if (kind == "archivos") return "files";
     if (kind == "monitor") return "monitor";

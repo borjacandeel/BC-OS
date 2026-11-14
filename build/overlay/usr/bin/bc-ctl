@@ -1,10 +1,11 @@
 #!/bin/sh
-# Controla el panel de BC Shell por D-Bus (lo usan los atajos de sway). Uso: bc-ctl launcher|center|lock|tiling|style <mac|win>|power <acción>
+# Controla el panel de BC Shell por D-Bus (lo usan los atajos de sway). Uso: bc-ctl launcher|center|lock|tiling|style <mac|win|minimal>|welcome|power <acción>
 case "$1" in
   launcher) m=ToggleLauncher; set -- ;;
   center)   m=ToggleControlCenter; set -- ;;
   lock)     m=Lock; set -- ;;
   tiling)   exec bc-wm-mode toggle ;;
+  welcome)  m=ShowWelcome; set -- ;;
   style)    m=SetStyle; a="$2"; set -- s "$a" ;;
   option)   m=SetOption; k="$2"; v="$3"; set -- s "$k" s "$v" ;;
   power)    m=Power; a="$2"; set -- s "$a" ;;

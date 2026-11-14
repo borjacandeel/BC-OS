@@ -1,4 +1,7 @@
 #include "appsettings.h"
+#include <QColor>
+#include <QDir>
+#include <QFile>
 #include <QProcess>
 #include <QStandardPaths>
 
@@ -7,7 +10,10 @@ AppSettings::AppSettings(QObject *parent) : QObject(parent) {
     m_reduced = s.value("movimientoReducido", false).toBool();
     m_language = s.value("idioma", "es_ES").toString();
     m_style = s.value("estiloEscritorio", "mac").toString();
-    if (m_style != "win") m_style = "mac";
+    if (m_style != "win" && m_style != "minimal") m_style = "mac";
+    m_wallpaper = s.value("fondo", "").toString();
+    m_accent = s.value("acento", "#2F7BF5").toString();
+    m_welcomed = s.value("bienvenida", false).toBool();
     m_widgets = s.value("widgets", true).toBool();
     m_mode = s.value("modo", "").toString();
 }
@@ -27,7 +33,7 @@ void AppSettings::setLanguage(const QString &l) {
 }
 
 void AppSettings::setDesktopStyle(const QString &st) {
-    const QString s = st == "win" ? "win" : "mac";
+    const QString s = (st == "win" || st == "minimal") ? st : "mac";
     if (s == m_style) return;
     m_style = s;
     QSettings("BC-OS", "bc-shell").setValue("estiloEscritorio", s);
@@ -56,5 +62,33 @@ void AppSettings::setMode(const QString &m) {
     m_mode = v;
     QSettings("BC-OS", "bc-shell").setValue("modo", v);
     notifyPanel("mode", v.isEmpty() ? "-" : v);
+    emit changed();
+}
+
+void AppSettings::setWallpaper(const QString &p) {
+    if (p == m_wallpaper) return;
+    m_wallpaper = p;
+    QSettings("BC-OS", "bc-shell").setValue("fondo", p);
+    // sway lo lee al arrancar desde ~/.config/bc/wallpaper (bc-wm-mode init); en caliente se avisa al panel
+    const QString dir = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/bc";
+    QDir().mkpath(dir);
+    QFile f(dir + "/wallpaper");
+    if (f.open(QIODevice::WriteOnly | QIODevice::Truncate)) { f.write(p.toUtf8() + "\n"); f.close(); }
+    notifyPanel("wallpaper", p.isEmpty() ? "-" : p);
+    emit changed();
+}
+
+void AppSettings::setAccent(const QString &c) {
+    if (c == m_accent || !QColor::isValidColorName(c)) return;
+    m_accent = c;
+    QSettings("BC-OS", "bc-shell").setValue("acento", c);
+    notifyPanel("accent", c);
+    emit changed();
+}
+
+void AppSettings::setWelcomed(bool on) {
+    if (on == m_welcomed) return;
+    m_welcomed = on;
+    QSettings("BC-OS", "bc-shell").setValue("bienvenida", on);
     emit changed();
 }

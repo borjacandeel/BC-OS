@@ -34,6 +34,7 @@ public:
     // Enfoca (o restaura si está minimizada) la primera ventana de la app; devuelve false si no hay ninguna.
     Q_INVOKABLE bool focusApp(const QString &appId);
     Q_INVOKABLE void toggleTiling();
+    Q_INVOKABLE void setTiling(bool on);
     Q_INVOKABLE void refresh();
 
     // Analiza la salida de `swaymsg -t get_tree` (pruebas).

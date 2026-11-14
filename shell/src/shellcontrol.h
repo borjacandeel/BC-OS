@@ -17,6 +17,7 @@ public slots:
     void Lock() { emit lockRequested(); }
     void ToggleTiling() { emit tilingToggled(); }
     void Power(const QString &action) { emit powerRequested(action); }
+    void ShowWelcome() { emit welcomeRequested(); }
     void SetStyle(const QString &style) { emit styleChanged(style); }
     void SetOption(const QString &key, const QString &value) { emit optionChanged(key, value); }
 signals:
@@ -26,6 +27,7 @@ signals:
     void tilingToggled();
     void powerRequested(const QString &action);
     void styleChanged(const QString &style);
+    void welcomeRequested();
     void optionChanged(const QString &key, const QString &value);
 };
 

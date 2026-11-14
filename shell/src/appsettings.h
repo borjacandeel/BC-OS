@@ -9,6 +9,9 @@ class AppSettings : public QObject {
     Q_PROPERTY(QString desktopStyle READ desktopStyle WRITE setDesktopStyle NOTIFY changed)
     Q_PROPERTY(bool widgets READ widgets WRITE setWidgets NOTIFY changed)
     Q_PROPERTY(QString mode READ mode WRITE setMode NOTIFY changed)
+    Q_PROPERTY(QString wallpaper READ wallpaper WRITE setWallpaper NOTIFY changed)
+    Q_PROPERTY(QString accent READ accent WRITE setAccent NOTIFY changed)
+    Q_PROPERTY(bool welcomed READ welcomed WRITE setWelcomed NOTIFY changed)
     Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY changed)
 public:
     explicit AppSettings(QObject *parent = nullptr);
@@ -19,6 +22,12 @@ public:
     void setWidgets(bool on);
     QString mode() const { return m_mode; }
     void setMode(const QString &m);
+    QString wallpaper() const { return m_wallpaper; }
+    void setWallpaper(const QString &p);
+    QString accent() const { return m_accent; }
+    void setAccent(const QString &c);
+    bool welcomed() const { return m_welcomed; }
+    void setWelcomed(bool on);
     QString language() const { return m_language; }
     void setReducedMotion(bool on);
     void setLanguage(const QString &l);
@@ -29,6 +38,7 @@ private:
     bool m_reduced = false;
     QString m_language = "es_ES";
     QString m_style = "mac";
-    bool m_widgets = true;
+    bool m_widgets = true, m_welcomed = false;
+    QString m_wallpaper, m_accent = "#2F7BF5";
     QString m_mode;
 };

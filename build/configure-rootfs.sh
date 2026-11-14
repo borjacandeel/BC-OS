@@ -43,6 +43,7 @@ install -m644 "$HERE/overlay/etc/bc/sway/efectos.conf" "$R/etc/bc/sway/efectos.c
 install -D -m644 "$HERE/overlay/etc/bc/alacritty.toml" "$R/etc/bc/alacritty.toml"
 install -D -m644 "$HERE/overlay/etc/xdg/foot/foot.ini" "$R/etc/xdg/foot/foot.ini"
 install -D -m644 "$HERE/../shell/assets/wallpaper-default.png" "$R/usr/share/bc/wallpaper-default.png"
+mkdir -p "$R/usr/share/bc/wallpapers"; install -m644 "$HERE"/../assets/wallpapers/*.jpg "$R/usr/share/bc/wallpapers/"
 install -D -m644 "$HERE/overlay/etc/bc/sway/config" "$R/etc/bc/sway/config"
 install -m644 "$HERE/overlay/etc/bc/sway/keyboard.conf" "$R/etc/bc/sway/keyboard.conf"
 install -m644 "$HERE/overlay/etc/bc/atajos.txt" "$R/etc/bc/atajos.txt"

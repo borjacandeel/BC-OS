@@ -121,3 +121,8 @@ bool SwayControl::focusApp(const QString &appId) {
 void SwayControl::toggleTiling() {
     QProcess::startDetached(QStandardPaths::findExecutable("bc-wm-mode").isEmpty() ? QStringLiteral("bc-wm-mode") : QStandardPaths::findExecutable("bc-wm-mode"), {"toggle"});
 }
+
+void SwayControl::setTiling(bool on) {
+    const QString exe = QStandardPaths::findExecutable("bc-wm-mode");
+    QProcess::startDetached(exe.isEmpty() ? QStringLiteral("bc-wm-mode") : exe, {on ? "tiling" : "floating"});
+}

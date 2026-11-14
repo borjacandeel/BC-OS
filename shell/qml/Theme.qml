@@ -11,8 +11,8 @@ QtObject {
     readonly property color silverDark: "#A1ADC0"
 
     // Acento y semánticos
-    readonly property color accent: "#2F7BF5"
-    readonly property color accentSelected: "#2D63D8"
+    readonly property color accent: AppConfig.accent
+    readonly property color accentSelected: Qt.darker(AppConfig.accent, 1.18)
     readonly property color close: "#FF5F57"
     readonly property color minimize: "#FEBC2E"
     readonly property color zoom: "#28C840"
