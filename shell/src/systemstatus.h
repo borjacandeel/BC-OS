@@ -1,5 +1,6 @@
 #pragma once
 #include <QObject>
+#include <QSet>
 #include <QStringList>
 #include <QTimer>
 #include <functional>
@@ -71,6 +72,7 @@ private:
     void readBattery();
     QTimer m_timer;
     bool m_audio = false, m_muted = false, m_hasWifi = false, m_wifiEnabled = false, m_online = false, m_wired = false;
+    QSet<QString> m_running;
     bool m_hasBattery = false, m_batteryCharging = false, m_hasBacklight = false, m_btAvailable = false, m_btOn = false, m_dnd = false;
     double m_volume = 0, m_brightness = 0;
     int m_signal = -1, m_batteryPercent = 0;

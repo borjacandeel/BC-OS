@@ -1,6 +1,7 @@
 #include "packagestore.h"
 #include <QRegularExpression>
 #include <QStandardPaths>
+#include <QTimer>
 
 PackageStore::PackageStore(QObject *parent) : QAbstractListModel(parent) {}
 
@@ -89,13 +90,20 @@ bool PackageStore::flatpakAvailable() const { return !QStandardPaths::findExecut
 void PackageStore::setFlathub(bool on) {
     if (on == m_flathub) return;
     m_flathub = on && flatpakAvailable();
-    if (m_flathub) {  // el repositorio Flathub se añade al usuario la primera vez (sin privilegios)
-        QProcess add;
-        add.start(QStandardPaths::findExecutable("flatpak"), {"remote-add", "--user", "--if-not-exists", "flathub", "https://dl.flathub.org/repo/flathub.flatpakrepo"});
-        if (!add.waitForFinished(20000)) add.kill();
-    }
     beginResetModel(); m_rows.clear(); endResetModel(); emit countChanged();
     emit flathubChanged();
+    if (!m_flathub) return;
+    // El repositorio Flathub se añade al usuario la primera vez (sin privilegios); asíncrono para no bloquear la interfaz.
+    auto *add = new QProcess(this);
+    connect(add, &QProcess::finished, add, &QObject::deleteLater);
+    connect(add, &QProcess::errorOccurred, add, [add](QProcess::ProcessError e) { if (e == QProcess::FailedToStart) add->deleteLater(); });
+    QTimer::singleShot(20000, add, [add] { if (add->state() != QProcess::NotRunning) add->kill(); });
+    add->start(QStandardPaths::findExecutable("flatpak"), {"remote-add", "--user", "--if-not-exists", "flathub", "https://dl.flathub.org/repo/flathub.flatpakrepo"});
+}
+
+bool PackageStore::validFlatpakId(const QString &id) {
+    static const QRegularExpression re("^[A-Za-z0-9][A-Za-z0-9._-]*$");
+    return re.match(id).hasMatch();
 }
 
 void PackageStore::runFlatpakRead(const QStringList &args, std::function<void(const QString &)> done) {
@@ -105,7 +113,12 @@ void PackageStore::runFlatpakRead(const QStringList &args, std::function<void(co
     const quint64 gen = ++m_gen;
     setBusy(true);
     connect(p, &QProcess::finished, this, [this, p, done, gen] {
-        if (gen == m_gen) { done(QString::fromUtf8(p->readAllStandardOutput())); setBusy(false); }
+        if (gen == m_gen) { setBusy(false); done(QString::fromUtf8(p->readAllStandardOutput())); }
+        p->deleteLater();
+    });
+    connect(p, &QProcess::errorOccurred, this, [this, p, done, gen](QProcess::ProcessError e) {
+        if (e != QProcess::FailedToStart) return;
+        if (gen == m_gen) { setBusy(false); done({}); }
         p->deleteLater();
     });
     p->start(exe, args);
@@ -127,6 +140,10 @@ void PackageStore::runFlatpakWrite(const QStringList &args, const QString &actio
     connect(p, &QProcess::finished, this, [this, p, action](int code) {
         setBusy(false); emit logChanged(); emit finished(code == 0, action); p->deleteLater();
     });
+    connect(p, &QProcess::errorOccurred, this, [this, p, action](QProcess::ProcessError e) {
+        if (e != QProcess::FailedToStart) return;
+        setBusy(false); emit finished(false, action); p->deleteLater();
+    });
     p->start(exe, args);
 }
 
@@ -143,7 +160,12 @@ void PackageStore::runRead(const QStringList &args, std::function<void(const QSt
     const quint64 gen = ++m_gen;
     setBusy(true);
     connect(p, &QProcess::finished, this, [this, p, done, gen] {
-        if (gen == m_gen) { done(QString::fromUtf8(p->readAllStandardOutput())); setBusy(false); }
+        if (gen == m_gen) { setBusy(false); done(QString::fromUtf8(p->readAllStandardOutput())); }
+        p->deleteLater();
+    });
+    connect(p, &QProcess::errorOccurred, this, [this, p, done, gen](QProcess::ProcessError e) {
+        if (e != QProcess::FailedToStart) return;
+        if (gen == m_gen) { setBusy(false); done({}); }
         p->deleteLater();
     });
     p->start(exe, args);
@@ -152,7 +174,7 @@ void PackageStore::runRead(const QStringList &args, std::function<void(const QSt
 void PackageStore::search(const QString &query) {
     if (query.trimmed().isEmpty()) { beginResetModel(); m_rows.clear(); endResetModel(); emit countChanged(); return; }
     if (m_flathub) {
-        runFlatpakRead({"search", "--columns=application,name,version,description", query.trimmed()}, [this](const QString &out) {
+        runFlatpakRead({"search", "--columns=application,name,version,description", "--", query.trimmed()}, [this](const QString &out) {
             beginResetModel(); m_rows = parseFlatpak(out, false); endResetModel(); emit countChanged();
         });
         return;
@@ -208,16 +230,21 @@ void PackageStore::runPrivileged(const QStringList &pacmanArgs, const QString &p
         emit finished(ok, action);
         p->deleteLater();
     });
+    connect(p, &QProcess::errorOccurred, this, [this, p, action](QProcess::ProcessError e) {
+        if (e != QProcess::FailedToStart) return;
+        setBusy(false); emit finished(false, action); p->deleteLater();
+    });
     p->start(sudo, sudoArgs(pacmanArgs));
     p->write(password.toUtf8() + "\n");
+    p->closeWriteChannel();   // sin esto, con contraseña errónea sudo se queda esperando más datos
 }
 
 void PackageStore::install(const QString &name, const QString &password) {
-    if (m_flathub) { runFlatpakWrite({"install", "--user", "-y", "--noninteractive", "flathub", name}, "install"); return; }
+    if (m_flathub) { if (!validFlatpakId(name)) return; runFlatpakWrite({"install", "--user", "-y", "--noninteractive", "flathub", "--", name}, "install"); return; }
     runPrivileged({"-S", "--noconfirm", "--needed", "--", name}, password, "install");
 }
 void PackageStore::remove(const QString &name, const QString &password) {
-    if (m_flathub) { runFlatpakWrite({"uninstall", "--user", "-y", "--noninteractive", name}, "remove"); return; }
+    if (m_flathub) { if (!validFlatpakId(name)) return; runFlatpakWrite({"uninstall", "--user", "-y", "--noninteractive", "--", name}, "remove"); return; }
     runPrivileged({"-Rns", "--noconfirm", "--", name}, password, "remove");
 }
 void PackageStore::updateAll(const QString &password) {

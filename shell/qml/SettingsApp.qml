@@ -53,7 +53,7 @@ AppWindow {
             model: parent.options
             Rectangle {
                 width: 112; height: 32; radius: 9
-                color: index === parent.parent.current ? Theme.accent : Qt.rgba(1, 1, 1, 0.1)
+                color: index === parent.current ? Theme.accent : Qt.rgba(1, 1, 1, 0.1)
                 opacity: modelData.enabled === false ? 0.45 : 1
                 Text { anchors.centerIn: parent; text: modelData.label; color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14 }
                 MouseArea { anchors.fill: parent; enabled: modelData.enabled !== false; onClicked: parent.parent.picked(index) }

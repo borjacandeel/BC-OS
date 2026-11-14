@@ -8,7 +8,6 @@ Item {
     property int step: 0
     readonly property int steps: 3
     signal finished()
-    property bool pickedTiling: Sway.tiling
     readonly property string wallDir: "/usr/share/bc/wallpapers/"
     readonly property var wallpapers: [
         { f: "medianoche.jpg", n: qsTr("Medianoche") }, { f: "oceano.jpg", n: qsTr("Océano") },
@@ -19,7 +18,7 @@ Item {
     function pickStyle(id) { Settings.desktopStyle = id; UiState.style = id }
     function pickWallpaper(f) { Settings.wallpaper = wallDir + f }
     function pickAccent(c) { Settings.accent = c; AppConfig.setAccent(c) }
-    function pickTiling(on) { pickedTiling = on; Sway.setTiling(on) }
+    function pickTiling(on) { Sway.setTiling(on) }
     function next() { if (step < steps - 1) step++; else finish() }
     function finish() { Settings.welcomed = true; root.finished() }
     focus: true
@@ -159,9 +158,9 @@ Item {
             anchors.horizontalCenter: parent.horizontalCenter; spacing: 22
             Row { anchors.horizontalCenter: parent.horizontalCenter; spacing: 18
                   Card { title: qsTr("Flotantes"); badge: qsTr("Como siempre"); desc: qsTr("Las ventanas se colocan y se mueven libremente.")
-                         sel: !root.pickedTiling; onClicked: root.pickTiling(false); Mock { kind: "float" } }
+                         sel: !Sway.tiling; onClicked: root.pickTiling(false); Mock { kind: "float" } }
                   Card { title: qsTr("Mosaico"); badge: ""; desc: qsTr("Las ventanas se reparten la pantalla solas, como en bspwm.")
-                         sel: root.pickedTiling; onClicked: root.pickTiling(true); Mock { kind: "tile" } } }
+                         sel: Sway.tiling; onClicked: root.pickTiling(true); Mock { kind: "tile" } } }
             Row { anchors.horizontalCenter: parent.horizontalCenter; spacing: 10
                   Chip { text: qsTr("Widgets en el escritorio"); sel: Settings.widgets; onClicked: { Settings.widgets = !Settings.widgets; UiState.widgets = Settings.widgets } }
                   Chip { text: qsTr("Relajación"); sel: UiState.mode === "relax"; onClicked: { const m = UiState.mode === "relax" ? "" : "relax"; UiState.mode = m; Settings.mode = m } }

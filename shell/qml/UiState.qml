@@ -33,17 +33,18 @@ QtObject {
     property real menuX: 12
     property bool locked: false
     property string powerAction: ""
-    readonly property bool popupOpen: centerOpen || launcherOpen || startOpen || menu !== "" || powerAction !== ""
+    readonly property bool popupOpen: !locked && (centerOpen || launcherOpen || startOpen || menu !== "" || powerAction !== "")
     readonly property bool dim: launcherOpen || powerAction !== ""
 
     function closePopups() { centerOpen = false; launcherOpen = false; startOpen = false; menu = ""; powerAction = "" }
     function toggleLauncher() {
+        if (locked) return
         if (win) { const o = startOpen; closePopups(); startOpen = !o; return }
         const o = launcherOpen; closePopups(); launcherOpen = !o
     }
-    function toggleCenter() { const o = centerOpen; closePopups(); centerOpen = !o }
-    function openMenu(name, x) { const same = menu === name; closePopups(); if (!same) { menu = name; menuX = x } }
-    function openPower(action) { closePopups(); powerAction = action }
+    function toggleCenter() { if (locked) return; const o = centerOpen; closePopups(); centerOpen = !o }
+    function openMenu(name, x) { if (locked) return; const same = menu === name; closePopups(); if (!same) { menu = name; menuX = x } }
+    function openPower(action) { if (locked) return; closePopups(); powerAction = action }
 
     // cmd: "sway:<orden>" (sobre la ventana enfocada), "app:<acción>" (app de BC enfocada),
     //      "bc:<acción>" (panel): launcher, lock, center, tiling, about, power:<acción>.

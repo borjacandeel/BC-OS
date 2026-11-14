@@ -1,4 +1,5 @@
 #include "systemstatus.h"
+#include <QTimer>
 #include <QDir>
 #include <QFile>
 #include <QProcess>
@@ -92,14 +93,19 @@ void SystemStatus::parseBrightnessctl(const QString &out, bool &ok, double &frac
 void SystemStatus::run(const QString &program, const QStringList &args, std::function<void(int, const QString &)> done) {
     const QString exe = find(program);
     if (exe.isEmpty()) { done(-1, {}); return; }
+    const QString key = exe + ' ' + args.join(' ');
+    if (m_running.contains(key)) return;      // la consulta anterior aún no ha terminado (p. ej. nmcli colgado)
+    m_running.insert(key);
     auto *p = new QProcess(this);
-    connect(p, &QProcess::finished, this, [p, done](int code, QProcess::ExitStatus) {
+    connect(p, &QProcess::finished, this, [this, p, done, key](int code, QProcess::ExitStatus) {
+        m_running.remove(key);
         done(code, QString::fromUtf8(p->readAllStandardOutput()));
         p->deleteLater();
     });
-    connect(p, &QProcess::errorOccurred, this, [p, done](QProcess::ProcessError e) {
-        if (e == QProcess::FailedToStart) { done(-1, {}); p->deleteLater(); }
+    connect(p, &QProcess::errorOccurred, this, [this, p, done, key](QProcess::ProcessError e) {
+        if (e == QProcess::FailedToStart) { m_running.remove(key); done(-1, {}); p->deleteLater(); }
     });
+    QTimer::singleShot(10000, p, [p] { if (p->state() != QProcess::NotRunning) p->kill(); });
     p->start(exe, args);
 }
 

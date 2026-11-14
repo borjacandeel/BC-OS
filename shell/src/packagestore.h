@@ -39,6 +39,7 @@ public:
     static QVariantMap parseInfo(const QString &out);
     // Salida de `flatpak search/list --columns=application,name,version,description` (columnas separadas por tabulador)
     static QList<Pkg> parseFlatpak(const QString &out, bool installed);
+    static bool validFlatpakId(const QString &id);
     static QStringList sudoArgs(const QStringList &pacmanArgs);
 signals:
     void busyChanged();

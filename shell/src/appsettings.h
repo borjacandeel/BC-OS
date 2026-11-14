@@ -31,6 +31,7 @@ public:
     QString language() const { return m_language; }
     void setReducedMotion(bool on);
     void setLanguage(const QString &l);
+    void reload();
 signals:
     void changed();
 

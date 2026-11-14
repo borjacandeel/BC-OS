@@ -17,9 +17,9 @@ Rectangle {
     Icon { x: 18; y: 22; name: Icons.refresh; size: 38; color: Theme.accent }
     Column {
         x: 75; anchors.verticalCenter: parent.verticalCenter; spacing: 3
-        Text { text: card.title; color: Theme.textPrimary; font.family: Theme.fontFamily
+        Text { text: card.title; textFormat: Text.PlainText; color: Theme.textPrimary; font.family: Theme.fontFamily
                font.pixelSize: 15; font.weight: Font.DemiBold }
-        Text { text: card.body; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 14 }
+        Text { text: card.body; textFormat: Text.PlainText; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 14 }
     }
     Item {
         x: parent.width - 46; y: 10; width: 36; height: 36

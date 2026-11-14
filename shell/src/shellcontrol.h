@@ -19,7 +19,7 @@ public slots:
     void Power(const QString &action) { emit powerRequested(action); }
     void ShowWelcome() { emit welcomeRequested(); }
     void SetStyle(const QString &style) { emit styleChanged(style); }
-    void SetOption(const QString &key, const QString &value) { emit optionChanged(key, value); }
+    void SetOption(const QString &key, const QString &value);   // valida clave y valor antes de emitir
 signals:
     void launcherToggled();
     void controlCenterToggled();

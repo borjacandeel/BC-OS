@@ -6,6 +6,6 @@ if command -v alacritty >/dev/null 2>&1 && [ ! -f "${XDG_RUNTIME_DIR:-/tmp}/bc-n
   t0=$(date +%s)
   alacritty --config-file "$CFG" "$@" && exit 0
   # Si falló nada más arrancar, se recuerda durante la sesión y se pasa a foot
-  [ $(( $(date +%s) - t0 )) -lt 4 ] && : > "${XDG_RUNTIME_DIR:-/tmp}/bc-no-alacritty" || exit 0
+  [ $# -eq 0 ] && [ $(( $(date +%s) - t0 )) -lt 4 ] && : > "${XDG_RUNTIME_DIR:-/tmp}/bc-no-alacritty" || exit 0
 fi
 exec foot "$@"

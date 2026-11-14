@@ -2,11 +2,18 @@
 #include <QColor>
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
+#include <QRegularExpression>
 #include <QProcess>
 #include <QStandardPaths>
 
 AppSettings::AppSettings(QObject *parent) : QObject(parent) {
+    reload();
+}
+
+void AppSettings::reload() {
     QSettings s("BC-OS", "bc-shell");
+    s.sync();
     m_reduced = s.value("movimientoReducido", false).toBool();
     m_language = s.value("idioma", "es_ES").toString();
     m_style = s.value("estiloEscritorio", "mac").toString();
@@ -19,6 +26,7 @@ AppSettings::AppSettings(QObject *parent) : QObject(parent) {
 }
 
 void AppSettings::setReducedMotion(bool on) {
+    reload();   // otro proceso (panel o ajustes) pudo cambiarlo
     if (on == m_reduced) return;
     m_reduced = on;
     QSettings("BC-OS", "bc-shell").setValue("movimientoReducido", on);
@@ -26,6 +34,7 @@ void AppSettings::setReducedMotion(bool on) {
 }
 
 void AppSettings::setLanguage(const QString &l) {
+    reload();   // otro proceso (panel o ajustes) pudo cambiarlo
     if (l == m_language) return;
     m_language = l;
     QSettings("BC-OS", "bc-shell").setValue("idioma", l);
@@ -33,6 +42,7 @@ void AppSettings::setLanguage(const QString &l) {
 }
 
 void AppSettings::setDesktopStyle(const QString &st) {
+    reload();   // otro proceso (panel o ajustes) pudo cambiarlo
     const QString s = (st == "win" || st == "minimal") ? st : "mac";
     if (s == m_style) return;
     m_style = s;
@@ -49,6 +59,7 @@ static void notifyPanel(const QString &key, const QString &value) {
 }
 
 void AppSettings::setWidgets(bool on) {
+    reload();   // otro proceso (panel o ajustes) pudo cambiarlo
     if (on == m_widgets) return;
     m_widgets = on;
     QSettings("BC-OS", "bc-shell").setValue("widgets", on);
@@ -57,6 +68,7 @@ void AppSettings::setWidgets(bool on) {
 }
 
 void AppSettings::setMode(const QString &m) {
+    reload();   // otro proceso (panel o ajustes) pudo cambiarlo
     const QString v = (m == "relax" || m == "focus" || m == "night") ? m : QString();
     if (v == m_mode) return;
     m_mode = v;
@@ -66,6 +78,9 @@ void AppSettings::setMode(const QString &m) {
 }
 
 void AppSettings::setWallpaper(const QString &p) {
+    reload();   // otro proceso (panel o ajustes) pudo cambiarlo
+    static const QRegularExpression bad(R"([\"\\\\;,$\n'`])");
+    if (!p.isEmpty() && (p.contains(bad) || !QFileInfo(p).isFile())) return;
     if (p == m_wallpaper) return;
     m_wallpaper = p;
     QSettings("BC-OS", "bc-shell").setValue("fondo", p);
@@ -79,6 +94,7 @@ void AppSettings::setWallpaper(const QString &p) {
 }
 
 void AppSettings::setAccent(const QString &c) {
+    reload();   // otro proceso (panel o ajustes) pudo cambiarlo
     if (c == m_accent || !QColor::isValidColorName(c)) return;
     m_accent = c;
     QSettings("BC-OS", "bc-shell").setValue("acento", c);
@@ -87,6 +103,7 @@ void AppSettings::setAccent(const QString &c) {
 }
 
 void AppSettings::setWelcomed(bool on) {
+    reload();   // otro proceso (panel o ajustes) pudo cambiarlo
     if (on == m_welcomed) return;
     m_welcomed = on;
     QSettings("BC-OS", "bc-shell").setValue("bienvenida", on);

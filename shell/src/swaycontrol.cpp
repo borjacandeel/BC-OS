@@ -93,6 +93,11 @@ void SwayControl::refresh() {
         }
         p->deleteLater();
     });
+    connect(p, &QProcess::errorOccurred, this, [this, p](QProcess::ProcessError e) {
+        if (e != QProcess::FailedToStart) return;
+        m_busy = false; p->deleteLater();
+    });
+    QTimer::singleShot(5000, p, [this, p] { if (p->state() != QProcess::NotRunning) { m_busy = false; p->kill(); } });
     p->start(m_exe, {"-t", "get_tree", "-r"});
 }
 

@@ -1,4 +1,5 @@
 #include "pamauth.h"
+#include <QPointer>
 #include <QMetaObject>
 #include <QProcessEnvironment>
 #include <cstdlib>
@@ -43,8 +44,9 @@ bool PamAuth::verifySync(const QString &user, const QString &password, const QSt
 void PamAuth::verify(const QString &password) {
     const QString user = m_user;
     const QString service = qEnvironmentVariable("BC_PAM_SERVICE", "bc-lock");
-    std::thread([this, user, password, service] {
+    QPointer<PamAuth> self(this);
+    std::thread([self, user, password, service] {
         const bool ok = verifySync(user, password, service);
-        QMetaObject::invokeMethod(this, [this, ok] { emit finished(ok); }, Qt::QueuedConnection);
+        if (self) QMetaObject::invokeMethod(self.data(), [self, ok] { if (self) emit self->finished(ok); }, Qt::QueuedConnection);
     }).detach();
 }

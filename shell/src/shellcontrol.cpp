@@ -1,5 +1,8 @@
 #include "shellcontrol.h"
+#include <QColor>
 #include <QCoreApplication>
+#include <QFileInfo>
+#include <QRegularExpression>
 #include <QDBusConnection>
 #include <QDBusMessage>
 #include <QDBusPendingCall>
@@ -11,6 +14,18 @@ bool ShellControl::start() {
     QDBusConnection bus = QDBusConnection::sessionBus();
     if (!bus.isConnected() || !bus.registerService("org.bcos.Shell")) { qWarning() << "[shell] no se pudo registrar org.bcos.Shell"; return false; }
     return bus.registerObject("/org/bcos/Shell", this, QDBusConnection::ExportAllSlots);
+}
+
+void ShellControl::SetOption(const QString &key, const QString &value) {
+    if (key == "widgets") { if (value != "0" && value != "1") return; }
+    else if (key == "mode") { if (!QStringList{"relax", "focus", "night", "-"}.contains(value)) return; }
+    else if (key == "accent") { if (!QColor::isValidColorName(value)) return; }
+    else if (key == "wallpaper") {
+        // Solo imágenes reales y sin caracteres que cambiarían el significado de la orden de sway
+        static const QRegularExpression bad(R"([\"\\;,$\n'`])");
+        if (value != "-" && (value.contains(bad) || !QFileInfo(value).isFile())) return;
+    } else return;
+    emit optionChanged(key, value);
 }
 
 void ShellControl::invokeApp(const QString &app, const QString &action) {

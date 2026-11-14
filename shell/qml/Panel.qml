@@ -87,7 +87,10 @@ LayerWindow {
             if (key === "widgets") UiState.widgets = value === "1"
             else if (key === "mode") UiState.mode = value === "-" ? "" : value
             else if (key === "accent") AppConfig.setAccent(value)
-            else if (key === "wallpaper" && value !== "-") Sway.command("output * bg \"" + value + "\" fill #04111F")
+            else if (key === "wallpaper") {
+                const p = value === "-" ? "/usr/share/bc/wallpapers/medianoche.jpg" : value
+                if (/^[^"\\$;,\n'`]+$/.test(p)) Sway.command("output * bg \"" + p + "\" fill #04111F")
+            }
         }
         function onStyleChanged(st) { UiState.closePopups(); UiState.style = (st === "win" || st === "minimal") ? st : "mac" }
         function onWelcomeRequested() { UiState.closePopups(); UiState.welcomeOpen = true }
@@ -116,7 +119,7 @@ LayerWindow {
     LayerWindow {
         layer: "top"; edges: ["top", "left", "right"]; exclusive: UiState.barH; scope: "bc-topbar"
         width: UiState.sw; height: UiState.barH
-        shown: !UiState.splashing && !UiState.win
+        shown: !UiState.splashing && !UiState.win && !UiState.locked
         Loader { id: bar; anchors.fill: parent; source: "TopBar.qml" }
     }
 
