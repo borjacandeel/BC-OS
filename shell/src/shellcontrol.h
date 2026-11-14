@@ -18,6 +18,7 @@ public slots:
     void ToggleTiling() { emit tilingToggled(); }
     void Power(const QString &action) { emit powerRequested(action); }
     void ShowWelcome() { emit welcomeRequested(); }
+    void ShowOsd(const QString &kind) { if (kind == "volume" || kind == "brightness") emit osdRequested(kind); }
     void SetStyle(const QString &style) { emit styleChanged(style); }
     void SetOption(const QString &key, const QString &value);   // valida clave y valor antes de emitir
 signals:
@@ -28,6 +29,7 @@ signals:
     void powerRequested(const QString &action);
     void styleChanged(const QString &style);
     void welcomeRequested();
+    void osdRequested(const QString &kind);
     void optionChanged(const QString &key, const QString &value);
 };
 

@@ -51,6 +51,9 @@ Item {
         color: Qt.rgba(1, 1, 1, sel ? 0.12 : 0.06)
         border.width: sel ? 2 : 1; border.color: sel ? Theme.accent : Theme.hairline
         Behavior on color { ColorAnimation { duration: Theme.dur(120) } }
+        scale: hov.containsMouse ? 1.025 : 1
+        Behavior on scale { NumberAnimation { duration: Theme.dur(140); easing.type: Easing.OutCubic } }
+        HoverHandler { id: hov }
         Item { id: pv; x: 10; y: 10; width: parent.width - 20; height: 140; clip: true }
         Rectangle { visible: cardRoot.sel; x: parent.width - 36; y: 18; width: 22; height: 22; radius: 11; color: Theme.accent
                     Text { anchors.centerIn: parent; text: "✓"; color: Theme.white; font.pixelSize: 13 } }
@@ -106,7 +109,10 @@ Item {
 
         // Paso 0: estilo
         Row {
-            visible: root.step === 0
+            opacity: root.step === 0 ? 1 : 0; visible: opacity > 0
+            Behavior on opacity { NumberAnimation { duration: Theme.dur(220); easing.type: Easing.OutCubic } }
+            scale: root.step === 0 ? 1 : 0.97
+            Behavior on scale { NumberAnimation { duration: Theme.dur(260); easing.type: Easing.OutCubic } }
             anchors.horizontalCenter: parent.horizontalCenter; spacing: 18
             Card { title: qsTr("Windows"); badge: qsTr("Lo de siempre"); desc: qsTr("Barra de tareas abajo con menú Inicio y los atajos de siempre.")
                    sel: UiState.style === "win"; onClicked: root.pickStyle("win"); Mock { kind: "win" } }
@@ -118,7 +124,10 @@ Item {
 
         // Paso 1: colores y fondo
         Column {
-            visible: root.step === 1
+            opacity: root.step === 1 ? 1 : 0; visible: opacity > 0
+            Behavior on opacity { NumberAnimation { duration: Theme.dur(220); easing.type: Easing.OutCubic } }
+            scale: root.step === 1 ? 1 : 0.97
+            Behavior on scale { NumberAnimation { duration: Theme.dur(260); easing.type: Easing.OutCubic } }
             anchors.horizontalCenter: parent.horizontalCenter; spacing: 22
             Row { anchors.horizontalCenter: parent.horizontalCenter; spacing: 8
                   Chip { text: qsTr("Oscuro"); sel: true }
@@ -154,7 +163,10 @@ Item {
 
         // Paso 2: ventanas
         Column {
-            visible: root.step === 2
+            opacity: root.step === 2 ? 1 : 0; visible: opacity > 0
+            Behavior on opacity { NumberAnimation { duration: Theme.dur(220); easing.type: Easing.OutCubic } }
+            scale: root.step === 2 ? 1 : 0.97
+            Behavior on scale { NumberAnimation { duration: Theme.dur(260); easing.type: Easing.OutCubic } }
             anchors.horizontalCenter: parent.horizontalCenter; spacing: 22
             Row { anchors.horizontalCenter: parent.horizontalCenter; spacing: 18
                   Card { title: qsTr("Flotantes"); badge: qsTr("Como siempre"); desc: qsTr("Las ventanas se colocan y se mueven libremente.")

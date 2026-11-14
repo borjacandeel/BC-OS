@@ -16,7 +16,13 @@ Window {
     minimumHeight: 320
 
     onClosing: (c) => { c.accepted = false; win.closeRequested() }
-    onCloseRequested: Qt.quit()
+    onCloseRequested: { if (Theme.reducedMotion) Qt.quit(); else closeAnim.start() }
+    ParallelAnimation {
+        id: closeAnim
+        NumberAnimation { target: frame; property: "scale"; to: 0.94; duration: 140; easing.type: Easing.InCubic }
+        NumberAnimation { target: frame; property: "opacity"; to: 0; duration: 140 }
+        onFinished: Qt.quit()
+    }
 
     Connections {
         target: AppActions

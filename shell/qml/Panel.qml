@@ -93,6 +93,7 @@ LayerWindow {
             }
         }
         function onStyleChanged(st) { UiState.closePopups(); UiState.style = (st === "win" || st === "minimal") ? st : "mac" }
+        function onOsdRequested(kind) { SystemStatus.refresh(); osdDelay.kind = kind; osdDelay.restart() }
         function onWelcomeRequested() { UiState.closePopups(); UiState.welcomeOpen = true }
         function onLauncherToggled() { UiState.toggleLauncher() }
         function onControlCenterToggled() { UiState.toggleCenter() }
@@ -113,6 +114,15 @@ LayerWindow {
         Rectangle { anchors.fill: parent; color: "#ff8a2a"; opacity: UiState.mode === "night" ? 0.16 : 0.07 }
     }
 
+    Timer { id: osdDelay; property string kind: "volume"; interval: 180; onTriggered: if (!UiState.locked) { osdWin.shown = true; osd.show(kind) } }
+    // OSD de volumen y brillo
+    LayerWindow {
+        id: osdWin
+        layer: "overlay"; edges: ["bottom"]; margins: [0, 0, Math.round(110 * root.u), 0]; scope: "bc-osd"; passthrough: true
+        width: Math.round(260 * root.u); height: Math.round(64 * root.u)
+        shown: false
+        Osd { id: osd; scale: root.u; transformOrigin: Item.TopLeft; onHidden: osdWin.shown = false }
+    }
     Timer { id: welcomeTimer; interval: 3500; onTriggered: if (!UiState.locked) UiState.welcomeOpen = true }
 
     // Barra superior
@@ -158,12 +168,14 @@ LayerWindow {
         width: Math.round(321 * root.u); height: Math.round(80 * root.u)
         shown: Notifications.visible && !UiState.locked && !UiState.splashing
         NotificationCard {
+            id: notifCard
             scale: root.u
             transformOrigin: Item.TopLeft
             title: Notifications.title
             body: Notifications.body
             onDismissed: Notifications.dismiss()
         }
+        SlideIn { target: notifCard; dx: 60; dy: 0; duration: 260 }
     }
 
     // Pantalla completa (sin márgenes): bienvenida, bloqueo y pantalla de carga
@@ -215,6 +227,10 @@ LayerWindow {
                     visible: opacity > 0
                     Behavior on opacity { NumberAnimation { duration: Theme.dur(160); easing.type: Theme.easing } }
                 }
+                SlideIn { target: center; dy: -12; fade: false }
+                SlideIn { target: menu; dy: -6; duration: 150 }
+                SlideIn { target: launcherWrap; dy: -14; duration: 220 }
+                SlideIn { target: startMenu; dy: 28; duration: 240 }
                 MenuPopup {
                     id: menu
                     readonly property var all: UiState.menu === "system" ? AppMenus.systemItems
@@ -226,6 +242,7 @@ LayerWindow {
                     onActivated: (cmd) => { UiState.closePopups(); UiState.run(cmd) }
                 }
                 Item {
+                    id: launcherWrap
                     visible: UiState.launcherOpen
                     anchors.fill: parent
                     LauncherPanel {

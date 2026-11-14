@@ -60,6 +60,10 @@ Item {
             property real factor: 1 + dock.magnification * prox * prox
             Behavior on factor { NumberAnimation { duration: Theme.dur(110); easing.type: Theme.easing } }
 
+            property real jump: 0
+            SequentialAnimation { id: bounce
+                NumberAnimation { target: cell; property: "jump"; to: 24; duration: 150; easing.type: Easing.OutQuad }
+                NumberAnimation { target: cell; property: "jump"; to: 0; duration: 420; easing.type: Easing.OutBounce } }
             x: centerX - 35
             y: 15
             width: 70
@@ -70,6 +74,7 @@ Item {
                 size: 70
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.bottom: parent.bottom
+                anchors.bottomMargin: cell.jump
                 transformOrigin: Item.Bottom
                 scale: cell.factor
                 z: cell.factor
@@ -85,7 +90,7 @@ Item {
             MouseArea {
                 anchors.fill: parent
                 cursorShape: Qt.PointingHandCursor
-                onClicked: dock.launched(cell.modelData.kind, cell.modelData.name)
+                onClicked: { if (!Theme.reducedMotion && dock.running.indexOf(cell.modelData.kind) < 0 && cell.modelData.kind !== "lanzador") bounce.restart(); dock.launched(cell.modelData.kind, cell.modelData.name) }
             }
             Accessible.name: cell.modelData.name
             Accessible.role: Accessible.Button
