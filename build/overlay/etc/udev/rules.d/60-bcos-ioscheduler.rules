@@ -1,0 +1,4 @@
+# Planificador de E/S para escritorio (como en los kernels «Zen»): BFQ en discos con cola de una sola petición lenta; none en NVMe
+ACTION=="add|change", KERNEL=="nvme[0-9]*n[0-9]*", ATTR{queue/scheduler}="none"
+ACTION=="add|change", KERNEL=="sd[a-z]|mmcblk[0-9]*|vd[a-z]", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"
+ACTION=="add|change", KERNEL=="sd[a-z]|mmcblk[0-9]*|vd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="mq-deadline"

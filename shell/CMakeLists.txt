@@ -88,7 +88,7 @@ add_test(NAME movimiento_reducido COMMAND bc-shell --check --lang es_ES --reduce
          --expect-title "Actualizaciones")
 set_tests_properties(carga_es carga_en movimiento_reducido PROPERTIES ENVIRONMENT "${BC_ENV}")
 
-qt_add_executable(tst_shell tests/tst_shell.cpp src/clipboardhistory.h src/clipboardhistory.cpp src/updatechecker.h src/updatechecker.cpp src/launcher.h src/launcher.cpp src/filebrowser.h src/filebrowser.cpp
+qt_add_executable(tst_shell tests/tst_shell.cpp src/sysmonitor.h src/sysmonitor.cpp src/clipboardhistory.h src/clipboardhistory.cpp src/updatechecker.h src/updatechecker.cpp src/launcher.h src/launcher.cpp src/filebrowser.h src/filebrowser.cpp
     src/systemstatus.h src/systemstatus.cpp src/appindex.h src/appindex.cpp src/packagestore.h src/packagestore.cpp src/swaycontrol.h src/swaycontrol.cpp src/userlist.h src/userlist.cpp src/greetd.h src/greetd.cpp src/powercontrol.h src/powercontrol.cpp)
 target_link_libraries(tst_shell PRIVATE Qt6::Core Qt6::Gui Qt6::Network Qt6::Test)
 add_test(NAME modelo_archivos_y_lanzador COMMAND tst_shell)

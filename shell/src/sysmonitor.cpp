@@ -18,19 +18,42 @@ SysMonitor::SysMonitor(QObject *parent) : QAbstractListModel(parent) {
     m_timer.setInterval(2000);
     connect(&m_timer, &QTimer::timeout, this, &SysMonitor::refresh);
     m_cpuCount = qMax(1, int(sysconf(_SC_NPROCESSORS_ONLN)));
-    for (const QString &l : slurp("/proc/cpuinfo").split('\n')) {
-        if (l.startsWith("model name") || l.startsWith("Model") || l.startsWith("Hardware")) {
-            m_cpuModel = l.section(':', 1).trimmed();
-            break;
-        }
-    }
-    if (m_cpuModel.isEmpty()) m_cpuModel = QStringLiteral("ARM64");
+    m_cpuModel = cpuNameFromInfo(slurp("/proc/cpuinfo"));
+    m_osName = osNameFromRelease(slurp("/etc/os-release"));
 }
 
 void SysMonitor::setActive(bool on) {
     if (on == m_timer.isActive()) return;
     if (on) { m_timer.start(); refresh(); } else { m_timer.stop(); m_havePrev = false; }
     emit activeChanged();
+}
+
+QString SysMonitor::cpuNameFromInfo(const QString &info) {
+    QString implementer;
+    for (const QString &l : info.split('\n')) {
+        if (l.startsWith("model name") || l.startsWith("Model") || l.startsWith("Hardware")) {
+            const QString v = l.section(':', 1).trimmed();
+            if (!v.isEmpty()) return v;
+        } else if (l.startsWith("CPU implementer") && implementer.isEmpty()) {
+            implementer = l.section(':', 1).trimmed().toLower();
+        }
+    }
+    // En ARM64 /proc/cpuinfo no da el nombre: se deduce del fabricante (código del registro MIDR)
+    if (implementer == "0x61") return QStringLiteral("Apple Silicon (ARM64)");
+    if (implementer == "0x41") return QStringLiteral("ARM Cortex (ARM64)");
+    if (implementer == "0x51") return QStringLiteral("Qualcomm (ARM64)");
+    if (implementer == "0x48") return QStringLiteral("HiSilicon (ARM64)");
+    return QStringLiteral("ARM64");
+}
+
+QString SysMonitor::osNameFromRelease(const QString &text) {
+    for (const QString &l : text.split('\n')) {
+        if (!l.startsWith("PRETTY_NAME=")) continue;
+        QString v = l.mid(12).trimmed();
+        if (v.size() >= 2 && ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith('\'') && v.endsWith('\'')))) v = v.mid(1, v.size() - 2);
+        if (!v.isEmpty()) return v;
+    }
+    return QStringLiteral("BC OS");
 }
 
 QString SysMonitor::hostname() const { return slurp("/etc/hostname").trimmed(); }

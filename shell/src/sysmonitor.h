@@ -24,6 +24,7 @@ class SysMonitor : public QAbstractListModel {
     Q_PROPERTY(QString hostname READ hostname CONSTANT)
     Q_PROPERTY(QString kernel READ kernel CONSTANT)
     Q_PROPERTY(QString cpuModel READ cpuModel CONSTANT)
+    Q_PROPERTY(QString osName READ osName CONSTANT)
     Q_PROPERTY(int cpuCount READ cpuCount CONSTANT)
 public:
     enum Roles { PidRole = Qt::UserRole + 1, NameRole, CpuRole, MemRole };
@@ -46,6 +47,10 @@ public:
     QString hostname() const;
     QString kernel() const;
     QString cpuModel() const { return m_cpuModel; }
+    QString osName() const { return m_osName; }
+    // Nombre del procesador a partir de /proc/cpuinfo (en ARM no hay «model name»: se usa el fabricante).
+    static QString cpuNameFromInfo(const QString &cpuinfo);
+    static QString osNameFromRelease(const QString &osRelease);
     int cpuCount() const { return m_cpuCount; }
     int rowCount(const QModelIndex & = {}) const override { return m_rows.size(); }
     QVariant data(const QModelIndex &i, int role) const override;
@@ -73,7 +78,7 @@ private:
     QVariantList m_history;
     qint64 m_memTotal = 0, m_memAvail = 0, m_swapTotal = 0, m_swapFree = 0, m_diskTotal = 0, m_diskFree = 0, m_uptime = 0;
     int m_procCount = 0, m_cpuCount = 1;
-    QString m_cpuModel;
+    QString m_cpuModel, m_osName;
     quint64 m_rx = 0, m_tx = 0;
     QElapsedTimer m_netClock;
     QHash<int, quint64> m_procTicks;

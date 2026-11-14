@@ -52,6 +52,7 @@ install -m644 "$HERE/overlay/etc/bc/sway/keyboard.conf" "$R/etc/bc/sway/keyboard
 install -m644 "$HERE/overlay/etc/bc/atajos.txt" "$R/etc/bc/atajos.txt"
 install -m644 "$HERE/overlay/etc/bc/fastfetch.jsonc" "$HERE/overlay/etc/bc/fastfetch-logo.txt" "$R/etc/bc/"
 install -D -m644 "$HERE/overlay/etc/sysctl.d/90-bcos.conf" "$R/etc/sysctl.d/90-bcos.conf"
+install -D -m644 "$HERE/overlay/etc/udev/rules.d/60-bcos-ioscheduler.rules" "$R/etc/udev/rules.d/60-bcos-ioscheduler.rules"
 install -D -m440 "$HERE/overlay/etc/sudoers.d/10-bcos-pwfeedback" "$R/etc/sudoers.d/10-bcos-pwfeedback"
 install -D -m644 "$HERE/overlay/etc/systemd/system/getty@tty1.service.d/autologin.conf" "$R/etc/systemd/system/getty@tty1.service.d/autologin.conf"
 

@@ -7,6 +7,7 @@
 #include "../src/appindex.h"
 #include "../src/clipboardhistory.h"
 #include "../src/updatechecker.h"
+#include "../src/sysmonitor.h"
 #include "../src/greetd.h"
 #include "../src/launcher.h"
 #include "../src/packagestore.h"
@@ -202,6 +203,13 @@ private slots:
         QCOMPARE(l[0].id, QString("org.mozilla.firefox"));
         QCOMPARE(l[1].name, QString("GIMP"));
         QCOMPARE(l[0].repo, QString("flathub"));
+    }
+    void datosDelSistema() {
+        QCOMPARE(SysMonitor::cpuNameFromInfo("processor\t: 0\nCPU implementer\t: 0x61\nCPU part\t: 0x022\n"), QString("Apple Silicon (ARM64)"));
+        QCOMPARE(SysMonitor::cpuNameFromInfo("model name\t: Cortex-A72\n"), QString("Cortex-A72"));
+        QCOMPARE(SysMonitor::cpuNameFromInfo(""), QString("ARM64"));
+        QCOMPARE(SysMonitor::osNameFromRelease("NAME=\"BC OS\"\nPRETTY_NAME=\"BC OS 0.4.1-beta\"\n"), QString("BC OS 0.4.1-beta"));
+        QCOMPARE(SysMonitor::osNameFromRelease(""), QString("BC OS"));
     }
     void historialPortapapeles() {
         const auto l = ClipboardHistory::parseList("12\thola mundo\n11\t[[ binary data 12 KiB png 10x10 ]]\nabc\tno numerico\n10\t   \n9\tadiós\n");

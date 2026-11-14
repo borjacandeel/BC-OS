@@ -8,7 +8,7 @@ ESP_MIB=512
 # Arranque: deben coincidir con build/overlay/boot/loader (lo comprueba test/dry-run.sh).
 # En la imagen oficial la raíz es root=LABEL=bc-root y lang=es_ES; aquí se sustituyen por UUID/LUKS y el idioma elegido.
 BOOT_TIMEOUT=5
-BOOT_COMMON="rw fsck.mode=skip"
+BOOT_COMMON="rw fsck.mode=skip preempt=full nowatchdog transparent_hugepage=madvise"
 BOOT_SPLASH="splash plymouth.ignore-serial-consoles"
 BOOT_SAFE="plymouth.enable=0"
 BOOT_CONSOLE="console=tty0 console=ttyAMA0"

@@ -219,7 +219,7 @@ AppWindow {
         Column {
             visible: win.page === 5; width: parent.width; spacing: 10
             Label { text: qsTr("Acerca de BC OS"); font.pixelSize: 22; font.weight: Font.DemiBold }
-            Row2 { label: qsTr("Sistema"); value: "BC OS 0.2 alpha (ARM64)" }
+            Row2 { label: qsTr("Sistema"); value: Monitor.osName + " (ARM64)" }
             Row2 { label: qsTr("Equipo"); value: Monitor.hostname }
             Row2 { label: qsTr("Kernel"); value: "Linux " + Monitor.kernel }
             Row2 { label: qsTr("Procesador"); value: Monitor.cpuModel + " · " + Monitor.cpuCount }
