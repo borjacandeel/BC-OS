@@ -1,3 +1,5 @@
+# CI de BC OS: linteo de sintaxis, BC Core (Rust) y BC Shell (Qt 6).
+# Todo corre en ARM64 nativo (ubuntu-24.04-arm), igual que la imagen final; el linteo es independiente de la arquitectura.
 name: CI
 
 on:
@@ -8,6 +10,7 @@ on:
 permissions:
   contents: read
 
+# Un solo CI por rama/PR: si llega un commit nuevo se cancela el anterior.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -16,9 +19,69 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
+  # ---------------------------------------------------------------------------
+  # Linteo ligero: solo comprueba la SINTAXIS de los scripts (no los ejecuta).
+  # Falla si cualquier script tiene un error de sintaxis.
+  # ---------------------------------------------------------------------------
+  lint:
+    name: Linteo de scripts (sintaxis)
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: bash -n (build/ y build/overlay/usr/bin/)
+        run: |
+          # Se recorren los scripts con shebang bash de build/ (incluye build/lib, build/installer y build/plymouth)
+          # y los de build/overlay/usr/bin/ (que usan #!/bin/sh: se comprueban con sh -n más abajo).
+          fallos=0; n=0
+          while IFS= read -r f; do
+            [ -f "$f" ] || continue
+            case "$(head -n1 "$f" | head -c 200 | tr -d '\0')" in
+              '#!'*bash*)
+                n=$((n+1))
+                if bash -n "$f"; then echo "OK   bash -n $f"; else echo "::error file=$f::error de sintaxis (bash -n)"; fallos=$((fallos+1)); fi ;;
+            esac
+          done < <(git ls-files 'build/*' 'tools/*' 'shell/*' 'core/*' '*.sh' | sort -u)
+          echo "Scripts bash comprobados: $n"
+          test "$n" -gt 0 || { echo "::error::no se encontró ningún script bash (¿cambió el repo?)"; exit 1; }
+          test "$fallos" -eq 0
+      - name: sh -n (scripts POSIX sh, p. ej. build/overlay/usr/bin/)
+        run: |
+          fallos=0; n=0
+          while IFS= read -r f; do
+            [ -f "$f" ] || continue
+            case "$(head -n1 "$f" | head -c 200 | tr -d '\0')" in
+              '#!/bin/sh'*|'#!/usr/bin/env sh'*)
+                n=$((n+1))
+                if sh -n "$f"; then echo "OK   sh -n $f"; else echo "::error file=$f::error de sintaxis (sh -n)"; fallos=$((fallos+1)); fi ;;
+            esac
+          done < <(git ls-files | sort -u)
+          echo "Scripts sh comprobados: $n"
+          # Los 5 scripts de build/overlay/usr/bin/ son sh: deben aparecer como mínimo.
+          test "$n" -ge 1 || { echo "::error::no se encontró ningún script sh"; exit 1; }
+          test "$fallos" -eq 0
+      - name: python3 -m py_compile (scripts Python del repo)
+        run: |
+          fallos=0; n=0
+          while IFS= read -r f; do
+            [ -f "$f" ] || continue
+            es_py=0
+            case "$f" in *.py) es_py=1 ;; esac
+            case "$(head -n1 "$f" | head -c 200 | tr -d '\0')" in '#!'*python*) es_py=1 ;; esac
+            [ "$es_py" = 1 ] || continue
+            n=$((n+1))
+            if python3 -m py_compile "$f"; then echo "OK   py_compile $f"; else echo "::error file=$f::error de sintaxis (py_compile)"; fallos=$((fallos+1)); fi
+          done < <(git ls-files | sort -u)
+          echo "Scripts Python comprobados: $n"
+          test "$fallos" -eq 0
+
+  # ---------------------------------------------------------------------------
+  # BC Core (Rust): formato, clippy, tests y compilación release.
+  # ---------------------------------------------------------------------------
   rust:
     name: BC Core (Rust, ARM64 nativo)
     runs-on: ubuntu-24.04-arm
+    timeout-minutes: 45
     defaults:
       run:
         working-directory: core
@@ -55,9 +118,17 @@ jobs:
             core/target/release/bc-*-service
           if-no-files-found: error
 
+  # ---------------------------------------------------------------------------
+  # BC Shell (Qt 6): compila y pasa ctest con QT_QPA_PLATFORM=offscreen.
+  # El runner es Ubuntu 24.04, que trae Qt 6.4.2: es justo el mínimo que declara
+  # shell/CMakeLists.txt (find_package(Qt6 6.4 ...)). Si el código usara una API
+  # de Qt 6.5+ (loadFromModule, QtQuick.Effects, colorScheme, radios por esquina...)
+  # esta compilación fallaría, así que sirve de comprobación de compatibilidad.
+  # ---------------------------------------------------------------------------
   qt:
     name: BC Shell (Qt 6, ARM64 nativo)
     runs-on: ubuntu-24.04-arm
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - name: Comprobar si existe shell/
@@ -67,12 +138,28 @@ jobs:
       - name: Instalar dependencias Qt 6
         if: steps.shell.outputs.existe == 'true'
         run: |
+          # Compilación: cmake/ninja/g++, Qt base+QML+Quick+DBus+Network (qt6-base-dev, qt6-declarative-dev),
+          #   LinguistTools para qt_add_translations (qt6-tools-dev, qt6-tools-dev-tools, qt6-l10n-tools),
+          #   libpam0g-dev (PAM del bloqueo y login), SVG (qt6-svg-dev, libqt6svg6; los iconos son SVG).
+          # Ejecución: módulos QML que importa shell/qml (QtQuick, QtQuick.Window, QtQuick.Shapes; el resto se deja
+          #   por si algún QML los pide), dbus-run-session para el test de notificaciones D-Bus, python3 para
+          #   fake_greetd.py, fuentes (el render offscreen/software las necesita) y xvfb por si se usa xcb.
+          # layer-shell-qt es OPCIONAL (find_package QUIET): en Ubuntu 24.04 solo existe la versión de Qt 5,
+          #   así que aquí NO se instala y el código bajo BC_HAVE_LAYERSHELL no se compila en este CI (lo cubre image.yml).
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends cmake ninja-build g++ \
             qt6-base-dev qt6-declarative-dev qt6-tools-dev qt6-tools-dev-tools qt6-l10n-tools \
-            qt6-wayland-dev qt6-svg-dev libqt6svg6 libpam0g-dev dbus python3 qml6-module-qtquick qml6-module-qtquick-controls \
+            qt6-wayland-dev qt6-svg-dev libqt6svg6 libpam0g-dev python3 \
+            dbus dbus-bin dbus-daemon fonts-dejavu-core \
+            qml6-module-qtquick qml6-module-qtquick-controls \
             qml6-module-qtquick-layouts qml6-module-qtquick-window \
             qml6-module-qtqml-workerscript qml6-module-qtquick-templates qml6-module-qtquick-shapes xvfb
+      - name: Versiones (Qt debe ser 6.4 o superior)
+        if: steps.shell.outputs.existe == 'true'
+        run: |
+          qmake6 -query QT_VERSION || true
+          cmake --version | head -n1
+          dbus-run-session --version | head -n1
       - name: Configurar
         if: steps.shell.outputs.existe == 'true'
         run: cmake -S shell -B shell/build -G Ninja -DCMAKE_BUILD_TYPE=Release
@@ -81,4 +168,6 @@ jobs:
         run: cmake --build shell/build
       - name: Tests
         if: steps.shell.outputs.existe == 'true'
-        run: QT_QPA_PLATFORM=offscreen ctest --test-dir shell/build --output-on-failure
+        # Render por software y plataforma offscreen: no hace falta GPU ni servidor gráfico.
+        # --no-tests=error evita un «verde» falso si CMake no registró ninguna prueba.
+        run: QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software ctest --test-dir shell/build --output-on-failure --no-tests=error

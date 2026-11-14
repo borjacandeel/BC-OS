@@ -1,6 +1,10 @@
 name: Imagen ARM64
 
-# Construye la imagen de BC OS (runner ARM64 nativo). Solo publica un prerelease si se marca "publicar".
+# Construye la imagen de BC OS en un runner ARM64 NATIVO (sin qemu-user: el chroot de Arch Linux ARM corre directo).
+# Solo publica un prerelease si se marca "publicar" (o si se hace push de build/PUBLICAR).
+# Pasos largos: build-all.sh descarga el rootfs de Arch Linux ARM, instala paquetes con pacman, compila BC Shell
+# (Qt 6) y swayfx con meson dentro del chroot, y monta la imagen. En ARM64 nativo tarda ~15-25 min; con qemu-user
+# (x86_64) sería bastante más, por eso el timeout del trabajo es holgado.
 on:
   push:
     branches: [main]
@@ -16,38 +20,88 @@ on:
         type: boolean
         default: false
 
+# contents: write es necesario SOLO para crear el release y subir los ficheros.
 permissions:
   contents: write
+
+# Nunca dos construcciones/publicaciones a la vez (se usa el mismo tag v<versión>). No se cancela la que está en curso.
+concurrency:
+  group: imagen-bcos
+  cancel-in-progress: false
 
 jobs:
   imagen:
     name: Imagen BC OS (ARM64 nativo)
     runs-on: ubuntu-24.04-arm
+    # Límite total del trabajo (descarga + pacman + compilaciones + imagen + subida). Cada paso largo tiene además el suyo.
     timeout-minutes: 150
     steps:
       - uses: actions/checkout@v4
       - name: Resolver versión y modo
         id: v
+        # Los valores externos (inputs, fichero PUBLICAR) pasan por variables de entorno y se validan:
+        # así no se interpolan directamente en el shell (evita inyección de comandos).
+        env:
+          EVENTO: ${{ github.event_name }}
+          IN_VERSION: ${{ inputs.version }}
+          IN_PUBLICAR: ${{ inputs.publicar }}
         run: |
-          if [ "${{ github.event_name }}" = "push" ]; then
-            echo "version=$(tr -d ' \n' < build/PUBLICAR)" >> "$GITHUB_OUTPUT"; echo "publicar=true" >> "$GITHUB_OUTPUT"
+          if [ "$EVENTO" = "push" ]; then
+            version="$(tr -d ' \n\r' < build/PUBLICAR)"; publicar=true
           else
-            echo "version=${{ inputs.version }}" >> "$GITHUB_OUTPUT"; echo "publicar=${{ inputs.publicar }}" >> "$GITHUB_OUTPUT"
+            version="$IN_VERSION"; publicar="$IN_PUBLICAR"
           fi
+          if ! printf '%s' "$version" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.]+)?$'; then
+            echo "::error::versión no válida: «$version» (se espera p. ej. 0.3.2 o 0.3.2-alpha)"; exit 1
+          fi
+          echo "version=$version" >> "$GITHUB_OUTPUT"; echo "publicar=$publicar" >> "$GITHUB_OUTPUT"
+          echo "Versión: $version · publicar: $publicar"
       - name: Verificar arquitectura
         run: test "$(uname -m)" = "aarch64"
       - name: Liberar disco
-        run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache 2>/dev/null || true; df -h /
+        # La construcción necesita ~12-15 GB libres a la vez (rootfs + copia ext4 + imagen raw de 6 GiB + VDI + zip).
+        # Se borran herramientas preinstaladas que no se usan y se limpian imágenes de Docker y caché de apt.
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache /usr/local/.ghcup \
+            /usr/share/swift /usr/local/share/boost /opt/microsoft /usr/lib/jvm /usr/local/julia* 2>/dev/null || true
+          sudo docker system prune -af >/dev/null 2>&1 || true
+          sudo apt-get clean || true
+          df -h /
+          libre_gb=$(df --output=avail -BG / | tail -n1 | tr -dc '0-9')
+          echo "Espacio libre: ${libre_gb} GB"
+          if [ "$libre_gb" -lt 20 ]; then echo "::warning::solo ${libre_gb} GB libres; la imagen podría quedarse sin espacio"; fi
       - name: Instalar herramientas
+        # Herramientas del ANFITRIÓN (lo de dentro del chroot lo instala pacman):
+        # libarchive-tools=bsdtar (rootfs de ALARM), dosfstools+mtools (ESP FAT32), e2fsprogs (mkfs.ext4 -d), fdisk (sfdisk),
+        # qemu-utils (qemu-img → VDI), rsync, zip, curl+ca-certificates (descargas: ALARM y tema de cursores de GitHub),
+        # xz-utils (tar -xJ del tema de cursores), zstd, util-linux (mountpoint, mount).
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libarchive-tools dosfstools mtools e2fsprogs fdisk zstd qemu-utils rsync curl ca-certificates zip
+          sudo apt-get install -y --no-install-recommends libarchive-tools dosfstools mtools e2fsprogs fdisk zstd qemu-utils rsync curl ca-certificates zip xz-utils util-linux
       - name: Compilar BC Core (Rust)
+        # build-core.sh reutiliza core/target/release si ya existe (en aarch64), así sudo no necesita cargo/rustup.
+        timeout-minutes: 30
         run: cd core && cargo build --release --locked
       - name: Construir imagen
-        run: sudo build/build-all.sh "${{ steps.v.outputs.version }}" "$RUNNER_TEMP/bcwork"
+        # Necesita root (chroot, mount, rsync -aHAX). Directorio de trabajo en $RUNNER_TEMP (mismo disco que el repo).
+        # 120 min como tope: nativo suele tardar 15-25 min; el margen cubre descargas lentas del mirror de ALARM.
+        timeout-minutes: 120
+        env:
+          VERSION: ${{ steps.v.outputs.version }}
+        run: sudo build/build-all.sh "$VERSION" "$RUNNER_TEMP/bcwork"
       - name: Verificar integridad
-        run: cd build/out && sha256sum --check SHA256SUMS
+        # Comprueba la suma SHA256 del zip y que existan los ficheros que se van a publicar.
+        run: |
+          cd build/out
+          ls -lh
+          test -s SHA256SUMS && ls ./*.zip >/dev/null
+          sha256sum --check SHA256SUMS
+      - name: Limpiar montajes huérfanos
+        if: always()
+        # Si el build falló a medias pueden quedar montajes de proc/sys/dev en el chroot.
+        run: |
+          for d in dev sys proc; do sudo umount -R -l "$RUNNER_TEMP/bcwork/root/$d" 2>/dev/null || true; done
       - name: Guardar artefacto
         uses: actions/upload-artifact@v4
         with:
@@ -59,8 +113,14 @@ jobs:
           compression-level: 0
           retention-days: 14
       - name: Preparar notas
-        run: sed -i 's/@VERSION@/${{ steps.v.outputs.version }}/g' build/RELEASE-NOTES.md
+        # build/RELEASE-NOTES.md es la plantilla del release; @VERSION@ se sustituye por la versión real.
+        env:
+          VERSION: ${{ steps.v.outputs.version }}
+        run: |
+          sed -i "s/@VERSION@/$VERSION/g" build/RELEASE-NOTES.md
+          ! grep -q '@VERSION@' build/RELEASE-NOTES.md
       - name: Publicar prerelease
+        # Crea el tag v<versión> sobre el commit construido; adjunta el .zip y SHA256SUMS; el cuerpo son las notas.
         if: ${{ steps.v.outputs.publicar == 'true' }}
         uses: softprops/action-gh-release@v2
         with:

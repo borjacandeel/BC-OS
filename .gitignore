@@ -4,3 +4,4 @@ build-*/
 *.vdi
 *.qcow2
 .claude/worktrees/
+__pycache__/
