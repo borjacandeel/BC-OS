@@ -10,6 +10,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - ARM64 únicamente. Base Arch Linux ARM.
 
 ## En curso
+- [ ] 2026-11-14 **0.4.0 beta (prerelease)** — objetivo del creador: versión estable y fluida en VirtualBox (VMSVGA; «súper optimizada, con esquinas redondeadas y fluido»). Hecho: revisión de código (C++ y QML/scripts) y correcciones; build candidato en curso → verificar en QEMU (fish, flatpak, clamav, bienvenida, bloqueo, estilos, efectos) → publicar con image.yml (0.4.0-beta). Esquinas redondeadas en ventanas de terceros: solo con swayfx + GPU (entrada «efectos»); con render por software no es posible. El creador decide después de probar en VirtualBox.
 - [x] 2026-11-14 Shell por defecto **fish** (sugerencias automáticas, colores BC, abreviaturas, zoxide, fzf, eza, bat) + capturas (`bc-screenshot`), sysctl, sudo pwfeedback, fastfetch BC. Mantener SIEMPRE colores y tema de BC OS (no adoptar los de Quantum). **Tienda de Quantum: todavía NO** (el creador lo pidió así); la Tienda actual (pacman + Flathub) se mantiene.
 - [x] 2026-11-14 Informe 01 (shell y apps de Quantum, solo lectura) escrito en `docs/design/referencia-quantum/01-shell-y-apps.md`; faltan los demás informes (repositorio, instalador, imagen) de este análisis.
 - [ ] Análisis de Quantum Linux en `docs/design/referencia-quantum/` (subagente) → priorizar recreación: repositorio propio `[bc]` firmado + actualizaciones OTA, Centro BC, Ayuda, instantáneas, ISO live, etc.
