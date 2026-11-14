@@ -1,0 +1,10 @@
+#!/bin/sh
+# Polybar: batería mínima; sin batería (sobremesa, máquina virtual) no muestra nada
+for b in /sys/class/power_supply/BAT*; do [ -r "$b/capacity" ] && break; done
+[ -r "$b/capacity" ] || exit 0
+c=$(cat "$b/capacity"); s=$(cat "$b/status" 2>/dev/null)
+if [ "$s" = Charging ]; then i="󰂄"
+elif [ "$c" -ge 90 ]; then i="󰁹"; elif [ "$c" -ge 70 ]; then i="󰂀"
+elif [ "$c" -ge 50 ]; then i="󰁾"; elif [ "$c" -ge 25 ]; then i="󰁼"
+else i="%{F#E2AAA0}󰁺%{F-}"; fi
+echo "$i $c%"

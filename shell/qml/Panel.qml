@@ -88,11 +88,11 @@ LayerWindow {
             else if (key === "mode") UiState.mode = value === "-" ? "" : value
             else if (key === "accent") AppConfig.setAccent(value)
             else if (key === "wallpaper") {
-                const p = value === "-" ? "/usr/share/bc/wallpapers/medianoche.jpg" : value
+                const p = value === "-" ? "/usr/share/bc/wallpapers/ondas.jpg" : value
                 if (/^[^"\\$;,\n'`]+$/.test(p)) Sway.command("output * bg \"" + p + "\" fill #04111F")
             }
         }
-        function onStyleChanged(st) { UiState.closePopups(); UiState.style = (st === "win" || st === "minimal") ? st : "mac" }
+        function onStyleChanged(st) { UiState.closePopups(); UiState.style = st === "win" ? "win" : "mac" }
         function onOsdRequested(kind) { SystemStatus.refresh(); osdDelay.kind = kind; osdDelay.restart() }
         function onWelcomeRequested() { UiState.closePopups(); UiState.welcomeOpen = true }
         function onLauncherToggled() { UiState.toggleLauncher() }
@@ -302,7 +302,7 @@ LayerWindow {
 
     Component.onCompleted: {
         UiState.splashing = AppConfig.splash
-        UiState.style = Settings.desktopStyle
+        UiState.style = Settings.desktopStyle === "win" ? "win" : "mac"
         UiState.widgets = Settings.widgets
         UiState.mode = Settings.mode
         if (AppConfig.splash && !Settings.welcomed) welcomeTimer.start()

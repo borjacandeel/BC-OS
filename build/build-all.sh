@@ -26,6 +26,7 @@ bc_umount "$R"; trap - EXIT
 bash "$HERE/build-shell.sh" "$R"
 bash "$HERE/build-core.sh" "$R"
 bash "$HERE/build-swayfx.sh" "$R"
+[ "${BC_GHOSTTY:-1}" = 0 ] || bash "$HERE/build-ghostty.sh" "$R" || echo "AVISO: no se pudo compilar Ghostty; la terminal será Alacritty"
 sed -i "s/^PRETTY_NAME=.*/PRETTY_NAME=\"BC OS $VER\"/; s/^VERSION=.*/VERSION=\"$VER\"/; s/^VERSION_ID=.*/VERSION_ID=\"$VER\"/" "$HERE/overlay/etc/os-release"
 bash "$HERE/configure-rootfs.sh" "$R"
 

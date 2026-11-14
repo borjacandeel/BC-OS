@@ -5,7 +5,7 @@ import QtQuick
 QtObject {
     readonly property var names: ({
         "bc-files": qsTr("Archivos"), "bc-monitor": qsTr("Monitor del sistema"), "bc-settings": qsTr("Configuración"),
-        "bc-store": qsTr("Tienda"), "foot": qsTr("Terminal"), "Alacritty": qsTr("Terminal"), "firefox": qsTr("Firefox"), "": qsTr("Escritorio")
+        "bc-store": qsTr("Tienda"), "foot": qsTr("Terminal"), "Alacritty": qsTr("Terminal"), "com.mitchellh.ghostty": qsTr("Terminal"), "firefox": qsTr("Firefox"), "": qsTr("Escritorio")
     })
     function nameFor(appId) {
         if (names[appId] !== undefined) return names[appId]

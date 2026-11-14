@@ -1,7 +1,7 @@
-; Barra «Dotfiles» de BC OS: escritorios numerados, pista del reproductor al centro y reloj (estilo minimal)
+; Barra «Dotfiles» de BC OS: casi transparente; escritorios, reproductor al centro y red, Bluetooth, batería, volumen y reloj a la derecha
 [colors]
 foreground = #EAF1F5
-background = #A60E1B26
+background = #1A0E1B26
 dim = #7F95A3
 focus = #FFFFFF
 alert = #E2AAA0
@@ -23,7 +23,7 @@ font-2 = "CaskaydiaCove Nerd Font:size=13;4"
 font-3 = "DejaVu Sans Mono:size=10;3"
 modules-left = launcher bspwm
 modules-center = media
-modules-right = pulseaudio time
+modules-right = net bluetooth battery pulseaudio time
 scroll-up = bspwm-wsnext
 scroll-down = bspwm-wsprev
 wm-restack = bspwm
@@ -73,7 +73,7 @@ label-volume = 󰕾 %percentage%%
 label-muted = 󰖁 muted
 label-muted-foreground = ${colors.dim}
 use-ui-max = false
-click-right = pavucontrol
+click-right = pavucontrol &
 
 [module/time]
 type = internal/date
@@ -81,6 +81,25 @@ interval = 10
 time = %H:%M
 date = %d %b
 label = %time% | %date%
+
+[module/net]
+type = custom/script
+exec = bc-bar-net
+interval = 5
+click-left = bc-menu-wifi &
+click-right = bc-terminal -e nmtui &
+
+[module/bluetooth]
+type = custom/script
+exec = bc-bar-bt
+interval = 10
+click-left = bc-menu-bt &
+click-right = bluetoothctl power toggle >/dev/null 2>&1 || true
+
+[module/battery]
+type = custom/script
+exec = bc-bar-bat
+interval = 30
 
 ; --- Módulos extra (actívalos añadiéndolos a modules-right) ---
 [module/temperature]

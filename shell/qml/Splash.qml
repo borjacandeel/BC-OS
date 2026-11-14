@@ -20,8 +20,12 @@ Rectangle {
     }
     Brand { id: logo; anchors.centerIn: parent; logoHeight: 64; scale: 0.94 }
 
+    // Se arranca con un temporizador (no ligado a la visibilidad de la capa) y un seguro garantiza
+    // que la pantalla de carga nunca se quede encima del escritorio aunque la animación no corra.
+    Timer { interval: 60; running: AppConfig.splash; onTriggered: intro.start() }
+    Timer { interval: 4500; running: AppConfig.splash; onTriggered: { intro.stop(); root.opacity = 0; UiState.splashing = false } }
     SequentialAnimation {
-        running: AppConfig.splash
+        id: intro
         onFinished: UiState.splashing = false
         NumberAnimation { target: logo; property: "scale"; to: 1.0; duration: Theme.dur(700); easing.type: Easing.OutCubic }
         PauseAnimation { duration: Theme.dur(350) }

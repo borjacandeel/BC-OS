@@ -118,8 +118,7 @@ AppWindow {
                 spacing: 12
                 Repeater {
                     model: [{ id: "mac", name: qsTr("BC"), desc: qsTr("Barra superior y Dock") },
-                            { id: "win", name: qsTr("Windows"), desc: qsTr("Barra de tareas y menú Inicio") },
-                            { id: "minimal", name: qsTr("Minimal"), desc: qsTr("Solo la barra superior") }]
+                            { id: "win", name: qsTr("Windows"), desc: qsTr("Barra de tareas y menú Inicio") }]
                     delegate: Rectangle {
                         required property var modelData
                         readonly property bool sel: Settings.desktopStyle === modelData.id

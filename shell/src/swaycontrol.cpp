@@ -14,14 +14,16 @@ void walk(const QJsonObject &n, bool inScratch, QVariantList &out) {
     if ((type == "con" || type == "floating_con") && leaf && n.value("pid").toInt() > 0) {
         QString app = n.value("app_id").toString();
         if (app.isEmpty()) app = n.value("window_properties").toObject().value("class").toString();
-        const QJsonObject deco = n.value("deco_rect").toObject();
+        // deco_rect es relativo al contenedor padre; rect es absoluto pero (como en i3) empieza DEBAJO de la barra de título
+        const QJsonObject deco = n.value("deco_rect").toObject(), rect = n.value("rect").toObject();
         out.append(QVariantMap{{"id", n.value("id").toInt()}, {"appId", app}, {"title", n.value("name").toString()},
                                {"focused", n.value("focused").toBool()}, {"floating", type == "floating_con"},
                                {"minimized", inScratch}, {"pid", n.value("pid").toInt()},
                                {"fullscreen", n.value("fullscreen_mode").toInt() > 0},
                                // barra de título dibujada por sway (x, y, ancho, alto): ahí se colocan los botones de la ventana
-                               {"decoX", deco.value("x").toInt()}, {"decoY", deco.value("y").toInt()},
-                               {"decoW", deco.value("width").toInt()}, {"decoH", deco.value("height").toInt()}});
+                               {"decoX", rect.value("x").toInt()}, {"decoY", rect.value("y").toInt() - deco.value("height").toInt()},
+                               {"decoW", deco.value("width").toInt()}, {"decoH", deco.value("height").toInt()},
+                               {"rectW", rect.value("width").toInt()}, {"rectH", rect.value("height").toInt() + deco.value("height").toInt()}});
         return;
     }
     const bool scratch = inScratch || (type == "workspace" && n.value("name").toString() == "__i3_scratch");
@@ -97,7 +99,7 @@ void SwayControl::refresh() {
                 if (m.value("minimized").toBool() || m.value("fullscreen").toBool() || m.value("decoH").toInt() <= 0) continue;
                 if (m.value("appId").toString().startsWith("bc-")) continue;   // las apps de BC llevan su propio semáforo
                 chrome.append(QVariantMap{{"id", m.value("id")}, {"x", m.value("decoX")}, {"y", m.value("decoY")}, {"w", m.value("decoW")}, {"h", m.value("decoH")},
-                                          {"focused", m.value("focused")}});
+                                          {"rw", m.value("rectW")}, {"rh", m.value("rectH")}, {"focused", m.value("focused")}});
             }
             if (chrome != m_chrome) {
                 m_chrome = chrome;

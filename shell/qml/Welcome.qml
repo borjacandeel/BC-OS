@@ -11,7 +11,7 @@ Item {
     signal finished()
     readonly property string wallDir: "/usr/share/bc/wallpapers/"
     readonly property var wallpapers: [
-        { f: "medianoche.jpg", n: qsTr("Medianoche") }, { f: "oceano.jpg", n: qsTr("Océano") },
+        { f: "ondas.jpg", n: qsTr("Ondas") }, { f: "medianoche.jpg", n: qsTr("Medianoche") }, { f: "oceano.jpg", n: qsTr("Océano") },
         { f: "grafito.jpg", n: qsTr("Grafito") }, { f: "plata.jpg", n: qsTr("Plata") }]
     // Solo los colores base de BC OS (los del semáforo y los de las tarjetas del Monitor)
     readonly property var accents: ["#2F7BF5", "#34C759", "#FF9F0A", "#FF5F57", "#8E9BB2"]
@@ -138,8 +138,6 @@ Item {
                    sel: UiState.style === "win" && !root.dotfilesChosen; onClicked: root.pickStyle("win"); Mock { kind: "win" } }
             Card { title: qsTr("BC"); badge: qsTr("Recomendado"); desc: qsTr("Barra arriba con menús, Dock flotante y animaciones: el estilo de BC OS.")
                    sel: UiState.style === "mac" && !root.dotfilesChosen; onClicked: root.pickStyle("mac"); Mock { kind: "mac" } }
-            Card { title: qsTr("Minimal"); badge: ""; desc: qsTr("Solo la barra superior: limpio, sin Dock ni widgets.")
-                   sel: UiState.style === "minimal" && !root.dotfilesChosen; onClicked: root.pickStyle("minimal"); Mock { kind: "minimal" } }
             Card { title: qsTr("Dotfiles"); badge: qsTr("Mosaico"); desc: qsTr("bspwm con polybar, rofi y picom (X11). Se activa al volver a iniciar sesión.")
                    sel: root.dotfilesChosen; onClicked: root.pickDotfiles(); DotfilesMock { } }
         }
@@ -171,7 +169,7 @@ Item {
                     model: root.wallpapers
                     delegate: Rectangle {
                         required property var modelData
-                        readonly property bool sel: Settings.wallpaper === root.wallDir + modelData.f || (Settings.wallpaper === "" && modelData.f === "medianoche.jpg")
+                        readonly property bool sel: Settings.wallpaper === root.wallDir + modelData.f || (Settings.wallpaper === "" && modelData.f === "ondas.jpg")
                         width: 150; height: 100; radius: 12; color: "#0A1020"; clip: true
                         border.width: sel ? 3 : 1; border.color: sel ? Theme.accent : Theme.hairline
                         Image { anchors.fill: parent; anchors.margins: 3; source: root.step === 1 && visible ? "file://" + root.wallDir + modelData.f : ""; fillMode: Image.PreserveAspectCrop; asynchronous: true; sourceSize.width: 300 }

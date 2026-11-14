@@ -1,0 +1,22 @@
+#!/bin/sh
+# Menú wifi (rofi + nmcli): activar/desactivar y conectarse a una red
+R="rofi -dmenu -i -theme $HOME/.config/rofi/config.rasi"
+state=$(nmcli -t radio wifi 2>/dev/null)
+if [ "$state" = enabled ]; then toggle="󰖪  Desactivar wifi"; else toggle="󰖩  Activar wifi"; fi
+list=$(nmcli -t -f IN-USE,SIGNAL,SECURITY,SSID dev wifi list --rescan auto 2>/dev/null |
+  awk -F: '$4!="" && !seen[$4]++ { printf "%s %s%%  %s%s\n", ($1=="*"?"":" "), $2, $4, ($3==""||$3=="--"?"":"  ") }')
+pick=$(printf '%s\n%s\n󰒓  Ajustes de red avanzados\n' "$toggle" "$list" | $R -p "Wifi") || exit 0
+case $pick in
+  *"Desactivar wifi") nmcli radio wifi off ;;
+  *"Activar wifi") nmcli radio wifi on ;;
+  *"Ajustes de red"*) exec bc-terminal -e nmtui ;;
+  *)
+    ssid=$(printf '%s' "$pick" | sed 's/^. [0-9]*%  //; s/  $//')
+    [ -n "$ssid" ] || exit 0
+    if nmcli -t -f NAME connection show | grep -qx "$ssid"; then nmcli connection up id "$ssid" >/dev/null 2>&1
+    else
+      pass=$(printf '' | rofi -dmenu -password -p "Contraseña de «$ssid»" -theme "$HOME/.config/rofi/config.rasi") || exit 0
+      if [ -n "$pass" ]; then nmcli dev wifi connect "$ssid" password "$pass" >/dev/null 2>&1; else nmcli dev wifi connect "$ssid" >/dev/null 2>&1; fi
+    fi
+    if [ $? -eq 0 ]; then notify-send "Wifi" "Conectado a $ssid"; else notify-send -u critical "Wifi" "No se pudo conectar a $ssid"; fi ;;
+esac

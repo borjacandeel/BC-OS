@@ -22,11 +22,11 @@ echo "$new" > "$D/layout-mode.tmp.$$" && mv "$D/layout-mode.tmp.$$" "$D/layout-m
 OUT="${XDG_RUNTIME_DIR:?sin XDG_RUNTIME_DIR}/bc-sway.conf"
 { cat /etc/bc/sway/config; [ -f /etc/bc/sway/keyboard.conf ] && cat /etc/bc/sway/keyboard.conf
   [ -n "$BC_FX" ] && [ -f /etc/bc/sway/efectos.conf ] && cat /etc/bc/sway/efectos.conf
-  WP=/usr/share/bc/wallpapers/medianoche.jpg
+  WP=/usr/share/bc/wallpapers/ondas.jpg
   [ -f "$D/wallpaper" ] && w=$(head -n1 "$D/wallpaper") && [ -f "$w" ] && WP=$w
-  case $WP in *\"*|*\\*|*\$*|*\;*|*,*|*\'*|*\`*) WP=/usr/share/bc/wallpapers/medianoche.jpg ;; esac
+  case $WP in *\"*|*\\*|*\$*|*\;*|*,*|*\'*|*\`*) WP=/usr/share/bc/wallpapers/ondas.jpg ;; esac
   case $WP in *"
-"*) WP=/usr/share/bc/wallpapers/medianoche.jpg ;; esac
+"*) WP=/usr/share/bc/wallpapers/ondas.jpg ;; esac
   printf 'output * bg "%s" fill #04111F\n' "$WP"
   cat "$D/sway-mode.conf"
   printf 'for_window [window_role="pop-up"] floating enable\nfor_window [window_type="dialog"] floating enable\n'

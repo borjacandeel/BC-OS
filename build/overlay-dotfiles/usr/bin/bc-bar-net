@@ -1,0 +1,14 @@
+#!/bin/sh
+# Polybar: estado de red mínimo (wifi con señal, cable o desconectado)
+command -v nmcli >/dev/null || { echo "󰤮"; exit 0; }
+line=$(nmcli -t -f TYPE,STATE,CONNECTION device 2>/dev/null | grep ':connected:' | head -n1)
+case $line in
+  wifi:*)
+    sig=$(nmcli -t -f ACTIVE,SIGNAL dev wifi 2>/dev/null | grep '^yes' | cut -d: -f2 | head -n1)
+    sig=${sig:-0}
+    if [ "$sig" -ge 75 ]; then i="󰤨"; elif [ "$sig" -ge 50 ]; then i="󰤥"; elif [ "$sig" -ge 25 ]; then i="󰤢"; else i="󰤟"; fi
+    echo "$i" ;;
+  ethernet:*) echo "󰈀" ;;
+  "") echo "%{F#7F95A3}󰤮%{F-}" ;;
+  *) echo "󰛳" ;;
+esac

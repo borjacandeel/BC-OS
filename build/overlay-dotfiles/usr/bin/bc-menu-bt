@@ -1,0 +1,25 @@
+#!/bin/sh
+# Menú Bluetooth (rofi + bluetoothctl): encender/apagar, conectar y desconectar
+R="rofi -dmenu -i -theme $HOME/.config/rofi/config.rasi"
+bluetoothctl show >/dev/null 2>&1 || { notify-send "Bluetooth" "No hay adaptador Bluetooth"; exit 0; }
+if bluetoothctl show | grep -q "Powered: yes"; then on=1; toggle="󰂲  Apagar Bluetooth"; else on=0; toggle="󰂯  Encender Bluetooth"; fi
+devs=""
+if [ $on = 1 ]; then
+  timeout 5 bluetoothctl --timeout 4 scan on >/dev/null 2>&1
+  devs=$(bluetoothctl devices | while read -r _ mac name; do
+    if bluetoothctl info "$mac" | grep -q "Connected: yes"; then echo "󰂱  $name  ·  conectado|$mac"; else echo "󰂯  $name|$mac"; fi
+  done)
+fi
+pick=$(printf '%s\n%s\n' "$toggle" "$(printf '%s\n' "$devs" | cut -d'|' -f1)" | sed '/^$/d' | $R -p "Bluetooth") || exit 0
+case $pick in
+  *"Apagar Bluetooth") bluetoothctl power off >/dev/null ;;
+  *"Encender Bluetooth") rfkill unblock bluetooth 2>/dev/null; bluetoothctl power on >/dev/null ;;
+  *)
+    mac=$(printf '%s\n' "$devs" | grep -F "$pick|" | head -n1 | cut -d'|' -f2)
+    [ -n "$mac" ] || exit 0
+    case $pick in
+      *conectado) bluetoothctl disconnect "$mac" >/dev/null && notify-send "Bluetooth" "Desconectado" ;;
+      *) bluetoothctl pair "$mac" >/dev/null 2>&1; bluetoothctl trust "$mac" >/dev/null 2>&1
+         if bluetoothctl connect "$mac" >/dev/null 2>&1; then notify-send "Bluetooth" "Conectado"; else notify-send -u critical "Bluetooth" "No se pudo conectar"; fi ;;
+    esac ;;
+esac
