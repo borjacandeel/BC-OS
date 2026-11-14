@@ -56,7 +56,7 @@ AppWindow {
 
     Row {
         visible: Store.flatpakAvailable
-        anchors.right: parent.right; anchors.rightMargin: 150; y: 66; spacing: 8
+        anchors.right: parent.right; anchors.rightMargin: 240; y: 66; spacing: 8
         Repeater {
             model: [qsTr("Arch"), qsTr("Flathub")]
             delegate: Rectangle {

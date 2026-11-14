@@ -1,4 +1,4 @@
-## BC OS @VERSION@ (ARM64) — prerrelease alpha, solo pruebas
+## BC OS @VERSION@ (ARM64) — beta (prerrelease), para probar en máquinas virtuales
 
 Imagen de disco arrancable (UEFI, ARM64). **Aún no hay ISO**: el instalador (`sudo bc-install`) viene dentro de la imagen.
 
