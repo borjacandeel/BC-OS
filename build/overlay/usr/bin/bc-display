@@ -1,0 +1,27 @@
+#!/bin/sh
+# Resolución de pantalla de BC OS. Uso: bc-display auto | list | set <AnchoxAlto> | watch
+#  auto  : aplica el modo preferido (el que anuncia el monitor o la ventana de la máquina virtual)
+#  watch : vigila cambios de pantalla (DRM) y aplica «auto»; así la ventana de VirtualBox/QEMU se adapta al redimensionarla
+cmd="${1:-auto}"
+outs() { swaymsg -t get_outputs -r 2>/dev/null; }
+case "$cmd" in
+  list) outs | jq -r '.[] | select(.active) | .modes[] | "\(.width)x\(.height)"' | sort -u -t x -k1,1nr -k2,2nr ;;
+  set)
+    case "$2" in [0-9]*x[0-9]*) ;; *) echo "uso: bc-display set 1920x1080" >&2; exit 2 ;; esac
+    outs | jq -r '.[] | select(.active) | .name' | while read -r n; do swaymsg "output $n mode $2" >/dev/null; done ;;
+  auto)
+    outs | jq -r '.[] | select(.active) | "\(.name) \(.modes[0].width) \(.modes[0].height) \(.modes[0].refresh) \(.current_mode.width) \(.current_mode.height)"' |
+    while read -r n w h r cw ch; do
+      [ -n "$w" ] && [ "$w" != "null" ] || continue
+      if [ "$w" != "$cw" ] || [ "$h" != "$ch" ]; then
+        hz=$(awk -v r="$r" 'BEGIN { printf "%.3f", r/1000 }')
+        swaymsg "output $n mode ${w}x${h}@${hz}Hz" >/dev/null
+      fi
+    done ;;
+  watch)
+    bc-display auto
+    udevadm monitor --udev --subsystem-match=drm 2>/dev/null | while read -r _; do
+      sleep 1; bc-display auto
+    done ;;
+  *) echo "uso: bc-display auto|list|set <AnchoxAlto>|watch" >&2; exit 2 ;;
+esac

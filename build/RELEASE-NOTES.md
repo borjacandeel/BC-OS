@@ -9,6 +9,13 @@ Imagen de disco arrancable (UEFI, ARM64). **Aún no hay ISO**: el instalador (`s
 4. Arranca: menú de 5 s con **BC OS** (animación de arranque con el logo, por defecto) y **BC OS (modo seguro, sin animación)**.
 5. Aparece el **panel de login**. Usuario `bc`, contraseña `bcos` (**solo alpha**; cámbiala con `passwd`).
 
+### Novedades de 0.4.1
+- **La pantalla se adapta sola** al tamaño de la ventana de VirtualBox/QEMU o al monitor (`bc-display`; vigila los cambios de pantalla). En Configuración: `bc-display list` / `bc-display set 1920x1080`.
+- **Iconos Qogir** (vinceliuice, GPL-3.0) para aplicaciones y tipos de archivo; interfaz con el pack BC. Paleta **Medianoche refinado**, más sobria.
+- Animaciones: ventanas emergentes con entrada deslizante, notificaciones que entran por la derecha, rebote del Dock al abrir una app, cierre animado de las apps, transiciones en la bienvenida y **OSD** de volumen y brillo.
+- **Súper+V**: historial del portapapeles. **Bloqueo y apagado de pantalla por inactividad** (10 y 15 min). Aviso de actualizaciones disponibles.
+- Se quita del menú de arranque la entrada «efectos» (fallaba en VirtualBox); sigue disponible a mano añadiendo `bc.gpu=1` en el editor de arranque (solo con GPU real).
+
 ### Novedades de 0.4.0: «como Quantum, pero BC OS»
 - **Asistente de bienvenida** en el primer inicio (3 pasos): estilo de escritorio, fondo y color de acento, y organización de ventanas (flotantes o mosaico, widgets, Modos). Se reabre desde Configuración.
 - **Tres estilos de escritorio** elegibles al instante: **BC** (barra superior + Dock), **Windows** (barra de tareas + menú Inicio con búsqueda) y **Minimal** (solo la barra).

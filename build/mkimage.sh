@@ -24,7 +24,7 @@ mcopy -i "$ESP" "$R/boot/initramfs-linux.img" ::/initramfs-linux.img
 mcopy -i "$ESP" "$HERE/overlay/boot/loader/loader.conf" ::/loader/loader.conf
 mcopy -i "$ESP" "$HERE/overlay/boot/loader/entries/bcos.conf" ::/loader/entries/bcos.conf
 mcopy -i "$ESP" "$HERE/overlay/boot/loader/entries/bcos-seguro.conf" ::/loader/entries/bcos-seguro.conf
-mcopy -i "$ESP" "$HERE/overlay/boot/loader/entries/bcos-efectos.conf" ::/loader/entries/bcos-efectos.conf
+# La entrada de efectos (swayfx, bc.gpu=1) no se incluye: falla en VirtualBox. Se puede activar a mano añadiendo bc.gpu=1 en el editor de arranque.
 
 # Root ext4 poblada con mke2fs -d
 ROOT_MIB=$((SIZE - ESP_MIB - 2))

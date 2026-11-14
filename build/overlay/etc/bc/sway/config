@@ -100,6 +100,9 @@ for_window [app_id="bc-.*"] border none
 for_window [window_role="pop-up"] floating enable
 for_window [window_type="dialog"] floating enable
 
+# Pantalla: se adapta sola al tamaño de la ventana de la máquina virtual o al monitor
+exec bc-display watch
+
 # Historial del portapapeles, bloqueo por inactividad y apagado de pantalla
 exec wl-paste --type text --watch cliphist store
 exec wl-paste --type image --watch cliphist store
