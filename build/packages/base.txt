@@ -56,3 +56,6 @@ fzf
 zoxide
 eza
 bat
+cliphist
+swayidle
+pacman-contrib

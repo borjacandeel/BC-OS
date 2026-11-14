@@ -17,6 +17,7 @@ public slots:
     void Lock() { emit lockRequested(); }
     void ToggleTiling() { emit tilingToggled(); }
     void Power(const QString &action) { emit powerRequested(action); }
+    void ToggleClipboard() { emit clipboardToggled(); }
     void ShowWelcome() { emit welcomeRequested(); }
     void ShowOsd(const QString &kind) { if (kind == "volume" || kind == "brightness") emit osdRequested(kind); }
     void SetStyle(const QString &style) { emit styleChanged(style); }
@@ -29,6 +30,7 @@ signals:
     void powerRequested(const QString &action);
     void styleChanged(const QString &style);
     void welcomeRequested();
+    void clipboardToggled();
     void osdRequested(const QString &kind);
     void optionChanged(const QString &key, const QString &value);
 };

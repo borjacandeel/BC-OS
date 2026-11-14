@@ -32,6 +32,7 @@ bindsym $mod+e exec bc-shell --app files
 bindsym Ctrl+space exec bc-ctl launcher
 bindsym $mod+space exec bc-ctl launcher
 bindsym $mod+c exec bc-ctl center
+bindsym $mod+v exec bc-ctl clipboard
 bindsym Ctrl+$mod+q exec bc-ctl lock
 bindsym $mod+Shift+e exec bc-ctl power logout
 bindsym $mod+F1 exec mousepad /etc/bc/atajos.txt
@@ -98,6 +99,11 @@ bindsym Alt+Print exec bc-screenshot ventana
 for_window [app_id="bc-.*"] border none
 for_window [window_role="pop-up"] floating enable
 for_window [window_type="dialog"] floating enable
+
+# Historial del portapapeles, bloqueo por inactividad y apagado de pantalla
+exec wl-paste --type text --watch cliphist store
+exec wl-paste --type image --watch cliphist store
+exec swayidle -w timeout 600 'bc-ctl lock' timeout 900 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' before-sleep 'bc-ctl lock'
 
 # Panel de BC Shell (barra, Dock, fondo, notificaciones); se relanza si termina
 exec sh -c 'while [ -S "$SWAYSOCK" ]; do bc-shell --panel; sleep 1; done'

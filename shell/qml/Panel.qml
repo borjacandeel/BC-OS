@@ -96,6 +96,7 @@ LayerWindow {
         function onOsdRequested(kind) { SystemStatus.refresh(); osdDelay.kind = kind; osdDelay.restart() }
         function onWelcomeRequested() { UiState.closePopups(); UiState.welcomeOpen = true }
         function onLauncherToggled() { UiState.toggleLauncher() }
+        function onClipboardToggled() { UiState.toggleClipboard() }
         function onControlCenterToggled() { UiState.toggleCenter() }
         function onLockRequested() { UiState.run("bc:lock") }
         function onTilingToggled() { Sway.toggleTiling() }
@@ -201,7 +202,7 @@ LayerWindow {
     LayerWindow {
         layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-popups"
         margins: [UiState.topInset, 0, UiState.win ? UiState.taskH : 0, 0]
-        keyboard: UiState.launcherOpen || UiState.startOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
+        keyboard: UiState.launcherOpen || UiState.clipboardOpen || UiState.startOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
         width: UiState.sw; height: UiState.sh
         shown: UiState.popupOpen
         Loader {
@@ -257,6 +258,19 @@ LayerWindow {
                     }
                     Connections { target: UiState; function onLauncherOpenChanged() { if (UiState.launcherOpen) launcher.reset() } }
                 }
+                Item {
+                    id: clipWrap
+                    visible: UiState.clipboardOpen
+                    anchors.fill: parent
+                    ClipboardPopup {
+                        id: clipboardPopup
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        y: Math.round(pop.height * 0.14)
+                        onCloseRequested: UiState.closePopups()
+                    }
+                    Connections { target: UiState; function onClipboardOpenChanged() { if (UiState.clipboardOpen) clipboardPopup.reset() } }
+                }
+                SlideIn { target: clipWrap; dy: -14; duration: 220 }
                 StartMenu {
                     id: startMenu
                     visible: UiState.startOpen

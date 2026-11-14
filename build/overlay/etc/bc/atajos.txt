@@ -6,6 +6,7 @@ Aplicaciones
   Súper+E               Abrir Archivos
   Ctrl+Espacio          Lanzador de aplicaciones (también Súper+Espacio)
   Súper+C               Centro de control
+  Súper+V               Historial del portapapeles
   Ctrl+Súper+Q          Bloquear pantalla
   Súper+Mayús+E         Cerrar sesión
   Súper+F1              Esta lista

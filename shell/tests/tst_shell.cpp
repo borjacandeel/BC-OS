@@ -5,6 +5,8 @@
 #include <QtTest>
 #include "../src/filebrowser.h"
 #include "../src/appindex.h"
+#include "../src/clipboardhistory.h"
+#include "../src/updatechecker.h"
 #include "../src/greetd.h"
 #include "../src/launcher.h"
 #include "../src/packagestore.h"
@@ -200,6 +202,16 @@ private slots:
         QCOMPARE(l[0].id, QString("org.mozilla.firefox"));
         QCOMPARE(l[1].name, QString("GIMP"));
         QCOMPARE(l[0].repo, QString("flathub"));
+    }
+    void historialPortapapeles() {
+        const auto l = ClipboardHistory::parseList("12\thola mundo\n11\t[[ binary data 12 KiB png 10x10 ]]\nabc\tno numerico\n10\t   \n9\tadiós\n");
+        QCOMPARE(l.size(), 2);
+        QCOMPARE(l[0].toMap().value("id").toString(), QString("12"));
+        QCOMPARE(l[1].toMap().value("text").toString(), QString("adiós"));
+    }
+    void avisoDeActualizaciones() {
+        QCOMPARE(UpdateChecker::parseCount("linux 6.1-1 -> 6.2-1\nfoo 1-1 -> 1-2\n"), 2);
+        QCOMPARE(UpdateChecker::parseCount(""), 0);
     }
     void iconosDeApps() {
         QTemporaryDir d;

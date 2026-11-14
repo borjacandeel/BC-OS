@@ -21,6 +21,8 @@
 #include "swaycontrol.h"
 #include "layerhelper.h"
 #include "shellcontrol.h"
+#include "clipboardhistory.h"
+#include "updatechecker.h"
 #include "filebrowser.h"
 #include "launcher.h"
 
@@ -108,7 +110,9 @@ int main(int argc, char *argv[]) {
     NotificationQueue notifications;
     NotificationServer notifServer(&notifications);
     PowerControl power;
-    if (!appMode) swayPtr = std::make_unique<SwayControl>();
+    ClipboardHistory clipboard;
+    std::unique_ptr<UpdateChecker> updates;
+    if (!appMode) { swayPtr = std::make_unique<SwayControl>(); if (!(p.isSet(oShot) || p.isSet(oCheck))) updates = std::make_unique<UpdateChecker>(); }
     // Solo de las apps
     NotificationClient notifClient;
     AppActions actions(appName);
@@ -121,6 +125,10 @@ int main(int argc, char *argv[]) {
         qmlRegisterSingletonInstance("BCShell", 1, 0, "Shell", &shell);
         qmlRegisterSingletonInstance("BCShell", 1, 0, "Notifications", &notifications);
         qmlRegisterSingletonInstance("BCShell", 1, 0, "Power", &power);
+        qmlRegisterSingletonInstance("BCShell", 1, 0, "Clipboard", &clipboard);
+        if (updates) QObject::connect(updates.get(), &UpdateChecker::updatesFound, &notifications, [&notifications](int n) {
+            notifications.push("BC OS", QObject::tr("Actualizaciones disponibles"), QObject::tr("%1 paquetes pueden actualizarse desde la Tienda").arg(n), "", 8000);
+        });
         qmlRegisterSingletonInstance("BCShell", 1, 0, "AppActions", &actions);
         if (!(p.isSet(oShot) || p.isSet(oCheck))) { notifServer.start(); shell.start(); }
     } else {

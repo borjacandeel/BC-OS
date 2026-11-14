@@ -19,6 +19,7 @@ QtObject {
     readonly property int taskH: 48
     readonly property int topInset: win ? 0 : barH
     property bool startOpen: false
+    property bool clipboardOpen: false
     property string mode: ""                 // "", "relax", "focus" o "night"
     property bool widgets: true
     readonly property var pinned: [
@@ -33,15 +34,16 @@ QtObject {
     property real menuX: 12
     property bool locked: false
     property string powerAction: ""
-    readonly property bool popupOpen: !locked && (centerOpen || launcherOpen || startOpen || menu !== "" || powerAction !== "")
+    readonly property bool popupOpen: !locked && (centerOpen || launcherOpen || startOpen || clipboardOpen || menu !== "" || powerAction !== "")
     readonly property bool dim: launcherOpen || powerAction !== ""
 
-    function closePopups() { centerOpen = false; launcherOpen = false; startOpen = false; menu = ""; powerAction = "" }
+    function closePopups() { centerOpen = false; launcherOpen = false; startOpen = false; clipboardOpen = false; menu = ""; powerAction = "" }
     function toggleLauncher() {
         if (locked) return
         if (win) { const o = startOpen; closePopups(); startOpen = !o; return }
         const o = launcherOpen; closePopups(); launcherOpen = !o
     }
+    function toggleClipboard() { if (locked) return; const o = clipboardOpen; closePopups(); clipboardOpen = !o }
     function toggleCenter() { if (locked) return; const o = centerOpen; closePopups(); centerOpen = !o }
     function openMenu(name, x) { if (locked) return; const same = menu === name; closePopups(); if (!same) { menu = name; menuX = x } }
     function openPower(action) { if (locked) return; closePopups(); powerAction = action }
