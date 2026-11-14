@@ -6,6 +6,7 @@ case "$1" in
   lock)     m=Lock; set -- ;;
   tiling)   exec bc-wm-mode toggle ;;
   style)    m=SetStyle; a="$2"; set -- s "$a" ;;
+  option)   m=SetOption; k="$2"; v="$3"; set -- s "$k" s "$v" ;;
   power)    m=Power; a="$2"; set -- s "$a" ;;
   *) echo "uso: bc-ctl launcher|center|lock|tiling|power <poweroff|reboot|suspend|logout>" >&2; exit 2 ;;
 esac

@@ -17,6 +17,8 @@ QtObject {
     readonly property int taskH: 48
     readonly property int topInset: win ? 0 : barH
     property bool startOpen: false
+    property string mode: ""                 // "", "relax", "focus" o "night"
+    property bool widgets: true
     readonly property var pinned: [
         { kind: "archivos", name: qsTr("Archivos") }, { kind: "ajustes", name: qsTr("Configuración") },
         { kind: "monitor", name: qsTr("Monitor") }, { kind: "terminal", name: qsTr("Terminal") },

@@ -36,6 +36,15 @@ LayerWindow {
         }
     }
 
+    // Widgets (reloj, calendario, uso): columna derecha del fondo, bajo la barra superior
+    Widgets {
+        visible: UiState.widgets
+        scale: root.u
+        transformOrigin: Item.TopRight
+        x: root.width - Math.round(24 * root.u) - width
+        y: UiState.topInset + Math.round(28 * root.u)
+    }
+
     function launch(kind, name) {
         if (kind === "lanzador") { UiState.toggleLauncher(); return }
         if (kind === "musica") { Notifications.push("BC OS", name, qsTr("En desarrollo"), "", 4000); return }
@@ -74,12 +83,28 @@ LayerWindow {
     }
     Connections {
         target: Shell
+        function onOptionChanged(key, value) {
+            if (key === "widgets") UiState.widgets = value === "1"
+            else if (key === "mode") UiState.mode = value === "-" ? "" : value
+        }
         function onStyleChanged(st) { UiState.closePopups(); UiState.style = st === "win" ? "win" : "mac" }
         function onLauncherToggled() { UiState.toggleLauncher() }
         function onControlCenterToggled() { UiState.toggleCenter() }
         function onLockRequested() { UiState.run("bc:lock") }
         function onTilingToggled() { Sway.toggleTiling() }
         function onPowerRequested(a) { UiState.openPower(a) }
+    }
+
+    // Modos: Relajación / Concentración dejan «No molestar»; Noche y Relajación tiñen la pantalla de ámbar suave
+    Connections {
+        target: UiState
+        function onModeChanged() { SystemStatus.dnd = UiState.mode === "focus" || UiState.mode === "relax" }
+    }
+    LayerWindow {
+        layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-tint"; passthrough: true
+        width: UiState.sw; height: UiState.sh
+        shown: (UiState.mode === "night" || UiState.mode === "relax") && !UiState.locked
+        Rectangle { anchors.fill: parent; color: "#ff8a2a"; opacity: UiState.mode === "night" ? 0.16 : 0.07 }
     }
 
     // Barra superior
@@ -219,6 +244,8 @@ LayerWindow {
     Component.onCompleted: {
         UiState.splashing = AppConfig.splash
         UiState.style = Settings.desktopStyle
+        UiState.widgets = Settings.widgets
+        UiState.mode = Settings.mode
         if (AppConfig.demo === "win") UiState.style = "win"
         if (!AppConfig.splash && AppConfig.demo === "") Notifications.push("BC OS", qsTr("Actualizaciones"), qsTr("BC OS está al día"), "", 600000)
         const d = AppConfig.demo

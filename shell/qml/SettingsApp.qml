@@ -88,6 +88,9 @@ AppWindow {
         Column {
             visible: win.page === 0; width: parent.width; spacing: 12
             Label { text: qsTr("Apariencia"); font.pixelSize: 22; font.weight: Font.DemiBold }
+            Row2 { label: qsTr("Widgets en el escritorio"); value: ""
+                   Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
+                            on: Settings.widgets; onToggled: (v) => Settings.widgets = v } }
             Label { text: qsTr("Estilo de escritorio") }
             Row {
                 spacing: 12

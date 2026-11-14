@@ -12,8 +12,9 @@ Window {
     property string keyboard: "none"
     property string scope: "bc-shell"
     property bool shown: true
+    property bool passthrough: false
     color: "transparent"
-    flags: Qt.FramelessWindowHint
+    flags: Qt.FramelessWindowHint | (passthrough ? Qt.WindowTransparentForInput : 0)
     visible: false
 
     Component.onCompleted: {

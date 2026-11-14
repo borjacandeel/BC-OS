@@ -5,7 +5,7 @@ import BCShell
 Rectangle {
     id: cc
     width: 381
-    height: 387
+    height: 459
     radius: Theme.radiusPanel
     color: Theme.panelFill
     border.width: 1
@@ -99,8 +99,24 @@ Rectangle {
         onMoved: (v) => SystemStatus.setBrightness(v)
     }
 
+    Row {
+        x: 16; y: 314; spacing: 8
+        Repeater {
+            model: [{ id: "relax", name: qsTr("Relajación") }, { id: "focus", name: qsTr("Concentración") }, { id: "night", name: qsTr("Noche") }]
+            delegate: Rectangle {
+                required property var modelData
+                readonly property bool on: UiState.mode === modelData.id
+                width: (cc.width - 32 - 16) / 3; height: 57; radius: Theme.radiusTile
+                color: on ? Theme.accent : (ma2.containsMouse ? Qt.rgba(1, 1, 1, 0.11) : Theme.tileFill)
+                Text { anchors.centerIn: parent; text: modelData.name; color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14; font.weight: on ? Font.DemiBold : Font.Normal }
+                MouseArea { id: ma2; anchors.fill: parent; hoverEnabled: true
+                            onClicked: { const m = on ? "" : modelData.id; UiState.mode = m; Settings.mode = m } }
+            }
+        }
+    }
+
     Rectangle {
-        x: 16; y: 314; width: parent.width - 32; height: 57; radius: Theme.radiusTile
+        x: 16; y: 386; width: parent.width - 32; height: 57; radius: Theme.radiusTile
         color: Theme.tileFill
         Icon { x: 22; y: 16; name: SystemStatus.hasBattery ? Icons.batteryIcon(SystemStatus.batteryPercent, SystemStatus.batteryCharging) : Icons.bolt
                size: 26; color: Theme.white }
