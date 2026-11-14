@@ -23,8 +23,27 @@ Window {
         function onActionInvoked(a) {
             if (a === "close") win.closeRequested()
             else if (a === "fullscreen") WindowControl.toggleFullscreen()
-            else if (a === "minimize") WindowControl.minimize()
+            else if (a === "minimize") win.minimizeAnimated()
         }
+    }
+    // Minimizar: la ventana se encoge hacia el Dock y pasa al scratchpad de sway; al volver, se despliega.
+    function minimizeAnimated() {
+        if (Theme.reducedMotion) { WindowControl.minimize(); return }
+        minAnim.restart()
+    }
+    onActiveChanged: if (active && frame.opacity < 0.1) {
+        frame.transformOrigin = Item.Bottom
+        frame.scale = 1
+        frame.opacity = 1
+    }
+    SequentialAnimation {
+        id: minAnim
+        ScriptAction { script: frame.transformOrigin = Item.Bottom }
+        ParallelAnimation {
+            NumberAnimation { target: frame; property: "scale"; to: 0.55; duration: 200; easing.type: Easing.InCubic }
+            NumberAnimation { target: frame; property: "opacity"; to: 0; duration: 200; easing.type: Easing.InCubic }
+        }
+        ScriptAction { script: WindowControl.minimize() }
     }
     Shortcut { sequence: "Ctrl+W"; onActivated: win.closeRequested() }
 
@@ -62,7 +81,7 @@ Window {
                         width: 14; height: 14; radius: 7; color: modelData.c
                         MouseArea {
                             anchors.fill: parent; anchors.margins: -3
-                            onClicked: modelData.a === 0 ? win.closeRequested() : (modelData.a === 1 ? WindowControl.minimize() : WindowControl.toggleFullscreen())
+                            onClicked: modelData.a === 0 ? win.closeRequested() : (modelData.a === 1 ? win.minimizeAnimated() : WindowControl.toggleFullscreen())
                         }
                     }
                 }
