@@ -4,13 +4,16 @@ Los números de versión son hitos de planificación, no promesas. Estado real e
 
 | Versión | Hito | Contenido principal | Estado |
 |---|---|---|---|
-| 0.1.0 | Fundación | rootfs ARM64, imagen arrancable, locale español, documentación | en curso |
-| 0.2.0 | Prototipo BC Shell | sesión Wayland, barra superior, Dock, lanzador | pendiente |
-| 0.3.0 | Componentes de escritorio | Mission Control, Centro de control, notificaciones, design system aplicado | pendiente |
-| 0.4.0 | Aplicaciones nativas | Archivos, Configuración, Monitor, Terminal, Store | pendiente |
-| 0.5.0 | Sistema integrado | BC Core, red, audio, hardware, seguridad, actualizaciones | pendiente |
-| 0.8.0 | Beta | instalador, optimización, beta pública | pendiente |
-| 1.0.0 | Primera estable | criterios de calidad y rendimiento cumplidos y medidos | pendiente |
+| 0.1.x | Fundación | rootfs ARM64, imagen arrancable, locale español, docs; arranca en VirtualBox ARM64 (0.1.2/0.1.3) | hecho |
+| 0.2.0 | Escritorio funcional | login greetd, bloqueo, Centro de control, notificaciones, Archivos, Monitor, Configuración, Tienda, BC Core | hecho (QEMU) |
+| 0.3.x | sway y personalización | sway flotante/mosaico, atajos, panel + apps, menús globales, Alacritty, cursor macOS, swaybg, minimizar animado, swayfx experimental; estilos BC/Windows/Minimal, Modos, widgets, Flathub, bienvenida | en curso |
+| 0.4.0 | Seguridad y pulido | `ext-session-lock`, tema claro, ventanas externas completas en el Dock, polkit en la Tienda | planificado |
+| 0.5.0 | Paridad de funciones (inspiración Quantum Linux) | antivirus (ClamAV) y Centro BC, copias antes de actualizar, idiomas es/en/pt-BR | planificado |
+| 0.8.0 | Beta | ISO con instalador (GRUB/arranque seguro), optimización, beta pública | planificado |
+| 0.x experimental | Compatibilidad | Android con Waydroid, juegos x86 con FEX/box64 (sin Steam/Proton nativos: no hay ARM64) | por hacer, experimental |
+| 1.0.0 | Primera estable | criterios de calidad y rendimiento cumplidos y medidos | planificado |
+
+Los hitos 0.4+ son planificación, no promesas. Referencia de funciones: Quantum Linux (solo ideas; ver ADR 0005).
 
 ## Fases
 
