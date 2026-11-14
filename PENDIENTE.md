@@ -22,7 +22,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 
 - [x] 2026-11-14 0.3.2: animación minimizar + swayfx experimental (verificado: lento con llvmpipe; pendiente probar con GPU real/VirtualBox 3D). Lunes 16:30 se retoma (tarea programada en esta conversación).
 
-- [ ] 2026-11-14 Fase 4 (antivirus): crate `core/crates/bc-antivirus-service` (org.bcos.Antivirus, ClamAV) EN CURSO.
+- [ ] 2026-11-14 Fase 4 (antivirus): crate `core/crates/bc-antivirus-service` (org.bcos.Antivirus, ClamAV) HECHO en core/ (tests 46/46, clippy limpio, release OK, probado por D-Bus con clamscan falso). Falta fuera de core/: añadir `bc-antivirus-service` a la lista `for b in …` de build/build-core.sh e instalar `clamav` en el rootfs.
 
 ## Pendiente (orden)
 ### Fase 0 — Viabilidad
