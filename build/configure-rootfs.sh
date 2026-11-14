@@ -80,6 +80,7 @@ install -D -m644 "$HERE/overlay/usr/lib/tmpfiles.d/bc-greeter.conf" "$R/usr/lib/
 install -m644 "$HERE/overlay/etc/pam.d/bc-lock" "$R/etc/pam.d/bc-lock"
 install -m644 "$HERE/overlay/etc/systemd/system/bc-login-fallback.path" "$HERE/overlay/etc/systemd/system/bc-login-fallback.service" "$R/etc/systemd/system/"
 sh "systemctl enable greetd.service bc-login-fallback.path && systemctl set-default graphical.target"
+sh "systemctl --global enable pipewire.socket pipewire-pulse.socket wireplumber.service"
 
 # Servicios mínimos
 sh "systemctl enable NetworkManager systemd-timesyncd systemd-resolved nftables sshd bluetooth"
