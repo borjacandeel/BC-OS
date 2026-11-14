@@ -14,9 +14,14 @@ void walk(const QJsonObject &n, bool inScratch, QVariantList &out) {
     if ((type == "con" || type == "floating_con") && leaf && n.value("pid").toInt() > 0) {
         QString app = n.value("app_id").toString();
         if (app.isEmpty()) app = n.value("window_properties").toObject().value("class").toString();
+        const QJsonObject deco = n.value("deco_rect").toObject();
         out.append(QVariantMap{{"id", n.value("id").toInt()}, {"appId", app}, {"title", n.value("name").toString()},
                                {"focused", n.value("focused").toBool()}, {"floating", type == "floating_con"},
-                               {"minimized", inScratch}, {"pid", n.value("pid").toInt()}});
+                               {"minimized", inScratch}, {"pid", n.value("pid").toInt()},
+                               {"fullscreen", n.value("fullscreen_mode").toInt() > 0},
+                               // barra de título dibujada por sway (x, y, ancho, alto): ahí se colocan los botones de la ventana
+                               {"decoX", deco.value("x").toInt()}, {"decoY", deco.value("y").toInt()},
+                               {"decoW", deco.value("width").toInt()}, {"decoH", deco.value("height").toInt()}});
         return;
     }
     const bool scratch = inScratch || (type == "workspace" && n.value("name").toString() == "__i3_scratch");
@@ -85,6 +90,19 @@ void SwayControl::refresh() {
                 if (!m.value("minimized").toBool()) ids << m.value("appId").toString();
                 else ids << m.value("appId").toString();
                 if (m.value("focused").toBool()) { fid = m.value("id").toInt(); fapp = m.value("appId").toString(); ftitle = m.value("title").toString(); }
+            }
+            QVariantList chrome;
+            for (const QVariant &v : w) {
+                const QVariantMap m = v.toMap();
+                if (m.value("minimized").toBool() || m.value("fullscreen").toBool() || m.value("decoH").toInt() <= 0) continue;
+                if (m.value("appId").toString().startsWith("bc-")) continue;   // las apps de BC llevan su propio semáforo
+                chrome.append(QVariantMap{{"id", m.value("id")}, {"x", m.value("decoX")}, {"y", m.value("decoY")}, {"w", m.value("decoW")}, {"h", m.value("decoH")},
+                                          {"focused", m.value("focused")}});
+            }
+            if (chrome != m_chrome) {
+                m_chrome = chrome;
+                m_poll.setInterval(m_chrome.isEmpty() ? 10000 : 600);   // con ventanas externas se sigue su posición para colocar los botones
+                emit chromeChanged();
             }
             if (w != m_windows || fid != m_focusedId) {
                 m_windows = w; m_appIds = ids; m_focusedId = fid; m_focusedApp = fapp; m_focusedTitle = ftitle;

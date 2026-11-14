@@ -4,16 +4,18 @@ set $mod Mod4
 set $term bc-terminal
 
 # Aspecto: el panel (bc-shell --panel) dibuja barra, Dock y fondo; las apps de BC dibujan su propio título
-# Bordes: finos en mosaico (el foco se ve en azul) y de 6 px en flotante, discretos, para poder redimensionar con el ratón
-default_border pixel 2
-default_floating_border pixel 6
+# Barra de título de sway en las ventanas que no son de BC (el panel dibuja encima el semáforo a la izquierda, como macOS).
+# Las apps de BC llevan su propio marco y semáforo (border none). Borde fino en mosaico y de 6 px en flotante para redimensionar.
+default_border normal 2
+default_floating_border normal 6
 titlebar_border_thickness 0
-titlebar_padding 0
-client.focused          #2F7BF5 #1B2740 #E8ECF5 #2F7BF5 #243252
-client.focused_inactive #1B2740 #0F182B #8E9BB2 #1B2740 #1B2740
+titlebar_padding 10 6
+title_align center
+client.focused          #243252 #1B2740 #E8ECF5 #2F7BF5 #243252
+client.focused_inactive #1B2740 #131C2E #8E9BB2 #1B2740 #1B2740
 client.unfocused        #141C2E #0F182B #8E9BB2 #141C2E #141C2E
 client.urgent           #FF5F57 #1B2740 #E8ECF5 #FF5F57 #FF5F57
-font pango:Inter 1
+font pango:Inter 10
 focus_follows_mouse yes
 popup_during_fullscreen smart
 xwayland enable

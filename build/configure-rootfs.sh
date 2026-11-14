@@ -64,6 +64,7 @@ allowed_users=anybody
 needs_root_rights=auto
 XW
 install -d -m1777 "$R/var/lib/bc-greeter"      # elección de entorno por usuario (la escribe cada usuario; la lee el login)
+install -D -m644 "$HERE/overlay/usr/lib/firefox/distribution/policies.json" "$R/usr/lib/firefox/distribution/policies.json"   # Firefox usa la barra de título del sistema (semáforo a la izquierda)
 install -D -m644 "$HERE/overlay/etc/sysctl.d/90-bcos.conf" "$R/etc/sysctl.d/90-bcos.conf"
 install -D -m644 "$HERE/overlay/etc/udev/rules.d/60-bcos-ioscheduler.rules" "$R/etc/udev/rules.d/60-bcos-ioscheduler.rules"
 install -D -m440 "$HERE/overlay/etc/sudoers.d/10-bcos-pwfeedback" "$R/etc/sudoers.d/10-bcos-pwfeedback"

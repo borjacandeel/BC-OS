@@ -126,6 +126,9 @@ LayerWindow {
     }
     Timer { id: welcomeTimer; interval: 3500; onTriggered: if (!UiState.locked) UiState.welcomeOpen = true }
 
+    // Botones de ventana para las apps que no son de BC
+    WindowChrome { }
+
     // Barra superior
     LayerWindow {
         layer: "top"; edges: ["top", "left", "right"]; exclusive: UiState.barH; scope: "bc-topbar"

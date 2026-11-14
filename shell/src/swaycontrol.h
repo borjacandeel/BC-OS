@@ -15,6 +15,7 @@ class SwayControl : public QObject {
     Q_PROPERTY(QString focusedAppId READ focusedAppId NOTIFY windowsChanged)
     Q_PROPERTY(QString focusedTitle READ focusedTitle NOTIFY windowsChanged)
     Q_PROPERTY(bool tiling READ tiling NOTIFY tilingChanged)
+    Q_PROPERTY(QVariantList chromeWindows READ chromeWindows NOTIFY chromeChanged)
 public:
     explicit SwayControl(QObject *parent = nullptr);
     bool available() const { return m_available; }
@@ -24,6 +25,7 @@ public:
     QString focusedAppId() const { return m_focusedApp; }
     QString focusedTitle() const { return m_focusedTitle; }
     bool tiling() const { return m_tiling; }
+    QVariantList chromeWindows() const { return m_chrome; }
 
     Q_INVOKABLE void command(const QString &cmd);
     Q_INVOKABLE void focusWindow(int id);
@@ -43,12 +45,13 @@ public:
 signals:
     void windowsChanged();
     void tilingChanged();
+    void chromeChanged();
 
 private:
     void readMode();
     QString m_exe;
     bool m_available = false;
-    QVariantList m_windows;
+    QVariantList m_windows, m_chrome;
     QStringList m_appIds;
     int m_focusedId = -1;
     QString m_focusedApp, m_focusedTitle;

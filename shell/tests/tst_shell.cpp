@@ -185,7 +185,7 @@ private slots:
     void arbolDeSway() {
         const QByteArray j = R"({"type":"root","nodes":[{"type":"output","nodes":[
           {"type":"workspace","name":"1","nodes":[
-            {"type":"con","id":10,"pid":100,"app_id":"foot","name":"bc@bcos: ~","focused":true,"nodes":[],"floating_nodes":[]},
+            {"type":"con","id":10,"pid":100,"app_id":"foot","name":"bc@bcos: ~","focused":true,"deco_rect":{"x":4,"y":8,"width":300,"height":24},"nodes":[],"floating_nodes":[]},
             {"type":"con","id":11,"pid":101,"app_id":null,"window_properties":{"class":"Firefox"},"name":"Web","nodes":[],"floating_nodes":[]}],
            "floating_nodes":[{"type":"floating_con","id":12,"pid":102,"app_id":"bc-files","name":"Archivos","nodes":[],"floating_nodes":[]}]},
           {"type":"workspace","name":"__i3_scratch","nodes":[],"floating_nodes":[
@@ -194,6 +194,8 @@ private slots:
         QCOMPARE(w.size(), 4);
         QCOMPARE(w[0].toMap().value("appId").toString(), QString("foot"));
         QVERIFY(w[0].toMap().value("focused").toBool());
+        QCOMPARE(w[0].toMap().value("decoH").toInt(), 24);
+        QCOMPARE(w[0].toMap().value("decoX").toInt(), 4);
         QCOMPARE(w[1].toMap().value("appId").toString(), QString("Firefox"));
         QVERIFY(w[2].toMap().value("floating").toBool());
         QVERIFY(w[3].toMap().value("minimized").toBool());

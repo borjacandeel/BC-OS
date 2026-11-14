@@ -13,13 +13,14 @@ Window {
     property string scope: "bc-shell"
     property bool shown: true
     property bool passthrough: false
+    property bool absolute: false      // márgenes respecto a la pantalla entera (ignora las zonas reservadas por las barras)
     color: "transparent"
     flags: Qt.FramelessWindowHint | (passthrough ? Qt.WindowTransparentForInput : 0)
     visible: false
 
     readonly property bool fullscreenSurface: edges.length === 4
     function apply() {
-        Layer.configure(w, { layer: layer, anchors: edges, exclusive: fullscreenSurface ? -1 : exclusive, margins: margins, keyboard: keyboard,
+        Layer.configure(w, { layer: layer, anchors: edges, exclusive: (fullscreenSurface || absolute) ? -1 : exclusive, margins: margins, keyboard: keyboard,
                              scope: scope, width: edges.indexOf("left") >= 0 && edges.indexOf("right") >= 0 ? 0 : width,
                              height: edges.indexOf("top") >= 0 && edges.indexOf("bottom") >= 0 ? 0 : height })
     }
