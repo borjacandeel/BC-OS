@@ -7,7 +7,7 @@
         <location filename="../qml/ControlCenter.qml" line="45"/>
         <location filename="../qml/ControlCenter.qml" line="79"/>
         <source>No disponible</source>
-        <translation type="unfinished"></translation>
+        <translation>No disponible</translation>
     </message>
     <message>
         <location filename="../qml/ControlCenter.qml" line="70"/>
@@ -17,7 +17,7 @@
     <message>
         <location filename="../qml/ControlCenter.qml" line="70"/>
         <source>Red</source>
-        <translation type="unfinished"></translation>
+        <translation>Red</translation>
     </message>
     <message>
         <location filename="../qml/ControlCenter.qml" line="71"/>
@@ -34,7 +34,7 @@
     <message>
         <location filename="../qml/ControlCenter.qml" line="72"/>
         <source>Sin conexión</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin conexión</translation>
     </message>
     <message>
         <location filename="../qml/ControlCenter.qml" line="78"/>
@@ -65,17 +65,17 @@
     <message>
         <location filename="../qml/ControlCenter.qml" line="108"/>
         <source>Batería %1 % · cargando</source>
-        <translation type="unfinished"></translation>
+        <translation>Batería %1 % · cargando</translation>
     </message>
     <message>
         <location filename="../qml/ControlCenter.qml" line="109"/>
         <source>Batería %1 %</source>
-        <translation type="unfinished"></translation>
+        <translation>Batería %1 %</translation>
     </message>
     <message>
         <location filename="../qml/ControlCenter.qml" line="110"/>
         <source>Conectado a la corriente</source>
-        <translation type="unfinished"></translation>
+        <translation>Conectado a la corriente</translation>
     </message>
     <message>
         <source>Energía</source>
@@ -86,43 +86,102 @@
     <name>Dock</name>
     <message>
         <location filename="../qml/Dock.qml" line="13"/>
+        <source>Lanzador</source>
+        <translation>Lanzador</translation>
+    </message>
+    <message>
+        <location filename="../qml/Dock.qml" line="14"/>
         <source>Archivos</source>
         <translation>Archivos</translation>
     </message>
     <message>
-        <location filename="../qml/Dock.qml" line="14"/>
+        <location filename="../qml/Dock.qml" line="15"/>
         <source>Configuración</source>
         <translation>Configuración</translation>
     </message>
     <message>
-        <location filename="../qml/Dock.qml" line="15"/>
+        <location filename="../qml/Dock.qml" line="16"/>
         <source>Monitor</source>
         <translation>Monitor</translation>
     </message>
     <message>
-        <location filename="../qml/Dock.qml" line="16"/>
+        <location filename="../qml/Dock.qml" line="17"/>
         <source>Terminal</source>
         <translation>Terminal</translation>
     </message>
     <message>
-        <location filename="../qml/Dock.qml" line="17"/>
+        <location filename="../qml/Dock.qml" line="18"/>
         <source>Tienda</source>
         <translation>Tienda</translation>
     </message>
     <message>
-        <location filename="../qml/Dock.qml" line="18"/>
+        <location filename="../qml/Dock.qml" line="19"/>
         <source>Navegador</source>
         <translation>Navegador</translation>
     </message>
     <message>
-        <location filename="../qml/Dock.qml" line="19"/>
+        <location filename="../qml/Dock.qml" line="20"/>
         <source>Música</source>
         <translation>Música</translation>
     </message>
     <message>
-        <location filename="../qml/Dock.qml" line="20"/>
+        <location filename="../qml/Dock.qml" line="21"/>
         <source>Papelera</source>
         <translation>Papelera</translation>
+    </message>
+</context>
+<context>
+    <name>FileBrowser</name>
+    <message>
+        <location filename="../src/filebrowser.cpp" line="94"/>
+        <source>No hay ninguna aplicación para abrir «%1»</source>
+        <translation>No hay ninguna aplicación para abrir «%1»</translation>
+    </message>
+    <message>
+        <location filename="../src/filebrowser.cpp" line="125"/>
+        <location filename="../src/filebrowser.cpp" line="134"/>
+        <source>Nombre no válido</source>
+        <translation>Nombre no válido</translation>
+    </message>
+    <message>
+        <location filename="../src/filebrowser.cpp" line="126"/>
+        <source>No se pudo crear la carpeta</source>
+        <translation>No se pudo crear la carpeta</translation>
+    </message>
+    <message>
+        <location filename="../src/filebrowser.cpp" line="137"/>
+        <source>Ya existe un elemento con ese nombre</source>
+        <translation>Ya existe un elemento con ese nombre</translation>
+    </message>
+    <message>
+        <location filename="../src/filebrowser.cpp" line="138"/>
+        <source>No se pudo cambiar el nombre</source>
+        <translation>No se pudo cambiar el nombre</translation>
+    </message>
+    <message>
+        <location filename="../src/filebrowser.cpp" line="151"/>
+        <source>No se pudo usar la papelera</source>
+        <translation>No se pudo usar la papelera</translation>
+    </message>
+    <message>
+        <location filename="../src/filebrowser.cpp" line="157"/>
+        <source>No se pudo mover a la papelera</source>
+        <translation>No se pudo mover a la papelera</translation>
+    </message>
+    <message>
+        <location filename="../src/filebrowser.cpp" line="178"/>
+        <source>No se pudo restaurar</source>
+        <translation>No se pudo restaurar</translation>
+    </message>
+    <message>
+        <location filename="../src/filebrowser.cpp" line="188"/>
+        <source>No se pudo eliminar</source>
+        <translation>No se pudo eliminar</translation>
+    </message>
+    <message>
+        <location filename="../src/filebrowser.cpp" line="200"/>
+        <source>No se pudo vaciar la papelera</source>
+        <translation>No se pudo vaciar la papelera</translation>
     </message>
 </context>
 <context>
@@ -158,24 +217,96 @@
         <translation>Música</translation>
     </message>
     <message>
-        <location filename="../qml/FilesWindow.qml" line="201"/>
+        <location filename="../qml/FilesWindow.qml" line="208"/>
         <source>La carpeta no existe o no se puede leer</source>
         <translation>La carpeta no existe o no se puede leer</translation>
     </message>
     <message>
-        <location filename="../qml/FilesWindow.qml" line="202"/>
+        <location filename="../qml/FilesWindow.qml" line="209"/>
         <source>Sin resultados</source>
         <translation>Sin resultados</translation>
     </message>
     <message>
-        <location filename="../qml/FilesWindow.qml" line="202"/>
+        <location filename="../qml/FilesWindow.qml" line="209"/>
         <source>Carpeta vacía</source>
         <translation>Carpeta vacía</translation>
     </message>
     <message>
-        <location filename="../qml/FilesWindow.qml" line="208"/>
+        <location filename="../qml/FilesWindow.qml" line="215"/>
         <source>Ningún nombre contiene «%1»</source>
         <translation>Ningún nombre contiene «%1»</translation>
+    </message>
+    <message>
+        <location filename="../qml/FilesWindow.qml" line="227"/>
+        <source>Archivos</source>
+        <translation>Archivos</translation>
+    </message>
+    <message>
+        <location filename="../qml/FilesWindow.qml" line="227"/>
+        <source>No se pudo completar la operación</source>
+        <translation>No se pudo completar la operación</translation>
+    </message>
+    <message>
+        <location filename="../qml/FilesWindow.qml" line="237"/>
+        <source>Carpeta sin título</source>
+        <translation>Carpeta sin título</translation>
+    </message>
+    <message>
+        <location filename="../qml/FilesWindow.qml" line="275"/>
+        <source>Restaurar</source>
+        <translation>Restaurar</translation>
+    </message>
+    <message>
+        <location filename="../qml/FilesWindow.qml" line="275"/>
+        <source>Eliminar definitivamente</source>
+        <translation>Eliminar definitivamente</translation>
+    </message>
+    <message>
+        <location filename="../qml/FilesWindow.qml" line="275"/>
+        <location filename="../qml/FilesWindow.qml" line="276"/>
+        <source>Vaciar papelera</source>
+        <translation>Vaciar papelera</translation>
+    </message>
+    <message>
+        <location filename="../qml/FilesWindow.qml" line="278"/>
+        <source>Abrir</source>
+        <translation>Abrir</translation>
+    </message>
+    <message>
+        <location filename="../qml/FilesWindow.qml" line="278"/>
+        <source>Renombrar…</source>
+        <translation>Renombrar…</translation>
+    </message>
+    <message>
+        <location filename="../qml/FilesWindow.qml" line="278"/>
+        <source>Mover a la papelera</source>
+        <translation>Mover a la papelera</translation>
+    </message>
+    <message>
+        <location filename="../qml/FilesWindow.qml" line="278"/>
+        <location filename="../qml/FilesWindow.qml" line="279"/>
+        <source>Nueva carpeta…</source>
+        <translation>Nueva carpeta…</translation>
+    </message>
+    <message>
+        <location filename="../qml/FilesWindow.qml" line="320"/>
+        <source>Nueva carpeta</source>
+        <translation>Nueva carpeta</translation>
+    </message>
+    <message>
+        <location filename="../qml/FilesWindow.qml" line="320"/>
+        <source>Cambiar nombre</source>
+        <translation>Cambiar nombre</translation>
+    </message>
+    <message>
+        <location filename="../qml/FilesWindow.qml" line="337"/>
+        <source>Cancelar</source>
+        <translation>Cancelar</translation>
+    </message>
+    <message>
+        <location filename="../qml/FilesWindow.qml" line="340"/>
+        <source>Aceptar</source>
+        <translation>Aceptar</translation>
     </message>
     <message>
         <source>Proyectos</source>
@@ -199,7 +330,7 @@
         <translation>Buscar</translation>
     </message>
     <message>
-        <location filename="../qml/FilesWindow.qml" line="149"/>
+        <location filename="../qml/FilesWindow.qml" line="150"/>
         <source>Papelera</source>
         <translation>Papelera</translation>
     </message>
@@ -225,24 +356,37 @@
 <context>
     <name>Greeter</name>
     <message>
-        <location filename="../qml/Greeter.qml" line="10"/>
+        <location filename="../qml/Greeter.qml" line="12"/>
         <source>Inicio de sesión de BC OS</source>
         <translation>Inicio de sesión de BC OS</translation>
     </message>
     <message>
-        <location filename="../qml/Greeter.qml" line="78"/>
+        <location filename="../qml/Greeter.qml" line="80"/>
         <source>Suspender</source>
         <translation>Suspender</translation>
     </message>
     <message>
-        <location filename="../qml/Greeter.qml" line="79"/>
+        <location filename="../qml/Greeter.qml" line="81"/>
         <source>Reiniciar</source>
         <translation>Reiniciar</translation>
     </message>
     <message>
-        <location filename="../qml/Greeter.qml" line="80"/>
+        <location filename="../qml/Greeter.qml" line="82"/>
         <source>Apagar</source>
         <translation>Apagar</translation>
+    </message>
+</context>
+<context>
+    <name>LauncherPanel</name>
+    <message>
+        <location filename="../qml/LauncherPanel.qml" line="66"/>
+        <source>Buscar aplicaciones</source>
+        <translation>Buscar aplicaciones</translation>
+    </message>
+    <message>
+        <location filename="../qml/LauncherPanel.qml" line="100"/>
+        <source>No se encontró ninguna aplicación</source>
+        <translation>No se encontró ninguna aplicación</translation>
     </message>
 </context>
 <context>
@@ -280,42 +424,43 @@
     </message>
     <message>
         <location filename="../qml/Main.qml" line="18"/>
-        <location filename="../qml/Main.qml" line="197"/>
+        <location filename="../qml/Main.qml" line="218"/>
         <source>Actualizaciones</source>
         <translation>Actualizaciones</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="197"/>
+        <location filename="../qml/Main.qml" line="218"/>
         <source>BC OS está al día</source>
         <translation>BC OS está al día</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="52"/>
+        <location filename="../qml/Main.qml" line="57"/>
         <source>En desarrollo</source>
         <translation>En desarrollo</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="53"/>
+        <location filename="../qml/Main.qml" line="58"/>
+        <location filename="../qml/Main.qml" line="188"/>
         <source>No se pudo abrir la aplicación</source>
         <translation>No se pudo abrir la aplicación</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="144"/>
+        <location filename="../qml/Main.qml" line="159"/>
         <source>LIGERO. POTENTE. FLUIDO.</source>
         <translation>LIGERO. POTENTE. FLUIDO.</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="172"/>
+        <location filename="../qml/Main.qml" line="193"/>
         <source>BC OS</source>
         <translation>BC OS</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="172"/>
+        <location filename="../qml/Main.qml" line="193"/>
         <source>Versión alpha · ARM64</source>
         <translation>Versión alpha · ARM64</translation>
     </message>
     <message>
-        <location filename="../qml/Main.qml" line="173"/>
+        <location filename="../qml/Main.qml" line="194"/>
         <source>Configuración</source>
         <translation>Configuración</translation>
     </message>
@@ -325,55 +470,55 @@
     <message>
         <location filename="../qml/MonitorApp.qml" line="9"/>
         <source>Monitor del sistema</source>
-        <translation type="unfinished"></translation>
+        <translation>Monitor del sistema</translation>
     </message>
     <message>
         <location filename="../qml/MonitorApp.qml" line="39"/>
         <location filename="../qml/MonitorApp.qml" line="80"/>
         <source>CPU</source>
-        <translation type="unfinished"></translation>
+        <translation>CPU</translation>
     </message>
     <message>
         <location filename="../qml/MonitorApp.qml" line="40"/>
         <source>%1 núcleos</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 núcleos</translation>
     </message>
     <message>
         <location filename="../qml/MonitorApp.qml" line="41"/>
         <location filename="../qml/MonitorApp.qml" line="81"/>
         <source>Memoria</source>
-        <translation type="unfinished"></translation>
+        <translation>Memoria</translation>
     </message>
     <message>
         <location filename="../qml/MonitorApp.qml" line="42"/>
         <location filename="../qml/MonitorApp.qml" line="45"/>
         <source>de %1</source>
-        <translation type="unfinished"></translation>
+        <translation>de %1</translation>
     </message>
     <message>
         <location filename="../qml/MonitorApp.qml" line="44"/>
         <source>Disco</source>
-        <translation type="unfinished"></translation>
+        <translation>Disco</translation>
     </message>
     <message>
         <location filename="../qml/MonitorApp.qml" line="47"/>
         <source>Red</source>
-        <translation type="unfinished"></translation>
+        <translation>Red</translation>
     </message>
     <message>
         <location filename="../qml/MonitorApp.qml" line="67"/>
         <source>activo %1</source>
-        <translation type="unfinished"></translation>
+        <translation>activo %1</translation>
     </message>
     <message>
         <location filename="../qml/MonitorApp.qml" line="68"/>
         <source>%1 procesos</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 procesos</translation>
     </message>
     <message>
         <location filename="../qml/MonitorApp.qml" line="78"/>
         <source>Proceso</source>
-        <translation type="unfinished"></translation>
+        <translation>Proceso</translation>
     </message>
 </context>
 <context>
@@ -387,6 +532,19 @@
         <location filename="../qml/NotificationCard.qml" line="14"/>
         <source>BC OS está al día</source>
         <translation>BC OS está al día</translation>
+    </message>
+</context>
+<context>
+    <name>PackageStore</name>
+    <message>
+        <location filename="../src/packagestore.cpp" line="119"/>
+        <source>sudo no está instalado</source>
+        <translation>sudo no está instalado</translation>
+    </message>
+    <message>
+        <location filename="../src/packagestore.cpp" line="131"/>
+        <source>Contraseña incorrecta</source>
+        <translation>Contraseña incorrecta</translation>
     </message>
 </context>
 <context>
@@ -447,219 +605,318 @@
     <message>
         <location filename="../qml/SettingsApp.qml" line="9"/>
         <source>Configuración</source>
-        <translation type="unfinished">Configuración</translation>
+        <translation>Configuración</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="14"/>
         <location filename="../qml/SettingsApp.qml" line="90"/>
         <source>Apariencia</source>
-        <translation type="unfinished"></translation>
+        <translation>Apariencia</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="15"/>
         <location filename="../qml/SettingsApp.qml" line="130"/>
         <source>Sonido</source>
-        <translation type="unfinished">Sonido</translation>
+        <translation>Sonido</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="16"/>
         <location filename="../qml/SettingsApp.qml" line="152"/>
         <source>Red</source>
-        <translation type="unfinished"></translation>
+        <translation>Red</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="17"/>
         <location filename="../qml/SettingsApp.qml" line="169"/>
         <source>Energía</source>
-        <translation type="unfinished">Energía</translation>
+        <translation>Energía</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="18"/>
         <location filename="../qml/SettingsApp.qml" line="179"/>
         <source>Usuarios</source>
-        <translation type="unfinished"></translation>
+        <translation>Usuarios</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="19"/>
         <source>Acerca de</source>
-        <translation type="unfinished"></translation>
+        <translation>Acerca de</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="93"/>
         <source>Reducir movimiento</source>
-        <translation type="unfinished"></translation>
+        <translation>Reducir movimiento</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="94"/>
         <source>Desactiva las animaciones del escritorio</source>
-        <translation type="unfinished"></translation>
+        <translation>Desactiva las animaciones del escritorio</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="100"/>
         <source>Idioma</source>
-        <translation type="unfinished"></translation>
+        <translation>Idioma</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="101"/>
         <source>Se aplica al volver a iniciar sesión</source>
-        <translation type="unfinished"></translation>
+        <translation>Se aplica al volver a iniciar sesión</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="111"/>
         <source>Tema</source>
-        <translation type="unfinished"></translation>
+        <translation>Tema</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="112"/>
         <source>El tema claro llegará en una versión futura</source>
-        <translation type="unfinished"></translation>
+        <translation>El tema claro llegará en una versión futura</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="115"/>
         <source>Oscuro</source>
-        <translation type="unfinished"></translation>
+        <translation>Oscuro</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="115"/>
         <source>Claro</source>
-        <translation type="unfinished"></translation>
+        <translation>Claro</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="120"/>
         <source>Fondo de pantalla</source>
-        <translation type="unfinished"></translation>
+        <translation>Fondo de pantalla</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="123"/>
         <source>BC OS (predeterminado)</source>
-        <translation type="unfinished"></translation>
+        <translation>BC OS (predeterminado)</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="132"/>
         <source>No se detecta ningún dispositivo de audio (PipeWire).</source>
-        <translation type="unfinished"></translation>
+        <translation>No se detecta ningún dispositivo de audio (PipeWire).</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="136"/>
         <source>Volumen de salida</source>
-        <translation type="unfinished"></translation>
+        <translation>Volumen de salida</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="144"/>
         <source>Silenciar</source>
-        <translation type="unfinished"></translation>
+        <translation>Silenciar</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="153"/>
         <location filename="../qml/SettingsApp.qml" line="172"/>
         <source>Estado</source>
-        <translation type="unfinished"></translation>
+        <translation>Estado</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="153"/>
         <source>Conectado</source>
-        <translation type="unfinished">Conectado</translation>
+        <translation>Conectado</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="153"/>
         <source>Sin conexión</source>
-        <translation type="unfinished"></translation>
+        <translation>Sin conexión</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="154"/>
         <source>Conexión</source>
-        <translation type="unfinished"></translation>
+        <translation>Conexión</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="155"/>
         <source>Tipo</source>
-        <translation type="unfinished"></translation>
+        <translation>Tipo</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="155"/>
         <source>Ethernet</source>
-        <translation type="unfinished"></translation>
+        <translation>Ethernet</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="155"/>
         <location filename="../qml/SettingsApp.qml" line="160"/>
         <source>Wi-Fi</source>
-        <translation type="unfinished">Wi-Fi</translation>
+        <translation>Wi-Fi</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="156"/>
         <source>Intensidad de señal</source>
-        <translation type="unfinished"></translation>
+        <translation>Intensidad de señal</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="170"/>
         <source>Fuente de alimentación</source>
-        <translation type="unfinished"></translation>
+        <translation>Fuente de alimentación</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="170"/>
         <source>Batería</source>
-        <translation type="unfinished"></translation>
+        <translation>Batería</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="170"/>
         <source>Corriente eléctrica</source>
-        <translation type="unfinished"></translation>
+        <translation>Corriente eléctrica</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="171"/>
         <source>Carga</source>
-        <translation type="unfinished"></translation>
+        <translation>Carga</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="172"/>
         <source>Cargando</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargando</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="172"/>
         <source>Descargando</source>
-        <translation type="unfinished"></translation>
+        <translation>Descargando</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="173"/>
         <source>Brillo de pantalla</source>
-        <translation type="unfinished"></translation>
+        <translation>Brillo de pantalla</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="195"/>
         <source>Acerca de BC OS</source>
-        <translation type="unfinished">Acerca de BC OS</translation>
+        <translation>Acerca de BC OS</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="196"/>
         <source>Sistema</source>
-        <translation type="unfinished"></translation>
+        <translation>Sistema</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="197"/>
         <source>Equipo</source>
-        <translation type="unfinished"></translation>
+        <translation>Equipo</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="198"/>
         <source>Kernel</source>
-        <translation type="unfinished"></translation>
+        <translation>Kernel</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="199"/>
         <source>Procesador</source>
-        <translation type="unfinished"></translation>
+        <translation>Procesador</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="200"/>
         <source>Memoria</source>
-        <translation type="unfinished"></translation>
+        <translation>Memoria</translation>
     </message>
     <message>
         <location filename="../qml/SettingsApp.qml" line="201"/>
         <source>Creado por Borja Candel. LIGERO. POTENTE. FLUIDO.</source>
-        <translation type="unfinished"></translation>
+        <translation>Creado por Borja Candel. LIGERO. POTENTE. FLUIDO.</translation>
+    </message>
+</context>
+<context>
+    <name>StoreApp</name>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="9"/>
+        <location filename="../qml/StoreApp.qml" line="37"/>
+        <source>Tienda</source>
+        <translation>Tienda</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="37"/>
+        <source>Operación completada</source>
+        <translation>Operación completada</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="37"/>
+        <source>La operación ha fallado</source>
+        <translation>La operación ha fallado</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="53"/>
+        <source>Buscar software (nombre o descripción)</source>
+        <translation>Buscar software (nombre o descripción)</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="60"/>
+        <source>Resultados</source>
+        <translation>Resultados</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="60"/>
+        <source>Instaladas</source>
+        <translation>Instaladas</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="72"/>
+        <source>Actualizar sistema</source>
+        <translation>Actualizar sistema</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="101"/>
+        <source>Quitar</source>
+        <translation>Quitar</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="101"/>
+        <source>Instalar</source>
+        <translation>Instalar</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="110"/>
+        <source>Escribe para buscar software</source>
+        <translation>Escribe para buscar software</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="110"/>
+        <source>Sin resultados</source>
+        <translation>Sin resultados</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="110"/>
+        <source>No hay software instalado</source>
+        <translation>No hay software instalado</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="116"/>
+        <source>Buscando…</source>
+        <translation>Buscando…</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="139"/>
+        <source>Trabajando…</source>
+        <translation>Trabajando…</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="139"/>
+        <source>Software de los repositorios de Arch Linux ARM</source>
+        <translation>Software de los repositorios de Arch Linux ARM</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="157"/>
+        <source>Se necesita tu contraseña</source>
+        <translation>Se necesita tu contraseña</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="159"/>
+        <source>Para instalar o quitar software hace falta permiso de administrador.</source>
+        <translation>Para instalar o quitar software hace falta permiso de administrador.</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="176"/>
+        <source>Cancelar</source>
+        <translation>Cancelar</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="179"/>
+        <source>Aceptar</source>
+        <translation>Aceptar</translation>
     </message>
 </context>
 <context>

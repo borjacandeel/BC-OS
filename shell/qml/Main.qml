@@ -22,6 +22,7 @@ Window {
     property bool monitorOpen: false
     property bool launcherOpen: false
     property bool settingsOpen: false
+    property bool storeOpen: false
     property int zTop: 100
     readonly property bool notifOpen: Notifications.visible
 
@@ -50,6 +51,7 @@ Window {
         const r = Launcher.launch(kind)
         if (kind === "monitor") { openInternal(monitorWin, "monitorOpen"); return }
         if (kind === "ajustes") { openInternal(settingsWin, "settingsOpen"); return }
+        if (kind === "tienda") { openInternal(storeWin, "storeOpen"); return }
         if (kind === "papelera") { filesOpen = true; Files.openTrash(); return }
         if (kind === "archivos") filesOpen = true
         else if (r === "unavailable") showNotice(name, qsTr("En desarrollo"))
@@ -104,6 +106,16 @@ Window {
                     item.closeRequested.connect(() => { item.shown = false; settingsClose.restart() }) }
     }
     Timer { id: settingsClose; interval: 230; onTriggered: root.settingsOpen = false }
+
+    Loader {
+        id: storeWin
+        active: root.storeOpen
+        source: "StoreApp.qml"
+        onLoaded: { root.place(item, 2); z = ++root.zTop
+                    item.activated.connect(() => storeWin.z = ++root.zTop)
+                    item.closeRequested.connect(() => { item.shown = false; storeClose.restart() }) }
+    }
+    Timer { id: storeClose; interval: 230; onTriggered: root.storeOpen = false }
 
     Loader {
         id: notif
@@ -164,7 +176,7 @@ Window {
         onLoaded: {
             item.launched.connect((kind, name) => root.launch(kind, name))
             item.running = Qt.binding(() => Launcher.running.concat(root.filesOpen ? ["archivos"] : [])
-                .concat(root.monitorOpen ? ["monitor"] : []).concat(root.settingsOpen ? ["ajustes"] : []))
+                .concat(root.monitorOpen ? ["monitor"] : []).concat(root.settingsOpen ? ["ajustes"] : []).concat(root.storeOpen ? ["tienda"] : []))
         }
     }
 
@@ -208,6 +220,7 @@ Window {
         else if (AppConfig.demo === "menu") sysMenu.open = true
         else if (AppConfig.demo === "power") powerDialog.open("poweroff")
         else if (AppConfig.demo === "launcher") launcherPanel.show()
+        else if (AppConfig.demo === "tienda") launch("tienda", "")
         else if (AppConfig.demo === "monitor") launch("monitor", "")
         else if (AppConfig.demo === "ajustes") launch("ajustes", "")
     }

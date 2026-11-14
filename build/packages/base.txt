@@ -32,3 +32,10 @@ libnewt
 plymouth
 greetd
 cage
+firefox
+brightnessctl
+bluez
+bluez-utils
+pipewire-alsa
+alsa-utils
+mousepad

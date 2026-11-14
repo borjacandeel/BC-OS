@@ -14,11 +14,15 @@ QString Launcher::programFor(const QString &kind) {
         const QString env = qEnvironmentVariable("BC_TERMINAL");
         return env.isEmpty() ? QStringLiteral("foot") : env;
     }
+    if (kind == "navegador") {
+        const QString env = qEnvironmentVariable("BC_BROWSER");
+        return env.isEmpty() ? QStringLiteral("firefox") : env;
+    }
     return {};
 }
 
 QString Launcher::launch(const QString &kind) {
-    if (kind == "archivos" || kind == "monitor" || kind == "ajustes") return "internal";
+    if (kind == "archivos" || kind == "monitor" || kind == "ajustes" || kind == "tienda") return "internal";
     const QString prog = programFor(kind);
     if (prog.isEmpty()) return "unavailable";
     if (m_pids.contains(kind)) return "started";

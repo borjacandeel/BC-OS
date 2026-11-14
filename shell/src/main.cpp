@@ -12,6 +12,7 @@
 #include "appindex.h"
 #include "appsettings.h"
 #include "notifications.h"
+#include "packagestore.h"
 #include "powercontrol.h"
 #include "sysmonitor.h"
 #include "systemstatus.h"
@@ -69,6 +70,7 @@ int main(int argc, char *argv[]) {
     AppSettings appSettings;
     SysMonitor monitor;
     AppIndex apps({}, lang);
+    PackageStore store;
     SystemStatus status;
     NotificationQueue notifications;
     NotificationServer notifServer(&notifications);
@@ -80,6 +82,7 @@ int main(int argc, char *argv[]) {
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Settings", &appSettings);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Monitor", &monitor);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Apps", &apps);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Store", &store);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "SystemStatus", &status);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Notifications", &notifications);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Power", &power);

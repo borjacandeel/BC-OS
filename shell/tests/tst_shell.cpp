@@ -7,6 +7,7 @@
 #include "../src/appindex.h"
 #include "../src/greetd.h"
 #include "../src/launcher.h"
+#include "../src/packagestore.h"
 #include "../src/powercontrol.h"
 #include "../src/systemstatus.h"
 #include "../src/userlist.h"
@@ -106,7 +107,8 @@ private slots:
         QCOMPARE(l.launch("archivos"), QString("internal"));
         QCOMPARE(l.launch("monitor"), QString("internal"));
         QCOMPARE(l.launch("ajustes"), QString("internal"));
-        QCOMPARE(l.launch("tienda"), QString("unavailable"));
+        QCOMPARE(l.launch("tienda"), QString("internal"));
+        QCOMPARE(l.launch("musica"), QString("unavailable"));
         qputenv("BC_TERMINAL", "bc-no-existe-xyz");
         QCOMPARE(l.launch("terminal"), QString("failed"));
         qputenv("BC_TERMINAL", "sleep");  // sin argumentos termina con error; basta para ver el ciclo de vida
@@ -156,6 +158,19 @@ private slots:
         QCOMPARE(idx.search("inter").size(), 1);   // por comentario
         QCOMPARE(idx.search("zzz").size(), 0);
         QVERIFY(idx.launch("navegador.desktop"));
+    }
+    void tiendaPacman() {
+        const auto r = PackageStore::parseSearch("extra/firefox 160.0-1 [installed]\n    Standalone web browser from mozilla.org\n"
+                                                 "core/linux 6.8 (base) [installed: 6.7]\n    The Linux kernel\nextra/mpv 1:0.41-1\n    Video player\n");
+        QCOMPARE(r.size(), 3);
+        QCOMPARE(r[0].name, QString("firefox")); QCOMPARE(r[0].repo, QString("extra")); QVERIFY(r[0].installed);
+        QCOMPARE(r[0].desc, QString("Standalone web browser from mozilla.org"));
+        QVERIFY(r[1].installed); QVERIFY(!r[2].installed);
+        QCOMPARE(PackageStore::parseInstalled("bash 5.3\nnano 8.0\n").size(), 2);
+        const QVariantMap m = PackageStore::parseInfo("Repository      : extra\nName            : mpv\nVersion         : 1:0.41-1\nDescription     : Video player\nInstalled Size  : 5.00 MiB\n");
+        QCOMPARE(m.value("name").toString(), QString("mpv"));
+        QCOMPARE(m.value("size").toString(), QString("5.00 MiB"));
+        QCOMPARE(PackageStore::sudoArgs({"-S", "x"}), QStringList({"-S", "-p", "", "--", "pacman", "-S", "x"}));
     }
     void listaDeUsuarios() {
         QTemporaryDir t;
