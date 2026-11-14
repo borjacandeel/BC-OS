@@ -11,9 +11,11 @@ class PackageStore : public QAbstractListModel {
     Q_PROPERTY(QString log READ log NOTIFY logChanged)
     Q_PROPERTY(QVariantMap details READ details NOTIFY detailsChanged)
     Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
+    Q_PROPERTY(bool flathub READ flathub WRITE setFlathub NOTIFY flathubChanged)
+    Q_PROPERTY(bool flatpakAvailable READ flatpakAvailable CONSTANT)
 public:
-    enum Roles { NameRole = Qt::UserRole + 1, RepoRole, VersionRole, DescRole, InstalledRole };
-    struct Pkg { QString name, repo, version, desc; bool installed = false; };
+    enum Roles { NameRole = Qt::UserRole + 1, RepoRole, VersionRole, DescRole, InstalledRole, IdRole };
+    struct Pkg { QString name, repo, version, desc, id; bool installed = false; };
     explicit PackageStore(QObject *parent = nullptr);
     int rowCount(const QModelIndex & = {}) const override { return m_rows.size(); }
     QVariant data(const QModelIndex &i, int role) const override;
@@ -21,6 +23,9 @@ public:
     bool busy() const { return m_busy; }
     QString log() const { return m_log; }
     QVariantMap details() const { return m_details; }
+    bool flathub() const { return m_flathub; }
+    void setFlathub(bool on);
+    bool flatpakAvailable() const;
 
     Q_INVOKABLE void search(const QString &query);     // repositorios
     Q_INVOKABLE void listInstalled();                   // paquetes explícitos instalados
@@ -32,18 +37,24 @@ public:
     static QList<Pkg> parseSearch(const QString &out);
     static QList<Pkg> parseInstalled(const QString &out);
     static QVariantMap parseInfo(const QString &out);
+    // Salida de `flatpak search/list --columns=application,name,version,description` (columnas separadas por tabulador)
+    static QList<Pkg> parseFlatpak(const QString &out, bool installed);
     static QStringList sudoArgs(const QStringList &pacmanArgs);
 signals:
     void busyChanged();
     void logChanged();
     void detailsChanged();
     void countChanged();
+    void flathubChanged();
     void finished(bool ok, const QString &action);
 
 private:
     void runRead(const QStringList &args, std::function<void(const QString &)> done);
     void runPrivileged(const QStringList &pacmanArgs, const QString &password, const QString &action);
     void setBusy(bool b);
+    void runFlatpakRead(const QStringList &args, std::function<void(const QString &)> done);
+    void runFlatpakWrite(const QStringList &args, const QString &action);
+    bool m_flathub = false;
     QList<Pkg> m_rows;
     bool m_busy = false;
     QString m_log;

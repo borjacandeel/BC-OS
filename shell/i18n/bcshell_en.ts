@@ -734,12 +734,17 @@
 <context>
     <name>PackageStore</name>
     <message>
-        <location filename="../src/packagestore.cpp" line="119" />
+        <location filename="../src/packagestore.cpp" line="112" />
+        <source>Flatpak no está instalado</source>
+        <translation>Flatpak is not installed</translation>
+    </message>
+    <message>
+        <location filename="../src/packagestore.cpp" line="188" />
         <source>sudo no está instalado</source>
         <translation>sudo is not installed</translation>
     </message>
     <message>
-        <location filename="../src/packagestore.cpp" line="131" />
+        <location filename="../src/packagestore.cpp" line="200" />
         <source>Contraseña incorrecta</source>
         <translation>Incorrect password</translation>
     </message>
@@ -1130,77 +1135,92 @@
         <translation>Search software (name or description)</translation>
     </message>
     <message>
-        <location filename="../qml/StoreApp.qml" line="60" />
+        <location filename="../qml/StoreApp.qml" line="61" />
+        <source>Arch</source>
+        <translation>Arch</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="61" />
+        <source>Flathub</source>
+        <translation>Flathub</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="76" />
         <source>Resultados</source>
         <translation>Results</translation>
     </message>
     <message>
-        <location filename="../qml/StoreApp.qml" line="60" />
+        <location filename="../qml/StoreApp.qml" line="76" />
         <source>Instaladas</source>
         <translation>Installed</translation>
     </message>
     <message>
-        <location filename="../qml/StoreApp.qml" line="72" />
+        <location filename="../qml/StoreApp.qml" line="88" />
         <source>Actualizar sistema</source>
         <translation>Update system</translation>
     </message>
     <message>
-        <location filename="../qml/StoreApp.qml" line="101" />
+        <location filename="../qml/StoreApp.qml" line="117" />
         <source>Quitar</source>
         <translation>Remove</translation>
     </message>
     <message>
-        <location filename="../qml/StoreApp.qml" line="101" />
+        <location filename="../qml/StoreApp.qml" line="117" />
         <source>Instalar</source>
         <translation>Install</translation>
     </message>
     <message>
-        <location filename="../qml/StoreApp.qml" line="110" />
+        <location filename="../qml/StoreApp.qml" line="126" />
         <source>Escribe para buscar software</source>
         <translation>Type to search for software</translation>
     </message>
     <message>
-        <location filename="../qml/StoreApp.qml" line="110" />
+        <location filename="../qml/StoreApp.qml" line="126" />
         <source>Sin resultados</source>
         <translation>No results</translation>
     </message>
     <message>
-        <location filename="../qml/StoreApp.qml" line="110" />
+        <location filename="../qml/StoreApp.qml" line="126" />
         <source>No hay software instalado</source>
         <translation>No software installed</translation>
     </message>
     <message>
-        <location filename="../qml/StoreApp.qml" line="116" />
+        <location filename="../qml/StoreApp.qml" line="132" />
         <source>Buscando…</source>
         <translation>Searching…</translation>
     </message>
     <message>
-        <location filename="../qml/StoreApp.qml" line="139" />
+        <location filename="../qml/StoreApp.qml" line="155" />
         <source>Trabajando…</source>
         <translation>Working…</translation>
     </message>
     <message>
-        <location filename="../qml/StoreApp.qml" line="139" />
+        <location filename="../qml/StoreApp.qml" line="155" />
         <source>Software de los repositorios de Arch Linux ARM</source>
         <translation>Software from the Arch Linux ARM repositories</translation>
     </message>
     <message>
-        <location filename="../qml/StoreApp.qml" line="157" />
+        <location filename="../qml/StoreApp.qml" line="155" />
+        <source>Aplicaciones de Flathub (se instalan en tu usuario)</source>
+        <translation>Flathub apps (installed for your user)</translation>
+    </message>
+    <message>
+        <location filename="../qml/StoreApp.qml" line="173" />
         <source>Se necesita tu contraseña</source>
         <translation>Your password is required</translation>
     </message>
     <message>
-        <location filename="../qml/StoreApp.qml" line="159" />
+        <location filename="../qml/StoreApp.qml" line="175" />
         <source>Para instalar o quitar software hace falta permiso de administrador.</source>
         <translation>Installing or removing software requires administrator permission.</translation>
     </message>
     <message>
-        <location filename="../qml/StoreApp.qml" line="176" />
+        <location filename="../qml/StoreApp.qml" line="192" />
         <source>Cancelar</source>
         <translation>Cancel</translation>
     </message>
     <message>
-        <location filename="../qml/StoreApp.qml" line="179" />
+        <location filename="../qml/StoreApp.qml" line="195" />
         <source>Aceptar</source>
         <translation>OK</translation>
     </message>

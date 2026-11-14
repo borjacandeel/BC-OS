@@ -18,7 +18,7 @@ AppWindow {
     }
     function ask(action, name) {
         pending = { action: action, name: name }
-        if (password !== "") run()
+        if (Store.flathub || password !== "") run()
         else { pwDialog.open = true; pwInput.text = ""; pwInput.forceActiveFocus() }
     }
     function run() {
@@ -51,6 +51,22 @@ AppWindow {
             onAccepted: { win.mode = 0; Store.search(text) }
             Text { visible: field.text.length === 0; anchors.verticalCenter: parent.verticalCenter
                    text: qsTr("Buscar software (nombre o descripción)"); color: Theme.textSecondary; font: field.font }
+        }
+    }
+
+    Row {
+        visible: Store.flatpakAvailable
+        anchors.right: parent.right; anchors.rightMargin: 150; y: 66; spacing: 8
+        Repeater {
+            model: [qsTr("Arch"), qsTr("Flathub")]
+            delegate: Rectangle {
+                required property var modelData
+                required property int index
+                width: srcT.implicitWidth + 24; height: 28; radius: 14
+                color: (index === 1) === Store.flathub ? Theme.accent : Qt.rgba(1, 1, 1, 0.1)
+                Text { id: srcT; anchors.centerIn: parent; text: modelData; color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14 }
+                MouseArea { anchors.fill: parent; onClicked: { Store.flathub = index === 1; win.reload() } }
+            }
         }
     }
 
@@ -100,7 +116,7 @@ AppWindow {
                 opacity: Store.busy ? 0.5 : 1
                 Text { anchors.centerIn: parent; text: model.installed ? qsTr("Quitar") : qsTr("Instalar"); color: Theme.white
                        font.family: Theme.fontFamily; font.pixelSize: 14; font.weight: Font.DemiBold }
-                MouseArea { anchors.fill: parent; enabled: !Store.busy; onClicked: win.ask(model.installed ? "remove" : "install", model.name) }
+                MouseArea { anchors.fill: parent; enabled: !Store.busy; onClicked: win.ask(model.installed ? "remove" : "install", model.id) }
             }
             MouseArea { id: ma; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.NoButton }
         }
@@ -136,7 +152,7 @@ AppWindow {
     }
     Text {
         anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; anchors.bottomMargin: 10
-        text: Store.busy ? qsTr("Trabajando…") : qsTr("Software de los repositorios de Arch Linux ARM")
+        text: Store.busy ? qsTr("Trabajando…") : (Store.flathub ? qsTr("Aplicaciones de Flathub (se instalan en tu usuario)") : qsTr("Software de los repositorios de Arch Linux ARM"))
         color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 12
     }
 

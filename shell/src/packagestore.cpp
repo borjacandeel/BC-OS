@@ -13,12 +13,13 @@ QVariant PackageStore::data(const QModelIndex &i, int role) const {
     case VersionRole: return p.version;
     case DescRole: return p.desc;
     case InstalledRole: return p.installed;
+    case IdRole: return p.id.isEmpty() ? p.name : p.id;
     }
     return {};
 }
 
 QHash<int, QByteArray> PackageStore::roleNames() const {
-    return {{NameRole, "name"}, {RepoRole, "repo"}, {VersionRole, "version"}, {DescRole, "desc"}, {InstalledRole, "installed"}};
+    return {{NameRole, "name"}, {RepoRole, "repo"}, {VersionRole, "version"}, {DescRole, "desc"}, {InstalledRole, "installed"}, {IdRole, "id"}};
 }
 
 QList<PackageStore::Pkg> PackageStore::parseSearch(const QString &out) {
@@ -69,6 +70,66 @@ QVariantMap PackageStore::parseInfo(const QString &out) {
     return m;
 }
 
+QList<PackageStore::Pkg> PackageStore::parseFlatpak(const QString &out, bool installed) {
+    QList<Pkg> list;
+    for (const QString &line : out.split('\n')) {
+        const QStringList f = line.split('\t');
+        if (f.size() < 2 || f[0].trimmed().isEmpty() || !f[0].contains('.')) continue;  // «Sin coincidencias» u otras líneas
+        Pkg p;
+        p.id = f[0].trimmed(); p.name = f[1].trimmed();
+        p.version = f.value(2).trimmed(); p.desc = f.value(3).trimmed();
+        p.repo = "flathub"; p.installed = installed;
+        list.append(p);
+    }
+    return list;
+}
+
+bool PackageStore::flatpakAvailable() const { return !QStandardPaths::findExecutable("flatpak").isEmpty(); }
+
+void PackageStore::setFlathub(bool on) {
+    if (on == m_flathub) return;
+    m_flathub = on && flatpakAvailable();
+    if (m_flathub) {  // el repositorio Flathub se añade al usuario la primera vez (sin privilegios)
+        QProcess add;
+        add.start(QStandardPaths::findExecutable("flatpak"), {"remote-add", "--user", "--if-not-exists", "flathub", "https://dl.flathub.org/repo/flathub.flatpakrepo"});
+        if (!add.waitForFinished(20000)) add.kill();
+    }
+    beginResetModel(); m_rows.clear(); endResetModel(); emit countChanged();
+    emit flathubChanged();
+}
+
+void PackageStore::runFlatpakRead(const QStringList &args, std::function<void(const QString &)> done) {
+    const QString exe = QStandardPaths::findExecutable("flatpak");
+    if (exe.isEmpty()) { done({}); return; }
+    auto *p = new QProcess(this);
+    const quint64 gen = ++m_gen;
+    setBusy(true);
+    connect(p, &QProcess::finished, this, [this, p, done, gen] {
+        if (gen == m_gen) { done(QString::fromUtf8(p->readAllStandardOutput())); setBusy(false); }
+        p->deleteLater();
+    });
+    p->start(exe, args);
+}
+
+void PackageStore::runFlatpakWrite(const QStringList &args, const QString &action) {
+    if (m_busy) return;
+    const QString exe = QStandardPaths::findExecutable("flatpak");
+    if (exe.isEmpty()) { m_log = tr("Flatpak no está instalado"); emit logChanged(); emit finished(false, action); return; }
+    m_log.clear(); emit logChanged();
+    auto *p = new QProcess(this);
+    p->setProcessChannelMode(QProcess::MergedChannels);
+    setBusy(true);
+    connect(p, &QProcess::readyRead, this, [this, p] {
+        m_log += QString::fromUtf8(p->readAll());
+        if (m_log.size() > 20000) m_log = m_log.right(15000);
+        emit logChanged();
+    });
+    connect(p, &QProcess::finished, this, [this, p, action](int code) {
+        setBusy(false); emit logChanged(); emit finished(code == 0, action); p->deleteLater();
+    });
+    p->start(exe, args);
+}
+
 QStringList PackageStore::sudoArgs(const QStringList &pacmanArgs) {
     return QStringList{"-S", "-p", "", "--", "pacman"} + pacmanArgs;
 }
@@ -90,18 +151,31 @@ void PackageStore::runRead(const QStringList &args, std::function<void(const QSt
 
 void PackageStore::search(const QString &query) {
     if (query.trimmed().isEmpty()) { beginResetModel(); m_rows.clear(); endResetModel(); emit countChanged(); return; }
+    if (m_flathub) {
+        runFlatpakRead({"search", "--columns=application,name,version,description", query.trimmed()}, [this](const QString &out) {
+            beginResetModel(); m_rows = parseFlatpak(out, false); endResetModel(); emit countChanged();
+        });
+        return;
+    }
     runRead({"-Ss", "--", query.trimmed()}, [this](const QString &out) {
         beginResetModel(); m_rows = parseSearch(out); endResetModel(); emit countChanged();
     });
 }
 
 void PackageStore::listInstalled() {
+    if (m_flathub) {
+        runFlatpakRead({"list", "--app", "--columns=application,name,version,description"}, [this](const QString &out) {
+            beginResetModel(); m_rows = parseFlatpak(out, true); endResetModel(); emit countChanged();
+        });
+        return;
+    }
     runRead({"-Qe"}, [this](const QString &out) {
         beginResetModel(); m_rows = parseInstalled(out); endResetModel(); emit countChanged();
     });
 }
 
 void PackageStore::showDetails(const QString &name) {
+    if (m_flathub) return;
     runRead({"-Si", "--", name}, [this, name](const QString &out) {
         m_details = parseInfo(out);
         if (m_details.isEmpty()) {
@@ -139,11 +213,14 @@ void PackageStore::runPrivileged(const QStringList &pacmanArgs, const QString &p
 }
 
 void PackageStore::install(const QString &name, const QString &password) {
+    if (m_flathub) { runFlatpakWrite({"install", "--user", "-y", "--noninteractive", "flathub", name}, "install"); return; }
     runPrivileged({"-S", "--noconfirm", "--needed", "--", name}, password, "install");
 }
 void PackageStore::remove(const QString &name, const QString &password) {
+    if (m_flathub) { runFlatpakWrite({"uninstall", "--user", "-y", "--noninteractive", name}, "remove"); return; }
     runPrivileged({"-Rns", "--noconfirm", "--", name}, password, "remove");
 }
 void PackageStore::updateAll(const QString &password) {
+    if (m_flathub) { runFlatpakWrite({"update", "--user", "-y", "--noninteractive"}, "update"); return; }
     runPrivileged({"-Syu", "--noconfirm"}, password, "update");
 }

@@ -194,6 +194,13 @@ private slots:
         QVERIFY(w[2].toMap().value("floating").toBool());
         QVERIFY(w[3].toMap().value("minimized").toBool());
     }
+    void flatpakAnalizador() {
+        const auto l = PackageStore::parseFlatpak("org.mozilla.firefox\tFirefox\t128.0\tWeb browser\nSin coincidencias\norg.gimp.GIMP\tGIMP\t3.0\tImage editor\n", false);
+        QCOMPARE(l.size(), 2);
+        QCOMPARE(l[0].id, QString("org.mozilla.firefox"));
+        QCOMPARE(l[1].name, QString("GIMP"));
+        QCOMPARE(l[0].repo, QString("flathub"));
+    }
     void listaDeUsuarios() {
         QTemporaryDir t;
         QFile f(t.filePath("passwd"));
