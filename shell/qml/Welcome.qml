@@ -11,9 +11,10 @@ Item {
     property bool pickedTiling: Sway.tiling
     readonly property string wallDir: "/usr/share/bc/wallpapers/"
     readonly property var wallpapers: [
-        { f: "medianoche.jpg", n: qsTr("Medianoche") }, { f: "aurora.jpg", n: qsTr("Aurora") }, { f: "oceano.jpg", n: qsTr("Océano") },
-        { f: "atardecer.jpg", n: qsTr("Atardecer") }, { f: "grafito.jpg", n: qsTr("Grafito") }, { f: "plata.jpg", n: qsTr("Plata") }]
-    readonly property var accents: ["#2F7BF5", "#7B4DFF", "#D95CFF", "#FF6FB5", "#FF9F0A", "#34C759", "#1EC8AA", "#8E9BB2"]
+        { f: "medianoche.jpg", n: qsTr("Medianoche") }, { f: "oceano.jpg", n: qsTr("Océano") },
+        { f: "grafito.jpg", n: qsTr("Grafito") }, { f: "plata.jpg", n: qsTr("Plata") }]
+    // Solo los colores base de BC OS (los del semáforo y los de las tarjetas del Monitor)
+    readonly property var accents: ["#2F7BF5", "#34C759", "#FF9F0A", "#FF5F57", "#8E9BB2"]
 
     function pickStyle(id) { Settings.desktopStyle = id; UiState.style = id }
     function pickWallpaper(f) { Settings.wallpaper = wallDir + f }
