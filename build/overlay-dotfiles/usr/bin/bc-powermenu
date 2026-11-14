@@ -1,0 +1,9 @@
+#!/bin/sh
+# Menú de energía con rofi (entorno Dotfiles)
+sel="$(printf '  Bloquear\n  Cerrar sesión\n  Reiniciar\n  Apagar\n' | rofi -dmenu -i -p ' Energía' -theme "$HOME/.config/rofi/config.rasi" -theme-str 'window {width: 22%;} listview {lines: 4;}')"
+case "$sel" in
+  *Bloquear*) xsecurelock ;;
+  *Cerrar*) bspc quit ;;
+  *Reiniciar*) systemctl reboot ;;
+  *Apagar*) systemctl poweroff ;;
+esac

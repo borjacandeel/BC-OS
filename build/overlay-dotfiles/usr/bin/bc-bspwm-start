@@ -1,0 +1,13 @@
+#!/bin/sh
+# Script de arranque dentro de X (lo ejecuta xinit): entorno, teclado, cursor y bspwm.
+[ -f "$HOME/.xprofile" ] && . "$HOME/.xprofile"
+[ -f "$HOME/.Xresources" ] && xrdb -merge "$HOME/.Xresources"
+# Bus de sesión de systemd (si no lo trae el entorno)
+if [ -z "$DBUS_SESSION_BUS_ADDRESS" ] && [ -S "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/bus" ]; then
+  export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/bus"
+fi
+setxkbmap es 2>/dev/null || setxkbmap us 2>/dev/null
+xsetroot -cursor_name left_ptr 2>/dev/null
+xset s 600 600 2>/dev/null          # salvapantallas a los 10 min; xss-lock lo bloquea
+wmname LG3D 2>/dev/null
+exec bspwm

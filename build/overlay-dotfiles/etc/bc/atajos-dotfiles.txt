@@ -1,0 +1,28 @@
+ATAJOS DEL ENTORNO «DOTFILES» (bspwm)  —  Súper = tecla Windows
+
+Aplicaciones
+  Súper+Intro / Ctrl+Intro   Terminal              Súper+D / Ctrl+Espacio   Lanzador (rofi)
+  Súper+B / Ctrl+B           Firefox               Súper+E                  Archivos (pcmanfm)
+  Ctrl+Tab                   Cambiar de ventana    Súper+X                  Menú de energía
+  Súper+L                    Bloquear              Súper+F1                 Esta lista
+
+Ventanas
+  Súper+W (Mayús: forzar)    Cerrar                Súper+T / Mayús+T / S / F  Mosaico / pseudo / flotante / pantalla completa
+  Súper+H J K L              Foco (con Mayús: intercambiar)
+  Ctrl+flechas               Cambiar de ventana por dirección (con Mayús: mover)
+  Súper+M                    Mosaico ↔ monóculo    Súper+G                  Intercambiar con la mayor
+  Súper+1…0 (Mayús: enviar)  Escritorios           Súper+[ / ]              Escritorio anterior / siguiente
+  Súper+Alt+H J K L          Redimensionar (con Mayús: contraer)
+  Súper+Ctrl+H J K L / 1…9   Preselección de dirección / de proporción
+  Súper+flechas              Mover una ventana flotante
+  Súper+arrastrar            Mover (botón izq.) · redimensionar (botón der.)
+
+Sesión
+  Súper+Mayús+R              Recargar bspwm        Súper+Escape             Recargar los atajos
+  Súper+Alt+Q                Salir de bspwm
+
+Capturas y fondos
+  Impr                       Pantalla completa     Súper+Mayús+S            Área al portapapeles     Alt+Impr  Ventana
+  Súper+N / Mayús+N / Alt+N  Fondo siguiente / anterior / aleatorio
+
+Personaliza en ~/.config/{bspwm,sxhkd,polybar,picom,rofi,dunst,alacritty}. «bc-dotfiles-setup --reset» restaura los originales.

@@ -1,0 +1,12 @@
+! Xresources — entorno «Dotfiles» de BC OS (paleta «Montañas»)
+Xcursor.theme: macOS
+Xcursor.size:  24
+Xft.font:      CaskaydiaCove Nerd Font:size=11
+Xft.dpi:       96
+Xft.antialias: true
+Xft.hinting:   true
+Xft.hintstyle: hintslight
+Xft.rgba:      rgb
+*.foreground:  #EAF1F5
+*.background:  #0E1B26
+*.cursorColor: #8FC3D4

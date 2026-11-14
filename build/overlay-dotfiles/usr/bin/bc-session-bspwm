@@ -1,0 +1,15 @@
+#!/bin/sh
+# Sesión «Dotfiles (bspwm)» de BC OS (X11): arranca Xorg con bc-bspwm-start. La elige el login (greetd) o Configuración.
+export XDG_SESSION_TYPE=x11 XDG_CURRENT_DESKTOP=BC-Dotfiles BC_SESSION_ID=dotfiles
+export LANG="${LANG:-es_ES.UTF-8}" XCURSOR_THEME=macOS XCURSOR_SIZE=24
+LOG="$HOME/bc-session.log"
+{ date; echo "sesión: dotfiles (bspwm) · vt=${XDG_VTNR:-?}"; } > "$LOG" 2>&1
+bc-dotfiles-setup >> "$LOG" 2>&1
+VT="${XDG_VTNR:-1}"
+# Sin Xorg (paquete ausente) se vuelve al login en vez de dejar una pantalla negra
+if ! command -v Xorg >/dev/null 2>&1; then echo "Xorg no está instalado" >> "$LOG"; exit 1; fi
+xinit /usr/bin/bc-bspwm-start -- /usr/bin/Xorg ":${BC_DISPLAY:-1}" "vt$VT" -keeptty -nolisten tcp -noreset >> "$LOG" 2>&1
+rc=$?
+echo "Xorg terminó con código $rc" >> "$LOG"
+{ [ "$1" = "--greetd" ] || [ -n "$BC_GREETD" ]; } && exit 0
+exec fish

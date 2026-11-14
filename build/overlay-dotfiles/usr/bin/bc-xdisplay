@@ -1,0 +1,14 @@
+#!/bin/sh
+# Resolución en X: aplica el modo preferido del monitor (o de la ventana de la máquina virtual) cuando cambia. Uso: bc-xdisplay auto|watch
+auto() {
+  xrandr 2>/dev/null | awk '
+    /^[^ ]+ connected/ { out=$1; next }
+    out && /^ +[0-9]+x[0-9]+/ { if (!(out in pref)) { pref[out]=$1 } if ($0 ~ /\*/) cur[out]=$1 }
+    END { for (o in pref) if (cur[o] != pref[o]) print o, pref[o] }' |
+  while read -r o m; do xrandr --output "$o" --mode "$m" 2>/dev/null; done
+}
+case "${1:-auto}" in
+  auto) auto ;;
+  watch) while :; do auto; sleep 2; done ;;
+  *) echo "uso: bc-xdisplay auto|watch" >&2; exit 2 ;;
+esac

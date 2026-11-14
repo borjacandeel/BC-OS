@@ -1,0 +1,147 @@
+#
+# sxhkdrc — atajos del entorno «Dotfiles» de BC OS (Súper = tecla Windows). Lista legible: /etc/bc/atajos-dotfiles.txt
+#
+
+# recargar sxhkd
+super + Escape
+	pkill -USR1 -x sxhkd
+
+# salir / reiniciar bspwm
+super + alt + {q,r}
+	bspc {quit,wm -r}
+
+# cerrar / matar
+super + {_,shift + }w
+	bspc node -{c,k}
+
+# alternar mosaico y monóculo
+super + m
+	bspc desktop -l next
+
+# intercambiar con el mayor
+super + g
+	bspc node -s biggest
+
+# estado de la ventana: mosaico, pseudo-mosaico, flotante, pantalla completa
+super + {t,shift + t,s,f}
+	bspc node -t {tiled,pseudo_tiled,floating,fullscreen}
+
+# banderas
+super + ctrl + {m,x,y,z}
+	bspc node -g {marked,locked,sticky,private}
+
+# foco / intercambio por dirección (h j k l)
+super + {_,shift + }{h,j,k,l}
+	bspc node -{f,s} {west,south,north,east}
+
+# Ctrl + flechas: cambiar de ventana por dirección; con Mayús, moverla
+ctrl + {Left,Down,Up,Right}
+	bspc node -f {west,south,north,east}
+ctrl + shift + {Left,Down,Up,Right}
+	bspc node -s {west,south,north,east}
+
+# foco por ruta
+super + {p,b,comma,period}
+	bspc node -f @{parent,brother,first,second}
+
+# siguiente / anterior en el escritorio
+super + {_,shift + }c
+	bspc node -f {next,prev}.local
+
+# escritorio anterior / siguiente
+super + bracket{left,right}
+	bspc desktop -f {prev,next}.local
+
+# último nodo / escritorio
+super + {grave,Tab}
+	bspc {node,desktop} -f last
+
+# historial de foco
+super + {o,i}
+	bspc wm -h off; \
+	bspc node {older,newer} -f; \
+	bspc wm -h on
+
+# ir al escritorio / enviar ventana (1-9, 0)
+super + {_,shift + }{1-9,0}
+	bspc {desktop -f,node -d} '^{1-9,10}'
+
+# presección
+super + ctrl + {h,j,k,l}
+	bspc node -p {west,south,north,east}
+super + ctrl + {1-9}
+	bspc node -o 0.{1-9}
+super + ctrl + space
+	bspc node -p cancel
+super + ctrl + shift + space
+	bspc query -N -d | xargs -I id -n 1 bspc node id -p cancel
+
+# redimensionar
+super + alt + {h,j,k,l}
+	bspc node -z {left -20 0,bottom 0 20,top 0 -20,right 20 0}
+super + alt + shift + {h,j,k,l}
+	bspc node -z {right -20 0,top 0 20,bottom 0 -20,left 20 0}
+
+# mover una ventana flotante
+super + {Left,Down,Up,Right}
+	bspc node -v {-20 0,0 20,0 -20,20 0}
+
+#
+# aplicaciones
+#
+super + Return
+	bc-terminal
+ctrl + Return
+	bc-terminal
+super + d
+	rofi -show drun -theme ~/.config/rofi/config.rasi
+ctrl + space
+	rofi -show drun -theme ~/.config/rofi/config.rasi
+ctrl + Tab
+	rofi -show window -theme ~/.config/rofi/config.rasi
+super + e
+	pcmanfm ~/
+ctrl + b
+	firefox
+super + b
+	firefox
+super + x
+	bc-powermenu
+super + l
+	xsecurelock
+super + F1
+	bc-terminal -e less /etc/bc/atajos-dotfiles.txt
+super + shift + r
+	bspc wm -r
+
+#
+# capturas y portapapeles
+#
+Print
+	maim -u "$HOME/Imágenes/captura-$(date +%F_%H-%M-%S).png" && notify-send "Captura guardada"
+super + shift + s
+	maim -s -u | xclip -selection clipboard -t image/png
+alt + Print
+	maim -i "$(xdotool getactivewindow)" -u "$HOME/Imágenes/ventana-$(date +%F_%H-%M-%S).png"
+
+#
+# multimedia y brillo
+#
+XF86Audio{RaiseVolume,LowerVolume}
+	wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%{+,-}
+XF86AudioMute
+	wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
+XF86Audio{Play,Next,Prev}
+	playerctl {play-pause,next,previous}
+XF86MonBrightness{Up,Down}
+	brightnessctl -c backlight set 5%{+,-}
+
+#
+# fondos
+#
+super + n
+	~/.config/bin/wallpaper.sh next
+super + shift + n
+	~/.config/bin/wallpaper.sh prev
+super + alt + n
+	~/.config/bin/wallpaper.sh random

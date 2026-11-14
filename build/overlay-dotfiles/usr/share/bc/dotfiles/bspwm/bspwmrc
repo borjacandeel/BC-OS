@@ -1,0 +1,68 @@
+#!/bin/sh
+# ============================================
+#  bspwmrc — BSPWM + SXHKD + Polybar (entorno «Dotfiles» de BC OS)
+#  Basado en los dotfiles de Borja Candel; es idempotente: cada servicio se lanza una sola vez.
+# ============================================
+have() { command -v "$1" >/dev/null 2>&1; }
+run_once() { _p="$1"; shift; pgrep -x "$_p" >/dev/null 2>&1 && return 0; "$@" >/dev/null 2>&1 & }
+
+# Fondo: ~/.wallpapers/montanas.jpg si existe; si no, la primera imagen; si no, color sólido
+set_wallpaper() {
+  _wp="$HOME/.wallpapers/montanas.jpg"
+  [ -f "$_wp" ] || _wp="$(ls -1 "$HOME"/.wallpapers/*.jpg "$HOME"/.wallpapers/*.png "$HOME"/.wallpapers/*.jpeg 2>/dev/null | head -n 1)"
+  if [ -n "$_wp" ] && [ -f "$_wp" ]; then feh --bg-fill "$_wp"; else xsetroot -solid '#14222e' 2>/dev/null; fi
+}
+
+run_once sxhkd sxhkd                                   # atajos
+have dunst && run_once dunst dunst                     # notificaciones
+have wmname && wmname LG3D                              # apps Java
+[ -x "$HOME/.config/bin/bc-xdisplay" ] || true
+have bc-xdisplay && run_once bc-xdisplay bc-xdisplay watch   # la pantalla sigue al tamaño de la ventana de la máquina virtual
+have picom && run_once picom picom --config "$HOME/.config/picom/picom.conf"
+set_wallpaper
+have xss-lock && have xsecurelock && run_once xss-lock xss-lock -l -- xsecurelock   # bloqueo al suspender / salvapantallas
+[ -x "$HOME/.config/polybar/launch.sh" ] && run_once polybar "$HOME/.config/polybar/launch.sh"
+have wl-paste || true
+# Bandeja (solo si existen)
+have volumeicon && run_once volumeicon volumeicon
+ls /sys/class/power_supply/BAT* >/dev/null 2>&1 && have cbatticon && run_once cbatticon cbatticon
+have nm-applet && run_once nm-applet nm-applet
+
+xsetroot -cursor_name left_ptr 2>/dev/null
+
+# Escritorios I..X (los nombres de más no crean monitores)
+bspc monitor -d I II III IV V VI VII VIII IX X 2>/dev/null
+
+bspc config border_width         2
+bspc config window_gap           10
+bspc config split_ratio          0.52
+bspc config borderless_monocle   true
+bspc config gapless_monocle      true
+bspc config top_padding          0
+
+# Colores (paleta «Montañas»)
+bspc config focused_border_color   "#8FC3D4"
+bspc config normal_border_color    "#1B2B3A"
+bspc config active_border_color    "#5E8CA0"
+bspc config presel_feedback_color  "#E2AAA0"
+
+# Ratón: mover y redimensionar con Super + botón (como en el resto de BC OS)
+bspc config pointer_modifier mod4
+bspc config pointer_action1 move
+bspc config pointer_action2 resize_side
+bspc config pointer_action3 resize_corner
+bspc config focus_follows_pointer true
+bspc config pointer_follows_focus false
+
+# Reglas
+bspc rule -a Gimp desktop='^8' state=floating follow=on
+bspc rule -a mplayer2 state=floating
+bspc rule -a Screenkey manage=off
+bspc rule -a Pcmanfm state=floating center=true
+bspc rule -a Steam state=floating center=true
+bspc rule -a zoom state=floating
+bspc rule -a TelegramDesktop state=floating center=true
+bspc rule -a Pavucontrol state=floating center=true
+bspc rule -a Lxappearance state=floating center=true
+bspc rule -a Alacritty state=tiled
+bspc rule -a Firefox desktop='^2'

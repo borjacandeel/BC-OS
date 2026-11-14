@@ -1,0 +1,22 @@
+#!/bin/sh
+# Copia la configuración del entorno «Dotfiles» al usuario SOLO si falta (no pisa tus cambios).
+# Uso: bc-dotfiles-setup [--reset]   (--reset sobrescribe todo con la versión del sistema)
+SRC=/usr/share/bc/dotfiles
+CFG="${XDG_CONFIG_HOME:-$HOME/.config}"
+force=0; [ "$1" = "--reset" ] && force=1
+put() { # origen destino
+  if [ ! -e "$2" ] || [ "$force" = 1 ]; then mkdir -p "$(dirname "$2")"; cp -f "$1" "$2"; fi
+}
+for d in bspwm sxhkd polybar picom rofi dunst alacritty; do
+  for f in "$SRC/$d"/*; do [ -f "$f" ] && put "$f" "$CFG/$d/$(basename "$f")"; done
+done
+for f in "$SRC"/bin/*; do put "$f" "$CFG/bin/$(basename "$f")"; chmod 755 "$CFG/bin/$(basename "$f")"; done
+chmod 755 "$CFG/bspwm/bspwmrc" "$CFG/polybar/launch.sh" 2>/dev/null
+put "$SRC/Xresources" "$HOME/.Xresources"
+put "$SRC/xprofile" "$HOME/.xprofile"
+# Fondos
+mkdir -p "$HOME/.wallpapers"
+for w in montanas medianoche oceano grafito plata; do
+  [ -f "/usr/share/bc/wallpapers/$w.jpg" ] && [ ! -e "$HOME/.wallpapers/$w.jpg" ] && cp "/usr/share/bc/wallpapers/$w.jpg" "$HOME/.wallpapers/$w.jpg"
+done
+exit 0

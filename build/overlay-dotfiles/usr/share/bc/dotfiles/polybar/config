@@ -1,0 +1,120 @@
+; Barra «Dotfiles» de BC OS: escritorios numerados, pista del reproductor al centro y reloj (estilo minimal)
+[colors]
+foreground = #EAF1F5
+background = #A60E1B26
+dim = #7F95A3
+focus = #FFFFFF
+alert = #E2AAA0
+green = #1DB954
+
+[bar/bar]
+enable-ipc = true
+height = 28
+width = 100%
+padding = 2
+module-margin = 1
+background = ${colors.background}
+foreground = ${colors.foreground}
+line-size = 2
+line-color = ${colors.focus}
+font-0 = "CaskaydiaCove Nerd Font:style=Regular:size=11;3"
+font-1 = "CaskaydiaCove Nerd Font:style=Bold:size=11;3"
+font-2 = "CaskaydiaCove Nerd Font:size=13;4"
+font-3 = "DejaVu Sans Mono:size=10;3"
+modules-left = launcher bspwm
+modules-center = media
+modules-right = pulseaudio time
+scroll-up = bspwm-wsnext
+scroll-down = bspwm-wsprev
+wm-restack = bspwm
+override-redirect = false
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[module/launcher]
+type = custom/text
+content = "󰄾"
+content-padding = 1
+click-left = rofi -show drun -theme ~/.config/rofi/config.rasi
+click-right = bc-powermenu
+
+[module/bspwm]
+type = internal/bspwm
+format = <label-state>
+index-sort = true
+enable-click = true
+enable-scroll = true
+label-focused = %index%
+label-focused-underline = ${colors.focus}
+label-focused-foreground = ${colors.focus}
+label-focused-padding = 2
+label-occupied = %index%
+label-occupied-foreground = ${colors.dim}
+label-occupied-padding = 2
+label-empty =
+label-urgent = !
+label-urgent-foreground = ${colors.alert}
+label-urgent-padding = 2
+
+[module/media]
+type = custom/script
+exec = bc-media-status
+interval = 1
+format = <label>
+format-underline = ${colors.green}
+click-left = playerctl play-pause
+click-right = playerctl next
+click-middle = playerctl previous
+
+[module/pulseaudio]
+type = internal/pulseaudio
+format-volume = <label-volume>
+label-volume = 󰕾 %percentage%%
+label-muted = 󰖁 muted
+label-muted-foreground = ${colors.dim}
+use-ui-max = false
+click-right = pavucontrol
+
+[module/time]
+type = internal/date
+interval = 10
+time = %H:%M
+date = %d %b
+label = %time% | %date%
+
+; --- Módulos extra (actívalos añadiéndolos a modules-right) ---
+[module/temperature]
+type = internal/temperature
+thermal-zone = 0
+warn-temperature = 70
+format = <label>
+label = %temperature-c%
+label-warn-foreground = ${colors.alert}
+
+[module/wlan]
+type = internal/network
+interface-type = wireless
+interval = 3.0
+format-connected = <label-connected>
+label-connected = 󰖩 %essid%
+format-disconnected = <label-disconnected>
+label-disconnected = 󰖪
+label-disconnected-foreground = ${colors.dim}
+
+[module/eth]
+type = internal/network
+interface-type = wired
+interval = 3.0
+format-connected = <label-connected>
+label-connected = 󰈀 %local_ip%
+format-disconnected = <label-disconnected>
+label-disconnected = 󰈂
+label-disconnected-foreground = ${colors.dim}
+
+[settings]
+screenchange-reload = true
+pseudo-transparency = false
+
+[global/wm]
+margin-top = 0
+margin-bottom = 0
