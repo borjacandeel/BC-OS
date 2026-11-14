@@ -28,7 +28,7 @@ Item {
     Keys.onLeftPressed: if (step > 0) step--
     Keys.onReturnPressed: next()
 
-    Rectangle { anchors.fill: parent; color: Qt.rgba(0.02, 0.04, 0.10, 0.94) }
+    Rectangle { anchors.fill: parent; color: Qt.rgba(0.02, 0.04, 0.10, 0.97) }
     MouseArea { anchors.fill: parent }   // no deja pasar clics
 
     component Chip: Rectangle {

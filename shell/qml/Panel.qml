@@ -163,13 +163,32 @@ LayerWindow {
         }
     }
 
+    // Pantalla completa (sin márgenes): bienvenida, bloqueo y pantalla de carga
+    LayerWindow {
+        layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-full"
+        keyboard: UiState.locked || UiState.welcomeOpen ? "exclusive" : "none"
+        width: UiState.sw; height: UiState.sh
+        shown: UiState.welcomeOpen || UiState.locked || UiState.splashing
+        Item {
+            anchors.fill: parent
+            Welcome {
+                anchors.fill: parent
+                visible: UiState.welcomeOpen
+                onVisibleChanged: if (visible) { step = 0; forceActiveFocus() }
+                onFinished: UiState.welcomeOpen = false
+            }
+            LockScreen { active: UiState.locked; onUnlocked: UiState.locked = false }
+            Splash { }
+        }
+    }
+
     // Capa emergente: Centro de control, menús, lanzador, apagado, bloqueo y pantalla de carga
     LayerWindow {
         layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-popups"
-        margins: [UiState.locked || UiState.splashing || UiState.welcomeOpen ? 0 : UiState.topInset, 0, UiState.win && !UiState.locked && !UiState.splashing ? UiState.taskH : 0, 0]
-        keyboard: UiState.locked || UiState.welcomeOpen || UiState.launcherOpen || UiState.startOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
+        margins: [UiState.topInset, 0, UiState.win ? UiState.taskH : 0, 0]
+        keyboard: UiState.launcherOpen || UiState.startOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
         width: UiState.sw; height: UiState.sh
-        shown: UiState.popupOpen || UiState.locked || UiState.splashing
+        shown: UiState.popupOpen
         Loader {
             id: popLoader
             anchors.fill: parent
@@ -218,12 +237,6 @@ LayerWindow {
                     }
                     Connections { target: UiState; function onLauncherOpenChanged() { if (UiState.launcherOpen) launcher.reset() } }
                 }
-                Welcome {
-                    anchors.fill: parent
-                    visible: UiState.welcomeOpen
-                    onVisibleChanged: if (visible) { step = 0; forceActiveFocus() }
-                    onFinished: UiState.welcomeOpen = false
-                }
                 StartMenu {
                     id: startMenu
                     visible: UiState.startOpen
@@ -246,8 +259,6 @@ LayerWindow {
                     }
                 }
                 Connections { target: UiState; function onPowerActionChanged() { if (UiState.powerAction !== "") powerDialog.open(UiState.powerAction) } }
-                LockScreen { active: UiState.locked; onUnlocked: UiState.locked = false }
-                Splash { }
             }
         }
     }

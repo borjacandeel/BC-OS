@@ -92,7 +92,7 @@ if [[ "${BC_KEEP_FIRMWARE:-0}" != "1" ]]; then
   [[ -n "$FW" ]] && sh "pacman -Rdd --noconfirm --disable-sandbox $FW" || true
 fi
 sh "pacman -Q labwc >/dev/null 2>&1 && pacman -Rns --noconfirm --disable-sandbox labwc || true"
-sh "pacman -S --needed --noconfirm --disable-sandbox sway swaybg grim layer-shell-qt alacritty"
+sh "pacman -S --needed --noconfirm --disable-sandbox $(grep -v '^#' "$HERE/packages/base.txt" | tr '\n' ' ')"
 sh "pacman -Q gcc >/dev/null 2>&1 && pacman -Rdd --noconfirm --disable-sandbox gcc || true"
 find "$R/usr/share/locale" -mindepth 1 -maxdepth 1 ! -name 'es*' ! -name 'en*' ! -name 'locale.alias' -exec rm -rf {} + 2>/dev/null || true
 rm -rf "$R/usr/share/doc" "$R/usr/share/man" "$R/usr/share/info" "$R/usr/share/gtk-doc" "$R/usr/share/help" 2>/dev/null || true
