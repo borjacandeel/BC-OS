@@ -70,7 +70,10 @@ install -m440 "$HERE/overlay/etc/sudoers.d/10-wheel" "$R/etc/sudoers.d/10-wheel"
 # Tema de iconos BC (Freedesktop) como tema por defecto
 mkdir -p "$R/usr/share/icons"; rm -rf "$R/usr/share/icons/BC"
 cp -a "$HERE/../icons/dist/theme/BC" "$R/usr/share/icons/BC"
-mkdir -p "$R/etc/gtk-3.0"; printf '[Settings]\ngtk-icon-theme-name=BC\ngtk-cursor-theme-name=macOS\ngtk-cursor-theme-size=24\n' > "$R/etc/gtk-3.0/settings.ini"
+# Qogir (vinceliuice, GPL-3.0): iconos de aplicaciones y archivos; la interfaz del shell usa el pack BC
+rm -rf "$R/usr/share/icons/Qogir"; cp -a "$HERE/../icons/qogir/Qogir" "$R/usr/share/icons/Qogir"
+mkdir -p "$R/usr/share/licenses/qogir-icon-theme"; cp "$HERE/../icons/qogir/COPYING" "$HERE/../icons/qogir/AUTHORS" "$R/usr/share/licenses/qogir-icon-theme/"
+mkdir -p "$R/etc/gtk-3.0"; printf '[Settings]\ngtk-icon-theme-name=Qogir\ngtk-cursor-theme-name=macOS\ngtk-cursor-theme-size=24\n' > "$R/etc/gtk-3.0/settings.ini"
 
 # Cursor tipo macOS por defecto: tema libre «apple_cursor» de ful1e5 (GPL-3.0), descargado y verificado
 CUR_URL="https://github.com/ful1e5/apple_cursor/releases/download/v2.0.1/macOS.tar.xz"

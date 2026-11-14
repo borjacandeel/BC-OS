@@ -9,17 +9,25 @@ Item {
     width: size
     height: size
 
+    // Iconos de aplicación: tema Qogir (vinceliuice, GPL-3.0); el resto de la interfaz usa el pack BC.
     readonly property var names: ({
-        lanzador: "bc-launcher",
+        lanzador: "view-app-grid",
         archivos: "system-file-manager",
         ajustes: "preferences-system",
         monitor: "utilities-system-monitor",
         terminal: "utilities-terminal",
-        tienda: "system-software-install",
+        tienda: "gnome-software",
         navegador: "web-browser",
         musica: "multimedia-audio-player",
         papelera: "user-trash"
     })
 
-    Icon { anchors.fill: parent; size: root.size; name: root.names[root.kind] || "application-octet-stream" }
+    Image {
+        anchors.fill: parent
+        source: "qrc:/BCShell/qogir/" + (root.names[root.kind] || "system-file-manager") + ".svg"
+        sourceSize: Qt.size(root.size * 2, root.size * 2)
+        fillMode: Image.PreserveAspectFit
+        smooth: true
+        asynchronous: false
+    }
 }

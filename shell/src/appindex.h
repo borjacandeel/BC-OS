@@ -11,6 +11,8 @@ public:
     explicit AppIndex(const QStringList &dirs = QStringList(), const QString &lang = QString(), QObject *parent = nullptr);
     int count() const { return m_entries.size(); }
     static bool isHiddenId(const QString &id);
+    // Ruta de archivo del icono de una app (nombre del tema o ruta absoluta); vacía si no se encuentra. `roots` = carpetas de iconos.
+    static QString resolveIcon(const QString &name, const QStringList &roots = {});
     Q_INVOKABLE QVariantList search(const QString &query) const;
     Q_INVOKABLE bool launch(const QString &id);
     Q_INVOKABLE void reload();

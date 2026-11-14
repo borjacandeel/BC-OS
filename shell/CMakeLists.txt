@@ -47,8 +47,10 @@ qt_add_translations(bc-shell
     RESOURCE_PREFIX /i18n
 )
 
+file(GLOB BC_QOGIR_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/assets/qogir/*.svg)
 file(GLOB BC_ICON_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/assets/icons/*.svg)
 qt_add_resources(bc-shell bcicons PREFIX /BCShell/icons BASE ${CMAKE_CURRENT_SOURCE_DIR}/assets/icons FILES ${BC_ICON_FILES})
+qt_add_resources(bc-shell bcqogir PREFIX /BCShell/qogir BASE ${CMAKE_CURRENT_SOURCE_DIR}/assets/qogir FILES ${BC_QOGIR_FILES})
 
 target_link_libraries(bc-shell PRIVATE bccommon Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::DBus ${PAM_LIBRARY})
 if(LayerShellQt_FOUND)

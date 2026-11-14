@@ -18,14 +18,19 @@ QtObject {
     readonly property color zoom: "#28C840"
 
     // Superficies (cristal ligero, sin desenfoque por CPU)
-    readonly property color panelFill: Qt.rgba(0.07, 0.11, 0.25, 0.80)
-    readonly property color panelFillSoft: Qt.rgba(0.10, 0.15, 0.30, 0.55)
-    readonly property color sidebarFill: Qt.rgba(0.03, 0.06, 0.16, 0.45)
-    readonly property color barFill: Qt.rgba(0.03, 0.07, 0.20, 0.60)
-    readonly property color tileFill: Qt.rgba(1, 1, 1, 0.07)
-    readonly property color hairline: Qt.rgba(1, 1, 1, 0.14)
+    // «Medianoche refinado»: azul noche más apagado y sobrio, con un solo acento
+    readonly property color panelFill: Qt.rgba(0.06, 0.09, 0.16, 0.86)
+    readonly property color panelFillSoft: Qt.rgba(0.09, 0.12, 0.20, 0.55)
+    readonly property color sidebarFill: Qt.rgba(0.02, 0.04, 0.09, 0.45)
+    readonly property color barFill: Qt.rgba(0.03, 0.05, 0.10, 0.72)
+    readonly property color popupFill: Qt.rgba(0.06, 0.09, 0.16, 0.97)    // menús, lanzador, Centro de control
+    readonly property color windowFill: Qt.rgba(0.05, 0.08, 0.14, 0.92)   // marco de las apps de BC
+    readonly property color widgetFill: Qt.rgba(0.04, 0.07, 0.13, 0.62)
+    readonly property color scrim: Qt.rgba(0.01, 0.03, 0.07, 0.55)        // velo bajo los diálogos
+    readonly property color tileFill: Qt.rgba(1, 1, 1, 0.06)
+    readonly property color hairline: Qt.rgba(1, 1, 1, 0.10)
     readonly property color textPrimary: white
-    readonly property color textSecondary: Qt.rgba(1, 1, 1, 0.62)
+    readonly property color textSecondary: Qt.rgba(1, 1, 1, 0.60)
 
     // Radios
     readonly property int radiusWindow: 22

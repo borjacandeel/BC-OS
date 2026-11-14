@@ -1,4 +1,6 @@
 #include "appindex.h"
+#include <QFileInfo>
+#include <QRegularExpression>
 #include <QDir>
 #include <QFile>
 #include <QProcess>
@@ -82,6 +84,23 @@ bool AppIndex::isHiddenId(const QString &id) {
     return false;
 }
 
+QString AppIndex::resolveIcon(const QString &name, const QStringList &rootsIn) {
+    if (name.isEmpty()) return {};
+    if (name.startsWith('/')) return QFileInfo(name).isFile() ? name : QString();
+    static const QRegularExpression ok("^[A-Za-z0-9._+-]+$");
+    if (!ok.match(name).hasMatch()) return {};   // nada de «..» ni separadores
+    QStringList roots = rootsIn;
+    if (roots.isEmpty()) roots = {"/usr/share/icons/Qogir/scalable/apps", "/usr/share/icons/hicolor/scalable/apps",
+                                  "/usr/share/icons/hicolor/256x256/apps", "/usr/share/icons/hicolor/128x128/apps",
+                                  "/usr/share/icons/hicolor/64x64/apps", "/usr/share/icons/hicolor/48x48/apps", "/usr/share/pixmaps"};
+    for (const QString &r : roots)
+        for (const char *ext : {".svg", ".png"}) {
+            const QString p = r + '/' + name + ext;
+            if (QFileInfo(p).isFile()) return p;
+        }
+    return {};
+}
+
 QVariantList AppIndex::search(const QString &query) const {
     const QString q = query.trimmed();
     QVariantList out;
@@ -98,7 +117,8 @@ QVariantList AppIndex::search(const QString &query) const {
     }
     std::stable_sort(hits.begin(), hits.end(), [](const Scored &a, const Scored &b) { return a.score > b.score; });
     for (const Scored &h : hits)
-        out.append(QVariantMap{{"id", h.e->id}, {"name", h.e->name}, {"icon", h.e->icon}, {"comment", h.e->comment}});
+        out.append(QVariantMap{{"id", h.e->id}, {"name", h.e->name}, {"icon", h.e->icon}, {"comment", h.e->comment},
+                               {"iconPath", resolveIcon(h.e->icon)}});
     return out;
 }
 

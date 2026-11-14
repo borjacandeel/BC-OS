@@ -51,7 +51,7 @@ Window {
         id: frame
         anchors.fill: parent
         radius: Theme.radiusWindow
-        color: Qt.rgba(0.06, 0.10, 0.23, 0.88)
+        color: Theme.windowFill
         border.width: 1
         border.color: Theme.hairline
         clip: true

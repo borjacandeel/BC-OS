@@ -13,7 +13,7 @@ Column {
     Binding { target: Monitor; property: "active"; value: w.visible; when: w.visible }
 
     component Card: Rectangle {
-        radius: 20; color: Qt.rgba(0.06, 0.10, 0.23, 0.55); border.width: 1; border.color: Theme.hairline
+        radius: 20; color: Theme.widgetFill; border.width: 1; border.color: Theme.hairline
         width: parent.width
     }
 

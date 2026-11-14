@@ -175,6 +175,11 @@ En GitHub: **Actions → Imagen ARM64 → Run workflow** (opción *publicar* cre
 - **swayfx** (WillPower3309, licencia MIT) y **sway / wlroots**: se compilan o instalan desde su origen; no se modifican.
 - Pack de iconos y logos BC: propios, bajo la licencia del repositorio con marca reservada.
 
+## Iconos y créditos de terceros
+
+- **Qogir** (vinceliuice, GPL-3.0): iconos de aplicaciones y tipos de archivo (subconjunto en `icons/qogir/`, sin modificar). La interfaz del shell usa el pack BC propio (`icons/`).
+- Cursor tipo macOS: `apple_cursor` de ful1e5 (GPL-3.0). swayfx (MIT), Alacritty, fish, sway y el resto: ver sus licencias en el sistema.
+
 ## Principios
 
 Español primero · solo ARM64 · nada de afirmar lo no probado · seguridad intacta · optimizar midiendo · builds reproducibles · sin credenciales en el repo. Normas en [`CONTRIBUTING.md`](CONTRIBUTING.md) y [`SECURITY.md`](SECURITY.md). Reglas para agentes: [`CLAUDE.md`](CLAUDE.md).

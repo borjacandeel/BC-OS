@@ -9,7 +9,7 @@ Rectangle {
     width: 300
     height: col.height + 16
     radius: 14
-    color: Qt.rgba(0.08, 0.13, 0.28, 0.97)
+    color: Theme.popupFill
     border.width: 1
     border.color: Theme.hairline
 

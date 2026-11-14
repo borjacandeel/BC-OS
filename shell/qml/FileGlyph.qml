@@ -16,5 +16,12 @@ Item {
         pdf: "application-pdf"
     })
 
-    Icon { anchors.centerIn: parent; size: 76; name: root.names[root.kind] || "application-octet-stream" }
+    Image {
+        anchors.centerIn: parent
+        width: 76; height: 76
+        source: "qrc:/BCShell/qogir/" + (root.names[root.kind] || "text-x-generic") + ".svg"
+        sourceSize: Qt.size(152, 152)
+        fillMode: Image.PreserveAspectFit
+        smooth: true
+    }
 }

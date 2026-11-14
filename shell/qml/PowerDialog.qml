@@ -42,7 +42,7 @@ Item {
         }
     }
 
-    Rectangle { anchors.fill: parent; color: Qt.rgba(0.01, 0.04, 0.10, 0.55) }
+    Rectangle { anchors.fill: parent; color: Theme.scrim }
     MouseArea { anchors.fill: parent; onClicked: { root.close(); root.cancelled() } }
 
     Rectangle {

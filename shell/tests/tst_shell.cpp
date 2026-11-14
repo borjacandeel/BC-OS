@@ -201,6 +201,16 @@ private slots:
         QCOMPARE(l[1].name, QString("GIMP"));
         QCOMPARE(l[0].repo, QString("flathub"));
     }
+    void iconosDeApps() {
+        QTemporaryDir d;
+        QVERIFY(d.isValid());
+        QFile f(d.filePath("miapp.svg")); QVERIFY(f.open(QIODevice::WriteOnly)); f.write("<svg/>"); f.close();
+        QCOMPARE(AppIndex::resolveIcon("miapp", {d.path()}), d.filePath("miapp.svg"));
+        QCOMPARE(AppIndex::resolveIcon("../miapp", {d.path()}), QString());
+        QCOMPARE(AppIndex::resolveIcon("noexiste", {d.path()}), QString());
+        QCOMPARE(AppIndex::resolveIcon(d.filePath("miapp.svg")), d.filePath("miapp.svg"));
+        QCOMPARE(AppIndex::resolveIcon(""), QString());
+    }
     void listaDeUsuarios() {
         QTemporaryDir t;
         QFile f(t.filePath("passwd"));

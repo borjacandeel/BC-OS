@@ -7,7 +7,7 @@ Rectangle {
     width: 381
     height: 459
     radius: Theme.radiusPanel
-    color: Qt.rgba(0.07, 0.11, 0.25, 0.97)
+    color: Theme.popupFill
     border.width: 1
     border.color: Theme.hairline
 

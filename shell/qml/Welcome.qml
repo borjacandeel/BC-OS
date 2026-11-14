@@ -27,7 +27,7 @@ Item {
     Keys.onLeftPressed: if (step > 0) step--
     Keys.onReturnPressed: next()
 
-    Rectangle { anchors.fill: parent; color: Qt.rgba(0.02, 0.04, 0.10, 0.97) }
+    Rectangle { anchors.fill: parent; color: Qt.rgba(0.02, 0.03, 0.07, 0.97) }
     MouseArea { anchors.fill: parent }   // no deja pasar clics
 
     component Chip: Rectangle {
@@ -67,22 +67,22 @@ Item {
     component Mock: Rectangle {
         property string kind: "mac"     // mac | win | minimal | float | tile
         anchors.fill: parent; radius: 10
-        gradient: Gradient { GradientStop { position: 0; color: "#16275a" } GradientStop { position: 1; color: "#0a1236" } }
+        gradient: Gradient { GradientStop { position: 0; color: "#1B2740" } GradientStop { position: 1; color: "#0A1020" } }
         Rectangle { visible: kind === "mac" || kind === "minimal" || kind === "float" || kind === "tile"; width: parent.width; height: 8; color: Qt.rgba(1, 1, 1, 0.18) }
         Rectangle { visible: kind === "win"; anchors.bottom: parent.bottom; width: parent.width; height: 10; color: Qt.rgba(1, 1, 1, 0.2)
                     Row { anchors.centerIn: parent; spacing: 4; Repeater { model: 5; Rectangle { width: 6; height: 6; radius: 2; color: Qt.rgba(1, 1, 1, 0.6) } } } }
         Rectangle { visible: kind === "mac"; anchors.bottom: parent.bottom; anchors.bottomMargin: 6; anchors.horizontalCenter: parent.horizontalCenter
                     width: 70; height: 14; radius: 7; color: Qt.rgba(1, 1, 1, 0.22)
                     Row { anchors.centerIn: parent; spacing: 4; Repeater { model: 5; Rectangle { width: 7; height: 7; radius: 2.5; color: Qt.rgba(1, 1, 1, 0.7) } } } }
-        Rectangle { visible: kind === "mac" || kind === "win" || kind === "minimal"; x: parent.width * 0.22; y: 22; width: parent.width * 0.5; height: 62; radius: 6; color: Qt.rgba(0.04, 0.07, 0.17, 0.95)
+        Rectangle { visible: kind === "mac" || kind === "win" || kind === "minimal"; x: parent.width * 0.22; y: 22; width: parent.width * 0.5; height: 62; radius: 6; color: Qt.rgba(0.03, 0.05, 0.10, 0.95)
                     Rectangle { x: 5; y: 5; width: 22; height: 3; radius: 1.5; color: Qt.rgba(1, 1, 1, 0.35) } }
-        Rectangle { visible: kind === "float"; x: parent.width * 0.2; y: 22; width: parent.width * 0.5; height: 70; radius: 6; color: Qt.rgba(0.04, 0.07, 0.17, 0.95) }
-        Rectangle { visible: kind === "float"; x: parent.width * 0.42; y: 48; width: parent.width * 0.4; height: 60; radius: 6; color: Qt.rgba(0.08, 0.14, 0.32, 0.95) }
+        Rectangle { visible: kind === "float"; x: parent.width * 0.2; y: 22; width: parent.width * 0.5; height: 70; radius: 6; color: Qt.rgba(0.03, 0.05, 0.10, 0.95) }
+        Rectangle { visible: kind === "float"; x: parent.width * 0.42; y: 48; width: parent.width * 0.4; height: 60; radius: 6; color: Qt.rgba(0.10, 0.15, 0.25, 0.95) }
         Row { visible: kind === "tile"; x: 6; y: 14; width: parent.width - 12; height: parent.height - 22; spacing: 5
-              Rectangle { width: (parent.width - 5) / 2; height: parent.height; radius: 4; color: Qt.rgba(0.04, 0.07, 0.17, 0.95) }
+              Rectangle { width: (parent.width - 5) / 2; height: parent.height; radius: 4; color: Qt.rgba(0.03, 0.05, 0.10, 0.95) }
               Column { width: (parent.width - 5) / 2; height: parent.height; spacing: 5
-                       Rectangle { width: parent.width; height: (parent.height - 5) / 2; radius: 4; color: Qt.rgba(0.08, 0.14, 0.32, 0.95) }
-                       Rectangle { width: parent.width; height: (parent.height - 5) / 2; radius: 4; color: Qt.rgba(0.08, 0.14, 0.32, 0.95) } } }
+                       Rectangle { width: parent.width; height: (parent.height - 5) / 2; radius: 4; color: Qt.rgba(0.10, 0.15, 0.25, 0.95) }
+                       Rectangle { width: parent.width; height: (parent.height - 5) / 2; radius: 4; color: Qt.rgba(0.10, 0.15, 0.25, 0.95) } } }
     }
 
     Column {
@@ -130,7 +130,7 @@ Item {
                     delegate: Rectangle {
                         required property var modelData
                         readonly property bool sel: Settings.wallpaper === root.wallDir + modelData.f || (Settings.wallpaper === "" && modelData.f === "medianoche.jpg")
-                        width: 150; height: 100; radius: 12; color: "#0a1236"; clip: true
+                        width: 150; height: 100; radius: 12; color: "#0A1020"; clip: true
                         border.width: sel ? 3 : 1; border.color: sel ? Theme.accent : Theme.hairline
                         Image { anchors.fill: parent; anchors.margins: 3; source: root.step === 1 && visible ? "file://" + root.wallDir + modelData.f : ""; fillMode: Image.PreserveAspectCrop; asynchronous: true; sourceSize.width: 300 }
                         Text { anchors.bottom: parent.bottom; anchors.horizontalCenter: parent.horizontalCenter; anchors.bottomMargin: 5; text: modelData.n

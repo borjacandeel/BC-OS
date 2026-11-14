@@ -259,7 +259,7 @@ AppWindow {
         transformOrigin: Item.TopLeft
         Behavior on opacity { NumberAnimation { duration: Theme.dur(120) } }
         Behavior on scale { NumberAnimation { duration: Theme.dur(140); easing.type: Theme.easing } }
-        Rectangle { anchors.fill: parent; radius: 12; color: Qt.rgba(0.08, 0.13, 0.28, 0.97); border.width: 1; border.color: Theme.hairline }
+        Rectangle { anchors.fill: parent; radius: 12; color: Theme.popupFill; border.width: 1; border.color: Theme.hairline }
         Column {
             id: ctxCol
             x: 6; y: 6; width: parent.width - 12
@@ -305,7 +305,7 @@ AppWindow {
         visible: opacity > 0
         opacity: open ? 1 : 0
         Behavior on opacity { NumberAnimation { duration: Theme.dur(140) } }
-        Rectangle { anchors.fill: parent; color: Qt.rgba(0.01, 0.04, 0.10, 0.5) }
+        Rectangle { anchors.fill: parent; color: Theme.scrim }
         MouseArea { anchors.fill: parent; onClicked: { nameDialog.open = false; fx.forceActiveFocus() } }
         Rectangle {
             width: 380; height: 160; radius: 18; anchors.centerIn: parent

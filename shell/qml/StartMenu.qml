@@ -12,7 +12,7 @@ Rectangle {
     width: Math.min(620, UiState.sw - 24)
     height: Math.min(600, UiState.sh - UiState.taskH - 24)
     radius: 16
-    color: Qt.rgba(0.07, 0.11, 0.25, 0.97)
+    color: Theme.popupFill
     border.width: 1
     border.color: Theme.hairline
 
@@ -72,7 +72,10 @@ Rectangle {
         delegate: Rectangle {
             width: list.width; height: 48; radius: 10
             color: rma.containsMouse ? Qt.rgba(1, 1, 1, 0.1) : "transparent"
-            Rectangle { x: 8; anchors.verticalCenter: parent.verticalCenter; width: 32; height: 32; radius: 8
+            Image { visible: modelData.iconPath !== ""; x: 8; anchors.verticalCenter: parent.verticalCenter; width: 32; height: 32
+                    source: modelData.iconPath !== "" ? "file://" + modelData.iconPath : ""; sourceSize: Qt.size(64, 64)
+                    fillMode: Image.PreserveAspectFit; asynchronous: true }
+            Rectangle { visible: modelData.iconPath === ""; x: 8; anchors.verticalCenter: parent.verticalCenter; width: 32; height: 32; radius: 8
                         color: Qt.hsla((modelData.name.charCodeAt(0) * 37 % 360) / 360, 0.45, 0.42, 1)
                         Text { anchors.centerIn: parent; text: modelData.name.charAt(0).toUpperCase(); color: Theme.white
                                font.family: Theme.fontFamily; font.pixelSize: 17; font.weight: Font.DemiBold } }
