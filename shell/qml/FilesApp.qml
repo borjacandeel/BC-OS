@@ -265,10 +265,10 @@ AppWindow {
             x: 6; y: 6; width: parent.width - 12
             Repeater {
                 model: {
-                    if (Files.inTrash) return ctxOnItem
+                    if (Files.inTrash) return fx.ctxOnItem
                         ? [{ id: "restore", t: qsTr("Restaurar") }, { id: "delete", t: qsTr("Eliminar definitivamente") }, { id: "empty", t: qsTr("Vaciar papelera") }]
                         : [{ id: "empty", t: qsTr("Vaciar papelera") }]
-                    return ctxOnItem
+                    return fx.ctxOnItem
                         ? [{ id: "open", t: qsTr("Abrir") }, { id: "rename", t: qsTr("Renombrar…") }, { id: "trash", t: qsTr("Mover a la papelera") }, { id: "new", t: qsTr("Nueva carpeta…") }]
                         : [{ id: "new", t: qsTr("Nueva carpeta…") }]
                 }
