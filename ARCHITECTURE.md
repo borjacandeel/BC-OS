@@ -47,6 +47,24 @@ Detalle en `docs/adr/`:
 6. Verificación de arranque en QEMU aarch64 con UEFI (AAVMF) antes de cualquier publicación.
 7. Suma SHA256 y publicación en GitHub Releases (solo con imagen probada).
 
+## 3b. Sesión de usuario: login, escritorio, bloqueo y apagado
+
+```
+systemd-boot → kernel → Plymouth (logo BC) → greetd
+  greetd → cage (kiosco Wayland, render por software) → bc-greeter (QML, IPC greetd + PAM)
+  login correcto → greetd arranca `bc-session --greetd` → labwc → bc-shell
+  cerrar sesión (labwc --exit) → vuelve a greetd/bc-greeter
+```
+
+- **Respaldo:** `bc-greeter-session` cuenta los arranques del greeter (`/run/bc-greeter/count`); tras 3 fallos seguidos marca
+  `/run/bc-greeter/failed` y `bc-login-fallback.path` arranca el autologin de `getty@tty1` (que detiene greetd por `Conflicts=`).
+- **Bloqueo:** `Ctrl+Súper+Q` o menú del logo BC. Es una superposición de pantalla completa que verifica con PAM (`/etc/pam.d/bc-lock`).
+  **Limitación:** no usa `ext-session-lock-v1`, así que no impide por sí sola que otra ventana reciba teclado; está en la lista de pendientes.
+- **Apagar / reiniciar / suspender / cerrar sesión:** diálogo de confirmación con cuenta atrás; ejecuta `systemctl` o `labwc --exit`.
+- **Estado del sistema** (`SystemStatus`): `wpctl` (audio), `nmcli` (red), `/sys/class/power_supply` (batería), `brightnessctl`, `bluetoothctl`.
+- **Notificaciones:** `bc-shell` implementa `org.freedesktop.Notifications` en el bus de sesión; respeta No molestar.
+- **Tienda:** interfaz sobre `pacman`; instalar y quitar usan `sudo -S` con la contraseña del usuario (solo en memoria).
+
 ## 4. Servicios BC Core
 
 | Servicio | Responsabilidad | Privilegio |

@@ -72,3 +72,12 @@ Convertir a VDI: `VBoxManage convertfromraw bcos.img bcos.vdi --format VDI`. Act
 ## Reproducibilidad
 
 Entradas fijadas: URL y MD5 del rootfs, lista de paquetes `build/packages/base.txt`, overlay `build/overlay/`. Arch Linux ARM es rolling: dos builds en fechas distintas no son idénticos bit a bit; se registran las versiones de paquetes por build.
+
+
+## Componentes que construye `build/build-all.sh`
+
+1. `build-shell.sh`: compila `shell/` (BC Shell + `bc-greeter`) **dentro** del rootfs aarch64 (Qt 6, PAM) y lo instala en `/usr`.
+2. `build-core.sh`: compila BC Core (Rust) para aarch64 (nativo o compilación cruzada) y habilita sus unidades de usuario.
+3. `configure-rootfs.sh`: idioma, usuarios, greetd + respaldo, PipeWire, iconos BC, tema Plymouth, instalador y reducción de tamaño
+   (`BC_KEEP_FIRMWARE=1` conserva `linux-firmware`).
+4. `mkimage.sh`: GPT (ESP FAT32 + ext4), systemd-boot con las entradas «BC OS» (animación) y «modo seguro».

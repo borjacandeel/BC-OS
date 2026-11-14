@@ -31,3 +31,20 @@ Objetivos (no garantizados): RAM ≤ 700 MB, CPU ≈ ≤ 2 % en reposo.
 ## CI
 
 Workflow en runner ARM64 (`ubuntu-24.04-arm`): lint, build Rust/Qt, tests, ensamblado de imagen, prueba de arranque, SHA256. No se publica si falla alguna etapa.
+
+
+## Pruebas de BC Shell (`ctest`)
+
+```bash
+cmake -S shell -B build-shell -G Ninja && cmake --build build-shell
+QT_QPA_PLATFORM=offscreen QT_QUICK_BACKEND=software ctest --test-dir build-shell --output-on-failure
+```
+
+Cubren: carga del QML sin avisos (es/en/movimiento reducido), capturas en 3 tamaños, modelo de archivos y Papelera (especificación
+FreeDesktop), lanzador, índice `.desktop`, analizadores de `wpctl`/`nmcli`/`pacman`/`wlrctl`, protocolo IPC de greetd contra un
+servidor falso (`tests/fake_greetd.py`, contraseña buena y mala) y el servicio D-Bus de notificaciones (`dbus-run-session`).
+
+## Pruebas de la imagen en QEMU
+
+`tools/qemu/start.sh <imagen.img>` arranca la imagen (UEFI, virtio-gpu, SSH en el puerto 2222). Con `tools/qemu/monitor.py`
+se envían teclas (`sendkey`) y se hacen capturas (`screendump`). Ejemplo: escribir la contraseña en el greeter y capturar el escritorio.
