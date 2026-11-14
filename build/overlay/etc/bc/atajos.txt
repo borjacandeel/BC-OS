@@ -12,6 +12,7 @@ Aplicaciones
   Súper+F1              Esta lista
 
 Ventanas
+  Ctrl+arrastrar        Mover cualquier ventana (botón izquierdo) · redimensionar (botón derecho)
   Súper+Q / Ctrl+Q      Cerrar ventana
   Súper+F               Pantalla completa
   Súper+M               Minimizar  ·  Súper+Mayús+M: restaurar

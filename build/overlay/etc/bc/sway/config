@@ -4,10 +4,15 @@ set $mod Mod4
 set $term bc-terminal
 
 # Aspecto: el panel (bc-shell --panel) dibuja barra, Dock y fondo; las apps de BC dibujan su propio título
-default_border none
-default_floating_border none
+# Bordes: finos en mosaico (el foco se ve en azul) y de 6 px en flotante, discretos, para poder redimensionar con el ratón
+default_border pixel 2
+default_floating_border pixel 6
 titlebar_border_thickness 0
 titlebar_padding 0
+client.focused          #2F7BF5 #1B2740 #E8ECF5 #2F7BF5 #243252
+client.focused_inactive #1B2740 #0F182B #8E9BB2 #1B2740 #1B2740
+client.unfocused        #141C2E #0F182B #8E9BB2 #141C2E #141C2E
+client.urgent           #FF5F57 #1B2740 #E8ECF5 #FF5F57 #FF5F57
 font pango:Inter 1
 focus_follows_mouse yes
 popup_during_fullscreen smart
@@ -71,7 +76,8 @@ mode "redimensionar" {
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
-floating_modifier $mod normal
+# Mantén Ctrl y arrastra con el botón izquierdo para mover la ventana y con el derecho para redimensionarla
+floating_modifier Ctrl normal
 
 # Escritorios
 bindsym $mod+1 workspace number 1
