@@ -139,6 +139,9 @@ int main(int argc, char *argv[]) {
 
     g_prev = qInstallMessageHandler(countingHandler);
     QQmlApplicationEngine engine;
+    // Qt.quit() desde QML (cerrar la ventana de una app) debe terminar el proceso
+    // (se usa exit(0): con QCoreApplication::quit() el bucle de eventos seguía vivo en Qt 6.4)
+    QObject::connect(&engine, &QQmlEngine::quit, &app, [] { QCoreApplication::exit(0); });
     if (appMode) {
         const QString n = appName.left(1).toUpper() + appName.mid(1);
         engine.load(QUrl("qrc:/BCShell/" + n + "App.qml"));
