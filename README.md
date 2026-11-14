@@ -20,7 +20,7 @@ Sistema operativo Linux ARM64 creado por <b>Borja Candel</b>, en español por de
   <br><sub>Captura real de BC OS 0.2.0-alpha en QEMU aarch64 (BC Shell sobre labwc, render por software). Es anterior a sway: desde 0.3.0 el compositor es sway; las capturas de más abajo ya son de la serie 0.3.x.</sub>
 </p>
 
-> **Estado honesto:** alpha experimental, versión actual **0.3.x-alpha** (0.3.0 sway, 0.3.1 pulido, 0.3.2 animación de minimizar y swayfx experimental). Es un escritorio funcional (login, bloqueo, Archivos con Papelera, Monitor, Configuración, Tienda, notificaciones, mosaico/flotante, estilos de escritorio…) **verificado en QEMU aarch64**. **Las versiones 0.1.2 y 0.1.3 arrancaron en VirtualBox ARM64; de la 0.2.0 en adelante aún no se han probado ahí, ni en hardware real.** **No hay ISO todavía** (el instalador `bc-install` va dentro de la imagen). Ver [problemas conocidos](#problemas-conocidos).
+> **Estado honesto:** alpha experimental, versión actual **0.4.x-beta** (0.4.0-beta publicada; 0.4.1-beta con los arreglos de hoy en publicación; 0.3.x fue la serie alpha con sway). Es un escritorio funcional (login, bloqueo, Archivos con Papelera, Monitor, Configuración, Tienda, notificaciones, mosaico/flotante, estilos de escritorio…) **verificado en QEMU aarch64**. **Las versiones 0.1.2 y 0.1.3 arrancaron en VirtualBox ARM64; de la 0.2.0 en adelante aún no se han probado ahí, ni en hardware real.** **No hay ISO todavía** (el instalador `bc-install` va dentro de la imagen). Ver [problemas conocidos](#problemas-conocidos).
 
 ---
 
@@ -47,7 +47,10 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 | `0.3.0-alpha` | publicada | **sway**: botón mosaico/flotante en la barra (`Súper+Mayús+Espacio`), `Ctrl+Intro` terminal, `Ctrl+B` Firefox, menús globales tipo macOS por app, Dock con ventanas reales. BC Shell dividido en panel + apps. |
 | `0.3.1-alpha` | publicada | Terminal Alacritty (respaldo foot), cursor tipo macOS, fondo sin parpadeos (`swaybg`), transparencias, Dock con minimizadas. |
 | `0.3.2-alpha` | publicada | Animación de minimizar y entrada de arranque **experimental** con swayfx (solo GPU real). Estilos de escritorio (BC/Windows/Minimal), Modos, widgets, Tienda con Flathub y asistente de bienvenida de 3 pasos (en desarrollo dentro de la serie 0.3.x; ver `PENDIENTE.md`). |
-| `0.4.0` → `1.0.0` | planificadas | Ventanas externas más completas, bloqueo seguro (`ext-session-lock`), tema claro, ISO con instalador, beta y primera estable. Son hitos, no promesas. |
+| `0.4.0-beta` | publicada (prerrelease) | Asistente de bienvenida, estilos BC/Windows/Minimal, widgets, Modos, Flathub, fish, antivirus (servicio), animaciones y fondos propios. |
+| `0.4.1-beta` | en publicación | Arreglos: las ventanas de las apps se cierran, sin aviso rojo en sway, **resolución adaptable** (`bc-display`), iconos **Qogir**, paleta *Medianoche refinado*, portapapeles (Súper+V), bloqueo por inactividad, ajustes tipo Zen del kernel estándar. |
+| `0.5.0-beta` | en pruebas | Entorno **Dotfiles (bspwm)** elegible en el login (X11: bspwm, sxhkd, polybar, picom, rofi, dunst) basado en `borjacandeel/dotfiles-2026`. |
+| `0.6.0` → `1.0.0` | planificadas | Ventanas externas más completas, bloqueo seguro (`ext-session-lock`), tema claro, ISO con instalador, beta y primera estable. Son hitos, no promesas. |
 
 > Las funciones de estilos, Modos, widgets, Flathub y bienvenida están implementadas en el código y se han probado con `ctest` y en QEMU, pero su inclusión exacta por versión publicada se confirma en las [notas de cada release](https://github.com/borjacandeel/BC-OS/releases).
 
@@ -163,7 +166,7 @@ tools/              diagnóstico de host, utilidades
 ## Construir
 
 ```bash
-sudo build/build-all.sh 0.3.2-alpha      # rootfs + shell + core + swayfx + configuración (host ARM64 o x86_64 con qemu-user)
+sudo build/build-all.sh 0.4.1-beta      # rootfs + shell + core + swayfx + configuración (host ARM64 o x86_64 con qemu-user)
 ```
 
 En GitHub: **Actions → Imagen ARM64 → Run workflow** (opción *publicar* crea un prerelease). Guía completa: [`docs/development/BUILD.md`](docs/development/BUILD.md), pruebas: [`TESTING.md`](docs/development/TESTING.md), ARM64/VirtualBox: [`ARM64.md`](docs/development/ARM64.md).
