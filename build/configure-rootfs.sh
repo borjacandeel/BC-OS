@@ -73,7 +73,7 @@ if ! echo "$CUR_SHA  $CUR_TAR" | sha256sum -c - >/dev/null 2>&1; then
   echo "$CUR_SHA  $CUR_TAR" | sha256sum -c -
 fi
 rm -rf "$R/usr/share/icons/macOS" "$R/usr/share/icons/macOS-White"
-tar -xJf "$CUR_TAR" -C "$R/usr/share/icons" macOS
+tar -xJf "$CUR_TAR" -C "$R/usr/share/icons" ./macOS
 install -D -m644 /dev/stdin "$R/usr/share/icons/default/index.theme" <<'CUR'
 [Icon Theme]
 Inherits=macOS

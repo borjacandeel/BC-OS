@@ -9,6 +9,13 @@ Imagen de disco arrancable (UEFI, ARM64). **Aún no hay ISO**: el instalador (`s
 4. Arranca: menú de 5 s con **BC OS** (animación de arranque con el logo, por defecto) y **BC OS (modo seguro, sin animación)**.
 5. Aparece el **panel de login**. Usuario `bc`, contraseña `bcos` (**solo alpha**; cámbiala con `passwd`).
 
+### Novedades de 0.3.1
+- Terminal por defecto **Alacritty** (translúcida, con respaldo a foot); ventanas de BC con transparencia suave.
+- **Cursor tipo macOS** por defecto (tema libre apple_cursor de ful1e5, GPL-3.0).
+- **Fondo sin parpadeos** al arrancar y al alternar mosaico/flotante (el fondo lo pinta sway; ya no se recarga la configuración en caliente).
+- Dock con ventanas minimizadas; lanzador sin herramientas de desarrollo; instalador al día (dos entradas de arranque, Plymouth).
+- Nota: no hay `picom` (es solo para X11); el desenfoque de fondo no está disponible en sway estándar.
+
 ### Novedades de 0.3.0: sway, mosaico y atajos
 - **Compositor sway**: ventanas **flotantes** (por defecto, como macOS) o en **mosaico** (como bspwm). Botón en la barra superior o `Súper+Mayús+Espacio`.
 - Atajos: **Ctrl+Intro** terminal, **Ctrl+B** Firefox, Ctrl+Espacio lanzador, Súper+E Archivos, Súper+Q cerrar, Súper+F pantalla completa, Súper+M minimizar. Lista completa: `/etc/bc/atajos.txt` (Súper+F1).
