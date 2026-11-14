@@ -113,6 +113,7 @@ Item {
                     RotationAnimator on rotation {
                         running: root.busy
                         from: 0; to: 360; duration: 900; loops: Animation.Infinite
+                        onRunningChanged: if (!running) goIcon.rotation = 0
                     }
                 }
                 MouseArea {

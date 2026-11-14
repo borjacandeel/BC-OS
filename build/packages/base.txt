@@ -39,3 +39,4 @@ bluez-utils
 pipewire-alsa
 alsa-utils
 mousepad
+xorg-xwayland

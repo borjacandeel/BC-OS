@@ -42,6 +42,8 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends libarchive-tools dosfstools mtools e2fsprogs fdisk zstd qemu-utils rsync curl ca-certificates zip
+      - name: Compilar BC Core (Rust)
+        run: cd core && cargo build --release --locked
       - name: Construir imagen
         run: sudo build/build-all.sh "${{ steps.v.outputs.version }}" "$RUNNER_TEMP/bcwork"
       - name: Verificar integridad

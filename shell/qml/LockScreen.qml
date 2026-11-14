@@ -5,7 +5,8 @@ import BCShell
 Item {
     id: root
     property bool active: false
-    property string displayName: PamAuth.currentUser
+    readonly property var me: Users.users.find(u => u.name === PamAuth.currentUser)
+    property string displayName: me ? me.display : PamAuth.currentUser
     signal unlocked()
     anchors.fill: parent
     z: 5000
@@ -39,7 +40,7 @@ Item {
         y: Math.round(root.height * 0.42)
         userName: PamAuth.currentUser
         displayName: root.displayName
-        placeholder: qsTr("Introduce la contraseña para desbloquear")
+        placeholder: qsTr("Introduce la contraseña")
         scale: Math.min(1, root.height / 800)
         transformOrigin: Item.Top
         onSubmitted: (password) => PamAuth.verify(password)

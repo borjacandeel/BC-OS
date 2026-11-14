@@ -31,7 +31,8 @@ Rectangle {
                color: tile.active ? tile.iconColor : Theme.textSecondary }
         Text { anchors.horizontalCenter: parent.horizontalCenter; y: 68; text: tile.label
                color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 16 }
-        Text { anchors.horizontalCenter: parent.horizontalCenter; y: 92; text: tile.status
+        Text { anchors.horizontalCenter: parent.horizontalCenter; y: 92; text: tile.status; width: parent.width - 12
+               horizontalAlignment: Text.AlignHCenter; elide: Text.ElideRight
                color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 14 }
         MouseArea { id: ta; anchors.fill: parent; hoverEnabled: true; enabled: tile.available; onClicked: tile.clicked() }
     }

@@ -16,7 +16,7 @@ ProtectControlGroups=yes
 RestrictAddressFamilies=AF_UNIX
 LockPersonality=yes
 MemoryDenyWriteExecute=yes
-ReadWritePaths=%E/bcos
+ReadWritePaths=%E
 
 [Install]
 WantedBy=default.target

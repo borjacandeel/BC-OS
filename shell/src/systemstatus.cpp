@@ -146,7 +146,7 @@ void SystemStatus::refresh() {
         const bool on = avail && parseBluetoothPowered(out);
         if (avail != m_btAvailable || on != m_btOn) { m_btAvailable = avail; m_btOn = on; emit changed(); }
     });
-    run("brightnessctl", {"-m"}, [this](int code, const QString &out) {
+    run("brightnessctl", {"-c", "backlight", "-m"}, [this](int code, const QString &out) {
         bool ok = false; double frac = 0;
         if (code == 0) parseBrightnessctl(out, ok, frac);
         if (ok != m_hasBacklight || (ok && qAbs(frac - m_brightness) > 0.005)) {

@@ -4,7 +4,7 @@
 set -euo pipefail
 R="${1:?uso: $0 <rootfs>}"; HERE="$(cd "$(dirname "$0")" && pwd)"; CORE="$HERE/../core"
 if [[ "$(uname -m)" == "aarch64" ]]; then
-  ( cd "$CORE" && cargo build --release --locked )
+  [[ -x "$CORE/target/release/bc-daemon" ]] || ( cd "$CORE" && cargo build --release --locked )
   OUT="$CORE/target/release"
 else
   export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER=aarch64-linux-gnu-gcc
