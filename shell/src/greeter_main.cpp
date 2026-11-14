@@ -9,6 +9,7 @@
 #include <QTranslator>
 #include <QtQml/qqml.h>
 #include "appconfig.h"
+#include "appsettings.h"
 #include "greetd.h"
 #include "powercontrol.h"
 #include "userlist.h"
@@ -53,10 +54,12 @@ int main(int argc, char *argv[]) {
     GreetdClient greetd;
     PowerControl power;
     UserList users(p.value(oPasswd));
+    AppSettings appSettings;
     qmlRegisterSingletonInstance("BCShell", 1, 0, "AppConfig", &cfg);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Greetd", &greetd);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Power", &power);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Users", &users);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Settings", &appSettings);
 
     const QString counter = qEnvironmentVariable("BC_GREETER_DIR", "/run/bc-greeter") + "/count";
     QObject::connect(&greetd, &GreetdClient::succeeded, &app, [&] {

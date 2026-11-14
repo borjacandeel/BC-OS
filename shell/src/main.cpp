@@ -9,8 +9,10 @@
 #include <QtQml/qqml.h>
 #include "appconfig.h"
 #include "pamauth.h"
+#include "appsettings.h"
 #include "notifications.h"
 #include "powercontrol.h"
+#include "sysmonitor.h"
 #include "systemstatus.h"
 #include "userlist.h"
 #include "filebrowser.h"
@@ -63,6 +65,8 @@ int main(int argc, char *argv[]) {
     Launcher launcher;
     FileBrowser files;
     PamAuth pam;
+    AppSettings appSettings;
+    SysMonitor monitor;
     SystemStatus status;
     NotificationQueue notifications;
     NotificationServer notifServer(&notifications);
@@ -71,6 +75,8 @@ int main(int argc, char *argv[]) {
     PowerControl power;
     UserList users;
     qmlRegisterSingletonInstance("BCShell", 1, 0, "PamAuth", &pam);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Settings", &appSettings);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Monitor", &monitor);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "SystemStatus", &status);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Notifications", &notifications);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Power", &power);

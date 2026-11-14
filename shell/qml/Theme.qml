@@ -40,7 +40,7 @@ QtObject {
     readonly property int sizeSmall: 14
 
     // Movimiento
-    readonly property bool reducedMotion: AppConfig.reducedMotion
+    readonly property bool reducedMotion: AppConfig.reducedMotion || Settings.reducedMotion
     function dur(ms) { return reducedMotion ? 0 : ms }
     readonly property int easing: Easing.OutCubic
 }

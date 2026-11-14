@@ -9,20 +9,20 @@ find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Qml Quick Network DBus Linguis
 find_library(PAM_LIBRARY pam REQUIRED)
 qt_standard_project_setup()
 
-add_library(bccommon STATIC src/appconfig.h src/appconfig.cpp src/powercontrol.h src/powercontrol.cpp
+add_library(bccommon STATIC src/appconfig.h src/appconfig.cpp src/appsettings.h src/appsettings.cpp src/powercontrol.h src/powercontrol.cpp
     src/userlist.h src/userlist.cpp)
 target_link_libraries(bccommon PUBLIC Qt6::Core)
 
 qt_add_executable(bc-shell src/main.cpp src/launcher.h src/launcher.cpp src/filebrowser.h src/filebrowser.cpp
     src/pamauth.h src/pamauth.cpp src/systemstatus.h src/systemstatus.cpp
-    src/notifications.h src/notifications.cpp)
+    src/notifications.h src/notifications.cpp src/sysmonitor.h src/sysmonitor.cpp)
 
 set(BC_QML_FILES
     qml/Main.qml qml/Theme.qml qml/Icons.qml qml/IconCache.qml qml/Icon.qml qml/Wallpaper.qml
     qml/TopBar.qml qml/Dock.qml qml/AppIcon.qml qml/FilesWindow.qml
     qml/FileGlyph.qml qml/ControlCenter.qml qml/NotificationCard.qml qml/Brand.qml
     qml/LoginPanel.qml qml/PowerButton.qml qml/PowerDialog.qml qml/BigClock.qml qml/LockScreen.qml
-    qml/Splash.qml qml/SystemMenu.qml)
+    qml/Splash.qml qml/SystemMenu.qml qml/AppWindow.qml qml/MonitorApp.qml qml/SettingsApp.qml)
 set(BC_GREETER_QML qml/Greeter.qml qml/LoginPanel.qml qml/PowerButton.qml qml/PowerDialog.qml qml/BigClock.qml
     qml/Theme.qml qml/Icons.qml qml/IconCache.qml qml/Icon.qml qml/Wallpaper.qml qml/Brand.qml)
 foreach(f ${BC_QML_FILES} qml/Greeter.qml)

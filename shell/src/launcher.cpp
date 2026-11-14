@@ -18,7 +18,7 @@ QString Launcher::programFor(const QString &kind) {
 }
 
 QString Launcher::launch(const QString &kind) {
-    if (kind == "archivos") return "internal";
+    if (kind == "archivos" || kind == "monitor" || kind == "ajustes") return "internal";
     const QString prog = programFor(kind);
     if (prog.isEmpty()) return "unavailable";
     if (m_pids.contains(kind)) return "started";

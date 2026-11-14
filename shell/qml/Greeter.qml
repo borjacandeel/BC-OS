@@ -5,6 +5,8 @@ import BCShell
 Window {
     id: win
     visible: true
+    flags: Qt.FramelessWindowHint
+    visibility: Qt.platform.pluginName === "wayland" ? Window.FullScreen : Window.Windowed
     width: 1280
     height: 800
     title: qsTr("Inicio de sesión de BC OS")

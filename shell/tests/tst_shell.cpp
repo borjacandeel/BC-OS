@@ -60,6 +60,8 @@ private slots:
     void lanzador() {
         Launcher l;
         QCOMPARE(l.launch("archivos"), QString("internal"));
+        QCOMPARE(l.launch("monitor"), QString("internal"));
+        QCOMPARE(l.launch("ajustes"), QString("internal"));
         QCOMPARE(l.launch("tienda"), QString("unavailable"));
         qputenv("BC_TERMINAL", "bc-no-existe-xyz");
         QCOMPARE(l.launch("terminal"), QString("failed"));
