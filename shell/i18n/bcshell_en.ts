@@ -1365,167 +1365,188 @@
 <context>
     <name>Welcome</name>
     <message>
-        <location filename="../qml/Welcome.qml" line="13" />
+        <location filename="../qml/Welcome.qml" line="14" />
         <source>Medianoche</source>
         <translation>Midnight</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="13" />
+        <location filename="../qml/Welcome.qml" line="14" />
         <source>Océano</source>
         <translation>Ocean</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="14" />
+        <location filename="../qml/Welcome.qml" line="15" />
         <source>Grafito</source>
         <translation>Graphite</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="14" />
+        <location filename="../qml/Welcome.qml" line="15" />
         <source>Plata</source>
         <translation>Silver</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="97" />
+        <location filename="../qml/Welcome.qml" line="117" />
         <source>¡Bienvenido a BC OS!</source>
         <translation>Welcome to BC OS!</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="99" />
+        <location filename="../qml/Welcome.qml" line="119" />
         <source>Elige cómo se ve tu escritorio</source>
         <translation>Choose how your desktop looks</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="99" />
+        <location filename="../qml/Welcome.qml" line="119" />
         <source>Elige tus colores y tu fondo</source>
         <translation>Choose your colors and wallpaper</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="99" />
+        <location filename="../qml/Welcome.qml" line="119" />
         <source>Elige cómo se organizan tus ventanas</source>
         <translation>Choose how your windows are arranged</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="100" />
+        <location filename="../qml/Welcome.qml" line="120" />
         <source>Puedes cambiarlo cuando quieras desde Configuración.</source>
         <translation>You can change this any time in Settings.</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="117" />
+        <location filename="../qml/Welcome.qml" line="137" />
         <source>Windows</source>
         <translation>Windows</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="117" />
+        <location filename="../qml/Welcome.qml" line="137" />
         <source>Lo de siempre</source>
         <translation>The classic</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="117" />
+        <location filename="../qml/Welcome.qml" line="137" />
         <source>Barra de tareas abajo con menú Inicio y los atajos de siempre.</source>
         <translation>Taskbar at the bottom with a Start menu and the usual shortcuts.</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="119" />
+        <location filename="../qml/Welcome.qml" line="139" />
         <source>BC</source>
         <translation>BC</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="119" />
+        <location filename="../qml/Welcome.qml" line="139" />
         <source>Recomendado</source>
         <translation>Recommended</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="119" />
+        <location filename="../qml/Welcome.qml" line="139" />
         <source>Barra arriba con menús, Dock flotante y animaciones: el estilo de BC OS.</source>
         <translation>Top bar with menus, a floating Dock and animations: the BC OS style.</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="121" />
+        <location filename="../qml/Welcome.qml" line="141" />
         <source>Minimal</source>
         <translation>Minimal</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="121" />
+        <location filename="../qml/Welcome.qml" line="141" />
         <source>Solo la barra superior: limpio, sin Dock ni widgets.</source>
         <translation>Just the top bar: clean, no Dock or widgets.</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="133" />
+        <location filename="../qml/Welcome.qml" line="143" />
+        <source>Dotfiles</source>
+        <translation>Dotfiles</translation>
+    </message>
+    <message>
+        <location filename="../qml/Welcome.qml" line="143" />
+        <source>bspwm con polybar, rofi y picom (X11). Se activa al volver a iniciar sesión.</source>
+        <translation>bspwm with polybar, rofi and picom (X11). Takes effect the next time you log in.</translation>
+    </message>
+    <message>
+        <location filename="../qml/Welcome.qml" line="151" />
+        <source>Cierra la sesión y vuelve a entrar para usar Dotfiles.</source>
+        <translation>Log out and back in to use Dotfiles.</translation>
+    </message>
+    <message>
+        <location filename="../qml/Welcome.qml" line="154" />
+        <source>Cerrar sesión ahora</source>
+        <translation>Log out now</translation>
+    </message>
+    <message>
+        <location filename="../qml/Welcome.qml" line="166" />
         <source>Oscuro</source>
         <translation>Dark</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="134" />
+        <location filename="../qml/Welcome.qml" line="167" />
         <source>Claro (próximamente)</source>
         <translation>Light (coming soon)</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="152" />
+        <location filename="../qml/Welcome.qml" line="185" />
         <source>Color de acento</source>
         <translation>Accent color</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="172" />
+        <location filename="../qml/Welcome.qml" line="205" />
         <source>Flotantes</source>
         <translation>Floating</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="172" />
+        <location filename="../qml/Welcome.qml" line="205" />
         <source>Como siempre</source>
         <translation>As usual</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="172" />
+        <location filename="../qml/Welcome.qml" line="205" />
         <source>Las ventanas se colocan y se mueven libremente.</source>
         <translation>Windows are placed and moved freely.</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="174" />
+        <location filename="../qml/Welcome.qml" line="143" />
+        <location filename="../qml/Welcome.qml" line="207" />
         <source>Mosaico</source>
         <translation>Tiling</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="174" />
+        <location filename="../qml/Welcome.qml" line="207" />
         <source>Las ventanas se reparten la pantalla solas, como en bspwm.</source>
         <translation>Windows share the screen automatically, like in bspwm.</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="177" />
+        <location filename="../qml/Welcome.qml" line="210" />
         <source>Widgets en el escritorio</source>
         <translation>Desktop widgets</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="178" />
+        <location filename="../qml/Welcome.qml" line="211" />
         <source>Relajación</source>
         <translation>Relax</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="179" />
+        <location filename="../qml/Welcome.qml" line="212" />
         <source>Concentración</source>
         <translation>Focus</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="180" />
+        <location filename="../qml/Welcome.qml" line="213" />
         <source>Noche</source>
         <translation>Night</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="188" />
+        <location filename="../qml/Welcome.qml" line="221" />
         <source>Saltar</source>
         <translation>Skip</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="191" />
+        <location filename="../qml/Welcome.qml" line="224" />
         <source>Atrás</source>
         <translation>Back</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="199" />
+        <location filename="../qml/Welcome.qml" line="232" />
         <source>Empezar a usar BC OS</source>
         <translation>Start using BC OS</translation>
     </message>
     <message>
-        <location filename="../qml/Welcome.qml" line="199" />
+        <location filename="../qml/Welcome.qml" line="232" />
         <source>Continuar</source>
         <translation>Continue</translation>
     </message>

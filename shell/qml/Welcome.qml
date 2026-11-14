@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Shapes
 import BCShell
 
 // Asistente de bienvenida de BC OS (primer inicio y desde Configuración): estilo de escritorio,
@@ -15,7 +16,9 @@ Item {
     // Solo los colores base de BC OS (los del semáforo y los de las tarjetas del Monitor)
     readonly property var accents: ["#2F7BF5", "#34C759", "#FF9F0A", "#FF5F57", "#8E9BB2"]
 
-    function pickStyle(id) { Settings.desktopStyle = id; UiState.style = id }
+    property bool dotfilesChosen: Sessions.runningId === "dotfiles"
+    function pickStyle(id) { Settings.desktopStyle = id; UiState.style = id; if (dotfilesChosen) { Sessions.remember(Sessions.currentUserName(), "bc"); dotfilesChosen = false } }
+    function pickDotfiles() { if (Sessions.remember(Sessions.currentUserName(), "dotfiles")) dotfilesChosen = true }
     function pickWallpaper(f) { Settings.wallpaper = wallDir + f }
     function pickAccent(c) { Settings.accent = c; AppConfig.setAccent(c) }
     function pickTiling(on) { Sway.setTiling(on) }
@@ -88,6 +91,23 @@ Item {
                        Rectangle { width: parent.width; height: (parent.height - 5) / 2; radius: 4; color: Qt.rgba(0.10, 0.15, 0.25, 0.95) } } }
     }
 
+    component DotfilesMock: Rectangle {
+        anchors.fill: parent; radius: 10; clip: true
+        gradient: Gradient { GradientStop { position: 0; color: "#1F4565" } GradientStop { position: 0.6; color: "#6CA4B8" } GradientStop { position: 0.85; color: "#E6D8C0" } }
+        Shape {
+            anchors.fill: parent
+            ShapePath { fillColor: "#3E6E88"; strokeColor: "transparent"
+                PathPolyline { path: [Qt.point(0, 110), Qt.point(40, 96), Qt.point(80, 104), Qt.point(130, 88), Qt.point(190, 102), Qt.point(210, 96), Qt.point(210, 140), Qt.point(0, 140)] } }
+            ShapePath { fillColor: "#0A1522"; strokeColor: "transparent"
+                PathPolyline { path: [Qt.point(0, 128), Qt.point(50, 112), Qt.point(95, 124), Qt.point(150, 104), Qt.point(210, 126), Qt.point(210, 140), Qt.point(0, 140)] } }
+        }
+        Rectangle { width: parent.width; height: 12; color: Qt.rgba(0.05, 0.1, 0.15, 0.7)
+            Row { x: 8; anchors.verticalCenter: parent.verticalCenter; spacing: 6
+                  Repeater { model: ["1", "2", "7"]; Text { text: modelData; color: index === 1 ? "#FFFFFF" : "#9DB2BF"; font.pixelSize: 8 } } }
+            Text { anchors.centerIn: parent; text: " Artista: Pista"; color: "#EAF1F5"; font.pixelSize: 7 }
+            Text { anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter; text: "19:22 | 06 Nov"; color: "#EAF1F5"; font.pixelSize: 7 } }
+    }
+
     Column {
         anchors.horizontalCenter: parent.horizontalCenter
         y: Math.max(24, parent.height * 0.08)
@@ -115,11 +135,24 @@ Item {
             Behavior on scale { NumberAnimation { duration: Theme.dur(260); easing.type: Easing.OutCubic } }
             anchors.horizontalCenter: parent.horizontalCenter; spacing: 18
             Card { title: qsTr("Windows"); badge: qsTr("Lo de siempre"); desc: qsTr("Barra de tareas abajo con menú Inicio y los atajos de siempre.")
-                   sel: UiState.style === "win"; onClicked: root.pickStyle("win"); Mock { kind: "win" } }
+                   sel: UiState.style === "win" && !root.dotfilesChosen; onClicked: root.pickStyle("win"); Mock { kind: "win" } }
             Card { title: qsTr("BC"); badge: qsTr("Recomendado"); desc: qsTr("Barra arriba con menús, Dock flotante y animaciones: el estilo de BC OS.")
-                   sel: UiState.style === "mac"; onClicked: root.pickStyle("mac"); Mock { kind: "mac" } }
+                   sel: UiState.style === "mac" && !root.dotfilesChosen; onClicked: root.pickStyle("mac"); Mock { kind: "mac" } }
             Card { title: qsTr("Minimal"); badge: ""; desc: qsTr("Solo la barra superior: limpio, sin Dock ni widgets.")
-                   sel: UiState.style === "minimal"; onClicked: root.pickStyle("minimal"); Mock { kind: "minimal" } }
+                   sel: UiState.style === "minimal" && !root.dotfilesChosen; onClicked: root.pickStyle("minimal"); Mock { kind: "minimal" } }
+            Card { title: qsTr("Dotfiles"); badge: qsTr("Mosaico"); desc: qsTr("bspwm con polybar, rofi y picom (X11). Se activa al volver a iniciar sesión.")
+                   sel: root.dotfilesChosen; onClicked: root.pickDotfiles(); DotfilesMock { } }
+        }
+
+        Row {
+            visible: root.step === 0 && root.dotfilesChosen
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: 282; spacing: 12
+            Text { anchors.verticalCenter: parent.verticalCenter; text: qsTr("Cierra la sesión y vuelve a entrar para usar Dotfiles."); color: Theme.textSecondary
+                   font.family: Theme.fontFamily; font.pixelSize: 14 }
+            Rectangle { height: 30; width: lo.implicitWidth + 28; radius: 15; color: Theme.accent
+                        Text { id: lo; anchors.centerIn: parent; text: qsTr("Cerrar sesión ahora"); color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 13 }
+                        MouseArea { anchors.fill: parent; onClicked: { Settings.welcomed = true; root.finished(); UiState.openPower("logout") } } }
         }
 
         // Paso 1: colores y fondo
