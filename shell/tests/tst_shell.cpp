@@ -106,7 +106,9 @@ private slots:
     void lanzador() {
         Launcher l;
         QCOMPARE(Launcher::appIdFor("archivos"), QString("bc-files"));
-        QCOMPARE(Launcher::appIdFor("terminal"), QString("foot"));
+        QCOMPARE(Launcher::appIdFor("terminal"), QString("Alacritty"));
+        QVERIFY(AppIndex::isHiddenId("cmake-gui.desktop"));
+        QVERIFY(!AppIndex::isHiddenId("firefox.desktop"));
         QCOMPARE(Launcher::appIdFor("navegador"), QString("firefox"));
         qputenv("BC_SHELL_BIN", "/bin/true");
         QCOMPARE(l.launch("tienda"), QString("started"));
@@ -149,7 +151,7 @@ private slots:
         QVERIFY(!AppIndex::parseDesktop("[Desktop Entry]\nType=Application\nName=X\nExec=x\nNoDisplay=true\n", "es_ES", e));
         QVERIFY(!AppIndex::parseDesktop("[Desktop Entry]\nType=Link\nName=X\nExec=x\n", "es_ES", e));
         QCOMPARE(AppIndex::commandFor("foot --title \"A B\" %U", false), QStringList({"foot", "--title", "A B"}));
-        QCOMPARE(AppIndex::commandFor("htop", true), QStringList({"foot", "-e", "htop"}));
+        QCOMPARE(AppIndex::commandFor("htop", true), QStringList({"bc-terminal", "-e", "htop"}));
         QTemporaryDir t;
         QDir(t.path()).mkpath("apps");
         QFile f(t.filePath("apps/navegador.desktop"));

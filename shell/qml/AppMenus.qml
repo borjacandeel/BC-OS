@@ -5,7 +5,7 @@ import QtQuick
 QtObject {
     readonly property var names: ({
         "bc-files": qsTr("Archivos"), "bc-monitor": qsTr("Monitor del sistema"), "bc-settings": qsTr("Configuración"),
-        "bc-store": qsTr("Tienda"), "foot": qsTr("Terminal"), "firefox": qsTr("Firefox"), "": qsTr("Escritorio")
+        "bc-store": qsTr("Tienda"), "foot": qsTr("Terminal"), "Alacritty": qsTr("Terminal"), "firefox": qsTr("Firefox"), "": qsTr("Escritorio")
     })
     function nameFor(appId) {
         if (names[appId] !== undefined) return names[appId]
@@ -29,7 +29,7 @@ QtObject {
     }
     function helpMenu() {
         return { title: qsTr("Ayuda"), items: [ { label: qsTr("Acerca de BC OS"), cmd: "bc:about" },
-                                                 { label: qsTr("Atajos de teclado"), cmd: "sway:exec foot -e less /etc/bc/atajos.txt" } ] }
+                                                 { label: qsTr("Atajos de teclado"), cmd: "sway:exec bc-terminal -e less /etc/bc/atajos.txt" } ] }
     }
 
     function menusFor(appId) {
@@ -64,7 +64,7 @@ QtObject {
             windowMenu(), helpMenu() ]
         if (appId === "") return [
             { title: qsTr("Archivo"), items: [ { label: qsTr("Nueva ventana de Archivos"), cmd: "sway:exec bc-shell --app files" },
-                                                { label: qsTr("Nueva terminal"), key: "Ctrl+Intro", cmd: "sway:exec foot" } ] },
+                                                { label: qsTr("Nueva terminal"), key: "Ctrl+Intro", cmd: "sway:exec bc-terminal" } ] },
             viewMenu([]), helpMenu() ]
         // Aplicaciones externas (Terminal, Firefox…)
         return [

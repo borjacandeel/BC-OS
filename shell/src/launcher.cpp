@@ -13,7 +13,7 @@ Launcher::Launcher(QObject *parent) : QObject(parent) {
 QString Launcher::programFor(const QString &kind) {
     if (kind == "terminal") {
         const QString env = qEnvironmentVariable("BC_TERMINAL");
-        return env.isEmpty() ? QStringLiteral("foot") : env;
+        return env.isEmpty() ? QStringLiteral("bc-terminal") : env;
     }
     if (kind == "navegador") {
         const QString env = qEnvironmentVariable("BC_BROWSER");
@@ -33,7 +33,7 @@ QString Launcher::bcAppName(const QString &kind) {
 QString Launcher::appIdFor(const QString &kind) {
     const QString n = bcAppName(kind);
     if (!n.isEmpty()) return "bc-" + n;
-    if (kind == "terminal") return "foot";
+    if (kind == "terminal") return "Alacritty";
     if (kind == "navegador") return "firefox";
     return {};
 }

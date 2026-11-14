@@ -44,14 +44,16 @@ LayerWindow {
             else Launcher.launch("archivos", "trash")
             return
         }
-        if (Sway.focusApp(appId)) return
+        if (Sway.focusApp(appId) || (kind === "terminal" && Sway.focusApp("foot"))) return
         const r = Launcher.launch(kind)
         if (r === "failed") Notifications.push("BC OS", name, qsTr("No se pudo abrir la aplicación"), "", 4000)
     }
     function runningKinds() {
-        const ids = Sway.appIds, out = []
-        for (const k of ["archivos", "ajustes", "monitor", "terminal", "tienda", "navegador"])
-            if (ids.indexOf(Launcher.appIdFor(k)) >= 0) out.push(k)
+        const ids = Sway.windows.map(w => w.appId), out = []
+        for (const k of ["archivos", "ajustes", "monitor", "terminal", "tienda", "navegador"]) {
+            const id = Launcher.appIdFor(k)
+            if (ids.indexOf(id) >= 0 || (k === "terminal" && ids.indexOf("foot") >= 0)) out.push(k)
+        }
         return out
     }
 

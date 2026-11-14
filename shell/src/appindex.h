@@ -10,6 +10,7 @@ public:
     struct Entry { QString id, name, exec, icon, comment; bool terminal = false; };
     explicit AppIndex(const QStringList &dirs = QStringList(), const QString &lang = QString(), QObject *parent = nullptr);
     int count() const { return m_entries.size(); }
+    static bool isHiddenId(const QString &id);
     Q_INVOKABLE QVariantList search(const QString &query) const;
     Q_INVOKABLE bool launch(const QString &id);
     Q_INVOKABLE void reload();

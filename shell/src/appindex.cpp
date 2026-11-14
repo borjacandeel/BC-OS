@@ -50,7 +50,7 @@ QStringList AppIndex::commandFor(const QString &exec, bool terminal) {
     e.remove(codes);
     e.replace("\x01", "%");
     QStringList args = QProcess::splitCommand(e.simplified());
-    if (terminal && !args.isEmpty()) args = QStringList{"foot", "-e"} + args;
+    if (terminal && !args.isEmpty()) args = QStringList{"bc-terminal", "-e"} + args;
     return args;
 }
 
@@ -62,6 +62,7 @@ void AppIndex::reload() {
         for (const QString &f : d.entryList({"*.desktop"}, QDir::Files)) {
             QFile file(d.filePath(f));
             if (!file.open(QIODevice::ReadOnly)) continue;
+            if (isHiddenId(f)) continue;
             Entry e;
             if (!parseDesktop(QString::fromUtf8(file.readAll()), m_lang, e)) { byId.remove(f); continue; }
             e.id = f;
@@ -71,6 +72,14 @@ void AppIndex::reload() {
     m_entries = byId.values();
     std::sort(m_entries.begin(), m_entries.end(), [](const Entry &a, const Entry &b) { return a.name.compare(b.name, Qt::CaseInsensitive) < 0; });
     emit changed();
+}
+
+bool AppIndex::isHiddenId(const QString &id) {
+    // Herramientas de desarrollo y variantes técnicas que no deben aparecer en el lanzador del usuario.
+    static const QStringList prefixes{"cmake", "assistant", "designer", "linguist", "qdbusviewer", "qv4l", "foot-server", "footclient",
+                                      "foot.desktop", "avahi", "bssh", "bvnc", "qt6ct", "qtcreator", "org.freedesktop.IBus", "nm-"};
+    for (const QString &p : prefixes) if (id.startsWith(p)) return true;
+    return false;
 }
 
 QVariantList AppIndex::search(const QString &query) const {
