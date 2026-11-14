@@ -9,6 +9,16 @@ Imagen de disco arrancable (UEFI, ARM64). **Aún no hay ISO**: el instalador (`s
 4. Arranca: menú de 5 s con **BC OS** (animación de arranque con el logo, por defecto) y **BC OS (modo seguro, sin animación)**.
 5. Aparece el **panel de login**. Usuario `bc`, contraseña `bcos` (**solo alpha**; cámbiala con `passwd`).
 
+### Novedades de 0.4.0: «como Quantum, pero BC OS»
+- **Asistente de bienvenida** en el primer inicio (3 pasos): estilo de escritorio, fondo y color de acento, y organización de ventanas (flotantes o mosaico, widgets, Modos). Se reabre desde Configuración.
+- **Tres estilos de escritorio** elegibles al instante: **BC** (barra superior + Dock), **Windows** (barra de tareas + menú Inicio con búsqueda) y **Minimal** (solo la barra).
+- **Widgets** en el escritorio (reloj, calendario, uso del equipo) y **Modos** en el Centro de control: Relajación, Concentración (No molestar) y Noche (tinte cálido).
+- **Fondos propios** (Medianoche, Océano, Grafito, Plata) y **color de acento** configurable con los colores base de BC OS.
+- **Tienda con Flathub** (apps Flatpak en tu usuario, sin contraseña) además de los repositorios de Arch Linux ARM.
+- **Servicio de antivirus** (`bc-antivirus-service`, ClamAV por D-Bus) y `clamav` en la imagen; aún sin interfaz gráfica.
+- Alacritty translúcido por defecto, cursor tipo macOS y animación de minimizar (apps de BC).
+- Referencia de ideas: Quantum Linux (GPL-3.0-or-later). BC OS no copia sus logos, fondos ni capturas; ver README.
+
 ### Novedades de 0.3.2
 - **Animación de minimizar** en las apps de BC (la ventana se encoge hacia el Dock y se despliega al volver).
 - **Esquinas redondeadas en todas las ventanas** con swayfx: entrada de arranque **«BC OS (experimental: efectos con GPU real)»**. Verificado en QEMU: redondea ventanas y Dock, pero con render por software (llvmpipe) va lento y con fallos de dibujo, por eso NO es el modo por defecto. Las ventanas de BC y el Dock ya son redondeados en el modo normal; las de terceros (Alacritty, Firefox) solo con efectos. Desenfoque y sombras: opcionales en `~/.config/bc/sway-user.conf`.
@@ -43,7 +53,8 @@ Imagen de disco arrancable (UEFI, ARM64). **Aún no hay ISO**: el instalador (`s
 
 ### No verificado / problemas conocidos
 - **Esta versión puede no estar probada en VirtualBox ARM64** (las anteriores 0.1.2 y 0.1.3 sí arrancaron).
-- Sin hardware real probado con sway; el Dock no muestra ventanas minimizadas.
+- Sin hardware real probado con sway. Tema claro, Música, Android (Waydroid) y juegos x86 (FEX/box64) aún no existen.
+- El servicio de antivirus no tiene interfaz; Flathub necesita red y se verifica poco.
 - El bloqueo es una superposición: no usa `ext-session-lock`, otra ventana podría recibir teclado. Contraseña por defecto pública.
 - Música sin implementar; sin tema claro; Wi-Fi/Bluetooth solo probados por sus analizadores (sin hardware en la VM).
 - Render por software (VirtualBox no tiene 3D): rendimiento no medido con precisión. RAM en reposo observada: ~250 MB usados tras iniciar sesión (QEMU, 2 GB).
