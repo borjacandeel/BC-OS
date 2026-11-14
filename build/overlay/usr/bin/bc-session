@@ -8,5 +8,9 @@ export LANG="${LANG:-es_ES.UTF-8}" XDG_CURRENT_DESKTOP=BC XDG_SESSION_TYPE=wayla
 LOG="$HOME/bc-session.log"
 { date; echo "renderD: $(ls /dev/dri 2>&1 | tr '\n' ' ')"; echo "WLR_RENDERER=$WLR_RENDERER QT_QUICK_BACKEND=$QT_QUICK_BACKEND"; } > "$LOG" 2>&1
 labwc >> "$LOG" 2>&1
-echo "labwc terminó con código $? — revisa $LOG"
+rc=$?
+echo "labwc terminó con código $rc" >> "$LOG"
+# Bajo greetd (--greetd) al cerrar sesión se vuelve al login; sin greetd (autologin) queda un terminal.
+{ [ "$1" = "--greetd" ] || [ -n "$BC_GREETD" ]; } && exit 0
+echo "labwc terminó con código $rc — revisa $LOG"
 exec bash

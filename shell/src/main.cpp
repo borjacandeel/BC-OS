@@ -10,6 +10,7 @@
 #include "appconfig.h"
 #include "pamauth.h"
 #include "powercontrol.h"
+#include "systemstatus.h"
 #include "userlist.h"
 #include "filebrowser.h"
 #include "launcher.h"
@@ -61,9 +62,11 @@ int main(int argc, char *argv[]) {
     Launcher launcher;
     FileBrowser files;
     PamAuth pam;
+    SystemStatus status;
     PowerControl power;
     UserList users;
     qmlRegisterSingletonInstance("BCShell", 1, 0, "PamAuth", &pam);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "SystemStatus", &status);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Power", &power);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Users", &users);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Launcher", &launcher);

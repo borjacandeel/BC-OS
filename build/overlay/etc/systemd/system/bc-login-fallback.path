@@ -1,0 +1,8 @@
+[Unit]
+Description=Respaldo de inicio de sesión de BC OS (si el login gráfico falla)
+
+[Path]
+PathExists=/run/bc-greeter/failed
+
+[Install]
+WantedBy=multi-user.target

@@ -56,9 +56,12 @@ Rectangle {
         anchors.rightMargin: 20
         anchors.verticalCenter: parent.verticalCenter
         spacing: 18
-        Icon { name: Icons.wifi; size: 22; anchors.verticalCenter: parent.verticalCenter }
-        Icon { name: Icons.volume; size: 22; anchors.verticalCenter: parent.verticalCenter }
-        Icon { name: Icons.battery; size: 26; anchors.verticalCenter: parent.verticalCenter }
+        Icon { name: Icons.networkIcon(SystemStatus.online, SystemStatus.wired, SystemStatus.signalBars(SystemStatus.signal))
+               size: 22; anchors.verticalCenter: parent.verticalCenter }
+        Icon { name: Icons.volumeIcon(SystemStatus.volume, SystemStatus.muted); size: 22
+               visible: SystemStatus.audioAvailable; anchors.verticalCenter: parent.verticalCenter }
+        Icon { name: Icons.batteryIcon(SystemStatus.batteryPercent, SystemStatus.batteryCharging); size: 26
+               visible: SystemStatus.hasBattery; anchors.verticalCenter: parent.verticalCenter }
         Rectangle {
             width: 36; height: 28; radius: 9
             anchors.verticalCenter: parent.verticalCenter

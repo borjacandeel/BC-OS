@@ -1,0 +1,7 @@
+[Unit]
+Description=Autologin en tty1 porque el login gráfico de BC OS ha fallado
+
+[Service]
+Type=oneshot
+ExecStartPre=/usr/bin/rm -f /run/bc-greeter/failed
+ExecStart=/usr/bin/systemctl start getty@tty1.service

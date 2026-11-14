@@ -35,5 +35,5 @@ private:
     State m_state = Idle;
     QString m_user, m_password;
     QStringList m_cmd{"bc-session", "--greetd"};
-    QStringList m_env{"XDG_SESSION_TYPE=wayland", "XDG_CURRENT_DESKTOP=BC"};
+    QStringList m_env{"XDG_SESSION_TYPE=wayland", "XDG_CURRENT_DESKTOP=BC", "BC_GREETD=1"};
 };

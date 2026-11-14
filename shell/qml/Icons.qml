@@ -32,4 +32,19 @@ QtObject {
     readonly property string lock: "system-lock-screen-symbolic"
     readonly property string user: "system-users-symbolic"
     readonly property string next: "go-next-symbolic"
+
+    function volumeIcon(v, muted) {
+        if (muted || v <= 0.001) return "audio-volume-muted-symbolic"
+        return v < 0.34 ? "audio-volume-low-symbolic" : (v < 0.67 ? "audio-volume-medium-symbolic" : "audio-volume-high-symbolic")
+    }
+    function networkIcon(online, wired, bars) {
+        if (!online) return "network-wireless-offline-symbolic"
+        if (wired) return "network-wired-symbolic"
+        return ["network-wireless-signal-none-symbolic", "network-wireless-signal-weak-symbolic",
+                "network-wireless-signal-ok-symbolic", "network-wireless-signal-excellent-symbolic"][Math.max(0, Math.min(3, bars))]
+    }
+    function batteryIcon(percent, charging) {
+        const lv = percent >= 90 ? 100 : (percent >= 70 ? 80 : (percent >= 50 ? 60 : (percent >= 30 ? 40 : (percent >= 10 ? 20 : 0))))
+        return "battery-level-" + lv + (charging ? "-charging" : "") + "-symbolic"
+    }
 }

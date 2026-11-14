@@ -1,0 +1,14 @@
+#!/bin/sh
+# Pantalla de login de BC OS: cage (kiosco Wayland) + bc-greeter, con render por software.
+# Si el greeter falla varias veces seguidas se marca /run/bc-greeter/failed y
+# bc-login-fallback.path arranca el autologin de tty1 para no dejar la máquina inservible.
+D=/run/bc-greeter
+n=$(cat "$D/count" 2>/dev/null); n=$(( ${n:-0} + 1 ))
+echo "$n" > "$D/count" 2>/dev/null
+if [ "$n" -gt 3 ]; then
+  : > "$D/failed" 2>/dev/null
+  exec sleep 3600
+fi
+export WLR_RENDERER=pixman WLR_NO_HARDWARE_CURSORS=1 QT_QUICK_BACKEND=software
+export QT_QPA_PLATFORM=wayland XDG_SESSION_TYPE=wayland LANG="${LANG:-es_ES.UTF-8}" BC_GREETER_DIR="$D"
+exec cage -s -- /usr/bin/bc-greeter

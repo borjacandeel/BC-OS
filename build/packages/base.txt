@@ -30,3 +30,5 @@ rsync
 libnewt
 # Arranque animado (tema bcos)
 plymouth
+greetd
+cage

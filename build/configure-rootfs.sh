@@ -36,7 +36,8 @@ XDG_VIDEOS_DIR="$HOME/Vídeos"
 E
 echo "es_ES" > "$S/.config/user-dirs.locale"
 install -m644 "$HERE/overlay/etc/skel/.bashrc" "$S/.bashrc"
-grep -q bc-session "$S/.bash_profile" || cat "$HERE/overlay/etc/skel/.bash_profile" >> "$S/.bash_profile"
+sed -i '/# BC OS: iniciar la sesión gráfica/,$d' "$S/.bash_profile"
+cat "$HERE/overlay/etc/skel/.bash_profile" >> "$S/.bash_profile"
 mkdir -p "$S/.config/labwc"; install -m644 "$HERE"/overlay/etc/skel/.config/labwc/* "$S/.config/labwc/"
 install -m755 "$HERE/overlay/usr/bin/bc-session" "$R/usr/bin/bc-session"
 install -D -m644 "$HERE/overlay/etc/systemd/system/getty@tty1.service.d/autologin.conf" "$R/etc/systemd/system/getty@tty1.service.d/autologin.conf"
@@ -62,6 +63,14 @@ mkdir -p "$R/etc/gtk-3.0"; printf '[Settings]\ngtk-icon-theme-name=BC\n' > "$R/e
 mkdir -p "$R/usr/lib/bc-install"
 cp -a "$HERE/installer/bc-install" "$HERE/installer/lang" "$R/usr/lib/bc-install/"
 chmod 755 "$R/usr/lib/bc-install/bc-install"; ln -sf ../lib/bc-install/bc-install "$R/usr/bin/bc-install"
+
+# Login gráfico con greetd (greeter propio) y respaldo de autologin
+install -D -m644 "$HERE/overlay/etc/greetd/config.toml" "$R/etc/greetd/config.toml"
+install -m755 "$HERE/overlay/usr/bin/bc-greeter-session" "$R/usr/bin/bc-greeter-session"
+install -D -m644 "$HERE/overlay/usr/lib/tmpfiles.d/bc-greeter.conf" "$R/usr/lib/tmpfiles.d/bc-greeter.conf"
+install -m644 "$HERE/overlay/etc/pam.d/bc-lock" "$R/etc/pam.d/bc-lock"
+install -m644 "$HERE/overlay/etc/systemd/system/bc-login-fallback.path" "$HERE/overlay/etc/systemd/system/bc-login-fallback.service" "$R/etc/systemd/system/"
+sh "systemctl enable greetd.service bc-login-fallback.path && systemctl set-default graphical.target"
 
 # Servicios mínimos
 sh "systemctl enable NetworkManager systemd-timesyncd systemd-resolved nftables sshd"
