@@ -1,7 +1,7 @@
 #!/bin/sh
 # Sesión «Dotfiles (bspwm)» de BC OS (X11): arranca Xorg con bc-bspwm-start. La elige el login (greetd) o Configuración.
 export XDG_SESSION_TYPE=x11 XDG_CURRENT_DESKTOP=BC-Dotfiles BC_SESSION_ID=dotfiles
-export LANG="${LANG:-es_ES.UTF-8}" XCURSOR_THEME=macOS XCURSOR_SIZE=24
+export LANG="${LANG:-es_ES.UTF-8}" XCURSOR_THEME=McMojave-cursors XCURSOR_SIZE=24
 LOG="$HOME/bc-session.log"
 { date; echo "sesión: dotfiles (bspwm) · vt=${XDG_VTNR:-?}"; } > "$LOG" 2>&1
 bc-dotfiles-setup >> "$LOG" 2>&1

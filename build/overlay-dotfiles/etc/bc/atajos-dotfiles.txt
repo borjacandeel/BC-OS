@@ -7,7 +7,9 @@ Aplicaciones
   Súper+L                    Bloquear              Súper+F1                 Esta lista
 
 Ventanas
-  Súper+W (Mayús: forzar)    Cerrar                Súper+T / Mayús+T / S / F  Mosaico / pseudo / flotante / pantalla completa
+  Súper+W / Ctrl+Q            Cerrar (Súper+Mayús+W: forzar)
+  Ctrl+1…0 (Mayús: llevar)   Escritorios
+                Súper+T / Mayús+T / S / F  Mosaico / pseudo / flotante / pantalla completa
   Súper+H J K L              Foco (con Mayús: intercambiar)
   Ctrl+flechas               Cambiar de ventana por dirección (con Mayús: mover)
   Súper+M                    Mosaico ↔ monóculo    Súper+G                  Intercambiar con la mayor

@@ -78,7 +78,7 @@ jobs:
         # xz-utils (tar -xJ del tema de cursores), zstd, util-linux (mountpoint, mount).
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libarchive-tools dosfstools mtools e2fsprogs fdisk zstd qemu-utils rsync curl ca-certificates zip xz-utils util-linux
+          sudo apt-get install -y --no-install-recommends libarchive-tools dosfstools mtools e2fsprogs fdisk zstd qemu-utils rsync curl ca-certificates zip xz-utils util-linux git python3-pil librsvg2-bin
       - name: Compilar BC Core (Rust)
         # build-core.sh reutiliza core/target/release si ya existe (en aarch64), así sudo no necesita cargo/rustup.
         timeout-minutes: 30

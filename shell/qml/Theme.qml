@@ -39,8 +39,8 @@ QtObject {
     readonly property int radiusControl: 10
 
     // Tipografía
-    readonly property string fontFamily: "Inter"
-    readonly property string fontMono: "DejaVu Sans Mono"
+    readonly property string fontFamily: "CaskaydiaCove Nerd Font"
+    readonly property string fontMono: "CaskaydiaCove Nerd Font Mono"
     readonly property int sizeBody: 16
     readonly property int sizeSmall: 14
 

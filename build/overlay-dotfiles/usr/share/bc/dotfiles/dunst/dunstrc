@@ -11,7 +11,7 @@
     markup = full
     stack_duplicates = true
     show_indicators = no
-    icon_theme = Qogir
+    icon_theme = "MacOS-Like-Dark, Qogir"
     enable_recursive_icon_lookup = true
     icon_position = left
     max_icon_size = 40

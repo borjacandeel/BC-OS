@@ -9,22 +9,22 @@ Item {
     width: size
     height: size
 
-    // Iconos de aplicación: tema Qogir (vinceliuice, GPL-3.0); el resto de la interfaz usa el pack BC.
+    // Iconos de aplicación: tema MacOS-Like-Dark (Scrimas, sobre MacTahoe de vinceliuice; GPL-3.0).
     readonly property var names: ({
         lanzador: "view-app-grid",
         archivos: "system-file-manager",
         ajustes: "preferences-system",
         monitor: "utilities-system-monitor",
-        terminal: "utilities-terminal",
+        terminal: "com.mitchellh.ghostty",
         tienda: "gnome-software",
-        navegador: "web-browser",
+        navegador: "firefox",
         musica: "multimedia-audio-player",
         papelera: "user-trash"
     })
 
     Image {
         anchors.fill: parent
-        source: "qrc:/BCShell/qogir/" + (root.names[root.kind] || "system-file-manager") + ".svg"
+        source: "qrc:/BCShell/apps/" + (root.names[root.kind] || "system-file-manager") + ".svg"
         sourceSize: Qt.size(root.size * 2, root.size * 2)
         fillMode: Image.PreserveAspectFit
         smooth: true

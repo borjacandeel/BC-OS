@@ -19,7 +19,7 @@ Ventanas
   Ctrl+flechas          Cambiar de ventana (izquierda, derecha, arriba, abajo)  ·  con Mayús: mover la ventana
   Súper+flechas         Lo mismo (alternativa)
   Alt+Tab               Siguiente ventana
-  Súper+1…4             Escritorio 1…4  ·  con Mayús: mover ahí la ventana
+  Ctrl+1…9 / Súper+1…4  Ir al escritorio  ·  con Mayús: llevar la ventana
   Súper+Ctrl+←/→        Escritorio anterior / siguiente
 
 Mosaico (como bspwm) y flotante (como macOS)

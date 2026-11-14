@@ -1,7 +1,7 @@
 #!/bin/sh
 # Variables de la sesión X (entorno «Dotfiles» de BC OS)
 export _JAVA_AWT_WM_NONREPARENTING=1
-export XCURSOR_THEME=macOS XCURSOR_SIZE=24
+export XCURSOR_THEME=McMojave-cursors XCURSOR_SIZE=24
 export GTK_THEME=Adwaita:dark
 export QT_QPA_PLATFORMTHEME=gtk3
 [ -f "$HOME/.profile" ] && . "$HOME/.profile"

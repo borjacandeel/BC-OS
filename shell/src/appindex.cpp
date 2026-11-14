@@ -90,7 +90,7 @@ QString AppIndex::resolveIcon(const QString &name, const QStringList &rootsIn) {
     static const QRegularExpression ok("^[A-Za-z0-9._+-]+$");
     if (!ok.match(name).hasMatch()) return {};   // nada de «..» ni separadores
     QStringList roots = rootsIn;
-    if (roots.isEmpty()) roots = {"/usr/share/icons/Qogir/scalable/apps", "/usr/share/icons/hicolor/scalable/apps",
+    if (roots.isEmpty()) roots = {"/usr/share/icons/MacOS-Like-Dark/apps/scalable", "/usr/share/icons/Qogir/scalable/apps", "/usr/share/icons/hicolor/scalable/apps",
                                   "/usr/share/icons/hicolor/256x256/apps", "/usr/share/icons/hicolor/128x128/apps",
                                   "/usr/share/icons/hicolor/64x64/apps", "/usr/share/icons/hicolor/48x48/apps", "/usr/share/pixmaps"};
     for (const QString &r : roots)

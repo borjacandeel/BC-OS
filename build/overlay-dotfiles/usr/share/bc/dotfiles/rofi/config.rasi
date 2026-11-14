@@ -3,7 +3,7 @@ configuration {
     modi: "drun,run,window";
     font: "CaskaydiaCove Nerd Font 12";
     show-icons: true;
-    icon-theme: "Qogir";
+    icon-theme: "MacOS-Like-Dark";
     terminal: "bc-terminal";
     drun-display-format: "{name}";
     display-drun: "  Apps ";

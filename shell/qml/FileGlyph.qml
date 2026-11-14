@@ -19,7 +19,7 @@ Item {
     Image {
         anchors.centerIn: parent
         width: 76; height: 76
-        source: "qrc:/BCShell/qogir/" + (root.names[root.kind] || "text-x-generic") + ".svg"
+        source: "qrc:/BCShell/apps/" + (root.names[root.kind] || "text-x-generic") + ".svg"
         sourceSize: Qt.size(152, 152)
         fillMode: Image.PreserveAspectFit
         smooth: true

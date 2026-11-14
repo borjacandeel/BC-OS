@@ -19,6 +19,7 @@ qt6-declarative
 qt6-wayland
 qt6-svg
 inter-font
+ttf-cascadia-code-nerd
 ttf-dejavu
 xdg-user-dirs
 foot

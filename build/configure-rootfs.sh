@@ -65,6 +65,7 @@ needs_root_rights=auto
 XW
 install -d -m1777 "$R/var/lib/bc-greeter"      # elección de entorno por usuario (la escribe cada usuario; la lee el login)
 install -D -m644 "$HERE/overlay/usr/lib/firefox/distribution/policies.json" "$R/usr/lib/firefox/distribution/policies.json"   # Firefox usa la barra de título del sistema (semáforo a la izquierda)
+install -D -m644 "$HERE/overlay/etc/fonts/local.conf" "$R/etc/fonts/local.conf"
 install -D -m644 "$HERE/overlay/etc/sysctl.d/90-bcos.conf" "$R/etc/sysctl.d/90-bcos.conf"
 install -D -m644 "$HERE/overlay/etc/udev/rules.d/60-bcos-ioscheduler.rules" "$R/etc/udev/rules.d/60-bcos-ioscheduler.rules"
 install -D -m440 "$HERE/overlay/etc/sudoers.d/10-bcos-pwfeedback" "$R/etc/sudoers.d/10-bcos-pwfeedback"
@@ -88,25 +89,17 @@ cp -a "$HERE/../icons/dist/theme/BC" "$R/usr/share/icons/BC"
 # Qogir (vinceliuice, GPL-3.0): iconos de aplicaciones y archivos; la interfaz del shell usa el pack BC
 rm -rf "$R/usr/share/icons/Qogir"; cp -a "$HERE/../icons/qogir/Qogir" "$R/usr/share/icons/Qogir"
 mkdir -p "$R/usr/share/licenses/qogir-icon-theme"; cp "$HERE/../icons/qogir/COPYING" "$HERE/../icons/qogir/AUTHORS" "$R/usr/share/licenses/qogir-icon-theme/"
-mkdir -p "$R/etc/gtk-3.0"; printf '[Settings]\ngtk-icon-theme-name=Qogir\ngtk-cursor-theme-name=macOS\ngtk-cursor-theme-size=24\n' > "$R/etc/gtk-3.0/settings.ini"
+# Iconos por defecto: MacOS-Like-Dark (GPL-3.0; se construye en el anfitrión) con Qogir de respaldo; cursor McMojave (GPL-3.0)
+bash "$HERE/build-icons-maclike.sh" "$R" || echo "AVISO: no se pudo construir MacOS-Like; se queda Qogir"
+rm -rf "$R/usr/share/icons/McMojave-cursors"; cp -a "$HERE/../icons/mcmojave/McMojave-cursors" "$R/usr/share/icons/McMojave-cursors"
+mkdir -p "$R/usr/share/licenses/mcmojave-cursors"; cp "$HERE/../icons/mcmojave/LICENSE" "$R/usr/share/licenses/mcmojave-cursors/"
+ICONS=MacOS-Like-Dark; [ -d "$R/usr/share/icons/MacOS-Like-Dark" ] || ICONS=Qogir
+mkdir -p "$R/etc/gtk-3.0" "$R/etc/gtk-4.0"
+printf '[Settings]\ngtk-icon-theme-name=%s\ngtk-cursor-theme-name=McMojave-cursors\ngtk-cursor-theme-size=24\ngtk-font-name=CaskaydiaCove Nerd Font 10\ngtk-application-prefer-dark-theme=1\n' "$ICONS" | tee "$R/etc/gtk-3.0/settings.ini" > "$R/etc/gtk-4.0/settings.ini"
 
-# Cursor tipo macOS por defecto: tema libre «apple_cursor» de ful1e5 (GPL-3.0), descargado y verificado
-CUR_URL="https://github.com/ful1e5/apple_cursor/releases/download/v2.0.1/macOS.tar.xz"
-CUR_SHA="9c6e5e13b068ce51a9e90a9abd6ce232ec7d25d4ceb05aa8ac76efbb99c76762"
-CUR_TAR="${BC_CACHE:-/tmp}/bc-macOS-cursor.tar.xz"
-if ! echo "$CUR_SHA  $CUR_TAR" | sha256sum -c - >/dev/null 2>&1; then
-  curl -fsSL --retry 4 -o "$CUR_TAR" "$CUR_URL"
-  echo "$CUR_SHA  $CUR_TAR" | sha256sum -c -
-fi
-rm -rf "$R/usr/share/icons/macOS" "$R/usr/share/icons/macOS-White"
-tar -xJf "$CUR_TAR" -C "$R/usr/share/icons" ./macOS
 install -D -m644 /dev/stdin "$R/usr/share/icons/default/index.theme" <<'CUR'
 [Icon Theme]
-Inherits=macOS
-CUR
-install -D -m644 /dev/stdin "$R/usr/share/licenses/bc-cursor-macos/AVISO" <<'CUR'
-Tema de cursores «macOS» del proyecto apple_cursor (ful1e5), licencia GPL-3.0.
-https://github.com/ful1e5/apple_cursor
+Inherits=McMojave-cursors
 CUR
 
 # Reducción de tamaño (imagen para máquinas virtuales UEFI; BC_KEEP_FIRMWARE=1 conserva todo el firmware).
