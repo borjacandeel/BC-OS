@@ -5,6 +5,15 @@ set -Eeuo pipefail
 
 HERE="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 ESP_MIB=512
+# Arranque: deben coincidir con build/overlay/boot/loader (lo comprueba test/dry-run.sh).
+# En la imagen oficial la raíz es root=LABEL=bc-root y lang=es_ES; aquí se sustituyen por UUID/LUKS y el idioma elegido.
+BOOT_TIMEOUT=5
+BOOT_COMMON="rw fsck.mode=skip"
+BOOT_SPLASH="splash plymouth.ignore-serial-consoles"
+BOOT_SAFE="plymouth.enable=0"
+BOOT_CONSOLE="console=tty0 console=ttyAMA0"
+INITRD_MODULES="virtio_blk virtio_pci virtio_scsi virtio_gpu nvme ahci xhci_pci vfat nls_cp437 nls_iso8859_1 ext4"
+PLYMOUTH_THEME=bcos
 
 SOURCE=/
 UI_LANG="${BC_INSTALL_LANG:-es_ES}"
@@ -65,7 +74,7 @@ run() {
 # Escribe fichero en el destino (respeta --dry-run)
 put() { # put <ruta> <modo>  (contenido por stdin)
   local path="$1" mode="${2:-644}"
-  if ((DRY)); then printf '+ escribir %s (modo %s)\n' "$path" "$mode"; cat >/dev/null; return 0; fi
+  if ((DRY)); then printf '+ escribir %s (modo %s)\n' "$path" "$mode"; sed 's/^/    | /'; return 0; fi
   mkdir -p "$(dirname "$path")"; cat >"$path"; chmod "$mode" "$path"
 }
 
@@ -342,15 +351,28 @@ do_config() {
   printf 'input type:keyboard {\n    xkb_layout %s\n}\n' "$(xkb_layout "$KEYMAP")" | put "$TARGET/etc/bc/sway/keyboard.conf"
   run ln -sf "/usr/share/zoneinfo/$TZONE" "$TARGET/etc/localtime"
   crun systemctl enable NetworkManager systemd-timesyncd systemd-resolved nftables
+  # Sesión gráfica igual que la imagen: greetd (bc-greeter) → bc-session (sway); respaldo en tty1 si el login gráfico falla
+  if ((DRY)) || [[ -e "$TARGET/usr/lib/systemd/system/greetd.service" && -e "$TARGET/etc/greetd/config.toml" ]]; then
+    crun systemctl enable greetd.service bc-login-fallback.path
+    crun systemctl set-default graphical.target
+  else
+    say "$S_NO_GREETD"; log "$S_NO_GREETD"
+  fi
   run rm -f "$TARGET/etc/resolv.conf"
   run ln -s ../run/systemd/resolve/stub-resolv.conf "$TARGET/etc/resolv.conf"
 }
 
 do_initramfs() {
   progress "$P_INITRD" 10
-  local hooks="base systemd modconf kms keyboard sd-vconsole block filesystems fsck"
+  # Mismo orden que build/overlay/etc/mkinitcpio.conf.d/bcos.conf: plymouth justo tras systemd
+  # y SIEMPRE antes de sd-encrypt (así la clave LUKS se pide en la pantalla de arranque).
+  local pre="base systemd" post="modconf kms keyboard sd-vconsole block" tail="filesystems fsck" hooks ply=1
+  if ((DRY == 0)) && [[ ! -e "$TARGET/usr/lib/initcpio/install/plymouth" ]]; then
+    ply=0; say "$S_NO_PLYMOUTH"; log "$S_NO_PLYMOUTH"
+  fi
+  hooks="$pre"; ((ply)) && hooks+=" plymouth"; hooks+=" $post"
   if ((ENCRYPT)); then
-    hooks="base systemd modconf kms keyboard sd-vconsole block sd-encrypt filesystems fsck"
+    hooks+=" sd-encrypt"
     if ((DRY == 0)) && [[ ! -x "$TARGET/usr/bin/cryptsetup" ]]; then
       say "$S_CRYPT_PKG"
       rm -f "$TARGET/etc/resolv.conf"; cp /etc/resolv.conf "$TARGET/etc/resolv.conf"
@@ -358,10 +380,23 @@ do_initramfs() {
       rm -f "$TARGET/etc/resolv.conf"; ln -s ../run/systemd/resolve/stub-resolv.conf "$TARGET/etc/resolv.conf"
     fi
   fi
-  printf 'MODULES=(virtio_blk virtio_pci virtio_scsi virtio_gpu nvme ahci xhci_pci vfat nls_cp437 nls_iso8859_1 ext4)\nHOOKS=(%s)\n' "$hooks" \
-    | put "$TARGET/etc/mkinitcpio.conf.d/bcos.conf"
+  hooks+=" $tail"
+  printf 'MODULES=(%s)\nHOOKS=(%s)\n' "$INITRD_MODULES" "$hooks" | put "$TARGET/etc/mkinitcpio.conf.d/bcos.conf"
+  # El tema Plymouth debe ser el predeterminado ANTES de generar el initramfs (como configure-rootfs.sh)
+  if ((ply)); then
+    if ((DRY)) || [[ -f "$TARGET/usr/share/plymouth/themes/$PLYMOUTH_THEME/$PLYMOUTH_THEME.plymouth" ]]; then
+      crun plymouth-set-default-theme "$PLYMOUTH_THEME"
+    else
+      say "$(fmt "$S_NO_PLY_THEME" "$PLYMOUTH_THEME")"; log "tema plymouth $PLYMOUTH_THEME ausente"
+    fi
+  fi
   crun mkinitcpio -P
-  ((DRY)) || [[ -s "$TARGET/boot/initramfs-linux.img" ]] || die "initramfs no generado"
+  ((DRY)) || [[ -s "$TARGET/boot/initramfs-linux.img" ]] || die "$S_NO_INITRD"
+}
+
+boot_entry() { # boot_entry <título> <raíz/cifrado> <parámetros propios>
+  printf 'title   %s\nlinux   /Image\ninitrd  /initramfs-linux.img\noptions %s %s %s %s lang=%s\n' \
+    "$1" "$2" "$BOOT_COMMON" "$3" "$BOOT_CONSOLE" "${LOCALE%%.*}"
 }
 
 do_boot() {
@@ -383,9 +418,11 @@ do_boot() {
   run mkdir -p "$TARGET/boot/EFI/BOOT" "$TARGET/boot/EFI/systemd" "$TARGET/boot/loader/entries"
   run cp "$efi" "$TARGET/boot/EFI/BOOT/BOOTAA64.EFI"
   run cp "$efi" "$TARGET/boot/EFI/systemd/systemd-bootaa64.efi"
-  printf 'default bcos.conf\ntimeout 2\nconsole-mode max\neditor no\n' | put "$TARGET/boot/loader/loader.conf"
-  printf 'title   BC OS\nlinux   /Image\ninitrd  /initramfs-linux.img\noptions %s rw quiet loglevel=3 console=tty0 console=ttyAMA0 lang=%s\n' \
-    "$cmdline" "${LOCALE%%.*}" | put "$TARGET/boot/loader/entries/bcos.conf"
+  # Dos entradas como la imagen oficial: normal (animación Plymouth) y modo seguro (sin animación).
+  # «editor no»: a diferencia de la imagen de pruebas, el sistema instalado no deja editar la línea del kernel.
+  printf 'default bcos.conf\ntimeout %s\nconsole-mode max\neditor no\n' "$BOOT_TIMEOUT" | put "$TARGET/boot/loader/loader.conf"
+  boot_entry "$S_BOOT_TITLE" "$cmdline" "$BOOT_SPLASH" | put "$TARGET/boot/loader/entries/bcos.conf"
+  boot_entry "$S_BOOT_TITLE_SAFE" "$cmdline" "$BOOT_SAFE" | put "$TARGET/boot/loader/entries/bcos-seguro.conf"
 }
 
 # ---------- Principal ----------

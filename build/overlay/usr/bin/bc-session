@@ -4,6 +4,7 @@
 if ! grep -qw "bc.gpu=1" /proc/cmdline || ! ls /dev/dri/renderD* >/dev/null 2>&1; then
   export WLR_RENDERER=pixman WLR_NO_HARDWARE_CURSORS=1 QT_QUICK_BACKEND=software
 fi
+export XCURSOR_THEME=macOS XCURSOR_SIZE=24
 export LANG="${LANG:-es_ES.UTF-8}" XDG_CURRENT_DESKTOP=BC XDG_SESSION_TYPE=wayland QT_QPA_PLATFORM=wayland
 LOG="$HOME/bc-session.log"
 { date; echo "renderD: $(ls /dev/dri 2>&1 | tr '\n' ' ')"; echo "WLR_RENDERER=$WLR_RENDERER QT_QUICK_BACKEND=$QT_QUICK_BACKEND"; } > "$LOG" 2>&1

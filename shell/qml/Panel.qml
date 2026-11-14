@@ -19,14 +19,15 @@ LayerWindow {
     readonly property int loadErrors: [bar, dockLoader, popLoader].filter(l => l.status === Loader.Error).length
     readonly property string notifTitle: qsTr("Actualizaciones")
 
-    Wallpaper { id: wall; anchors.fill: parent }
+    // Bajo sway el fondo lo pinta swaybg con la misma imagen (sin parpadeos); aquí solo en modo ventana (pruebas).
+    Wallpaper { id: wall; anchors.fill: parent; visible: !Layer.supported }
     Loader {
         id: brand
         scale: root.u
         transformOrigin: Item.BottomLeft
         x: Math.round(41 * root.u)
         y: root.height - height - Math.round(22 * root.u)
-        visible: !wall.ready
+        visible: !Layer.supported && !wall.ready
         sourceComponent: Column {
             spacing: 22
             Brand { logoHeight: 31; withOs: true }

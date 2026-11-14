@@ -1,0 +1,25 @@
+# Alacritty en BC OS (copia a ~/.config/alacritty/alacritty.toml para personalizar)
+[window]
+opacity = 0.82
+padding = { x = 12, y = 10 }
+decorations = "None"
+dynamic_padding = true
+
+[font]
+size = 11.5
+
+[colors.primary]
+background = "#070d22"
+foreground = "#e8ecf5"
+
+[colors.cursor]
+cursor = "#2f7bff"
+text = "#070d22"
+
+[colors.selection]
+background = "#2f7bff"
+text = "#ffffff"
+
+[cursor.style]
+shape = "Beam"
+blinking = "On"

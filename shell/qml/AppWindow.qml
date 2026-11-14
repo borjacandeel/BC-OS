@@ -32,7 +32,7 @@ Window {
         id: frame
         anchors.fill: parent
         radius: Theme.radiusWindow
-        color: Qt.rgba(0.06, 0.10, 0.23, 0.98)
+        color: Qt.rgba(0.06, 0.10, 0.23, 0.88)
         border.width: 1
         border.color: Theme.hairline
         clip: true

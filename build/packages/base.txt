@@ -43,3 +43,4 @@ sway
 layer-shell-qt
 grim
 swaybg
+alacritty

@@ -1,0 +1,11 @@
+#!/bin/sh
+# Terminal de BC OS: Alacritty (translúcido). Si no puede arrancar (p. ej. sin OpenGL), usa foot.
+CFG="${XDG_CONFIG_HOME:-$HOME/.config}/alacritty/alacritty.toml"
+[ -f "$CFG" ] || CFG=/etc/bc/alacritty.toml
+if command -v alacritty >/dev/null 2>&1 && [ ! -f "${XDG_RUNTIME_DIR:-/tmp}/bc-no-alacritty" ]; then
+  t0=$(date +%s)
+  alacritty --config-file "$CFG" "$@" && exit 0
+  # Si falló nada más arrancar, se recuerda durante la sesión y se pasa a foot
+  [ $(( $(date +%s) - t0 )) -lt 4 ] && : > "${XDG_RUNTIME_DIR:-/tmp}/bc-no-alacritty" || exit 0
+fi
+exec foot "$@"

@@ -48,6 +48,12 @@ S_DONE="BC OS se ha instalado correctamente en %s.\n\nRetira el medio de instala
 S_FAIL="La instalación ha fallado. Consulta el registro: %s"
 S_CRYPT_PKG="Instalando cryptsetup en el sistema destino (se necesita red)..."
 S_CRYPT_PKG_FAIL="No se pudo instalar cryptsetup en el destino. Añádelo a la imagen origen."
+S_BOOT_TITLE="BC OS"
+S_BOOT_TITLE_SAFE="BC OS (modo seguro, sin animación)"
+S_NO_PLYMOUTH="Aviso: el sistema origen no tiene Plymouth; se instalará sin animación de arranque."
+S_NO_PLY_THEME="Aviso: falta el tema Plymouth «%s»; se usará el tema por defecto."
+S_NO_GREETD="Aviso: el sistema origen no tiene greetd; el inicio de sesión será en modo texto (tty1)."
+S_NO_INITRD="No se ha generado el initramfs."
 S_USAGE="Uso: bc-install [opciones]
 
 Instalador de BC OS (ARM64). Sin opciones arranca el asistente interactivo.
