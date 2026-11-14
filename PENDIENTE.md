@@ -18,6 +18,8 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 
 - [ ] Siguiente: bloqueo seguro `ext-session-lock`; tema claro; selector de fondos; ISO live; polkit en Tienda; benchmarks; Música (el creador pidió dejarla para más adelante).
 
+- [x] 2026-11-14 0.3.2: animación minimizar + swayfx experimental (verificado: lento con llvmpipe; pendiente probar con GPU real/VirtualBox 3D). Lunes 16:30 se retoma (tarea programada en esta conversación).
+
 ## Pendiente (orden)
 ### Fase 0 — Viabilidad
 - [x] Inspeccionar repo (solo README, rama `main` + `claude/bc-os-kcjzgc`).

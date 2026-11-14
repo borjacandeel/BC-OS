@@ -9,6 +9,10 @@ Imagen de disco arrancable (UEFI, ARM64). **Aún no hay ISO**: el instalador (`s
 4. Arranca: menú de 5 s con **BC OS** (animación de arranque con el logo, por defecto) y **BC OS (modo seguro, sin animación)**.
 5. Aparece el **panel de login**. Usuario `bc`, contraseña `bcos` (**solo alpha**; cámbiala con `passwd`).
 
+### Novedades de 0.3.2
+- **Animación de minimizar** en las apps de BC (la ventana se encoge hacia el Dock y se despliega al volver).
+- **Esquinas redondeadas en todas las ventanas** con swayfx: entrada de arranque **«BC OS (experimental: efectos con GPU real)»**. Verificado en QEMU: redondea ventanas y Dock, pero con render por software (llvmpipe) va lento y con fallos de dibujo, por eso NO es el modo por defecto. Las ventanas de BC y el Dock ya son redondeados en el modo normal; las de terceros (Alacritty, Firefox) solo con efectos. Desenfoque y sombras: opcionales en `~/.config/bc/sway-user.conf`.
+
 ### Novedades de 0.3.1
 - Terminal por defecto **Alacritty** (translúcida, con respaldo a foot); ventanas de BC con transparencia suave.
 - **Cursor tipo macOS** por defecto (tema libre apple_cursor de ful1e5, GPL-3.0).
