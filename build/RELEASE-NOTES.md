@@ -9,6 +9,11 @@ Imagen de disco arrancable (UEFI, ARM64). **Aún no hay ISO**: el instalador (`s
 4. Arranca: menú de 5 s con **BC OS** (animación de arranque con el logo, por defecto) y **BC OS (modo seguro, sin animación)**.
 5. Aparece el **panel de login**. Usuario `bc`, contraseña `bcos` (**solo alpha**; cámbiala con `passwd`).
 
+### Novedades de 0.5.0: entorno «Dotfiles (bspwm)»
+- En el **login** (y en Configuración, y en la bienvenida) puedes elegir entre **BC OS** (sway) y **Dotfiles (bspwm)**, un entorno de mosaico X11 basado en `borjacandeel/dotfiles-2026`: **bspwm + sxhkd + polybar + picom + rofi + dunst**, con tus atajos (Súper+Intro, Súper+D, Ctrl+flechas, Ctrl+B Firefox…; lista en `/etc/bc/atajos-dotfiles.txt`, Súper+F1), fondo «Montañas», barra minimal (escritorios numerados, pista del reproductor, reloj) y la pantalla que se adapta a la ventana de la máquina virtual.
+- Verificado en QEMU aarch64: el login muestra el selector, Xorg arranca, polybar y el fondo aparecen, Ctrl+Intro abre la terminal y rofi funciona con iconos. **Sin probar en VirtualBox** (Xorg allí puede comportarse distinto: si queda en negro, vuelve a elegir «BC OS» en el login y envíame `~/bc-session.log`).
+- Configuración de Dotfiles en `~/.config/` (se copia solo la primera vez); `bc-dotfiles-setup --reset` restaura los originales.
+
 ### Novedades de 0.4.1
 - **La pantalla se adapta sola** al tamaño de la ventana de VirtualBox/QEMU o al monitor (`bc-display`; vigila los cambios de pantalla). En Configuración: `bc-display list` / `bc-display set 1920x1080`.
 - **Iconos Qogir** (vinceliuice, GPL-3.0) para aplicaciones y tipos de archivo; interfaz con el pack BC. Paleta **Medianoche refinado**, más sobria.
