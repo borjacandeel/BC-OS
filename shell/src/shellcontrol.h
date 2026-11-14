@@ -17,12 +17,14 @@ public slots:
     void Lock() { emit lockRequested(); }
     void ToggleTiling() { emit tilingToggled(); }
     void Power(const QString &action) { emit powerRequested(action); }
+    void SetStyle(const QString &style) { emit styleChanged(style); }
 signals:
     void launcherToggled();
     void controlCenterToggled();
     void lockRequested();
     void tilingToggled();
     void powerRequested(const QString &action);
+    void styleChanged(const QString &style);
 };
 
 // Servicio D-Bus de una app de BC (org.bcos.App.<nombre>): recibe acciones del menú global.

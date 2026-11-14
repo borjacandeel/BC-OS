@@ -88,6 +88,25 @@ AppWindow {
         Column {
             visible: win.page === 0; width: parent.width; spacing: 12
             Label { text: qsTr("Apariencia"); font.pixelSize: 22; font.weight: Font.DemiBold }
+            Label { text: qsTr("Estilo de escritorio") }
+            Row {
+                spacing: 12
+                Repeater {
+                    model: [{ id: "mac", name: qsTr("macOS"), desc: qsTr("Barra superior y Dock") },
+                            { id: "win", name: qsTr("Windows"), desc: qsTr("Barra de tareas y menú Inicio") }]
+                    delegate: Rectangle {
+                        required property var modelData
+                        readonly property bool sel: Settings.desktopStyle === modelData.id
+                        width: 220; height: 76; radius: 14
+                        color: sel ? Theme.accentSelected : Theme.tileFill
+                        border.width: sel ? 2 : 0; border.color: Theme.accent
+                        Column { anchors.centerIn: parent; spacing: 4
+                                 Label { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.name; font.weight: Font.DemiBold }
+                                 Hint { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.desc } }
+                        MouseArea { anchors.fill: parent; onClicked: Settings.desktopStyle = modelData.id }
+                    }
+                }
+            }
             Rectangle {
                 width: parent.width; height: 56; radius: 12; color: Theme.tileFill
                 Label { x: 14; y: 9; text: qsTr("Reducir movimiento") }

@@ -74,6 +74,7 @@ LayerWindow {
     }
     Connections {
         target: Shell
+        function onStyleChanged(st) { UiState.closePopups(); UiState.style = st === "win" ? "win" : "mac" }
         function onLauncherToggled() { UiState.toggleLauncher() }
         function onControlCenterToggled() { UiState.toggleCenter() }
         function onLockRequested() { UiState.run("bc:lock") }
@@ -85,15 +86,27 @@ LayerWindow {
     LayerWindow {
         layer: "top"; edges: ["top", "left", "right"]; exclusive: UiState.barH; scope: "bc-topbar"
         width: UiState.sw; height: UiState.barH
-        shown: !UiState.splashing
+        shown: !UiState.splashing && !UiState.win
         Loader { id: bar; anchors.fill: parent; source: "TopBar.qml" }
+    }
+
+    // Barra de tareas (estilo Windows)
+    LayerWindow {
+        layer: "top"; edges: ["bottom", "left", "right"]; exclusive: UiState.taskH; scope: "bc-taskbar"
+        width: UiState.sw; height: UiState.taskH
+        shown: UiState.win && !UiState.splashing && !UiState.locked
+        Taskbar {
+            anchors.fill: parent
+            running: root.runningKinds()
+            onLaunched: (k, n) => { if (k !== "lanzador") UiState.closePopups(); root.launch(k, n) }
+        }
     }
 
     // Dock
     LayerWindow {
         layer: "top"; edges: ["bottom"]; margins: [0, 0, Math.round(22 * root.u), 0]; scope: "bc-dock"
         width: Math.round(dockLoader.width * root.u); height: Math.round(dockLoader.height * root.u)
-        shown: !UiState.splashing && !UiState.locked
+        shown: !UiState.splashing && !UiState.locked && !UiState.win
         Loader {
             id: dockLoader
             source: "Dock.qml"
@@ -108,7 +121,7 @@ LayerWindow {
 
     // Notificación emergente
     LayerWindow {
-        layer: "top"; edges: ["top", "right"]; margins: [UiState.barH + Math.round(14 * root.u), Math.round(14 * root.u), 0, 0]; scope: "bc-notify"
+        layer: "top"; edges: ["top", "right"]; margins: [UiState.topInset + Math.round(14 * root.u), Math.round(14 * root.u), 0, 0]; scope: "bc-notify"
         width: Math.round(321 * root.u); height: Math.round(80 * root.u)
         shown: Notifications.visible && !UiState.locked && !UiState.splashing
         NotificationCard {
@@ -123,8 +136,8 @@ LayerWindow {
     // Capa emergente: Centro de control, menús, lanzador, apagado, bloqueo y pantalla de carga
     LayerWindow {
         layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-popups"
-        margins: [UiState.locked || UiState.splashing ? 0 : UiState.barH, 0, 0, 0]
-        keyboard: UiState.locked || UiState.launcherOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
+        margins: [UiState.locked || UiState.splashing ? 0 : UiState.topInset, 0, UiState.win && !UiState.locked && !UiState.splashing ? UiState.taskH : 0, 0]
+        keyboard: UiState.locked || UiState.launcherOpen || UiState.startOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
         width: UiState.sw; height: UiState.sh
         shown: UiState.popupOpen || UiState.locked || UiState.splashing
         Loader {
@@ -145,7 +158,7 @@ LayerWindow {
                     scale: root.u
                     transformOrigin: Item.TopRight
                     x: pop.width - pop.m - width
-                    y: pop.m + (Notifications.visible ? (80 + 10) * root.u : 0)
+                    y: UiState.win ? pop.height - center.height * root.u - pop.m : pop.m + (Notifications.visible ? (80 + 10) * root.u : 0)
                     opacity: UiState.centerOpen ? 1 : 0
                     visible: opacity > 0
                     Behavior on opacity { NumberAnimation { duration: Theme.dur(160); easing.type: Theme.easing } }
@@ -175,6 +188,16 @@ LayerWindow {
                     }
                     Connections { target: UiState; function onLauncherOpenChanged() { if (UiState.launcherOpen) launcher.reset() } }
                 }
+                StartMenu {
+                    id: startMenu
+                    visible: UiState.startOpen
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    y: pop.height - height - 12
+                    onLaunchPinned: (k, n) => { UiState.closePopups(); root.launch(k, n) }
+                    onLaunchApp: (id, n) => { UiState.closePopups(); if (!Apps.launch(id)) Notifications.push("BC OS", n, qsTr("No se pudo abrir la aplicación"), "", 4000) }
+                    onCloseRequested: UiState.closePopups()
+                    Connections { target: UiState; function onStartOpenChanged() { if (UiState.startOpen) startMenu.reset() } }
+                }
                 PowerDialog {
                     id: powerDialog
                     onCancelled: UiState.powerAction = ""
@@ -195,6 +218,8 @@ LayerWindow {
 
     Component.onCompleted: {
         UiState.splashing = AppConfig.splash
+        UiState.style = Settings.desktopStyle
+        if (AppConfig.demo === "win") UiState.style = "win"
         if (!AppConfig.splash && AppConfig.demo === "") Notifications.push("BC OS", qsTr("Actualizaciones"), qsTr("BC OS está al día"), "", 600000)
         const d = AppConfig.demo
         if (d === "lock") UiState.locked = true
@@ -202,6 +227,7 @@ LayerWindow {
         else if (d === "power") UiState.openPower("poweroff")
         else if (d === "launcher") UiState.toggleLauncher()
         else if (d === "centro") UiState.centerOpen = true
+        else if (d === "inicio") { UiState.style = "win"; UiState.toggleLauncher() }
         else if (d === "tienda" || d === "monitor" || d === "ajustes") launch(d, "")
     }
 }
