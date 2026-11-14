@@ -5,24 +5,29 @@ Imagen de disco arrancable (UEFI, ARM64). **Aún no hay ISO**: el instalador (`s
 ### Probar en VirtualBox (Mac Apple Silicon)
 1. Descomprime `BC-OS-@VERSION@-ARM64.vdi.zip`.
 2. VirtualBox → Nueva: Linux / Arch Linux (ARM 64-bit), ≥ 2 GB RAM, 2 CPU. **Sistema → Habilitar EFI.** Gráficos: VMSVGA.
-3. Disco: usar el `.vdi`. Red → Avanzado → Reenvío de puertos: TCP 2222 → 22 si quieres SSH.
-4. Arranca. En el menú de arranque (5 s) hay dos entradas:
-   - **BC OS** (por defecto, segura).
-   - **BC OS (con animación de arranque)**: logo BC con barra de progreso. **Experimental: no probada en imagen completa.** Si no arranca, reinicia y elige la primera.
-5. Sesión automática como `bc` (contraseña `bcos`, **solo alpha**). SSH: `ssh -p 2222 bc@127.0.0.1`.
+3. Disco: usar el `.vdi`. Red → Avanzado → Reenvío de puertos: TCP 2222 → 22 si quieres SSH (`ssh -p 2222 bc@127.0.0.1`).
+4. Arranca: menú de 5 s con **BC OS** (animación de arranque con el logo, por defecto) y **BC OS (modo seguro, sin animación)**.
+5. Aparece el **panel de login**. Usuario `bc`, contraseña `bcos` (**solo alpha**; cámbiala con `passwd`).
 
 ### Qué incluye
-- BC Shell con layout adaptable, Dock que abre Terminal (`foot`) y Archivos con carpetas reales, fondo BC y pack de iconos BC.
-- Render por software (VirtualBox no tiene 3D).
+- **Login gráfico** (greetd + pantalla propia), **bloqueo** (Ctrl+Súper+Q o menú del logo BC), cerrar sesión, reiniciar, apagar y suspender con confirmación.
+- **BC Shell**: barra superior y Centro de control con estado real (audio, red, batería, brillo, Bluetooth, No molestar), notificaciones del sistema,
+  lanzador con búsqueda (Ctrl+Espacio o icono del Dock), **Archivos** (carpetas reales, nueva carpeta, renombrar, Papelera), **Monitor del sistema**,
+  **Configuración**, **Tienda** (pacman), Terminal (`foot`) y Navegador (Firefox).
+- Pack de **iconos BC**, fondo BC, animaciones en ventanas, Dock, menús y login (movimiento reducido en Configuración).
+- Servicios **BC Core** (Rust, D-Bus) como servicios de usuario, SSH activado y cortafuegos.
+- Si el login gráfico fallara 3 veces seguidas, el sistema arranca con **autologin** de `bc` para no quedarte fuera.
 
-### Verificado
-- Arranque en QEMU aarch64 UEFI; `0.1.2-alpha` arrancó en VirtualBox ARM64.
-- Tests del shell (7/7) con capturas offscreen.
+### Verificado (QEMU aarch64 UEFI + pruebas automáticas)
+- Arranque → login (contraseña buena y mala) → escritorio → bloqueo (PAM) → cerrar sesión → vuelta al login; respaldo de autologin.
+- Estado real de red y audio en la sesión; Tienda abierta; firefox y foot instalados.
+- `ctest` del shell (carga QML es/en, protocolo greetd, notificaciones D-Bus, Papelera, lanzador, analizadores).
 
 ### No verificado / problemas conocidos
-- **Esta versión aún no se ha probado en VirtualBox.**
-- Configuración, Monitor, Tienda, Navegador, Música y Papelera solo muestran "En desarrollo"; el Centro de control no tiene estado real.
-- Sin pantalla de login ni de bloqueo todavía. Contraseña por defecto pública.
-- Rendimiento no medido.
+- **Esta versión puede no estar probada en VirtualBox ARM64** (las anteriores 0.1.2 y 0.1.3 sí arrancaron).
+- Ventanas externas (Terminal, Firefox) no se minimizan/restauran desde el Dock (falta `wlrctl` en los repositorios).
+- El bloqueo es una superposición: no usa `ext-session-lock`, otra ventana podría recibir teclado. Contraseña por defecto pública.
+- Música sin implementar; sin tema claro; Wi-Fi/Bluetooth solo probados por sus analizadores (sin hardware en la VM).
+- Render por software (VirtualBox no tiene 3D): rendimiento no medido con precisión. RAM en reposo observada: ~250 MB usados tras iniciar sesión (QEMU, 2 GB).
 
 SHA256 del zip en `SHA256SUMS`.
