@@ -17,6 +17,9 @@ Imagen de disco arrancable (UEFI, ARM64). **Aún no hay ISO**: el instalador (`s
 - **Tienda con Flathub** (apps Flatpak en tu usuario, sin contraseña) además de los repositorios de Arch Linux ARM.
 - **Servicio de antivirus** (`bc-antivirus-service`, ClamAV por D-Bus) y `clamav` en la imagen; aún sin interfaz gráfica.
 - Alacritty translúcido por defecto, cursor tipo macOS y animación de minimizar (apps de BC).
+- **fish** como shell por defecto, con sugerencias automáticas, colores de BC, `zoxide` (cd inteligente), `fzf` (Ctrl+R/Ctrl+T), `eza` y `bat`.
+- Capturas con `Impr`, `Súper+Mayús+S` (área) y `Alt+Impr` (ventana), al portapapeles y a Imágenes; ajustes de rendimiento (sysctl) y `fastfetch` con el logo de BC.
+- Revisión de seguridad y robustez: la Tienda ya no se queda colgada con contraseña errónea, opciones validadas, nada se abre sobre la pantalla bloqueada, superficies a pantalla completa bien dimensionadas.
 - Referencia de ideas: Quantum Linux (GPL-3.0-or-later). BC OS no copia sus logos, fondos ni capturas; ver README.
 
 ### Novedades de 0.3.2
