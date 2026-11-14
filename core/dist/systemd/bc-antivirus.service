@@ -1,0 +1,23 @@
+[Unit]
+Description=BC OS — Servicio de antivirus (ClamAV)
+Documentation=https://github.com/borjacandeel/BC-OS
+
+[Service]
+Type=dbus
+BusName=org.bcos.Antivirus
+ExecStart=/usr/bin/bc-antivirus-service
+Restart=on-failure
+# Los análisis son pesados: que no molesten al escritorio.
+Nice=10
+IOSchedulingClass=idle
+# Necesita ver /tmp (por eso no hay PrivateTmp) y leer $HOME, pero no escribir en ellos.
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_UNIX
+LockPersonality=yes
+
+[Install]
+WantedBy=default.target

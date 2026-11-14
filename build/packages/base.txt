@@ -45,3 +45,4 @@ grim
 swaybg
 alacritty
 flatpak
+clamav

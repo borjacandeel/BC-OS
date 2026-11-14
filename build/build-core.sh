@@ -11,7 +11,7 @@ else
   ( cd "$CORE" && cargo build --release --locked --target aarch64-unknown-linux-gnu )
   OUT="$CORE/target/aarch64-unknown-linux-gnu/release"
 fi
-for b in bc-daemon bc-settings-service bc-update-service bc-security-service bc-hardware-service bc-performance-service; do
+for b in bc-daemon bc-settings-service bc-update-service bc-security-service bc-hardware-service bc-performance-service bc-antivirus-service; do
   install -D -m755 "$OUT/$b" "$R/usr/bin/$b"
 done
 install -d "$R/usr/lib/systemd/user"
