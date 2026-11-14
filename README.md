@@ -44,12 +44,16 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 | `0.1.2-alpha` | publicada | **Arranca en VirtualBox ARM64** con BC Shell (render por software) y SSH activado. El shell es una maqueta. |
 | `0.1.3-alpha` | publicada | Shell con Dock y Archivos reales, iconos BC, fondo BC, instalador `bc-install` y animación de arranque con el logo. **Arranca en VirtualBox ARM64, también con la animación (confirmado por el creador).** |
 | `0.2.0-alpha` | publicada | **Escritorio funcional**: login (greetd), bloqueo, apagado, Centro de control real, notificaciones, Archivos + Papelera, Monitor, Configuración, Tienda, lanzador, iconos y fondo BC, BC Core y SSH. Verificada en QEMU. |
-| `0.3.0-alpha` | en preparación | **sway**: botón mosaico/flotante en la barra (`Súper+Mayús+Espacio`), `Ctrl+Intro` terminal, `Ctrl+B` Firefox, menús globales tipo macOS por app, Dock con ventanas reales. |
+| `0.3.0-alpha` | publicada | **sway**: botón mosaico/flotante en la barra (`Súper+Mayús+Espacio`), `Ctrl+Intro` terminal, `Ctrl+B` Firefox, menús globales tipo macOS por app, Dock con ventanas reales. |
 | `0.4.0` → `1.0.0` | planificadas | Ventanas externas en el Dock, bloqueo seguro (`ext-session-lock`), tema claro, ISO con instalador, beta y primera estable. Son hitos, no promesas. |
 
 ## Capturas
 
 <table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/bc-os-mosaico.png" alt="Modo mosaico"><br><sub><b>Mosaico</b> (sway): terminal y Firefox en mosaico; el botón de la barra alterna con el modo flotante.</sub></td>
+    <td width="50%"><img src="docs/screenshots/bc-os-lanzador-sway.png" alt="Lanzador"><br><sub><b>Lanzador</b> (Ctrl+Espacio) con menús globales por app en la barra.</sub></td>
+  </tr>
   <tr>
     <td width="50%"><img src="docs/screenshots/bc-os-login.png" alt="Panel de login"><br><sub><b>Login</b> (greetd + greeter propio sobre cage): reloj, avatar, contraseña con animación de error y botones de energía.</sub></td>
     <td width="50%"><img src="docs/screenshots/bc-os-bloqueo.png" alt="Pantalla de bloqueo"><br><sub><b>Bloqueo</b> (Ctrl+Súper+Q): misma estética, verifica con PAM.</sub></td>

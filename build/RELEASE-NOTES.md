@@ -9,6 +9,13 @@ Imagen de disco arrancable (UEFI, ARM64). **Aún no hay ISO**: el instalador (`s
 4. Arranca: menú de 5 s con **BC OS** (animación de arranque con el logo, por defecto) y **BC OS (modo seguro, sin animación)**.
 5. Aparece el **panel de login**. Usuario `bc`, contraseña `bcos` (**solo alpha**; cámbiala con `passwd`).
 
+### Novedades de 0.3.0: sway, mosaico y atajos
+- **Compositor sway**: ventanas **flotantes** (por defecto, como macOS) o en **mosaico** (como bspwm). Botón en la barra superior o `Súper+Mayús+Espacio`.
+- Atajos: **Ctrl+Intro** terminal, **Ctrl+B** Firefox, Ctrl+Espacio lanzador, Súper+E Archivos, Súper+Q cerrar, Súper+F pantalla completa, Súper+M minimizar. Lista completa: `/etc/bc/atajos.txt` (Súper+F1).
+- **Menús globales tipo macOS** en la barra: nombre de la app enfocada y sus menús (Archivo, Editar, Ver, Ventana, Ayuda); las apps de BC reciben las acciones por D-Bus.
+- **Dock con ventanas reales** (puntos de apps abiertas, enfocar al pulsar).
+- BC Shell ahora es un panel (layer-shell) más apps en procesos aparte.
+
 ### Qué incluye
 - **Login gráfico** (greetd + pantalla propia), **bloqueo** (Ctrl+Súper+Q o menú del logo BC), cerrar sesión, reiniciar, apagar y suspender con confirmación.
 - **BC Shell**: barra superior y Centro de control con estado real (audio, red, batería, brillo, Bluetooth, No molestar), notificaciones del sistema,
@@ -25,7 +32,7 @@ Imagen de disco arrancable (UEFI, ARM64). **Aún no hay ISO**: el instalador (`s
 
 ### No verificado / problemas conocidos
 - **Esta versión puede no estar probada en VirtualBox ARM64** (las anteriores 0.1.2 y 0.1.3 sí arrancaron).
-- Ventanas externas (Terminal, Firefox) no se minimizan/restauran desde el Dock (falta `wlrctl` en los repositorios).
+- Sin hardware real probado con sway; el Dock no muestra ventanas minimizadas.
 - El bloqueo es una superposición: no usa `ext-session-lock`, otra ventana podría recibir teclado. Contraseña por defecto pública.
 - Música sin implementar; sin tema claro; Wi-Fi/Bluetooth solo probados por sus analizadores (sin hardware en la VM).
 - Render por software (VirtualBox no tiene 3D): rendimiento no medido con precisión. RAM en reposo observada: ~250 MB usados tras iniciar sesión (QEMU, 2 GB).
