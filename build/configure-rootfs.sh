@@ -51,6 +51,19 @@ install -D -m644 "$HERE/overlay/etc/bc/sway/config" "$R/etc/bc/sway/config"
 install -m644 "$HERE/overlay/etc/bc/sway/keyboard.conf" "$R/etc/bc/sway/keyboard.conf"
 install -m644 "$HERE/overlay/etc/bc/atajos.txt" "$R/etc/bc/atajos.txt"
 install -m644 "$HERE/overlay/etc/bc/fastfetch.jsonc" "$HERE/overlay/etc/bc/fastfetch-logo.txt" "$R/etc/bc/"
+# Entorno «Dotfiles (bspwm)» (X11), elegible en el login y en Configuración (ver build/overlay-dotfiles/LEEME.md)
+DF="$HERE/overlay-dotfiles"
+mkdir -p "$R/usr/share/bc/sessions" "$R/usr/share/bc/dotfiles"
+cp -a "$DF/usr/share/bc/sessions/." "$R/usr/share/bc/sessions/"
+cp -a "$DF/usr/share/bc/dotfiles/." "$R/usr/share/bc/dotfiles/"
+for f in "$DF"/usr/bin/*; do install -m755 "$f" "$R/usr/bin/$(basename "$f")"; done
+install -m644 "$DF/etc/bc/atajos-dotfiles.txt" "$R/etc/bc/atajos-dotfiles.txt"
+install -D -m644 "$DF/etc/X11/xorg.conf.d/10-bcos-input.conf" "$R/etc/X11/xorg.conf.d/10-bcos-input.conf"
+install -D -m644 /dev/stdin "$R/etc/X11/Xwrapper.config" <<'XW'
+allowed_users=anybody
+needs_root_rights=auto
+XW
+install -d -m1777 "$R/var/lib/bc-greeter"      # elección de entorno por usuario (la escribe cada usuario; la lee el login)
 install -D -m644 "$HERE/overlay/etc/sysctl.d/90-bcos.conf" "$R/etc/sysctl.d/90-bcos.conf"
 install -D -m644 "$HERE/overlay/etc/udev/rules.d/60-bcos-ioscheduler.rules" "$R/etc/udev/rules.d/60-bcos-ioscheduler.rules"
 install -D -m440 "$HERE/overlay/etc/sudoers.d/10-bcos-pwfeedback" "$R/etc/sudoers.d/10-bcos-pwfeedback"
