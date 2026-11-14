@@ -21,6 +21,7 @@ echo "$new" > "$D/layout-mode.tmp" && mv "$D/layout-mode.tmp" "$D/layout-mode"
 # Configuración final de sway = sistema + teclado + modo + usuario (sin «include», que no es fiable)
 OUT="${XDG_RUNTIME_DIR:-/tmp}/bc-sway.conf"
 { cat /etc/bc/sway/config; [ -f /etc/bc/sway/keyboard.conf ] && cat /etc/bc/sway/keyboard.conf
+  [ -n "$BC_FX" ] && [ -f /etc/bc/sway/efectos.conf ] && cat /etc/bc/sway/efectos.conf
   cat "$D/sway-mode.conf"; [ -f "$D/sway-user.conf" ] && cat "$D/sway-user.conf"; true; } > "$OUT.tmp" && mv "$OUT.tmp" "$OUT"
 [ "$1" = init ] && exit 0
 # En caliente no se recarga sway (recargar reinicia el fondo y parpadea): se aplican las reglas por IPC.

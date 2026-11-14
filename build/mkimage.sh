@@ -24,6 +24,7 @@ mcopy -i "$ESP" "$R/boot/initramfs-linux.img" ::/initramfs-linux.img
 mcopy -i "$ESP" "$HERE/overlay/boot/loader/loader.conf" ::/loader/loader.conf
 mcopy -i "$ESP" "$HERE/overlay/boot/loader/entries/bcos.conf" ::/loader/entries/bcos.conf
 mcopy -i "$ESP" "$HERE/overlay/boot/loader/entries/bcos-seguro.conf" ::/loader/entries/bcos-seguro.conf
+mcopy -i "$ESP" "$HERE/overlay/boot/loader/entries/bcos-efectos.conf" ::/loader/entries/bcos-efectos.conf
 
 # Root ext4 poblada con mke2fs -d
 ROOT_MIB=$((SIZE - ESP_MIB - 2))
