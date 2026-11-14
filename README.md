@@ -16,11 +16,11 @@ Sistema operativo Linux ARM64 creado por <b>Borja Candel</b>, en español por de
 </p>
 
 <p align="center">
-  <img src="docs/screenshots/bc-os-virtualbox-arm64.png" alt="BC OS 0.1.2-alpha en VirtualBox ARM64" width="880">
-  <br><sub>Captura real (aportada por el creador): BC OS 0.1.2-alpha en VirtualBox ARM64, BC Shell sobre labwc (Wayland), render por software.</sub>
+  <img src="docs/screenshots/bc-os-escritorio.png" alt="BC OS 0.2.0-alpha: escritorio" width="880">
+  <br><sub>Captura real de BC OS 0.2.0-alpha en QEMU aarch64: BC Shell sobre labwc (Wayland), render por software, estado real de red y sonido.</sub>
 </p>
 
-> **Estado honesto:** alpha muy temprana. Hay una imagen ARM64 que arranca y un shell que se ve así, pero **el shell aún es un prototipo visual** (Dock, Archivos y Centro de control no son funcionales), **no hay instalador ni ISO todavía** y la imagen **solo `0.1.2-alpha` ha arrancado en VirtualBox ARM64** (ver [problemas conocidos](#problemas-conocidos)).
+> **Estado honesto:** alpha. `0.2.0-alpha` ya es un escritorio funcional (login, bloqueo, Archivos con Papelera, Monitor, Configuración, Tienda, notificaciones…), verificado en QEMU aarch64; **las versiones 0.1.2 y 0.1.3 arrancaron en VirtualBox ARM64, la 0.2.0 aún no se ha probado ahí**. **No hay ISO todavía** (el instalador `bc-install` va dentro de la imagen). Ver [problemas conocidos](#problemas-conocidos).
 
 ---
 
@@ -31,7 +31,7 @@ Sistema operativo Linux ARM64 creado por <b>Borja Candel</b>, en español por de
 1. Descomprime el `.zip` → `.vdi`. Comprueba `shasum -a 256`.
 2. VirtualBox (Mac Apple Silicon) → **Nueva**: Linux / Arch Linux (ARM 64-bit), ≥ 2 GB RAM, 2 CPU.
 3. **Sistema → Habilitar EFI**. Disco: usar el `.vdi` existente. Gráficos: VMSVGA.
-4. Arranca. Sesión automática como `bc` (contraseña `bcos`, **solo alpha**).
+4. Arranca: menú de 5 s (animación de arranque por defecto o modo seguro) → **panel de login**. Usuario `bc`, contraseña `bcos` (**solo alpha**).
 
 También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI AAVMF); ver [`docs/development/BUILD.md`](docs/development/BUILD.md).
 
@@ -43,29 +43,34 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 | `0.1.1-alpha` | publicada | Mitigación del `fsck`; en VirtualBox arrancaba a pantalla negra (labwc sin 3D). |
 | `0.1.2-alpha` | publicada | **Arranca en VirtualBox ARM64** con BC Shell (render por software) y SSH activado. El shell es una maqueta. |
 | `0.1.3-alpha` | publicada | Shell con Dock y Archivos reales, iconos BC, fondo BC, instalador `bc-install` y animación de arranque con el logo. **Arranca en VirtualBox ARM64, también con la animación (confirmado por el creador).** |
-| `0.2.0` | planificada | BC Shell funcional (Dock, lanzador, Centro de control). |
-| `0.3.0` → `1.0.0` | planificadas | Apps nativas, instalador, beta y primera estable. Son hitos, no promesas. |
+| `0.2.0-alpha` | publicada | **Escritorio funcional**: login (greetd), bloqueo, apagado, Centro de control real, notificaciones, Archivos + Papelera, Monitor, Configuración, Tienda, lanzador, iconos y fondo BC, BC Core y SSH. Verificada en QEMU. |
+| `0.3.0` → `1.0.0` | planificadas | Ventanas externas en el Dock, bloqueo seguro (`ext-session-lock`), tema claro, ISO con instalador, beta y primera estable. Son hitos, no promesas. |
 
 ## Capturas
 
 <table>
   <tr>
-    <td width="50%"><img src="docs/screenshots/bc-shell-captura-es.png" alt="BC Shell"><br><sub><b>BC Shell</b> (prototipo QML, captura generada por el propio shell en pruebas).</sub></td>
-    <td width="50%"><img src="docs/design/reference/escritorio-referencia-01.webp" alt="Referencia visual"><br><sub><b>Referencia visual</b> del creador: el objetivo de diseño, no una captura del sistema.</sub></td>
+    <td width="50%"><img src="docs/screenshots/bc-os-login.png" alt="Panel de login"><br><sub><b>Login</b> (greetd + greeter propio sobre cage): reloj, avatar, contraseña con animación de error y botones de energía.</sub></td>
+    <td width="50%"><img src="docs/screenshots/bc-os-bloqueo.png" alt="Pantalla de bloqueo"><br><sub><b>Bloqueo</b> (Ctrl+Súper+Q): misma estética, verifica con PAM.</sub></td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/icon-pack-catalogo.png" alt="Catálogo de iconos"><br><sub><b>Pack de iconos BC</b> (catálogo real, en construcción por lotes).</sub></td>
-    <td><img src="docs/screenshots/virtualbox-arranque.png" alt="Arranque en VirtualBox"><br><sub><b>VirtualBox ARM64</b>: menú de arranque de BC OS 0.1.0-alpha (systemd-boot).</sub></td>
+    <td><img src="docs/screenshots/bc-os-tienda.png" alt="Tienda"><br><sub><b>Tienda</b> sobre pacman, abierta dentro de la sesión.</sub></td>
+    <td><img src="docs/screenshots/arranque-bc-1-logo-progreso.png" alt="Animación de arranque"><br><sub><b>Arranque</b>: logo BC con barra de progreso (Plymouth).</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/icon-pack-catalogo.png" alt="Catálogo de iconos"><br><sub><b>Pack de iconos BC</b> (catálogo).</sub></td>
+    <td><img src="docs/design/reference/escritorio-referencia-01.webp" alt="Referencia visual"><br><sub><b>Referencia visual</b> del creador: el objetivo de diseño, no una captura del sistema.</sub></td>
   </tr>
 </table>
 
 ## Problemas conocidos
 
-- **VirtualBox:** `0.1.0` y `0.1.1` fallaban (`fsck` en 0.1.0; labwc sin EGL/3D en 0.1.1). `0.1.2-alpha` lo resuelve con render por software.
-- **BC Shell es una maqueta:** casi nada responde todavía; los botones, el Dock y el Centro de control no hacen nada real. Es la siguiente prioridad.
-- El layout del shell está diseñado para 1586×992 y se solapa en pantallas menores.
-- Sin instalador ni ISO. Contraseña por defecto pública (solo alpha).
-- Rendimiento no medido; los objetivos de abajo son metas, no resultados.
+- **VirtualBox:** `0.1.0` y `0.1.1` fallaban (`fsck`; labwc sin 3D). `0.1.2`/`0.1.3` arrancan con render por software. **`0.2.0-alpha` aún no se ha probado en VirtualBox** (sí en QEMU).
+- Las ventanas externas (Terminal, Firefox) no se minimizan/restauran desde el Dock: falta `wlrctl` en los repositorios.
+- El **bloqueo** es una superposición, no usa `ext-session-lock-v1`: otra ventana podría recibir teclado. Pendiente.
+- Contraseña por defecto pública (`bc` / `bcos`) y SSH activo: solo para pruebas en máquinas virtuales.
+- Sin tema claro, sin app de Música, sin ISO. Wi-Fi y Bluetooth sin probar con hardware real.
+- Rendimiento no medido con rigor; observado: ~250 MB de RAM usados tras iniciar sesión (QEMU, 2 GB).
 
 ---
 
@@ -89,13 +94,16 @@ Decisiones y motivos: [`ARCHITECTURE.md`](ARCHITECTURE.md) y [`docs/adr/`](docs/
 
 | Componente | Estado |
 |---|---|
-| Imagen ARM64 (arranque UEFI, sesión gráfica automática) | ✅ arranca en QEMU y en VirtualBox ARM64 (0.1.2) |
-| BC Shell (barra, Dock, Archivos, Centro de control, notificación) | 🟡 prototipo visual, tests `ctest` 3/3 |
-| BC Core (6 servicios D-Bus) | ✅ `fmt`, `clippy`, 23 tests; probado en bus de sesión |
-| Pack de iconos | 🟡 lote A (UI, 102 iconos); lotes B (apps) y C (lugares/MIME/dispositivos) en curso |
-| Instalador (`bc-install`) | 🟡 probado en QEMU (con y sin LUKS); en la imagen desde 0.1.3 |
+| Imagen ARM64 (UEFI, systemd-boot, animación de arranque) | ✅ QEMU · ✅ VirtualBox (0.1.2/0.1.3) · 🟡 0.2.0 sin probar en VirtualBox |
+| Login (greetd + greeter QML), bloqueo, apagado/reinicio/suspender/cerrar sesión | ✅ verificado en QEMU (incluye respaldo de autologin) |
+| BC Shell: barra, Dock, Centro de control, notificaciones, lanzador | ✅ estado real (audio, red, batería, brillo, Bluetooth, No molestar) |
+| Archivos (nueva carpeta, renombrar, Papelera) · Monitor · Configuración · Tienda | ✅ funcionales; Tienda usa `sudo` con tu contraseña |
+| BC Core (6 servicios D-Bus de usuario) | ✅ construidos e instalados; arrancan con la sesión |
+| Pack de iconos BC (186) integrado en el shell e instalado como tema | ✅ |
+| Instalador (`bc-install`) | 🟡 probado en QEMU (con y sin LUKS); dentro de la imagen |
 | ISO con instalador | ⛔ pendiente |
-| Benchmarks / optimización | ⛔ pendiente |
+| Ventanas externas en el Dock, bloqueo seguro, tema claro, Música | ⛔ pendiente |
+| Benchmarks / optimización | 🟡 primeras medidas; sin rigor |
 
 ## Objetivos (a medir, no garantizados)
 
