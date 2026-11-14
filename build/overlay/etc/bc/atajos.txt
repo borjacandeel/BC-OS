@@ -16,7 +16,8 @@ Ventanas
   Súper+Q / Ctrl+Q      Cerrar ventana
   Súper+F               Pantalla completa
   Súper+M               Minimizar  ·  Súper+Mayús+M: restaurar
-  Súper+flechas         Mover el foco  ·  con Mayús: mover la ventana
+  Ctrl+flechas          Cambiar de ventana (izquierda, derecha, arriba, abajo)  ·  con Mayús: mover la ventana
+  Súper+flechas         Lo mismo (alternativa)
   Alt+Tab               Siguiente ventana
   Súper+1…4             Escritorio 1…4  ·  con Mayús: mover ahí la ventana
   Súper+Ctrl+←/→        Escritorio anterior / siguiente

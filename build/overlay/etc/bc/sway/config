@@ -60,6 +60,15 @@ bindsym $mod+Shift+Left move left
 bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
+# Ctrl + flechas: cambiar de ventana en esa dirección (en mosaico y en flotante); con Mayús, mover la ventana
+bindsym Ctrl+Left focus left
+bindsym Ctrl+Right focus right
+bindsym Ctrl+Up focus up
+bindsym Ctrl+Down focus down
+bindsym Ctrl+Shift+Left move left
+bindsym Ctrl+Shift+Right move right
+bindsym Ctrl+Shift+Up move up
+bindsym Ctrl+Shift+Down move down
 bindsym Alt+Tab focus next
 bindsym Alt+Shift+Tab focus prev
 
