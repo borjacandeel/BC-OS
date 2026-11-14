@@ -13,7 +13,33 @@ class AppSettings : public QObject {
     Q_PROPERTY(QString accent READ accent WRITE setAccent NOTIFY changed)
     Q_PROPERTY(bool welcomed READ welcomed WRITE setWelcomed NOTIFY changed)
     Q_PROPERTY(QString language READ language WRITE setLanguage NOTIFY changed)
+    // Golden Gate: aspecto claro/oscuro, deslizador de Liquid Glass, Dock y widgets (se recargan en caliente
+    // en todos los procesos de BC Shell vigilando el archivo de ajustes)
+    Q_PROPERTY(QString appearance READ appearance WRITE setAppearance NOTIFY changed)
+    Q_PROPERTY(double glassTint READ glassTint WRITE setGlassTint NOTIFY changed)
+    Q_PROPERTY(bool dockAutohide READ dockAutohide WRITE setDockAutohide NOTIFY changed)
+    Q_PROPERTY(bool dockMagnify READ dockMagnify WRITE setDockMagnify NOTIFY changed)
+    Q_PROPERTY(int dockSize READ dockSize WRITE setDockSize NOTIFY changed)
+    Q_PROPERTY(QStringList dockApps READ dockApps WRITE setDockApps NOTIFY changed)
+    Q_PROPERTY(QString widgetLayout READ widgetLayout WRITE setWidgetLayout NOTIFY changed)
+    Q_PROPERTY(bool sounds READ sounds WRITE setSounds NOTIFY changed)
 public:
+    QString appearance() const { return m_appearance; }
+    void setAppearance(const QString &a);
+    double glassTint() const { return m_glass; }
+    void setGlassTint(double v);
+    bool dockAutohide() const { return m_dockAutohide; }
+    void setDockAutohide(bool on);
+    bool dockMagnify() const { return m_dockMagnify; }
+    void setDockMagnify(bool on);
+    int dockSize() const { return m_dockSize; }
+    void setDockSize(int px);
+    QStringList dockApps() const { return m_dockApps; }
+    void setDockApps(const QStringList &l);
+    QString widgetLayout() const { return m_widgetLayout; }
+    void setWidgetLayout(const QString &json);
+    bool sounds() const { return m_sounds; }
+    void setSounds(bool on);
     explicit AppSettings(QObject *parent = nullptr);
     bool reducedMotion() const { return m_reduced; }
     QString desktopStyle() const { return m_style; }
@@ -42,4 +68,12 @@ private:
     bool m_widgets = true, m_welcomed = false;
     QString m_wallpaper, m_accent = "#2F7BF5";
     QString m_mode;
+    QString m_appearance = "dark", m_widgetLayout;
+    double m_glass = 0.35;
+    bool m_dockAutohide = false, m_dockMagnify = true, m_sounds = true;
+    int m_dockSize = 48;
+    QStringList m_dockApps;
+    class QFileSystemWatcher *m_watch = nullptr;
+    void watch();
+    template <typename T> void store(const char *key, const T &v);
 };

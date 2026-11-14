@@ -26,6 +26,8 @@
 #include "sessionlist.h"
 #include "filebrowser.h"
 #include "launcher.h"
+#include "glassprovider.h"
+#include "desktopdata.h"
 
 static int g_warnings = 0;
 static QtMessageHandler g_prev = nullptr;
@@ -94,6 +96,8 @@ int main(int argc, char *argv[]) {
     LayerHelper layer;
     SessionList sessionList;
     WindowControl windowControl;
+    Batteries batteries;
+    Reminders reminders;
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Settings", &appSettings);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Monitor", &monitor);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Store", &store);
@@ -104,6 +108,8 @@ int main(int argc, char *argv[]) {
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Layer", &layer);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Sessions", &sessionList);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "WindowControl", &windowControl);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Batteries", &batteries);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Reminders", &reminders);
 
     // Solo del panel
     PamAuth pam;
@@ -115,6 +121,7 @@ int main(int argc, char *argv[]) {
     PowerControl power;
     ClipboardHistory clipboard;
     std::unique_ptr<UpdateChecker> updates;
+    WidgetHost widgetHost;
     if (!appMode) { swayPtr = std::make_unique<SwayControl>(); if (!(p.isSet(oShot) || p.isSet(oCheck))) updates = std::make_unique<UpdateChecker>(); }
     // Solo de las apps
     NotificationClient notifClient;
@@ -129,6 +136,7 @@ int main(int argc, char *argv[]) {
         qmlRegisterSingletonInstance("BCShell", 1, 0, "Notifications", &notifications);
         qmlRegisterSingletonInstance("BCShell", 1, 0, "Power", &power);
         qmlRegisterSingletonInstance("BCShell", 1, 0, "Clipboard", &clipboard);
+        qmlRegisterSingletonInstance("BCShell", 1, 0, "WidgetHost", &widgetHost);
         if (updates) QObject::connect(updates.get(), &UpdateChecker::updatesFound, &notifications, [&notifications](int n) {
             notifications.push("BC OS", QObject::tr("Actualizaciones disponibles"), QObject::tr("%1 paquetes pueden actualizarse desde la Tienda").arg(n), "", 8000);
         });
@@ -142,6 +150,7 @@ int main(int argc, char *argv[]) {
 
     g_prev = qInstallMessageHandler(countingHandler);
     QQmlApplicationEngine engine;
+    engine.addImageProvider("glass", new GlassProvider);
     // Qt.quit() desde QML (cerrar la ventana de una app) debe terminar el proceso
     // (se usa exit(0): con QCoreApplication::quit() el bucle de eventos seguía vivo en Qt 6.4)
     QObject::connect(&engine, &QQmlEngine::quit, &app, [] { QCoreApplication::exit(0); });

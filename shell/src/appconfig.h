@@ -11,7 +11,10 @@ class AppConfig : public QObject {
     Q_PROPERTY(QString demo READ demo CONSTANT)
     Q_PROPERTY(QString openArg READ openArg CONSTANT)
     Q_PROPERTY(QString accent READ accent NOTIFY accentChanged)
+    // Sesión «BC clásico» (escritorio anterior a Golden Gate), elegible en el login: BC_CLASSIC=1
+    Q_PROPERTY(bool classic READ classic CONSTANT)
 public:
+    bool classic() const { return qEnvironmentVariableIntValue("BC_CLASSIC") == 1; }
     AppConfig(QString language, bool reducedMotion, QString fixedTime, QObject *parent = nullptr, bool splash = false);
     QString language() const { return m_language; }
     bool reducedMotion() const { return m_reducedMotion; }

@@ -3,13 +3,62 @@
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QFileSystemWatcher>
+#include <QTimer>
 #include <QRegularExpression>
 #include <QProcess>
 #include <QStandardPaths>
 
 AppSettings::AppSettings(QObject *parent) : QObject(parent) {
     reload();
+    watch();
 }
+
+// Otro proceso (Ajustes del Sistema, el panel) puede cambiar el archivo: se recarga y se avisa en caliente.
+void AppSettings::watch() {
+    const QString file = QSettings("BC-OS", "bc-shell").fileName();
+    QDir().mkpath(QFileInfo(file).absolutePath());
+    m_watch = new QFileSystemWatcher(this);
+    m_watch->addPath(QFileInfo(file).absolutePath());
+    if (QFileInfo::exists(file)) m_watch->addPath(file);
+    auto onChange = [this, file] {
+        QTimer::singleShot(60, this, [this, file] {
+            if (QFileInfo::exists(file) && !m_watch->files().contains(file)) m_watch->addPath(file);
+            reload();
+            emit changed();
+        });
+    };
+    connect(m_watch, &QFileSystemWatcher::fileChanged, this, onChange);
+    connect(m_watch, &QFileSystemWatcher::directoryChanged, this, onChange);
+}
+
+template <typename T> void AppSettings::store(const char *key, const T &v) {
+    QSettings s("BC-OS", "bc-shell");
+    s.setValue(key, v);
+    s.sync();
+    emit changed();
+}
+
+void AppSettings::setAppearance(const QString &a) {
+    const QString v = a == "light" ? "light" : (a == "auto" ? "auto" : "dark");
+    if (v == m_appearance) return;
+    m_appearance = v;
+    store("aspecto", v);
+    // GTK, Qt y sway siguen el aspecto (bc-appearance aplica gsettings y colores de las barras de título)
+    const QString exe = QStandardPaths::findExecutable("bc-appearance");
+    if (!exe.isEmpty()) QProcess::startDetached(exe, {v});
+}
+void AppSettings::setGlassTint(double v) {
+    v = qBound(0.0, v, 1.0);
+    if (qFuzzyCompare(v + 1, m_glass + 1)) return;
+    m_glass = v; store("cristal", v);
+}
+void AppSettings::setDockAutohide(bool on) { if (on == m_dockAutohide) return; m_dockAutohide = on; store("dockOcultar", on); }
+void AppSettings::setDockMagnify(bool on) { if (on == m_dockMagnify) return; m_dockMagnify = on; store("dockAmpliar", on); }
+void AppSettings::setDockSize(int px) { px = qBound(32, px, 96); if (px == m_dockSize) return; m_dockSize = px; store("dockTamano", px); }
+void AppSettings::setDockApps(const QStringList &l) { if (l == m_dockApps) return; m_dockApps = l; store("dockApps", l); }
+void AppSettings::setWidgetLayout(const QString &j) { if (j == m_widgetLayout) return; m_widgetLayout = j; store("widgetsPosicion", j); }
+void AppSettings::setSounds(bool on) { if (on == m_sounds) return; m_sounds = on; store("sonidos", on); }
 
 void AppSettings::reload() {
     QSettings s("BC-OS", "bc-shell");
@@ -23,6 +72,14 @@ void AppSettings::reload() {
     m_welcomed = s.value("bienvenida", false).toBool();
     m_widgets = s.value("widgets", true).toBool();
     m_mode = s.value("modo", "").toString();
+    m_appearance = s.value("aspecto", "dark").toString();
+    m_glass = qBound(0.0, s.value("cristal", 0.35).toDouble(), 1.0);
+    m_dockAutohide = s.value("dockOcultar", false).toBool();
+    m_dockMagnify = s.value("dockAmpliar", true).toBool();
+    m_dockSize = qBound(32, s.value("dockTamano", 48).toInt(), 96);
+    m_dockApps = s.value("dockApps").toStringList();
+    m_widgetLayout = s.value("widgetsPosicion").toString();
+    m_sounds = s.value("sonidos", true).toBool();
 }
 
 void AppSettings::setReducedMotion(bool on) {
