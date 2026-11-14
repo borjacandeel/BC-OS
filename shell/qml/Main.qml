@@ -17,11 +17,9 @@ Window {
         .filter(l => l.status === Loader.Error).length
     readonly property string notifTitle: qsTr("Actualizaciones")
     property bool centerOpen: true
-    property bool notifOpen: true
     property bool filesOpen: true
     property bool locked: false
-    property string notifHeading: qsTr("Actualizaciones")
-    property string notifText: qsTr("BC OS está al día")
+    readonly property bool notifOpen: Notifications.visible
 
     // Escala única respecto al diseño (1586x992), acotada: el escritorio se adapta a cualquier tamaño.
     readonly property real u: Math.max(0.6, Math.min(1.25, Math.min(width / 1586, height / 992)))
@@ -30,19 +28,13 @@ Window {
     readonly property real dockTop: root.height - dock.height * u - Math.round(22 * u)
     readonly property real rightColW: (center.width > 0 ? center.width : 381) * u + margin * 2
 
-    function showNotice(title, text) {
-        notifHeading = title
-        notifText = text
-        notifOpen = true
-        noticeTimer.restart()
-    }
+    function showNotice(title, text) { Notifications.push("BC OS", title, text, "", 4000) }
     function launch(kind, name) {
         const r = Launcher.launch(kind)
         if (kind === "archivos") filesOpen = true
         else if (r === "unavailable") showNotice(name, qsTr("En desarrollo"))
         else if (r === "failed") showNotice(name, qsTr("No se pudo abrir la aplicación"))
     }
-    Timer { id: noticeTimer; interval: 4000; onTriggered: root.notifOpen = false }
 
     Loader { id: wallpaper; anchors.fill: parent; source: "Wallpaper.qml" }
 
@@ -81,9 +73,9 @@ Window {
         transformOrigin: Item.TopRight
         x: root.width - root.margin - width
         y: root.topH + root.margin
-        onLoaded: item.dismissed.connect(() => root.notifOpen = false)
-        Binding { target: notif.item; property: "title"; value: root.notifHeading; when: notif.item }
-        Binding { target: notif.item; property: "body"; value: root.notifText; when: notif.item }
+        onLoaded: item.dismissed.connect(() => Notifications.dismiss())
+        Binding { target: notif.item; property: "title"; value: Notifications.title; when: notif.item }
+        Binding { target: notif.item; property: "body"; value: Notifications.body; when: notif.item }
     }
 
     Loader {
@@ -164,6 +156,7 @@ Window {
     Splash { }
 
     Component.onCompleted: {
+        if (!AppConfig.splash && AppConfig.demo === "") Notifications.push("BC OS", qsTr("Actualizaciones"), qsTr("BC OS está al día"), "", 600000)
         if (AppConfig.demo === "lock") locked = true
         else if (AppConfig.demo === "menu") sysMenu.open = true
         else if (AppConfig.demo === "power") powerDialog.open("poweroff")

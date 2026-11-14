@@ -9,6 +9,7 @@
 #include <QtQml/qqml.h>
 #include "appconfig.h"
 #include "pamauth.h"
+#include "notifications.h"
 #include "powercontrol.h"
 #include "systemstatus.h"
 #include "userlist.h"
@@ -63,15 +64,21 @@ int main(int argc, char *argv[]) {
     FileBrowser files;
     PamAuth pam;
     SystemStatus status;
+    NotificationQueue notifications;
+    NotificationServer notifServer(&notifications);
+    notifications.setDnd(status.dnd());
+    QObject::connect(&status, &SystemStatus::changed, &notifications, [&] { notifications.setDnd(status.dnd()); });
     PowerControl power;
     UserList users;
     qmlRegisterSingletonInstance("BCShell", 1, 0, "PamAuth", &pam);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "SystemStatus", &status);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Notifications", &notifications);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Power", &power);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Users", &users);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Launcher", &launcher);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Files", &files);
 
+    if (!(p.isSet(oShot) || p.isSet(oCheck))) notifServer.start();
     g_prev = qInstallMessageHandler(countingHandler);
     QQmlApplicationEngine engine;
     engine.load(QUrl("qrc:/BCShell/Main.qml"));

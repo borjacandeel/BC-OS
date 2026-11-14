@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTOMOC ON)
 
-find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Qml Quick Network LinguistTools Test)
+find_package(Qt6 6.4 REQUIRED COMPONENTS Core Gui Qml Quick Network DBus LinguistTools Test)
 find_library(PAM_LIBRARY pam REQUIRED)
 qt_standard_project_setup()
 
@@ -14,7 +14,8 @@ add_library(bccommon STATIC src/appconfig.h src/appconfig.cpp src/powercontrol.h
 target_link_libraries(bccommon PUBLIC Qt6::Core)
 
 qt_add_executable(bc-shell src/main.cpp src/launcher.h src/launcher.cpp src/filebrowser.h src/filebrowser.cpp
-    src/pamauth.h src/pamauth.cpp src/systemstatus.h src/systemstatus.cpp)
+    src/pamauth.h src/pamauth.cpp src/systemstatus.h src/systemstatus.cpp
+    src/notifications.h src/notifications.cpp)
 
 set(BC_QML_FILES
     qml/Main.qml qml/Theme.qml qml/Icons.qml qml/IconCache.qml qml/Icon.qml qml/Wallpaper.qml
@@ -46,7 +47,7 @@ qt_add_translations(bc-shell
 file(GLOB BC_ICON_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/assets/icons/*.svg)
 qt_add_resources(bc-shell bcicons PREFIX /BCShell/icons BASE ${CMAKE_CURRENT_SOURCE_DIR}/assets/icons FILES ${BC_ICON_FILES})
 
-target_link_libraries(bc-shell PRIVATE bccommon Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick ${PAM_LIBRARY})
+target_link_libraries(bc-shell PRIVATE bccommon Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::DBus ${PAM_LIBRARY})
 
 # Greeter para greetd
 qt_add_executable(bc-greeter src/greeter_main.cpp src/greetd.h src/greetd.cpp)
@@ -87,6 +88,15 @@ add_test(NAME greeter_login_clave_mala COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests
 add_test(NAME greeter_captura COMMAND bc-greeter --check --size 1280x800 --lang es_ES
          --screenshot ${CMAKE_BINARY_DIR}/captura-greeter.png)
 set_tests_properties(greeter_captura PROPERTIES ENVIRONMENT "${BC_ENV}")
+qt_add_executable(tst_notif tests/tst_notif.cpp src/notifications.h src/notifications.cpp)
+target_link_libraries(tst_notif PRIVATE Qt6::Core Qt6::Gui Qt6::DBus Qt6::Test)
+find_program(BC_DBUS_RUN_SESSION dbus-run-session)
+if(BC_DBUS_RUN_SESSION)
+    add_test(NAME notificaciones_dbus COMMAND ${BC_DBUS_RUN_SESSION} -- $<TARGET_FILE:tst_notif>)
+else()
+    add_test(NAME notificaciones_dbus COMMAND tst_notif)
+endif()
+set_tests_properties(notificaciones_dbus PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
 foreach(sz 1280x800 1920x1080 1024x640)
     add_test(NAME responsive_${sz} COMMAND bc-shell --check --lang es_ES --size ${sz}
              --expect-title "Actualizaciones" --screenshot ${CMAKE_BINARY_DIR}/captura-${sz}.png)
