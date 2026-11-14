@@ -29,7 +29,8 @@ Mosaico (como bspwm) y flotante (como macOS)
   Súper+Mayús+R         Recargar la configuración
 
 Otros
-  Impr                  Captura de pantalla (en Imágenes)
+  Impr                  Captura de pantalla (en Imágenes y al portapapeles)
+  Súper+Mayús+S         Captura de un área  ·  Alt+Impr: de la ventana
   Teclas de volumen y brillo funcionan si el equipo las tiene.
 
 Personaliza: ~/.config/bc/sway-user.conf (sintaxis de sway).

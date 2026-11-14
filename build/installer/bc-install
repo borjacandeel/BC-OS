@@ -333,7 +333,7 @@ do_config() {
   # Cuentas por defecto de la imagen origen: se eliminan (el usuario lo crea el instalador)
   local u
   for u in bc alarm; do crun bash -c "id $u >/dev/null 2>&1 && userdel -rf $u || true"; done
-  crun useradd -m -G wheel,audio,video,input -s /bin/bash "$USER_NAME"
+  crun useradd -m -G wheel,audio,video,input -s /usr/bin/fish "$USER_NAME"
   if ((DRY)); then echo "+ (chroot) chpasswd <<< '$USER_NAME:<contraseña omitida>'"; else
     printf '%s:%s\n' "$USER_NAME" "$PW" | inchroot chpasswd >>"$LOG" 2>&1
   fi

@@ -46,3 +46,13 @@ swaybg
 alacritty
 flatpak
 clamav
+slurp
+wl-clipboard
+libnotify
+fastfetch
+jq
+fish
+fzf
+zoxide
+eza
+bat

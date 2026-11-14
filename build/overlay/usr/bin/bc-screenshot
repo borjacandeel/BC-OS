@@ -1,0 +1,14 @@
+#!/bin/sh
+# Capturas de pantalla de BC OS. Uso: bc-screenshot [pantalla|area|ventana]  (por defecto: pantalla)
+# Guarda en ~/Imágenes y copia al portapapeles (wl-copy). «area» pide seleccionar con el ratón (slurp).
+DIR="$(xdg-user-dir PICTURES 2>/dev/null || echo "$HOME/Imágenes")"
+mkdir -p "$DIR"
+F="$DIR/captura-$(date +%F_%H-%M-%S).png"
+case "${1:-pantalla}" in
+  area)    G="$(slurp)" || exit 0; grim -g "$G" "$F" ;;
+  ventana) G="$(swaymsg -t get_tree | jq -r '.. | select(.focused?==true) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')"; grim -g "$G" "$F" ;;
+  *)       grim "$F" ;;
+esac || exit 1
+command -v wl-copy >/dev/null 2>&1 && wl-copy < "$F"
+command -v notify-send >/dev/null 2>&1 && notify-send -a "BC OS" "Captura guardada" "$F" -i camera-photo
+echo "$F"
