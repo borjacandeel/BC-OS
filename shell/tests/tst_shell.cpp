@@ -11,6 +11,7 @@
 #include "../src/powercontrol.h"
 #include "../src/systemstatus.h"
 #include "../src/userlist.h"
+#include "../src/windowlist.h"
 
 class TstShell : public QObject {
     Q_OBJECT
@@ -171,6 +172,12 @@ private slots:
         QCOMPARE(m.value("name").toString(), QString("mpv"));
         QCOMPARE(m.value("size").toString(), QString("5.00 MiB"));
         QCOMPARE(PackageStore::sudoArgs({"-S", "x"}), QStringList({"-S", "-p", "", "--", "pacman", "-S", "x"}));
+    }
+    void listaDeVentanas() {
+        const QVariantList w = WindowList::parseList("foot: bc@bcos: ~\nfirefox: Mozilla Firefox\nbc-shell: BC Shell\n");
+        QCOMPARE(w.size(), 2);  // bc-shell no cuenta
+        QCOMPARE(w[0].toMap().value("appId").toString(), QString("foot"));
+        QCOMPARE(w[0].toMap().value("title").toString(), QString("bc@bcos: ~"));
     }
     void listaDeUsuarios() {
         QTemporaryDir t;

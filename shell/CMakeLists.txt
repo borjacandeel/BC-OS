@@ -15,7 +15,7 @@ target_link_libraries(bccommon PUBLIC Qt6::Core)
 
 qt_add_executable(bc-shell src/main.cpp src/launcher.h src/launcher.cpp src/filebrowser.h src/filebrowser.cpp
     src/pamauth.h src/pamauth.cpp src/systemstatus.h src/systemstatus.cpp
-    src/notifications.h src/notifications.cpp src/sysmonitor.h src/sysmonitor.cpp src/appindex.h src/appindex.cpp src/packagestore.h src/packagestore.cpp)
+    src/notifications.h src/notifications.cpp src/sysmonitor.h src/sysmonitor.cpp src/appindex.h src/appindex.cpp src/packagestore.h src/packagestore.cpp src/windowlist.h src/windowlist.cpp)
 
 set(BC_QML_FILES
     qml/Main.qml qml/Theme.qml qml/Icons.qml qml/IconCache.qml qml/Icon.qml qml/Wallpaper.qml
@@ -77,7 +77,7 @@ add_test(NAME movimiento_reducido COMMAND bc-shell --check --lang es_ES --reduce
 set_tests_properties(carga_es carga_en movimiento_reducido PROPERTIES ENVIRONMENT "${BC_ENV}")
 
 qt_add_executable(tst_shell tests/tst_shell.cpp src/launcher.h src/launcher.cpp src/filebrowser.h src/filebrowser.cpp
-    src/systemstatus.h src/systemstatus.cpp src/appindex.h src/appindex.cpp src/packagestore.h src/packagestore.cpp src/userlist.h src/userlist.cpp src/greetd.h src/greetd.cpp src/powercontrol.h src/powercontrol.cpp)
+    src/systemstatus.h src/systemstatus.cpp src/appindex.h src/appindex.cpp src/packagestore.h src/packagestore.cpp src/windowlist.h src/windowlist.cpp src/userlist.h src/userlist.cpp src/greetd.h src/greetd.cpp src/powercontrol.h src/powercontrol.cpp)
 target_link_libraries(tst_shell PRIVATE Qt6::Core Qt6::Gui Qt6::Network Qt6::Test)
 add_test(NAME modelo_archivos_y_lanzador COMMAND tst_shell)
 set_tests_properties(modelo_archivos_y_lanzador PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")

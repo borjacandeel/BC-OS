@@ -48,6 +48,8 @@ Window {
     }
     function launch(kind, name) {
         if (kind === "lanzador") { launcherPanel.open ? launcherPanel.hide() : launcherPanel.show(); return }
+        const appId = ({ terminal: "foot", navegador: "firefox" })[kind]
+        if (appId && Windows.has(appId)) { Windows.focus(appId); return }
         const r = Launcher.launch(kind)
         if (kind === "monitor") { openInternal(monitorWin, "monitorOpen"); return }
         if (kind === "ajustes") { openInternal(settingsWin, "settingsOpen"); return }
@@ -175,7 +177,7 @@ Window {
         y: root.height - height - Math.round(22 * root.u)
         onLoaded: {
             item.launched.connect((kind, name) => root.launch(kind, name))
-            item.running = Qt.binding(() => Launcher.running.concat(root.filesOpen ? ["archivos"] : [])
+            item.running = Qt.binding(() => Launcher.running.concat((Windows.has("foot") ? ["terminal"] : [])).concat(Windows.has("firefox") ? ["navegador"] : []).concat(root.filesOpen ? ["archivos"] : [])
                 .concat(root.monitorOpen ? ["monitor"] : []).concat(root.settingsOpen ? ["ajustes"] : []).concat(root.storeOpen ? ["tienda"] : []))
         }
     }

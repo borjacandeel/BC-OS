@@ -59,6 +59,15 @@ mkdir -p "$R/usr/share/icons"; rm -rf "$R/usr/share/icons/BC"
 cp -a "$HERE/../icons/dist/theme/BC" "$R/usr/share/icons/BC"
 mkdir -p "$R/etc/gtk-3.0"; printf '[Settings]\ngtk-icon-theme-name=BC\n' > "$R/etc/gtk-3.0/settings.ini"
 
+# Reducción de tamaño (imagen para máquinas virtuales UEFI; BC_KEEP_FIRMWARE=1 conserva linux-firmware)
+if [[ "${BC_KEEP_FIRMWARE:-0}" != "1" ]]; then
+  sh "pacman -Q linux-firmware >/dev/null 2>&1 && pacman -Rdd --noconfirm --disable-sandbox linux-firmware linux-firmware-whence 2>/dev/null || true"
+  sh "pacman -Q linux-firmware-whence >/dev/null 2>&1 && pacman -Rdd --noconfirm --disable-sandbox linux-firmware-whence || true"
+fi
+sh "pacman -Q gcc >/dev/null 2>&1 && pacman -Rdd --noconfirm --disable-sandbox gcc || true"
+find "$R/usr/share/locale" -mindepth 1 -maxdepth 1 ! -name 'es*' ! -name 'en*' ! -name 'locale.alias' -exec rm -rf {} + 2>/dev/null || true
+rm -rf "$R/usr/share/doc" "$R/usr/share/man" "$R/usr/share/info" "$R/usr/share/gtk-doc" "$R/usr/share/help" 2>/dev/null || true
+
 # Instalador (bc-install) disponible en el sistema
 mkdir -p "$R/usr/lib/bc-install"
 cp -a "$HERE/installer/bc-install" "$HERE/installer/lang" "$R/usr/lib/bc-install/"

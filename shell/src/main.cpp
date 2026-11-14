@@ -17,6 +17,7 @@
 #include "sysmonitor.h"
 #include "systemstatus.h"
 #include "userlist.h"
+#include "windowlist.h"
 #include "filebrowser.h"
 #include "launcher.h"
 
@@ -71,6 +72,7 @@ int main(int argc, char *argv[]) {
     SysMonitor monitor;
     AppIndex apps({}, lang);
     PackageStore store;
+    WindowList windowList;
     SystemStatus status;
     NotificationQueue notifications;
     NotificationServer notifServer(&notifications);
@@ -83,6 +85,7 @@ int main(int argc, char *argv[]) {
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Monitor", &monitor);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Apps", &apps);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Store", &store);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Windows", &windowList);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "SystemStatus", &status);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Notifications", &notifications);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Power", &power);

@@ -24,6 +24,7 @@ bc_chroot "$R" bash -c "pacman -S --needed --noconfirm --disable-sandbox $PK"
 bc_umount "$R"; trap - EXIT
 
 bash "$HERE/build-shell.sh" "$R"
+bash "$HERE/build-core.sh" "$R"
 sed -i "s/^PRETTY_NAME=.*/PRETTY_NAME=\"BC OS $VER\"/; s/^VERSION=.*/VERSION=\"$VER\"/; s/^VERSION_ID=.*/VERSION_ID=\"$VER\"/" "$HERE/overlay/etc/os-release"
 bash "$HERE/configure-rootfs.sh" "$R"
 
