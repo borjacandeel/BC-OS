@@ -14,6 +14,7 @@ class FileBrowser : public QAbstractListModel {
     Q_PROPERTY(bool available READ available NOTIFY pathChanged)
     Q_PROPERTY(int count READ rowCount NOTIFY countChanged)
     Q_PROPERTY(QVariantList crumbs READ crumbs NOTIFY pathChanged)
+    Q_PROPERTY(bool inTrash READ inTrash NOTIFY pathChanged)
 public:
     enum Roles { NameRole = Qt::UserRole + 1, PathRole, KindRole, IsDirRole };
     explicit FileBrowser(QObject *parent = nullptr);
@@ -31,14 +32,26 @@ public:
     QVariantList crumbs() const;
 
     Q_INVOKABLE void open(const QString &path);          // navega (añade al historial)
-    Q_INVOKABLE void activate(int row);                   // doble click: entra si es carpeta
+    Q_INVOKABLE void activate(int row);                   // doble click: entra si es carpeta; abre el archivo con xdg-open
     Q_INVOKABLE void back();
     Q_INVOKABLE void forward();
     Q_INVOKABLE void up();
     Q_INVOKABLE void place(const QString &name);          // home, desktop, documents, downloads, pictures, music
     Q_INVOKABLE QString placePath(const QString &name) const;
+    bool inTrash() const;
+    Q_INVOKABLE QString trashPath() const;                // ~/.local/share/Trash/files
+    Q_INVOKABLE void openTrash();
+    Q_INVOKABLE QString nameAt(int row) const;
+    Q_INVOKABLE bool newFolder(const QString &name);
+    Q_INVOKABLE bool renameAt(int row, const QString &newName);
+    Q_INVOKABLE bool trashAt(int row);                    // mueve a la papelera (especificación FreeDesktop)
+    Q_INVOKABLE bool restoreAt(int row);                  // solo dentro de la papelera
+    Q_INVOKABLE bool deleteAt(int row);                   // eliminación definitiva, solo en la papelera
+    Q_INVOKABLE bool emptyTrash();
+    Q_INVOKABLE void reload() { load(m_path); }
     static QString kindFor(const QFileInfo &fi);
 signals:
+    void operationFailed(const QString &message);
     void pathChanged();
     void filterChanged();
     void historyChanged();

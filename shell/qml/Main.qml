@@ -48,6 +48,7 @@ Window {
         const r = Launcher.launch(kind)
         if (kind === "monitor") { openInternal(monitorWin, "monitorOpen"); return }
         if (kind === "ajustes") { openInternal(settingsWin, "settingsOpen"); return }
+        if (kind === "papelera") { filesOpen = true; Files.openTrash(); return }
         if (kind === "archivos") filesOpen = true
         else if (r === "unavailable") showNotice(name, qsTr("En desarrollo"))
         else if (r === "failed") showNotice(name, qsTr("No se pudo abrir la aplicación"))

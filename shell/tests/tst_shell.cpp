@@ -51,6 +51,49 @@ private slots:
         QCOMPARE(c.last().toMap().value("name").toString(), QString("Sub"));
         QCOMPARE(c.first().toMap().value("path").toString(), QString("/"));
     }
+    void papeleraYOperaciones() {
+        QTemporaryDir t;
+        QVERIFY(t.isValid());
+        qputenv("XDG_DATA_HOME", (t.path() + "/data").toUtf8());
+        QDir d(t.path());
+        QVERIFY(d.mkpath("trabajo"));
+        QFile f(d.filePath("trabajo/nota.txt"));
+        QVERIFY(f.open(QIODevice::WriteOnly));
+        f.write("hola");
+        f.close();
+        FileBrowser b;
+        b.open(d.filePath("trabajo"));
+        QCOMPARE(b.rowCount(), 1);
+        QVERIFY(b.newFolder("Nueva"));
+        QVERIFY(b.newFolder("Nueva"));  // nombre repetido: "Nueva 2"
+        QCOMPARE(b.rowCount(), 3);
+        int row = -1;
+        for (int i = 0; i < b.rowCount(); ++i) if (b.nameAt(i) == "nota.txt") row = i;
+        QVERIFY(row >= 0);
+        QVERIFY(b.renameAt(row, "apuntes.txt"));
+        QVERIFY(QFile::exists(d.filePath("trabajo/apuntes.txt")));
+        QVERIFY(!b.renameAt(0, "a/b"));
+        for (int i = 0; i < b.rowCount(); ++i) if (b.nameAt(i) == "apuntes.txt") row = i;
+        QVERIFY(b.trashAt(row));
+        QVERIFY(!QFile::exists(d.filePath("trabajo/apuntes.txt")));
+        QVERIFY(QFile::exists(t.path() + "/data/Trash/files/apuntes.txt"));
+        QFile info(t.path() + "/data/Trash/info/apuntes.txt.trashinfo");
+        QVERIFY(info.open(QIODevice::ReadOnly));
+        QVERIFY(QString::fromUtf8(info.readAll()).contains("Path=" + d.filePath("trabajo/apuntes.txt")));
+        b.openTrash();
+        QVERIFY(b.inTrash());
+        QCOMPARE(b.rowCount(), 1);
+        QVERIFY(b.restoreAt(0));
+        QVERIFY(QFile::exists(d.filePath("trabajo/apuntes.txt")));
+        b.open(d.filePath("trabajo"));
+        for (int i = 0; i < b.rowCount(); ++i) if (b.nameAt(i) == "apuntes.txt") row = i;
+        QVERIFY(b.trashAt(row));
+        b.openTrash();
+        QVERIFY(b.deleteAt(0));
+        QCOMPARE(b.rowCount(), 0);
+        QVERIFY(b.emptyTrash());
+        QVERIFY(!b.trashAt(0));  // no se puede enviar a la papelera desde la papelera
+    }
     void carpetaInexistente() {
         FileBrowser b;
         b.open("/no/existe/bc");

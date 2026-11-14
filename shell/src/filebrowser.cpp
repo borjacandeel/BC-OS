@@ -1,4 +1,8 @@
 #include "filebrowser.h"
+#include <QDateTime>
+#include <QProcess>
+#include <QSaveFile>
+#include <QUrl>
 #include <QDir>
 #include <QMimeDatabase>
 #include <QStandardPaths>
@@ -82,7 +86,120 @@ void FileBrowser::open(const QString &path) {
 
 void FileBrowser::activate(int row) {
     if (row < 0 || row >= m_items.size()) return;
-    if (m_items.at(row).isDir()) open(m_items.at(row).absoluteFilePath());
+    const QFileInfo &fi = m_items.at(row);
+    if (fi.isDir()) { open(fi.absoluteFilePath()); return; }
+    if (inTrash()) return;
+    const QString xdg = QStandardPaths::findExecutable("xdg-open");
+    if (xdg.isEmpty() || !QProcess::startDetached(xdg, {fi.absoluteFilePath()}))
+        emit operationFailed(tr("No hay ninguna aplicación para abrir «%1»").arg(fi.fileName()));
+}
+
+namespace {
+QString dataHome() {
+    return QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
+}
+QString uniqueName(const QDir &dir, const QString &name) {
+    if (!dir.exists(name)) return name;
+    const QFileInfo fi(name);
+    const QString base = fi.completeBaseName().isEmpty() ? name : fi.completeBaseName();
+    const QString ext = fi.suffix().isEmpty() ? QString() : "." + fi.suffix();
+    for (int i = 2; i < 10000; ++i) {
+        const QString c = QString("%1 %2%3").arg(base).arg(i).arg(ext);
+        if (!dir.exists(c)) return c;
+    }
+    return name + "." + QString::number(QDateTime::currentMSecsSinceEpoch());
+}
+bool moveAny(const QString &from, const QString &to) {
+    if (QDir().rename(from, to)) return true;
+    return QProcess::execute("mv", {"--", from, to}) == 0;  // entre sistemas de archivos distintos
+}
+}  // namespace
+
+QString FileBrowser::trashPath() const { return dataHome() + "/Trash/files"; }
+bool FileBrowser::inTrash() const { return m_path == QDir::cleanPath(trashPath()); }
+void FileBrowser::openTrash() { QDir().mkpath(trashPath()); QDir().mkpath(dataHome() + "/Trash/info"); open(trashPath()); }
+QString FileBrowser::nameAt(int row) const { return row >= 0 && row < m_items.size() ? m_items.at(row).fileName() : QString(); }
+
+bool FileBrowser::newFolder(const QString &name) {
+    const QString n = name.trimmed();
+    if (n.isEmpty() || n.contains('/')) { emit operationFailed(tr("Nombre no válido")); return false; }
+    if (!QDir(m_path).mkdir(uniqueName(QDir(m_path), n))) { emit operationFailed(tr("No se pudo crear la carpeta")); return false; }
+    reload();
+    return true;
+}
+
+bool FileBrowser::renameAt(int row, const QString &newName) {
+    if (row < 0 || row >= m_items.size()) return false;
+    const QString n = newName.trimmed();
+    if (n.isEmpty() || n.contains('/')) { emit operationFailed(tr("Nombre no válido")); return false; }
+    const QFileInfo fi = m_items.at(row);
+    if (n == fi.fileName()) return true;
+    if (QFileInfo::exists(fi.absolutePath() + "/" + n)) { emit operationFailed(tr("Ya existe un elemento con ese nombre")); return false; }
+    if (!QDir().rename(fi.absoluteFilePath(), fi.absolutePath() + "/" + n)) { emit operationFailed(tr("No se pudo cambiar el nombre")); return false; }
+    reload();
+    return true;
+}
+
+bool FileBrowser::trashAt(int row) {
+    if (row < 0 || row >= m_items.size() || inTrash()) return false;
+    const QFileInfo fi = m_items.at(row);
+    const QDir files(trashPath()), info(dataHome() + "/Trash/info");
+    QDir().mkpath(files.path());
+    QDir().mkpath(info.path());
+    const QString name = uniqueName(files, fi.fileName());
+    QSaveFile f(info.filePath(name + ".trashinfo"));
+    if (!f.open(QIODevice::WriteOnly)) { emit operationFailed(tr("No se pudo usar la papelera")); return false; }
+    f.write("[Trash Info]\nPath=" + QUrl::toPercentEncoding(fi.absoluteFilePath(), "/") + "\nDeletionDate="
+            + QDateTime::currentDateTime().toString("yyyy-MM-ddThh:mm:ss").toUtf8() + "\n");
+    if (!f.commit()) return false;
+    if (!moveAny(fi.absoluteFilePath(), files.filePath(name))) {
+        QFile::remove(info.filePath(name + ".trashinfo"));
+        emit operationFailed(tr("No se pudo mover a la papelera"));
+        return false;
+    }
+    reload();
+    return true;
+}
+
+bool FileBrowser::restoreAt(int row) {
+    if (row < 0 || row >= m_items.size() || !inTrash()) return false;
+    const QString name = m_items.at(row).fileName();
+    const QString infoPath = dataHome() + "/Trash/info/" + name + ".trashinfo";
+    QFile f(infoPath);
+    QString orig;
+    if (f.open(QIODevice::ReadOnly)) {
+        for (const QString &l : QString::fromUtf8(f.readAll()).split('\n'))
+            if (l.startsWith("Path=")) orig = QUrl::fromPercentEncoding(l.mid(5).toUtf8());
+    }
+    if (orig.isEmpty()) orig = QDir::homePath() + "/" + name;
+    const QFileInfo target(orig);
+    QDir().mkpath(target.absolutePath());
+    const QString dest = target.absolutePath() + "/" + uniqueName(QDir(target.absolutePath()), target.fileName());
+    if (!moveAny(m_items.at(row).absoluteFilePath(), dest)) { emit operationFailed(tr("No se pudo restaurar")); return false; }
+    QFile::remove(infoPath);
+    reload();
+    return true;
+}
+
+bool FileBrowser::deleteAt(int row) {
+    if (row < 0 || row >= m_items.size() || !inTrash()) return false;
+    const QFileInfo fi = m_items.at(row);
+    const bool ok = fi.isDir() && !fi.isSymLink() ? QDir(fi.absoluteFilePath()).removeRecursively() : QFile::remove(fi.absoluteFilePath());
+    if (!ok) { emit operationFailed(tr("No se pudo eliminar")); return false; }
+    QFile::remove(dataHome() + "/Trash/info/" + fi.fileName() + ".trashinfo");
+    reload();
+    return true;
+}
+
+bool FileBrowser::emptyTrash() {
+    const QDir files(trashPath()), info(dataHome() + "/Trash/info");
+    bool ok = true;
+    for (const QFileInfo &fi : files.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System))
+        ok &= fi.isDir() && !fi.isSymLink() ? QDir(fi.absoluteFilePath()).removeRecursively() : QFile::remove(fi.absoluteFilePath());
+    for (const QFileInfo &fi : info.entryInfoList(QDir::Files)) QFile::remove(fi.absoluteFilePath());
+    if (!ok) emit operationFailed(tr("No se pudo vaciar la papelera"));
+    if (inTrash()) reload();
+    return ok;
 }
 
 void FileBrowser::back() {
