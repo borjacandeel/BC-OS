@@ -10,6 +10,7 @@ Item {
     height: size
 
     readonly property var names: ({
+        lanzador: "bc-launcher",
         archivos: "system-file-manager",
         ajustes: "preferences-system",
         monitor: "utilities-system-monitor",

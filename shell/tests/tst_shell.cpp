@@ -4,6 +4,7 @@
 #include <QTemporaryDir>
 #include <QtTest>
 #include "../src/filebrowser.h"
+#include "../src/appindex.h"
 #include "../src/greetd.h"
 #include "../src/launcher.h"
 #include "../src/powercontrol.h"
@@ -134,6 +135,27 @@ private slots:
         bool ok = false; double f = 0;
         SystemStatus::parseBrightnessctl("intel_backlight,backlight,500,50%,1000\n", ok, f);
         QVERIFY(ok); QCOMPARE(f, 0.5);
+    }
+    void indiceDeAplicaciones() {
+        AppIndex::Entry e;
+        QVERIFY(AppIndex::parseDesktop("[Desktop Entry]\nType=Application\nName=Terminal\nName[es]=Terminal de BC\nExec=foot %U\nIcon=foot\n", "es_ES", e));
+        QCOMPARE(e.name, QString("Terminal de BC"));
+        QVERIFY(!AppIndex::parseDesktop("[Desktop Entry]\nType=Application\nName=X\nExec=x\nNoDisplay=true\n", "es_ES", e));
+        QVERIFY(!AppIndex::parseDesktop("[Desktop Entry]\nType=Link\nName=X\nExec=x\n", "es_ES", e));
+        QCOMPARE(AppIndex::commandFor("foot --title \"A B\" %U", false), QStringList({"foot", "--title", "A B"}));
+        QCOMPARE(AppIndex::commandFor("htop", true), QStringList({"foot", "-e", "htop"}));
+        QTemporaryDir t;
+        QDir(t.path()).mkpath("apps");
+        QFile f(t.filePath("apps/navegador.desktop"));
+        QVERIFY(f.open(QIODevice::WriteOnly));
+        f.write("[Desktop Entry]\nType=Application\nName=Navegador web\nExec=true\nComment=Internet\n");
+        f.close();
+        AppIndex idx({t.filePath("apps")}, "es_ES");
+        QCOMPARE(idx.count(), 1);
+        QCOMPARE(idx.search("nave").size(), 1);
+        QCOMPARE(idx.search("inter").size(), 1);   // por comentario
+        QCOMPARE(idx.search("zzz").size(), 0);
+        QVERIFY(idx.launch("navegador.desktop"));
     }
     void listaDeUsuarios() {
         QTemporaryDir t;

@@ -15,14 +15,14 @@ target_link_libraries(bccommon PUBLIC Qt6::Core)
 
 qt_add_executable(bc-shell src/main.cpp src/launcher.h src/launcher.cpp src/filebrowser.h src/filebrowser.cpp
     src/pamauth.h src/pamauth.cpp src/systemstatus.h src/systemstatus.cpp
-    src/notifications.h src/notifications.cpp src/sysmonitor.h src/sysmonitor.cpp)
+    src/notifications.h src/notifications.cpp src/sysmonitor.h src/sysmonitor.cpp src/appindex.h src/appindex.cpp)
 
 set(BC_QML_FILES
     qml/Main.qml qml/Theme.qml qml/Icons.qml qml/IconCache.qml qml/Icon.qml qml/Wallpaper.qml
     qml/TopBar.qml qml/Dock.qml qml/AppIcon.qml qml/FilesWindow.qml
     qml/FileGlyph.qml qml/ControlCenter.qml qml/NotificationCard.qml qml/Brand.qml
     qml/LoginPanel.qml qml/PowerButton.qml qml/PowerDialog.qml qml/BigClock.qml qml/LockScreen.qml
-    qml/Splash.qml qml/SystemMenu.qml qml/AppWindow.qml qml/MonitorApp.qml qml/SettingsApp.qml)
+    qml/Splash.qml qml/SystemMenu.qml qml/AppWindow.qml qml/MonitorApp.qml qml/SettingsApp.qml qml/LauncherPanel.qml)
 set(BC_GREETER_QML qml/Greeter.qml qml/LoginPanel.qml qml/PowerButton.qml qml/PowerDialog.qml qml/BigClock.qml
     qml/Theme.qml qml/Icons.qml qml/IconCache.qml qml/Icon.qml qml/Wallpaper.qml qml/Brand.qml)
 foreach(f ${BC_QML_FILES} qml/Greeter.qml)
@@ -77,7 +77,7 @@ add_test(NAME movimiento_reducido COMMAND bc-shell --check --lang es_ES --reduce
 set_tests_properties(carga_es carga_en movimiento_reducido PROPERTIES ENVIRONMENT "${BC_ENV}")
 
 qt_add_executable(tst_shell tests/tst_shell.cpp src/launcher.h src/launcher.cpp src/filebrowser.h src/filebrowser.cpp
-    src/systemstatus.h src/systemstatus.cpp src/userlist.h src/userlist.cpp src/greetd.h src/greetd.cpp src/powercontrol.h src/powercontrol.cpp)
+    src/systemstatus.h src/systemstatus.cpp src/appindex.h src/appindex.cpp src/userlist.h src/userlist.cpp src/greetd.h src/greetd.cpp src/powercontrol.h src/powercontrol.cpp)
 target_link_libraries(tst_shell PRIVATE Qt6::Core Qt6::Gui Qt6::Network Qt6::Test)
 add_test(NAME modelo_archivos_y_lanzador COMMAND tst_shell)
 set_tests_properties(modelo_archivos_y_lanzador PROPERTIES ENVIRONMENT "QT_QPA_PLATFORM=offscreen")

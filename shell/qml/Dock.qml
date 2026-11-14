@@ -4,12 +4,13 @@ import BCShell
 // BC Dock: flotante, con magnificación animada por proximidad del puntero.
 Item {
     id: dock
-    width: 810
+    width: 124 + (apps.length - 1) * 98
     height: 103
 
     property real hoverX: -1000
     readonly property real magnification: Theme.reducedMotion ? 0.0 : 0.5
     readonly property var apps: [
+        { kind: "lanzador", name: qsTr("Lanzador") },
         { kind: "archivos", name: qsTr("Archivos") },
         { kind: "ajustes", name: qsTr("Configuración") },
         { kind: "monitor", name: qsTr("Monitor") },

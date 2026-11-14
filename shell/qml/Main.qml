@@ -20,6 +20,7 @@ Window {
     property bool filesOpen: true
     property bool locked: false
     property bool monitorOpen: false
+    property bool launcherOpen: false
     property bool settingsOpen: false
     property int zTop: 100
     readonly property bool notifOpen: Notifications.visible
@@ -45,6 +46,7 @@ Window {
         Qt.callLater(() => item.shown = true)
     }
     function launch(kind, name) {
+        if (kind === "lanzador") { launcherPanel.open ? launcherPanel.hide() : launcherPanel.show(); return }
         const r = Launcher.launch(kind)
         if (kind === "monitor") { openInternal(monitorWin, "monitorOpen"); return }
         if (kind === "ajustes") { openInternal(settingsWin, "settingsOpen"); return }
@@ -167,6 +169,12 @@ Window {
     }
 
     Shortcut { sequence: "Ctrl+Meta+Q"; onActivated: root.locked = true }
+    Shortcut { sequence: "Ctrl+Space"; onActivated: launcherPanel.open ? launcherPanel.hide() : launcherPanel.show() }
+
+    LauncherPanel {
+        id: launcherPanel
+        onLaunchRequested: (id, name) => { if (!Apps.launch(id)) root.showNotice(name, qsTr("No se pudo abrir la aplicación")) }
+    }
 
     SystemMenu {
         id: sysMenu
@@ -199,6 +207,7 @@ Window {
         if (AppConfig.demo === "lock") locked = true
         else if (AppConfig.demo === "menu") sysMenu.open = true
         else if (AppConfig.demo === "power") powerDialog.open("poweroff")
+        else if (AppConfig.demo === "launcher") launcherPanel.show()
         else if (AppConfig.demo === "monitor") launch("monitor", "")
         else if (AppConfig.demo === "ajustes") launch("ajustes", "")
     }
