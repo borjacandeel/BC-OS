@@ -22,6 +22,8 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 
 - [x] 2026-11-14 0.3.2: animación minimizar + swayfx experimental (verificado: lento con llvmpipe; pendiente probar con GPU real/VirtualBox 3D). Lunes 16:30 se retoma (tarea programada en esta conversación).
 
+- [ ] 2026-11-14 Fase 4 (antivirus): crate `core/crates/bc-antivirus-service` (org.bcos.Antivirus, ClamAV) EN CURSO.
+
 ## Pendiente (orden)
 ### Fase 0 — Viabilidad
 - [x] Inspeccionar repo (solo README, rama `main` + `claude/bc-os-kcjzgc`).
