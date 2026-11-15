@@ -1,5 +1,7 @@
 #!/bin/sh
 # Sesión gráfica de BC OS: sway (Wayland) + panel de BC Shell. Respaldo por software si no hay GPU.
+# «BC clásico»: el escritorio anterior a Golden Gate (barra, Dock y widgets de antes), elegible en el login
+if [ "$1" = "--classic" ]; then export BC_CLASSIC=1; shift; fi
 # Alpha: render por software siempre, salvo que el kernel arranque con bc.gpu=1
 if ! grep -qw "bc.gpu=1" /proc/cmdline || ! ls /dev/dri/renderD* >/dev/null 2>&1; then
   export WLR_RENDERER=pixman WLR_NO_HARDWARE_CURSORS=1 QT_QUICK_BACKEND=software
@@ -9,6 +11,8 @@ export LANG="${LANG:-es_ES.UTF-8}" XDG_CURRENT_DESKTOP=BC XDG_SESSION_TYPE=wayla
 LOG="$HOME/bc-session.log"
 { date; echo "renderD: $(ls /dev/dri 2>&1 | tr '\n' ' ')"; echo "WLR_RENDERER=$WLR_RENDERER QT_QUICK_BACKEND=$QT_QUICK_BACKEND"; } > "$LOG" 2>&1
 bc-wm-mode init >> "$LOG" 2>&1
+# Aspecto claro/oscuro recordado (GTK y barras de título)
+[ -x /usr/bin/bc-appearance ] && bc-appearance "$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/bc/appearance" 2>/dev/null || echo dark)" >> "$LOG" 2>&1
 # Efectos (esquinas redondeadas, sombras, desenfoque): swayfx + GPU. Sin GPU o si falla, sway normal.
 SWAY=sway
 if grep -qw "bc.gpu=1" /proc/cmdline && [ -x /opt/swayfx/bin/sway ] && ls /dev/dri/renderD* >/dev/null 2>&1; then

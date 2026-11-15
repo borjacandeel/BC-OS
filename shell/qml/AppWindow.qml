@@ -7,7 +7,7 @@ Window {
     id: win
     default property alias content: contentArea.data
     property alias titlebarContent: tbSlot.data
-    property int titlebarHeight: 44
+    property int titlebarHeight: Theme.gg ? 52 : 44
     signal closeRequested()
     visible: true
     color: "transparent"
@@ -57,9 +57,10 @@ Window {
         id: frame
         anchors.fill: parent
         radius: Theme.radiusWindow
-        color: Theme.windowFill
+        color: Theme.gg && !win.active ? Theme.windowBgInactive : Theme.windowFill
         border.width: 1
-        border.color: Theme.hairline
+        border.color: Theme.gg ? (Theme.dark ? Qt.rgba(1, 1, 1, 0.14) : Qt.rgba(0, 0, 0, 0.16)) : Theme.hairline
+        Behavior on color { ColorAnimation { duration: Theme.d(Theme.durHover) } }
         clip: true
         scale: 0.97
         opacity: 0
@@ -72,19 +73,25 @@ Window {
             id: titlebar
             width: parent.width
             height: win.titlebarHeight
-            color: Qt.rgba(1, 1, 1, 0.04)
+            color: Theme.gg ? "transparent" : Qt.rgba(1, 1, 1, 0.04)
             Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: Theme.hairline }
+            MouseArea { id: tlHover; x: 0; width: 90; height: parent.height; hoverEnabled: true; acceptedButtons: Qt.NoButton; z: 2 }
             MouseArea {
                 anchors.fill: parent
                 onPressed: win.startSystemMove()
                 onDoubleClicked: WindowControl.toggleFullscreen()
             }
             Row {
-                x: 16; anchors.verticalCenter: parent.verticalCenter; spacing: 9
+                x: Theme.gg ? Theme.trafficLeft + 4 : 16; anchors.verticalCenter: parent.verticalCenter; spacing: Theme.gg ? Theme.trafficGap : 9
+                z: 3
                 Repeater {
-                    model: [{ c: Theme.close, a: 0 }, { c: Theme.minimize, a: 1 }, { c: Theme.zoom, a: 2 }]
+                    model: [{ c: Theme.close, a: 0, g: "×" }, { c: Theme.minimize, a: 1, g: "−" }, { c: Theme.zoom, a: 2, g: "⤢" }]
                     Rectangle {
-                        width: 14; height: 14; radius: 7; color: modelData.c
+                        readonly property int d: Theme.gg ? Theme.trafficSize : 14
+                        width: d; height: d; radius: d / 2
+                        color: !Theme.gg || win.active || tlHover.containsMouse ? modelData.c : Theme.trafficInactive
+                        Text { anchors.centerIn: parent; visible: Theme.gg && tlHover.containsMouse; text: modelData.g; color: Qt.rgba(0, 0, 0, 0.55)
+                               font.pixelSize: parent.d - 2; font.weight: Font.Black }
                         MouseArea {
                             anchors.fill: parent; anchors.margins: -3
                             onClicked: modelData.a === 0 ? win.closeRequested() : (modelData.a === 1 ? win.minimizeAnimated() : WindowControl.toggleFullscreen())
@@ -96,10 +103,10 @@ Window {
                 visible: tbSlot.children.length === 0
                 anchors.centerIn: parent
                 text: win.title
-                color: Theme.textPrimary
+                color: Theme.gg && !win.active ? Theme.labelSecondary : Theme.textPrimary
                 font.family: Theme.fontFamily
-                font.pixelSize: 15
-                font.weight: Font.DemiBold
+                font.pixelSize: Theme.gg ? 13 : 15
+                font.weight: Theme.gg ? Font.Bold : Font.DemiBold
             }
             Item { id: tbSlot; anchors.fill: parent }
         }

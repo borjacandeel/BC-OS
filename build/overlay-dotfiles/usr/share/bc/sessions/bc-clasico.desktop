@@ -1,0 +1,6 @@
+[Desktop Entry]
+Name=BC clásico
+Comment=Escritorio anterior de BC OS (por si algo falla en el nuevo)
+Exec=bc-session --classic --greetd
+X-BC-Type=wayland
+X-BC-Order=2

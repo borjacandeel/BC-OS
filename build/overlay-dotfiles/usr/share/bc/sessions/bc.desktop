@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=BC OS
-Comment=Escritorio de BC OS (Wayland, sway)
+Comment=Escritorio de BC OS (Golden Gate)
 Exec=bc-session --greetd
 X-BC-Type=wayland
 X-BC-Order=1

@@ -20,27 +20,27 @@ QtObject {
 
     // Superficies (cristal ligero, sin desenfoque por CPU)
     // «Medianoche refinado»: azul noche más apagado y sobrio, con un solo acento
-    readonly property color panelFill: Qt.rgba(0.06, 0.09, 0.16, 0.86)
-    readonly property color panelFillSoft: Qt.rgba(0.09, 0.12, 0.20, 0.55)
-    readonly property color sidebarFill: Qt.rgba(0.02, 0.04, 0.09, 0.45)
+    readonly property color panelFill: lightUi ? Qt.rgba(0.97, 0.97, 0.98, 0.92) : Qt.rgba(0.06, 0.09, 0.16, 0.86)
+    readonly property color panelFillSoft: lightUi ? Qt.rgba(1, 1, 1, 0.6) : Qt.rgba(0.09, 0.12, 0.20, 0.55)
+    readonly property color sidebarFill: gg ? sidebarBg : Qt.rgba(0.02, 0.04, 0.09, 0.45)
     readonly property color barFill: Qt.rgba(0.03, 0.05, 0.10, 0.72)
-    readonly property color popupFill: Qt.rgba(0.06, 0.09, 0.16, 0.97)    // menús, lanzador, Centro de control
-    readonly property color windowFill: Qt.rgba(0.05, 0.08, 0.14, 0.92)   // marco de las apps de BC
+    readonly property color popupFill: gg ? (dark ? Qt.rgba(0.13, 0.13, 0.15, 0.98) : Qt.rgba(0.97, 0.97, 0.98, 0.98)) : Qt.rgba(0.06, 0.09, 0.16, 0.97)    // menús, lanzador, Centro de control
+    readonly property color windowFill: gg ? windowBg : Qt.rgba(0.05, 0.08, 0.14, 0.92)   // marco de las apps de BC
     readonly property color widgetFill: Qt.rgba(0.04, 0.07, 0.13, 0.62)
     readonly property color scrim: Qt.rgba(0.01, 0.03, 0.07, 0.55)        // velo bajo los diálogos
-    readonly property color tileFill: Qt.rgba(1, 1, 1, 0.06)
-    readonly property color hairline: Qt.rgba(1, 1, 1, 0.10)
-    readonly property color textPrimary: white
-    readonly property color textSecondary: Qt.rgba(1, 1, 1, 0.60)
+    readonly property color tileFill: lightUi ? Qt.rgba(0, 0, 0, 0.05) : Qt.rgba(1, 1, 1, 0.06)
+    readonly property color hairline: lightUi ? Qt.rgba(0, 0, 0, 0.10) : Qt.rgba(1, 1, 1, 0.10)
+    readonly property color textPrimary: lightUi ? "#1D1D1F" : white
+    readonly property color textSecondary: lightUi ? Qt.rgba(0, 0, 0, 0.55) : Qt.rgba(1, 1, 1, 0.60)
 
     // Radios
-    readonly property int radiusWindow: 22
+    readonly property int radiusWindow: gg ? windowRadius : 22
     readonly property int radiusPanel: 26
     readonly property int radiusTile: 18
     readonly property int radiusControl: 10
 
     // Tipografía
-    readonly property string fontFamily: "CaskaydiaCove Nerd Font"
+    readonly property string fontFamily: gg ? font : "CaskaydiaCove Nerd Font"
     readonly property string fontMono: "CaskaydiaCove Nerd Font Mono"
     readonly property int sizeBody: 16
     readonly property int sizeSmall: 14
@@ -62,6 +62,8 @@ QtObject {
     function px(v) { return Math.round(v * s) }
 
     // ---- Aspecto -------------------------------------------------------------------------
+    readonly property bool gg: !AppConfig.classic                  // escritorio Golden Gate (no «BC clásico»)
+    readonly property bool lightUi: gg && !dark
     readonly property bool dark: Settings.appearance !== "light"
     // Deslizador de Liquid Glass (Ajustes ▸ Aspecto): 0 = ultratransparente · 1 = totalmente tintado
     readonly property real tint: Settings.glassTint

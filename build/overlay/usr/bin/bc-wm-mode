@@ -13,7 +13,7 @@ case "$1" in
   *) echo "uso: bc-wm-mode toggle|tiling|floating|init|status" >&2; exit 2 ;;
 esac
 if [ "$new" = tiling ]; then
-  printf '# generado por bc-wm-mode: mosaico\nfor_window [app_id=".*"] floating disable\nfor_window [class=".*"] floating disable\ngaps inner 10\ngaps outer 10\ngaps bottom 110\n' > "$D/sway-mode.conf"
+  printf '# generado por bc-wm-mode: mosaico\nfor_window [app_id=".*"] floating disable\nfor_window [class=".*"] floating disable\ngaps inner 10\ngaps outer 10\ngaps bottom 10\n' > "$D/sway-mode.conf"
 else
   printf '# generado por bc-wm-mode: flotante\nfor_window [app_id=".*"] floating enable\nfor_window [class=".*"] floating enable\ngaps inner 0\ngaps outer 0\ngaps bottom 0\n' > "$D/sway-mode.conf"
 fi
@@ -29,6 +29,7 @@ OUT="${XDG_RUNTIME_DIR:?sin XDG_RUNTIME_DIR}/bc-sway.conf"
 "*) WP=/usr/share/bc/wallpapers/ondas.jpg ;; esac
   printf 'output * bg "%s" fill #04111F\n' "$WP"
   cat "$D/sway-mode.conf"
+  [ "$(cat "$D/appearance" 2>/dev/null)" = light ] && cat /etc/bc/sway/claro.conf 2>/dev/null
   printf 'for_window [window_role="pop-up"] floating enable\nfor_window [window_type="dialog"] floating enable\n'
   [ -f "$D/sway-user.conf" ] && cat "$D/sway-user.conf"; true; } > "$OUT.tmp.$$" && mv "$OUT.tmp.$$" "$OUT"
 [ "$1" = init ] && exit 0
@@ -37,7 +38,7 @@ if [ -n "$SWAYSOCK" ]; then
   if [ "$new" = tiling ]; then
     swaymsg 'for_window [app_id=".*"] floating disable; for_window [class=".*"] floating disable' >/dev/null 2>&1
     swaymsg '[app_id=".*"] floating disable; [class=".*"] floating disable' >/dev/null 2>&1
-    swaymsg 'gaps inner all set 10; gaps outer all set 10; gaps bottom all set 110' >/dev/null 2>&1
+    swaymsg 'gaps inner all set 10; gaps outer all set 10; gaps bottom all set 10' >/dev/null 2>&1
   else
     swaymsg 'for_window [app_id=".*"] floating enable; for_window [class=".*"] floating enable' >/dev/null 2>&1
     swaymsg '[app_id=".*"] floating enable; [class=".*"] floating enable' >/dev/null 2>&1

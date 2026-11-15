@@ -3,4 +3,4 @@ Name=Dotfiles (bspwm)
 Comment=Mosaico con bspwm, polybar, picom y rofi (X11)
 Exec=bc-session-bspwm --greetd
 X-BC-Type=x11
-X-BC-Order=2
+X-BC-Order=3
