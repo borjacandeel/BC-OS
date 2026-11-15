@@ -64,6 +64,16 @@ disponible en el login como **«BC clásico»**.
 | 20 | Sonidos originales (aviso, papelera, bloqueo, volumen, captura, error) | hecho |
 | — | Animaciones centralizadas en tokens | hecho; duraciones «sin confirmar» |
 
+## Pulido posterior (objetivo del creador: «exacto como un Mac»)
+- Interletrado de la barra medido sobre la captura (app en negrita 127 px, reloj 142 px).
+- Modo claro revisado en todas las apps (textos y controles adaptativos), interruptores estilo macOS.
+- OSD de volumen/brillo como píldora de vidrio arriba a la derecha (desde Tahoe).
+- Tema GTK **MacTahoe** (vinceliuice, MIT) claro/oscuro para apps externas; Inter como fuente del sistema; azul de sistema #0A84FF.
+- Spotlight con accesos (Aplicaciones, Archivos, Acciones, Portapapeles); avisos que entran desde la derecha.
+- Apps de BC con `.desktop` (aparecen en Aplicaciones y Spotlight); una sola «Terminal».
+- Con GPU (swayfx): sombras de ventana y desenfoque real detrás del Dock, menús y avisos.
+- Verificado en sway real (headless, aarch64): `rect` empieza bajo la barra de título; semáforos y genio usan `rect.y − alto`.
+
 ## Sin confirmar frente a Golden Gate
 - Todas las duraciones y curvas (Apple no las publica): menús 120 ms, Control Center 240 ms, genio 500 ms,
   Mission Control 330 ms, cambio de escritorio 420 ms, Dock 90 ms, rebote 180+520 ms ×2.
