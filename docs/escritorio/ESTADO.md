@@ -51,7 +51,7 @@ disponible en el login como **«BC clásico»**.
 | 7 | Ventanas: semáforo con símbolos al pasar, gris en inactivas, pantalla completa, mosaico (mitades/rellenar/centrar), ventanas BC radio 20 | hecho |
 | 8 | Mission Control (Spaces, «+», arrastrar ventana a escritorio), escritorios, selector de apps | hecho, compilado; pendiente de prueba real |
 | 9 | Gestos de trackpad | **parcial**: `bindgesture` de sway (3/4 dedos) es discreto: se dispara al terminar, **no sigue el dedo** |
-| 10 | Multimonitor: barra, Dock y cristal por pantalla, conexión en caliente | **parcial**: widgets y Mission Control solo en la principal |
+| 10 | Multimonitor: barra, Dock, cristal y Mission Control por pantalla, conexión en caliente | hecho (widgets en la principal) |
 | 11 | Archivos (Finder): barra lateral (Favoritos/Ubicaciones/Etiquetas), iconos/lista/columnas/galería, ruta, Vista rápida, etiquetas xattr, pestañas, búsqueda | hecho; captura en anfitrión |
 | 12 | Spotlight: apps, archivos (find en ~), cálculos (evaluador propio), acciones | hecho |
 | 13 | Aplicaciones (rejilla por páginas, búsqueda) desde el 2.º icono del Dock | hecho |
@@ -96,6 +96,13 @@ disponible en el login como **«BC clásico»**.
 - Cristal claro con suelo de tinte 0,55 (texto oscuro legible sobre fondos oscuros); barras de herramientas sin línea con
   fundido del contenido («scroll edge effect»).
 
+## Cuarta ronda
+- Primer arranque (bienvenida, paso 1): «Máquina virtual» (render por software) o «Equipo físico» (GPU: swayfx con
+  esquinas, sombras y desenfoque real detrás de ventanas). Se detecta con `systemd-detect-virt`/DMI y se guarda en
+  `~/.config/bc/equipo`; `bc-session` lo lee (bc.gpu=0/1 en el kernel lo fuerza). Cambiable en Ajustes ▸ General.
+- Repositorio propio `[bc]` (GitHub Releases, etiqueta `repo`): ver `build/repo/LEEME.md`.
+- Ventanas externas: fundido de opacidad al aparecer (sway no escala ventanas). Mission Control en cada pantalla.
+
 ## Sin confirmar frente a Golden Gate
 - Todas las duraciones y curvas (Apple no las publica): menús 120 ms, Control Center 240 ms, genio 500 ms,
   Mission Control 330 ms, cambio de escritorio 420 ms, Dock 90 ms, rebote 180+520 ms ×2.
@@ -105,7 +112,7 @@ disponible en el login como **«BC clásico»**.
 
 ## Limitaciones técnicas
 - El cristal muestra el **fondo** desenfocado, no las ventanas de detrás (solo el compositor puede: swayfx + GPU).
-- Cerrar ventanas externas se anima con una captura grim que se encoge y se desvanece (semáforo, Súper/Ctrl+Q); abrirlas no se anima.
+- Cerrar ventanas externas se anima con una captura grim que se encoge y se desvanece; al abrirlas, fundido de opacidad.
 - Gestos discretos (ver 9). Selector de apps: se confirma al soltar Alt si la tecla llega, o tras 1,1 s.
 - Iconos de app: tema MacOS-Like (GPL-3.0), squircle, sin capas de vidrio dinámicas ni modo tintado.
 

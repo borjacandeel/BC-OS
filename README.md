@@ -190,6 +190,18 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 
 Detalle de cada versión en [`build/RELEASE-NOTES.md`](build/RELEASE-NOTES.md) y en las [notas de cada release](https://github.com/borjacandeel/BC-OS/releases). Capturas de versiones anteriores (BC clásico, login antiguo, Tienda, arranque) en [`docs/screenshots/`](docs/screenshots/).
 
+## Actualizaciones: repositorio propio `[bc]`
+
+BC OS se actualiza desde su propio repositorio pacman, publicado en GitHub Releases
+([`repo`](https://github.com/borjacandeel/BC-OS/releases/tag/repo)) por `.github/workflows/repo.yml` en cada cambio:
+`bc-shell`, `bc-core`, `bc-escritorio` y el metapaquete `bc-os`. En el sistema: **Tienda ▸ Actualizaciones** o
+`sudo bc-actualizar`. Detalles en [`build/repo/LEEME.md`](build/repo/LEEME.md).
+
+## Primer arranque: máquina virtual o equipo físico
+
+La bienvenida pregunta dónde se ejecuta BC OS (y lo detecta solo). **Máquina virtual** (VirtualBox, UTM, QEMU):
+dibujo por software, ligero. **Equipo físico**: GPU con esquinas, sombras y desenfoque real detrás de las ventanas.
+
 ## Arquitectura
 
 | Pieza | Elección |

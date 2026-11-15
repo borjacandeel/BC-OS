@@ -24,10 +24,12 @@ Pendiente (en este orden):
 - [~] Apps BC al nivel de las de macOS. Hechas: Monitor de Actividad, Tienda (App Store), Calculadora, Notas, Vista previa.
       Hechas también: Calendario, Recordatorios, Ajustes (Wi-Fi, Bluetooth, Pantallas, Teclado, Fecha y hora), widgets editables, vibrancy.
       Hechas Música, Archivos ▸ Recientes (por fecha, miniaturas) y Control Center editable.
-- [x] Animaciones: entrada y salida de menús, Spotlight, Aplicaciones, Control Center, pila, galería, Mission Control, ventanas BC, hojas; cerrar externas (encoger+desvanecer), genio. Abrir externas: no (sway).
+- [x] Animaciones (también fundido al abrir ventanas externas): entrada y salida de menús, Spotlight, Aplicaciones, Control Center, pila, galería, Mission Control, ventanas BC, hojas; cerrar externas (encoger+desvanecer), genio. Abrir externas: no (sway).
 - [x] Materiales: cristal claro legible, barra de herramientas sin línea con fundido, barras laterales de vidrio, menús y popovers de vidrio.
 - [x] Barra de menús: iconos de estado propios (icon-designer) + batería adaptable claro/oscuro.
-- [~] Multimonitor: barra, Dock y cristal por pantalla (Mission Control y widgets solo en la principal).
+- [x] Multimonitor: barra, Dock, cristal y Mission Control por pantalla (widgets en la principal, como macOS).
+- [x] Primer arranque: «Máquina virtual» o «Equipo físico» (detectado); físico + GPU → swayfx con desenfoque real.
+- [x] Repositorio propio `[bc]` en GitHub Releases (`repo.yml`, `build/repo/`), `bc-actualizar`; la Tienda actualiza con él.
 - [ ] Ghostty: compilación desactivada (workflow `ghostty.yml` para depurar con strace) (BC_GHOSTTY=1 para probar). En CI Zig 0.17 da «panic: reached unreachable code» dentro del chroot; Terminal = Alacritty mientras tanto.
 - [ ] Verificar en QEMU cada parte con capturas antes de dar nada por hecho.
 - [x] README actualizado con capturas 1–14 (2026-11-15).
