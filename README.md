@@ -5,24 +5,24 @@
 <h1 align="center">BC OS</h1>
 
 <p align="center"><b>LIGERO. POTENTE. FLUIDO.</b><br>
-Sistema operativo Linux ARM64 creado por <b>Borja Candel</b>, en español por defecto.</p>
+Sistema operativo Linux (ARM64 y x86_64) creado por <b>Borja Candel</b>, en español por defecto.</p>
 
 <p align="center">
-  <img alt="Versión" src="https://img.shields.io/badge/versi%C3%B3n-0.7.0--beta%20(prerelease)-2F7BFF">
-  <img alt="Arquitectura" src="https://img.shields.io/badge/arquitectura-ARM64-04111F">
-  <img alt="Base" src="https://img.shields.io/badge/base-Arch%20Linux%20ARM-1793D1">
+  <img alt="Versión" src="https://img.shields.io/badge/versi%C3%B3n-0.8.0--beta%20(prerelease)-2F7BFF">
+  <img alt="Arquitectura" src="https://img.shields.io/badge/arquitectura-ARM64%20%7C%20x86__64-04111F">
+  <img alt="Base" src="https://img.shields.io/badge/base-Arch%20Linux%20%2F%20ARM-1793D1">
   <img alt="Idioma" src="https://img.shields.io/badge/idioma-espa%C3%B1ol%20(es__ES)-C60B1E">
   <img alt="Estado" src="https://img.shields.io/badge/estado-beta%20experimental-FFB340">
 </p>
 
-BC OS es un Linux **ARM64** ligero y en español, basado en **Arch Linux ARM**, con compositor **sway** y un escritorio propio, **BC Shell** (Qt 6 / QML). Desde la serie 0.6 su escritorio por defecto es **«Golden Gate»**: una réplica del aspecto y del comportamiento de macOS 27 Golden Gate, hecha con código y recursos propios o libres (no usa recursos de Apple). Está pensado para probarse en máquinas virtuales ARM64 (VirtualBox en Mac Apple Silicon, QEMU).
+BC OS es un Linux ligero y en español para **ARM64** (sobre **Arch Linux ARM**) y **x86_64** (sobre **Arch Linux**), con compositor **sway** y un escritorio propio, **BC Shell** (Qt 6 / QML). Desde la serie 0.6 su escritorio por defecto es **«Golden Gate»**: una réplica del aspecto y del comportamiento de macOS 27 Golden Gate, hecha con código y recursos propios o libres (no usa recursos de Apple). Se prueba en máquinas virtuales (VirtualBox en Mac Apple Silicon o PC, QEMU) y se adapta a equipos físicos con GPU.
 
 <p align="center">
   <img src="docs/escritorio/capturas/1-escritorio.jpg" alt="Escritorio Golden Gate de BC OS: barra de menús transparente, widgets de vidrio a la izquierda, fondo de ondas con el logo BC y Dock de vidrio" width="880">
   <br><sub>Escritorio Golden Gate: barra de menús, widgets de vidrio, iconos en el escritorio, aviso y Dock. Captura del shell en el anfitrión de desarrollo.</sub>
 </p>
 
-> **Estado honesto:** beta experimental. La **0.7.0-beta** (Golden Gate) se publica como prerelease para probar en VirtualBox; la 0.6.0-beta arrancó en QEMU aarch64 con login y escritorio correctos. Muchas piezas están compiladas y vistas en capturas, pero **pendientes de prueba real**. Ver [estado y pendientes](#estado-honesto-de-golden-gate).
+> **Estado honesto:** beta experimental. La **0.8.0-beta** sale para ARM64 y x86_64 (disco VDI e ISO live); la 0.6.0-beta arrancó en QEMU aarch64 con login y escritorio correctos. Muchas piezas están compiladas y vistas en capturas, pero **pendientes de prueba real**. Ver [estado y pendientes](#estado-honesto-de-golden-gate).
 
 ---
 
@@ -77,7 +77,15 @@ Qué incluye (detalle técnico y decisiones en [`docs/escritorio/ESTADO.md`](doc
     <td width="50%"><img src="docs/escritorio/capturas/13-musica.jpg" alt="Música"><br><sub><b>Música</b>: biblioteca local con mpv.</sub></td>
   </tr>
   <tr>
-    <td colspan="2" align="center"><img src="docs/escritorio/capturas/14-spotlight.jpg" alt="Spotlight" width="50%"><br><sub><b>Spotlight</b>: resultados por secciones.</sub></td>
+    <td width="50%"><img src="docs/escritorio/capturas/14-spotlight.jpg" alt="Spotlight"><br><sub><b>Spotlight</b>: resultados por secciones.</sub></td>
+    <td width="50%"><img src="docs/escritorio/capturas/18-modo-claro.jpg" alt="Modo claro"><br><sub><b>Modo claro</b>: widgets y avisos de vidrio claro, legibles sobre fondos oscuros.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/escritorio/capturas/15-control-center-editable.jpg" alt="Control Center editable"><br><sub><b>Control Center editable</b>: «Editar controles…», quitar con «−» y añadir Turno de noche, Calculadora, Nota rápida, Ajustes.</sub></td>
+    <td width="50%"><img src="docs/escritorio/capturas/16-recientes.jpg" alt="Archivos Recientes"><br><sub><b>Archivos ▸ Recientes</b>: agrupado por fecha, con miniaturas reales.</sub></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><img src="docs/escritorio/capturas/17-bienvenida-equipo.jpg" alt="Bienvenida: máquina virtual o equipo físico" width="70%"><br><sub><b>Primer arranque</b>: máquina virtual (ligero) o equipo físico (GPU, desenfoque real); se detecta solo.</sub></td>
   </tr>
 </table>
 
@@ -142,38 +150,37 @@ La sesión por defecto también se puede fijar en **Ajustes ▸ General ▸ «En
 - 0.6.0-beta arrancada en **QEMU aarch64**: login y escritorio correctos.
 - Componentes compilados y revisados en el anfitrión con capturas (las de arriba). Comprobado en sway real (headless, aarch64) el posicionamiento de semáforos y del genio.
 
-**Pendiente** (en este orden, de [`CLAUDE.md`](CLAUDE.md)):
-- Investigar a fondo macOS 27 Golden Gate en fuentes públicas y anotar medidas y rasgos.
-- Iconos propios con la misma rejilla y forma (squircle, vidrio por capas, claro/oscuro/tintado). Los de Apple no se copian.
-- Apps BC al nivel de las de macOS: Archivos, Ajustes del Sistema (todos los paneles), Monitor de Actividad, Tienda, Terminal, visor de imágenes, Notas, Calculadora, Calendario y Música.
-- Animaciones: abrir/cerrar ventanas BC, hojas, menús, Control Center, Mission Control, Aplicaciones y Spotlight.
-- Transparencias y materiales por componente (barra lateral, barra de herramientas, menús, popovers) en claro y oscuro.
-- Iconos de estado de la barra de menús exactos en forma y tamaño.
-- Verificar en QEMU cada parte con capturas antes de darla por hecha.
-- Probar en **VirtualBox** (Dock, Mission Control y el resto están compilados pero pendientes de prueba real).
+**Hecho en 0.8.0-beta** (compilado y visto en capturas; **pendiente de prueba en VirtualBox**):
+- Animaciones de macOS (abrir/cerrar ventanas, genio, menús, Spotlight, Aplicaciones, Control Center, Mission Control).
+- Materiales de vidrio en claro y oscuro, Control Center editable, Archivos ▸ Recientes, multimonitor, 10 fondos nuevos.
+- Imagen **x86_64** (Arch Linux) además de ARM64, **ISO live UEFI**, instalador con GRUB y arranque seguro opcionales.
+- Repositorio propio `[bc]`, instantáneas antes de actualizar (`bc-restaurar`), Tienda sin contraseña (polkit),
+  bloqueo a prueba de fallos, **Ghostty**, box64 (programas x86_64 en ARM) y `bc-rendimiento`.
+
+**Pendiente:** firma GPG del repositorio, idiomas, Android, gestos que sigan el dedo y probar todo en VirtualBox.
 
 **Limitaciones conocidas:**
 - El cristal (Liquid Glass) refleja el **fondo** desenfocado, no las ventanas de detrás: sin GPU no hay desenfoque real del compositor (con swayfx + GPU sí, opcional con `bc.gpu=1`).
 - Los **gestos** del trackpad (3/4 dedos) son **discretos**: se disparan al terminar y no siguen el dedo.
-- Abrir/cerrar ventanas de apps externas no se anima (sway no anima ventanas); sí las apps BC y el genio.
-- Multimonitor parcial: barra y Dock por pantalla; widgets, Mission Control y cristal usan la principal.
-- **Iconos propios en desarrollo**: ahora se usa el tema MacOS-Like (squircle, sin capas de vidrio dinámicas ni modo tintado).
+- Ventanas de apps externas: cierre con captura que se encoge y apertura con fundido (sway no escala ventanas).
+- Multimonitor: barra, Dock, cristal y Mission Control por pantalla; los widgets, en la principal.
+- Iconos de apps: tema MacOS-Like (elegido por el creador).
 - Duraciones, curvas y algunas medidas son estimaciones (Apple no las publica); ver «Sin confirmar» en [`ESTADO.md`](docs/escritorio/ESTADO.md).
-- Generales: el bloqueo no usa `ext-session-lock`; sin hardware real probado; contraseña por defecto pública y SSH activo (solo para máquinas virtuales).
+- Generales: el bloqueo de BC es una capa del panel (si el panel cae, entra swaylock con `ext-session-lock`); sin hardware real probado; contraseña por defecto pública y SSH activo (solo para máquinas virtuales).
 
 ---
 
 ## Descargar y probar
 
-Imágenes publicadas: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Cada release incluye `BC-OS-<versión>-ARM64.vdi.zip` y `SHA256SUMS`. Última: 0.7.0-beta (Golden Gate).
+Imágenes publicadas: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Cada release incluye `BC-OS-<versión>-ARM64.vdi.zip`, `BC-OS-<versión>-x86_64.vdi.zip`, las ISO live y `SHA256SUMS`. Última: **0.8.0-beta**.
 
 1. Descomprime el `.zip` → `.vdi`. Comprueba `shasum -a 256`.
-2. VirtualBox (Mac Apple Silicon) → **Nueva**: Linux / Arch Linux (ARM 64-bit), ≥ 2 GB RAM, 2 CPU.
+2. VirtualBox → **Nueva**: Linux / Arch Linux (**ARM 64-bit** en Mac Apple Silicon o **64-bit** en PC), ≥ 4 GB RAM, 2-4 CPU.
 3. **Sistema → Habilitar EFI**. Disco: usar el `.vdi` existente. Gráficos: VMSVGA.
 4. Opcional: Red → Avanzado → Reenvío de puertos TCP 2222 → 22 para SSH (`ssh -p 2222 bc@127.0.0.1`).
 5. Arranca: menú de 5 s (arranque normal o modo seguro) → **panel de login**. Usuario **`bc`**, contraseña **`bcos`** (**solo alpha/beta de prueba**; cámbiala con `passwd`).
 
-También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI AAVMF); ver [`docs/development/BUILD.md`](docs/development/BUILD.md). **No hay ISO todavía**: el instalador `sudo bc-install` va dentro de la imagen.
+También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI AAVMF); ver [`docs/development/BUILD.md`](docs/development/BUILD.md). También hay **ISO live** (arranca en RAM, con el instalador `sudo bc-install`). En la bienvenida elige **Máquina virtual**.
 
 ## Versiones
 
@@ -184,9 +191,10 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 | `0.3.x-alpha` | publicadas | **sway** (mosaico/flotante), menús globales por app, Dock con ventanas reales, Alacritty, animación de minimizar y swayfx experimental. |
 | `0.4.0-beta` / `0.4.1-beta` | publicadas (prerrelease) | Asistente de bienvenida, estilos, widgets, Modos, Flathub, fish, servicio de antivirus; resolución adaptable (`bc-display`), iconos Qogir, portapapeles (Súper+V). |
 | `0.5.0-beta` | prerrelease, en pruebas | Entorno **Dotfiles (bspwm)** elegible en el login. Verificado en QEMU; sin probar en VirtualBox. |
+| `0.8.0-beta` | prerelease | **x86_64** + ISO live, primer arranque VM/equipo físico, repositorio `[bc]`, instantáneas, Tienda sin contraseña, Ghostty, box64, instalador con GRUB/Secure Boot, Control Center editable, Recientes, 10 fondos, animaciones. |
 | `0.7.0-beta` | prerelease | Apps nuevas (Monitor, Tienda, Calculadora, Notas, Vista previa, Calendario, Recordatorios, Música), vibrancy, widgets editables, animaciones de cerrar/minimizar. |
 | `0.6.0-beta` | prerelease | Escritorio **Golden Gate** por defecto; «BC clásico» en el login. Arranca en QEMU con login y escritorio correctos. |
-| → `1.0.0` | planificadas | Bloqueo seguro (`ext-session-lock`), ISO con instalador y primera estable. Son hitos, no promesas. |
+| → `1.0.0` | planificada | Prueba completa en VirtualBox y hardware, firma GPG del repositorio y primera estable. Es un hito, no una promesa. |
 
 Detalle de cada versión en [`build/RELEASE-NOTES.md`](build/RELEASE-NOTES.md) y en las [notas de cada release](https://github.com/borjacandeel/BC-OS/releases). Capturas de versiones anteriores (BC clásico, login antiguo, Tienda, arranque) en [`docs/screenshots/`](docs/screenshots/).
 
