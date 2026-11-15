@@ -63,7 +63,7 @@ Item {
                 id: appName; anchors.centerIn: parent
                 text: AppMenus.nameFor(Sway.focusedAppId)
                 color: bar.ink; font.family: Theme.font; font.pixelSize: Math.round(Theme.barTextPx * bar.s)
-                font.weight: Font.Bold; font.letterSpacing: Theme.letterSpacing
+                font.weight: Font.Bold; font.letterSpacing: 0     // captura: «Ajustes del Sistema» = 127 px
             }
         }
         Repeater {
@@ -160,7 +160,7 @@ Item {
             open: UiState.notifCenterOpen
             onClicked: UiState.toggleNotifCenter()
             Text { id: clock; anchors.centerIn: parent; text: bar.clockText(bar.now); color: bar.ink
-                   font.family: Theme.font; font.pixelSize: Math.round(Theme.barTextPx * bar.s); font.letterSpacing: Theme.letterSpacing }
+                   font.family: Theme.font; font.pixelSize: Math.round(Theme.barTextPx * bar.s); font.letterSpacing: 0.3 }   // captura: reloj = 142 px
         }
     }
 }
