@@ -19,6 +19,12 @@ case "$cmd" in
         hz=$(awk -v r="$r" 'BEGIN { printf "%.3f", r/1000 }')
         swaymsg "output $n mode ${w}x${h}@${hz}Hz" >/dev/null
       fi
+      # Retina/HiDPI (p. ej. VirtualBox en Mac con «salida HiDPI sin escalar»): escala 2 para texto e iconos nítidos.
+      # ~/.config/bc/escala fija otra (1, 1.5, 2…).
+      esc="$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/bc/escala" 2>/dev/null)"
+      [ -n "$esc" ] || { [ "$w" -ge 2400 ] && esc=2 || esc=1; }
+      case "$esc" in *[!0-9.]*) esc=1 ;; esac
+      swaymsg "output $n scale $esc" >/dev/null
     done ;;
   watch)
     bc-display auto

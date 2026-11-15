@@ -38,6 +38,8 @@ static void countingHandler(QtMsgType t, const QMessageLogContext &c, const QStr
 }
 
 int main(int argc, char *argv[]) {
+    // Texto nítido con hinting nativo (como macOS en pantallas sin Retina); con GPU sigue siendo nítido
+    QQuickWindow::setTextRenderType(QQuickWindow::NativeTextRendering);
     // IconCache lee los SVG de los recursos (qrc:) con XMLHttpRequest para teñirlos.
     qputenv("QML_XHR_ALLOW_FILE_READ", "1");
     QGuiApplication app(argc, argv);

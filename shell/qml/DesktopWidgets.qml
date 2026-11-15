@@ -30,7 +30,10 @@ Item {
     // Widgets activos (Editar widgets…): orden de la columna. Por defecto, los de la captura de referencia.
     readonly property var heights: ({ baterias: Theme.widgetLargeH, app: Theme.widgetMediumH, recordatorios: Theme.widgetLargeH,
                                       calendario: Theme.widgetMediumH, reloj: Theme.widgetMediumH })
-    readonly property var active: layout._activos || ["baterias", "app", "recordatorios"]
+    // Sin baterías (máquina virtual, sobremesa) el widget de baterías no aparece: en su lugar, calendario y reloj
+    readonly property bool hayBaterias: Batteries.devices.length > 0
+    readonly property var active: (layout._activos || (hayBaterias ? ["baterias", "app", "recordatorios"] : ["calendario", "reloj", "recordatorios"]))
+                                  .filter(k => k !== "baterias" || hayBaterias)
     function isOn(id) { return active.indexOf(id) >= 0 }
     // Colocación por defecto: de arriba abajo; si no cabe, columna siguiente (como el escritorio de macOS)
     function defPos(id) {
