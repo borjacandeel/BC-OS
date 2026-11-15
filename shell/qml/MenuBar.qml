@@ -22,6 +22,7 @@ Item {
         const months = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sept", "oct", "nov", "dic"]
         let h = d.getHours(); const pm = h >= 12; h = h % 12; if (h === 0) h = 12
         const m = ("0" + d.getMinutes()).slice(-2)
+        if (Settings.clock24) return days[d.getDay()] + " " + d.getDate() + " " + months[d.getMonth()] + " " + d.getHours() + ":" + m
         if (AppConfig.language.indexOf("es") !== 0)
             return d.toLocaleDateString(loc, "ddd d MMM") + "  " + d.toLocaleTimeString(loc, "h:mm AP")
         return days[d.getDay()] + " " + d.getDate() + " " + months[d.getMonth()] + " " + h + ":" + m + (pm ? " p.m." : " a.m.")

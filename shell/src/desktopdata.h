@@ -78,6 +78,7 @@ class QuickTools : public QObject {
     Q_PROPERTY(QVariantMap media READ media NOTIFY mediaChanged)               // {title, artist, playing, available}
     Q_PROPERTY(bool busy READ busy NOTIFY busyChanged)
     Q_PROPERTY(QVariantList fileResults READ fileResults NOTIFY filesChanged)
+    Q_PROPERTY(QStringList displayModes READ displayModes NOTIFY displayModesChanged)
     Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)   // sondeo de reproducción solo con el panel visible
 public:
     bool active() const { return m_mediaTimer.isActive(); }
@@ -87,6 +88,7 @@ public:
     QVariantList btDevices() const { return m_bt; }
     QVariantMap media() const { return m_media; }
     QVariantList fileResults() const { return m_files; }
+    QStringList displayModes() const { return m_modes; }
     bool busy() const { return m_busy > 0; }
     Q_INVOKABLE void scanWifi();
     Q_INVOKABLE void connectWifi(const QString &ssid, const QString &password = QString());
@@ -99,6 +101,11 @@ public:
     Q_INVOKABLE static QString calculate(const QString &expr);   // «2+2*3» → «8»; vacío si no es una operación
     Q_INVOKABLE void open(const QString &path);              // xdg-open
     Q_INVOKABLE static QString iconPath(const QString &name); // ruta del icono del tema (vacía si no existe)
+    // Ajustes del Sistema ▸ Pantallas y Teclado
+    Q_INVOKABLE void listDisplayModes();                       // → displayModes
+    Q_INVOKABLE void setDisplayMode(const QString &mode);      // «1920x1080» o «auto»
+    Q_INVOKABLE bool setKeyboardLayout(const QString &code);   // es, us, gb, fr, de, it, pt, latam
+    Q_INVOKABLE static QString keyboardLayout();
     // Captura con grim de la pantalla (geom vacía) o de una región «x,y wxh» → señal captured(tag, ruta)
     Q_INVOKABLE void capture(const QString &tag, const QString &geom);
     static QVariantList parseWifi(const QString &nmcliTerse);
@@ -111,10 +118,12 @@ signals:
     void activeChanged();
     void wifiResult(bool ok, const QString &ssid);
     void filesChanged();
+    void displayModesChanged();
     void captured(const QString &tag, const QString &path, bool ok);
 private:
     void run(const QString &prog, const QStringList &args, std::function<void(int, const QString &)> done);
     QVariantList m_networks, m_bt, m_files;
+    QStringList m_modes;
     int m_searchSeq = 0;
     QVariantMap m_media;
     int m_busy = 0;

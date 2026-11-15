@@ -25,6 +25,7 @@ class AppSettings : public QObject {
     Q_PROPERTY(bool sounds READ sounds WRITE setSounds NOTIFY changed)
     Q_PROPERTY(QStringList dockRecent READ dockRecent WRITE setDockRecent NOTIFY changed)
     Q_PROPERTY(bool dockShowRecent READ dockShowRecent WRITE setDockShowRecent NOTIFY changed)
+    Q_PROPERTY(bool clock24 READ clock24 WRITE setClock24 NOTIFY changed)
 public:
     QString appearance() const { return m_appearance; }
     void setAppearance(const QString &a);
@@ -44,6 +45,8 @@ public:
     QStringList dockRecent() const { return m_dockRecent; }
     void setDockRecent(const QStringList &l);
     bool dockShowRecent() const { return m_dockShowRecent; }
+    bool clock24() const { return m_clock24; }
+    void setClock24(bool on) { if (on == m_clock24) return; m_clock24 = on; store("reloj24", on); }
     void setDockShowRecent(bool on);
     void setSounds(bool on);
     explicit AppSettings(QObject *parent = nullptr);
@@ -79,7 +82,7 @@ private:
     bool m_dockAutohide = false, m_dockMagnify = true, m_sounds = true;
     int m_dockSize = 46;
     QStringList m_dockApps, m_dockRecent;
-    bool m_dockShowRecent = true;
+    bool m_dockShowRecent = true, m_clock24 = false;
     class QFileSystemWatcher *m_watch = nullptr;
     void watch();
     template <typename T> void store(const char *key, const T &v);

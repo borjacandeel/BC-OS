@@ -21,9 +21,9 @@ Item {
         navegador: "firefox",
         musica: "multimedia-audio-player",
         papelera: "user-trash",
-        notas: "../icons/accessories-notes",
-        calculadora: "../icons/accessories-calculator",
-        vista: "../icons/multimedia-photo-viewer"
+        notas: "accessories-notes",
+        calculadora: "accessories-calculator",
+        vista: "multimedia-photo-viewer"
     })
 
     Image {

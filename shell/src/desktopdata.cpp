@@ -494,3 +494,32 @@ void NotesStore::restore(const QString &id) {
     QFile::rename(m_dir + "/.eliminadas/" + id + ".txt", m_dir + "/" + id + ".txt");
     reload();
 }
+
+void QuickTools::listDisplayModes() {
+    run("bc-display", {"list"}, [this](int code, const QString &o) {
+        const QStringList m = code == 0 ? o.split('\n', Qt::SkipEmptyParts) : QStringList();
+        if (m != m_modes) { m_modes = m; emit displayModesChanged(); }
+    });
+}
+void QuickTools::setDisplayMode(const QString &mode) {
+    static const QRegularExpression ok("^[0-9]{3,5}x[0-9]{3,5}$");
+    if (mode == "auto") run("bc-display", {"auto"}, [](int, const QString &) {});
+    else if (ok.match(mode).hasMatch()) run("bc-display", {"set", mode}, [](int, const QString &) {});
+}
+static QString kbFile() { return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/bc/keyboard-layout"; }
+QString QuickTools::keyboardLayout() {
+    QFile f(kbFile());
+    const QString v = f.open(QIODevice::ReadOnly) ? QString::fromUtf8(f.readAll()).trimmed() : QString();
+    return v.isEmpty() ? QStringLiteral("es") : v;
+}
+bool QuickTools::setKeyboardLayout(const QString &code) {
+    static const QStringList ok{"es", "us", "gb", "fr", "de", "it", "pt", "latam"};
+    if (!ok.contains(code)) return false;
+    QDir().mkpath(QFileInfo(kbFile()).absolutePath());
+    QSaveFile f(kbFile());
+    if (!f.open(QIODevice::WriteOnly)) return false;
+    f.write(code.toUtf8() + "\n"); f.commit();
+    QProcess::startDetached("swaymsg", {"input type:keyboard xkb_layout " + code});
+    QProcess::startDetached("bc-wm-mode", {"init"});
+    return true;
+}

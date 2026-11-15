@@ -21,6 +21,8 @@ echo "$new" > "$D/layout-mode.tmp.$$" && mv "$D/layout-mode.tmp.$$" "$D/layout-m
 # Configuración final de sway = sistema + teclado + modo + usuario (sin «include», que no es fiable)
 OUT="${XDG_RUNTIME_DIR:?sin XDG_RUNTIME_DIR}/bc-sway.conf"
 { cat /etc/bc/sway/config; [ -f /etc/bc/sway/keyboard.conf ] && cat /etc/bc/sway/keyboard.conf
+  # Distribución de teclado elegida en Ajustes del Sistema ▸ Teclado (solo letras: es, us, gb, fr, de, it, pt, latam)
+  kl=$(cat "$D/keyboard-layout" 2>/dev/null); case "$kl" in es|us|gb|fr|de|it|pt|latam) printf 'input type:keyboard xkb_layout %s\n' "$kl" ;; esac
   [ -n "$BC_FX" ] && [ -f /etc/bc/sway/efectos.conf ] && cat /etc/bc/sway/efectos.conf
   WP=/usr/share/bc/wallpapers/ondas.jpg
   [ -f "$D/wallpaper" ] && w=$(head -n1 "$D/wallpaper") && [ -f "$w" ] && WP=$w

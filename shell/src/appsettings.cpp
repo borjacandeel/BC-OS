@@ -84,6 +84,7 @@ void AppSettings::reload() {
     m_sounds = s.value("sonidos", true).toBool();
     m_dockRecent = s.value("dockRecientes").toStringList();
     m_dockShowRecent = s.value("dockMostrarRecientes", true).toBool();
+    m_clock24 = s.value("reloj24", false).toBool();
 }
 
 void AppSettings::setReducedMotion(bool on) {

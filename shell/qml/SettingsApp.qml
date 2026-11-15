@@ -11,13 +11,16 @@ AppWindow {
     Component.onCompleted: {
         Monitor.active = Qt.binding(() => win.visible && win.page === 5)
         const o = AppConfig.openArg
-        const map = { about: 5, red: 2, sonido: 1, energia: 3, usuarios: 4, aspecto: 6, dock: 7, fondo: 8, notificaciones: 9, general: 0 }
+        const map = { about: 5, red: 2, sonido: 1, energia: 3, usuarios: 4, aspecto: 6, dock: 7, fondo: 8, notificaciones: 9, general: 0,
+                      wifi: 10, bluetooth: 11, pantallas: 12, teclado: 13, fecha: 14 }
         if (map[o] !== undefined) win.page = map[o]
     }
 
     // Golden Gate: barra lateral de borde a borde con iconos en color (cuadrado redondeado + glifo blanco)
     readonly property var pages: [
-        { idx: 2, name: qsTr("Red"), icon: "network-wireless-signal-excellent-symbolic", c: "#0A84FF" },
+        { idx: 10, name: qsTr("Wi-Fi"), icon: "network-wireless-signal-excellent-symbolic", c: "#0A84FF" },
+        { idx: 11, name: qsTr("Bluetooth"), icon: "bluetooth-active-symbolic", c: "#0A84FF" },
+        { idx: 2, name: qsTr("Red"), icon: "network-wired-symbolic", c: "#0A84FF" },
         { idx: 1, name: qsTr("Sonido"), icon: "audio-volume-high-symbolic", c: "#FF375F" },
         { idx: 9, name: qsTr("Notificaciones"), icon: "notification-symbolic", c: "#FF453A" },
         { idx: 3, name: qsTr("Batería y energía"), icon: "preferences-system-power-symbolic", c: "#30D158" },
@@ -26,6 +29,9 @@ AppWindow {
         { idx: 7, name: qsTr("Escritorio y Dock"), icon: "view-app-grid-symbolic", c: "#48484A" },
         { idx: 8, name: qsTr("Fondo de pantalla"), icon: "image-x-generic", c: "#32ADE6" },
         { idx: 0, name: qsTr("General"), icon: "preferences-system-symbolic", c: "#8E8E93" },
+        { idx: 12, name: qsTr("Pantallas"), icon: "video-display-symbolic", c: "#0A84FF" },
+        { idx: 13, name: qsTr("Teclado"), icon: "input-keyboard-symbolic", c: "#8E8E93" },
+        { idx: 14, name: qsTr("Fecha y hora"), icon: "preferences-system-time", c: "#8E8E93" },
         { sep: true },
         { idx: 4, name: qsTr("Usuarios"), icon: "system-users-symbolic", c: "#8E8E93" },
         { idx: 5, name: qsTr("Acerca de"), icon: "dialog-information-symbolic", c: "#8E8E93" }
@@ -89,8 +95,21 @@ AppWindow {
                         font.family: Theme.fontFamily; font.pixelSize: 13; onTextChanged: win.query = text.toLowerCase()
                         Text { visible: !parent.text; text: qsTr("Buscar"); color: Theme.textSecondary; font: parent.font } }
         }
+        // Tarjeta de la cuenta (como en macOS: avatar, nombre y tipo de cuenta)
+        Rectangle {
+            x: 10; y: 42; width: parent.width - 20; height: 52; radius: 8; color: um.containsMouse ? Theme.tileFill : "transparent"
+            readonly property var me: Users.users.find(u => u.name === Sessions.currentUserName()) || Users.users[0]
+            Rectangle { x: 6; anchors.verticalCenter: parent.verticalCenter; width: 38; height: 38; radius: 19
+                        gradient: Gradient { GradientStop { position: 0; color: "#8E9BB2" } GradientStop { position: 1; color: "#5A6478" } }
+                        Text { anchors.centerIn: parent; text: parent.parent.me ? parent.parent.me.display.charAt(0).toUpperCase() : "?"; color: "white"
+                               font.family: Theme.fontFamily; font.pixelSize: 17; font.weight: Font.DemiBold } }
+            Column { x: 52; anchors.verticalCenter: parent.verticalCenter
+                     Label { text: parent.parent.me ? parent.parent.me.display : ""; font.pixelSize: 13; font.weight: Font.DemiBold }
+                     Hint { text: qsTr("Cuenta local de BC OS"); font.pixelSize: 11 } }
+            MouseArea { id: um; anchors.fill: parent; hoverEnabled: true; onClicked: win.page = 4 }
+        }
         Column {
-            x: 10; y: 46; width: parent.width - 20; spacing: 1
+            x: 10; y: 100; width: parent.width - 20; spacing: 1
             Repeater {
                 model: win.pages
                 Item {
@@ -243,6 +262,147 @@ AppWindow {
                     }
                 }
             }
+        }
+
+        // 10 Wi-Fi
+        Column {
+            visible: win.page === 10; width: parent.width; spacing: 12
+            onVisibleChanged: if (visible) Quick.scanWifi()
+            Label { text: qsTr("Wi-Fi"); font.pixelSize: 20; font.weight: Font.Bold }
+            Row2 { label: qsTr("Wi-Fi"); value: ""
+                   Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
+                            on: SystemStatus.wifiEnabled; onToggled: (v) => { SystemStatus.setWifi(v); if (v) Quick.scanWifi() } } }
+            Hint { visible: !SystemStatus.hasWifi; text: qsTr("Este equipo no tiene adaptador Wi-Fi.") }
+            Label { visible: SystemStatus.hasWifi; text: qsTr("Redes conocidas y cercanas"); font.weight: Font.DemiBold }
+            Rectangle {
+                visible: SystemStatus.hasWifi && SystemStatus.wifiEnabled
+                width: parent.width; height: Math.max(44, wl.height + 8); radius: 10; color: Theme.tileFill
+                Column {
+                    id: wl; x: 4; y: 4; width: parent.width - 8
+                    Repeater {
+                        model: Quick.networks
+                        Rectangle {
+                            required property var modelData
+                            width: wl.width; height: 36; radius: 7; color: wm.containsMouse ? Theme.fillHover : "transparent"
+                            Icon { x: 10; anchors.verticalCenter: parent.verticalCenter; size: 16; color: Theme.textPrimary
+                                   name: Icons.networkIcon(true, false, SystemStatus.signalBars(modelData.signal)) }
+                            Label { x: 36; anchors.verticalCenter: parent.verticalCenter; text: modelData.ssid; font.weight: modelData.active ? Font.DemiBold : Font.Normal }
+                            Hint { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
+                                   text: modelData.active ? qsTr("Conectado") : (modelData.secure ? "🔒" : "") }
+                            MouseArea { id: wm; anchors.fill: parent; hoverEnabled: true
+                                        onClicked: if (!modelData.active) { if (modelData.secure) { wpw.ssid = modelData.ssid; wpw.visible = true; wpwIn.forceActiveFocus() } else Quick.connectWifi(modelData.ssid) } }
+                        }
+                    }
+                    Hint { visible: Quick.networks.length === 0; padding: 10; text: Quick.busy ? qsTr("Buscando redes…") : qsTr("No se encontraron redes") }
+                }
+            }
+            Rectangle {
+                id: wpw; visible: false; property string ssid
+                width: parent.width; height: 40; radius: 10; color: Theme.tileFill; border.width: 2; border.color: Theme.accent
+                TextInput { id: wpwIn; anchors.fill: parent; anchors.leftMargin: 12; verticalAlignment: TextInput.AlignVCenter; echoMode: TextInput.Password
+                            color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 13
+                            onAccepted: { Quick.connectWifi(wpw.ssid, text); text = ""; wpw.visible = false }
+                            Text { visible: !parent.text; anchors.verticalCenter: parent.verticalCenter; text: qsTr("Contraseña de «%1»").arg(wpw.ssid); color: Theme.textSecondary; font: parent.font } }
+            }
+        }
+
+        // 11 Bluetooth
+        Column {
+            visible: win.page === 11; width: parent.width; spacing: 12
+            onVisibleChanged: if (visible && SystemStatus.bluetoothOn) Quick.scanBluetooth()
+            Label { text: qsTr("Bluetooth"); font.pixelSize: 20; font.weight: Font.Bold }
+            Row2 { label: qsTr("Bluetooth"); value: ""
+                   Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
+                            on: SystemStatus.bluetoothOn; onToggled: (v) => { SystemStatus.setBluetooth(v); if (v) Quick.scanBluetooth() } } }
+            Hint { visible: !SystemStatus.bluetoothAvailable; text: qsTr("Este equipo no tiene adaptador Bluetooth.") }
+            Label { visible: SystemStatus.bluetoothOn; text: qsTr("Dispositivos"); font.weight: Font.DemiBold }
+            Rectangle {
+                visible: SystemStatus.bluetoothOn
+                width: parent.width; height: Math.max(44, bl.height + 8); radius: 10; color: Theme.tileFill
+                Column {
+                    id: bl; x: 4; y: 4; width: parent.width - 8
+                    Repeater {
+                        model: Quick.btDevices
+                        Rectangle {
+                            required property var modelData
+                            width: bl.width; height: 36; radius: 7; color: bm2.containsMouse ? Theme.fillHover : "transparent"
+                            Icon { x: 10; anchors.verticalCenter: parent.verticalCenter; name: "bluetooth-active-symbolic"; size: 16; color: modelData.connected ? Theme.accent : Theme.textSecondary }
+                            Label { x: 36; anchors.verticalCenter: parent.verticalCenter; text: modelData.name }
+                            Rectangle { anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter
+                                        width: bt2.implicitWidth + 20; height: 24; radius: 6; color: Theme.fill
+                                        Text { id: bt2; anchors.centerIn: parent; text: modelData.connected ? qsTr("Desconectar") : qsTr("Conectar"); color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 12 }
+                                        MouseArea { anchors.fill: parent; onClicked: Quick.toggleBluetoothDevice(modelData.mac, !modelData.connected) } }
+                            MouseArea { id: bm2; anchors.fill: parent; hoverEnabled: true; acceptedButtons: Qt.NoButton }
+                        }
+                    }
+                    Hint { visible: Quick.btDevices.length === 0; padding: 10; text: Quick.busy ? qsTr("Buscando dispositivos…") : qsTr("No hay dispositivos") }
+                }
+            }
+        }
+
+        // 12 Pantallas
+        Column {
+            visible: win.page === 12; width: parent.width; spacing: 12
+            onVisibleChanged: if (visible) Quick.listDisplayModes()
+            Label { text: qsTr("Pantallas"); font.pixelSize: 20; font.weight: Font.Bold }
+            Rectangle {
+                anchors.horizontalCenter: parent.horizontalCenter; width: 260; height: 150; radius: 8; color: "#1C1C1E"; border.width: 3; border.color: "#3A3A3C"
+                Image { anchors.fill: parent; anchors.margins: 3; source: "qrc:/BCShell/assets/wallpaper-default.png"; fillMode: Image.PreserveAspectCrop; sourceSize.width: 520 }
+            }
+            Label { text: qsTr("Resolución"); font.weight: Font.DemiBold }
+            Flow {
+                width: parent.width; spacing: 8
+                Repeater {
+                    model: ["auto"].concat(Quick.displayModes.slice(0, 11))
+                    Rectangle {
+                        required property string modelData
+                        width: rt.implicitWidth + 24; height: 30; radius: 8; color: rma.containsMouse ? Theme.fillHover : Theme.tileFill
+                        Text { id: rt; anchors.centerIn: parent; text: modelData === "auto" ? qsTr("Automática") : modelData.replace("x", " × "); color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 12 }
+                        MouseArea { id: rma; anchors.fill: parent; hoverEnabled: true; onClicked: Quick.setDisplayMode(modelData) }
+                    }
+                }
+            }
+            Hint { width: parent.width; text: qsTr("«Automática» se adapta al monitor o a la ventana de la máquina virtual.") }
+        }
+
+        // 13 Teclado
+        Column {
+            visible: win.page === 13; width: parent.width; spacing: 12
+            property string current: Quick.keyboardLayout()
+            Label { text: qsTr("Teclado"); font.pixelSize: 20; font.weight: Font.Bold }
+            Label { text: qsTr("Fuentes de entrada"); font.weight: Font.DemiBold }
+            Rectangle {
+                width: parent.width; height: kl.height + 8; radius: 10; color: Theme.tileFill
+                Column {
+                    id: kl; x: 4; y: 4; width: parent.width - 8
+                    Repeater {
+                        model: [ { k: "es", t: qsTr("Español") }, { k: "latam", t: qsTr("Español (Latinoamérica)") }, { k: "us", t: qsTr("Inglés (EE. UU.)") },
+                                 { k: "gb", t: qsTr("Inglés (Reino Unido)") }, { k: "fr", t: qsTr("Francés") }, { k: "de", t: qsTr("Alemán") },
+                                 { k: "it", t: qsTr("Italiano") }, { k: "pt", t: qsTr("Portugués") } ]
+                        Rectangle {
+                            required property var modelData
+                            width: kl.width; height: 32; radius: 7; color: km2.containsMouse ? Theme.fillHover : "transparent"
+                            Label { x: 12; anchors.verticalCenter: parent.verticalCenter; text: modelData.t }
+                            Text { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; visible: kl.parent.parent.current === modelData.k
+                                   text: "✓"; color: Theme.accent; font.pixelSize: 14; font.weight: Font.Bold }
+                            MouseArea { id: km2; anchors.fill: parent; hoverEnabled: true
+                                        onClicked: if (Quick.setKeyboardLayout(modelData.k)) kl.parent.parent.current = modelData.k }
+                        }
+                    }
+                }
+            }
+            Hint { width: parent.width; text: qsTr("La distribución se aplica al momento y se recuerda al iniciar sesión. Atajos: Súper+F1.") }
+        }
+
+        // 14 Fecha y hora
+        Column {
+            visible: win.page === 14; width: parent.width; spacing: 12
+            Label { text: qsTr("Fecha y hora"); font.pixelSize: 20; font.weight: Font.Bold }
+            Row2 { label: qsTr("Formato de 24 horas"); value: ""
+                   Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
+                            on: Settings.clock24; onToggled: (v) => Settings.clock24 = v } }
+            Row2 { label: qsTr("Hora y fecha automáticas"); value: qsTr("Activado (systemd-timesyncd)") }
+            Hint { width: parent.width; text: qsTr("La barra de menús muestra la fecha y la hora como en macOS («Dom 15 nov 12:19 a.m.»); con 24 horas, «Dom 15 nov 0:19».") }
         }
 
         // 9 Notificaciones
