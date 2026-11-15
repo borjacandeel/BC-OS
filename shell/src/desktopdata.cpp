@@ -610,3 +610,77 @@ QVariantList QuickTools::recentFiles(int max) {
     }
     return out;
 }
+
+// ---------------------------------------------------------------------------------------------
+#include <QLocalSocket>
+#include <QDirIterator>
+MusicPlayer::MusicPlayer(QObject *parent) : QObject(parent) {
+    m_sockPath = QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation) + "/bc-musica.sock";
+    m_timer.setInterval(500);
+    connect(&m_timer, &QTimer::timeout, this, &MusicPlayer::poll);
+}
+MusicPlayer::~MusicPlayer() { if (m_mpv) { m_mpv->kill(); m_mpv->waitForFinished(500); } }
+bool MusicPlayer::available() const { return !QStandardPaths::findExecutable("mpv").isEmpty(); }
+QVariantMap MusicPlayer::describe(const QString &path) {
+    // «Artista - Título» en el nombre del archivo; álbum = carpeta
+    const QFileInfo fi(path);
+    QString base = fi.completeBaseName().replace('_', ' ');
+    base.remove(QRegularExpression("^\\\\d{1,3}[ .-]+"));
+    QString artist, title = base;
+    const int dash = base.indexOf(" - ");
+    if (dash > 0) { artist = base.left(dash).trimmed(); title = base.mid(dash + 3).trimmed(); }
+    return {{"path", path}, {"title", title}, {"artist", artist}, {"album", fi.dir().dirName()}};
+}
+void MusicPlayer::scan() {
+    QVariantList out;
+    QStringList roots{QStandardPaths::writableLocation(QStandardPaths::MusicLocation), QDir::homePath() + "/Música"};
+    roots.removeDuplicates();
+    QStringList seen;
+    for (const QString &r : roots) {
+        QDirIterator it(r, {"*.mp3", "*.flac", "*.ogg", "*.opus", "*.m4a", "*.wav", "*.aac"}, QDir::Files, QDirIterator::Subdirectories);
+        while (it.hasNext() && out.size() < 5000) { const QString p = it.next(); if (!seen.contains(p)) { seen << p; out.append(describe(p)); } }
+    }
+    std::sort(out.begin(), out.end(), [](const QVariant &a, const QVariant &b) {
+        return a.toMap().value("title").toString().compare(b.toMap().value("title").toString(), Qt::CaseInsensitive) < 0; });
+    m_songs = out; emit libraryChanged();
+}
+void MusicPlayer::play(int index) {
+    if (index < 0 || index >= m_songs.size() || !available()) return;
+    if (m_mpv) { m_mpv->disconnect(); m_mpv->kill(); m_mpv->waitForFinished(500); m_mpv->deleteLater(); m_mpv = nullptr; }
+    if (m_sock) { m_sock->deleteLater(); m_sock = nullptr; }
+    m_current = index; m_playing = true; m_pos = 0; m_dur = 0;
+    m_mpv = new QProcess(this);
+    connect(m_mpv, &QProcess::finished, this, [this](int code) {
+        // Al terminar una canción (salida normal) pasa a la siguiente, como en Música
+        if (code == 0 && m_playing && m_current + 1 < m_songs.size()) play(m_current + 1);
+        else { m_playing = false; emit stateChanged(); }
+    });
+    m_mpv->start("mpv", {"--no-video", "--really-quiet", "--input-ipc-server=" + m_sockPath, m_songs[index].toMap().value("path").toString()});
+    m_timer.start();
+    emit stateChanged(); emit progressChanged();
+}
+void MusicPlayer::send(const QByteArray &json) {
+    if (!m_sock) { m_sock = new QLocalSocket(this); connect(m_sock, &QLocalSocket::readyRead, this, [this] {
+        while (m_sock->canReadLine()) {
+            const QJsonObject o = QJsonDocument::fromJson(m_sock->readLine()).object();
+            const QString id = o.value("request_id").toVariant().toString();
+            if (id == "1") { m_pos = o.value("data").toDouble(); emit progressChanged(); }
+            else if (id == "2") { m_dur = o.value("data").toDouble(); emit progressChanged(); }
+        } }); }
+    if (m_sock->state() != QLocalSocket::ConnectedState) { m_sock->connectToServer(m_sockPath); if (!m_sock->waitForConnected(150)) return; }
+    m_sock->write(json + "\n");
+}
+void MusicPlayer::poll() {
+    if (!m_mpv || m_mpv->state() == QProcess::NotRunning) { m_timer.stop(); return; }
+    send(R"({"command":["get_property","time-pos"],"request_id":1})");
+    send(R"({"command":["get_property","duration"],"request_id":2})");
+}
+void MusicPlayer::toggle() {
+    if (m_current < 0) { if (!m_songs.isEmpty()) play(0); return; }
+    if (!m_mpv || m_mpv->state() == QProcess::NotRunning) { play(m_current); return; }
+    send(R"({"command":["cycle","pause"]})");
+    m_playing = !m_playing; emit stateChanged();
+}
+void MusicPlayer::next() { if (m_current + 1 < m_songs.size()) play(m_current + 1); }
+void MusicPlayer::previous() { if (m_pos > 3) seek(0); else if (m_current > 0) play(m_current - 1); }
+void MusicPlayer::seek(double s) { send(QString(R"({"command":["seek",%1,"absolute"]})").arg(qMax(0.0, s)).toUtf8()); }

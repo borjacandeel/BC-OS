@@ -35,6 +35,7 @@ QString Launcher::bcAppName(const QString &kind) {
     if (kind == "notas") return "notes";
     if (kind == "calculadora") return "calculator";
     if (kind == "vista") return "preview";
+    if (kind == "musica") return "music";
     return {};
 }
 

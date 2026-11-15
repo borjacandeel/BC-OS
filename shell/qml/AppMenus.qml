@@ -8,7 +8,7 @@ import QtQuick
 QtObject {
     readonly property var names: ({
         "bc-files": qsTr("Archivos"), "bc-monitor": qsTr("Monitor de Actividad"), "bc-settings": qsTr("Ajustes del Sistema"),
-        "bc-store": qsTr("Tienda"), "bc-calculator": qsTr("Calculadora"), "bc-notes": qsTr("Notas"), "bc-preview": qsTr("Vista previa"), "bc-reminders": qsTr("Recordatorios"), "bc-calendar": qsTr("Calendario"), "foot": qsTr("Terminal"), "Alacritty": qsTr("Terminal"), "com.mitchellh.ghostty": qsTr("Terminal"),
+        "bc-store": qsTr("Tienda"), "bc-calculator": qsTr("Calculadora"), "bc-notes": qsTr("Notas"), "bc-preview": qsTr("Vista previa"), "bc-reminders": qsTr("Recordatorios"), "bc-calendar": qsTr("Calendario"), "bc-music": qsTr("Música"), "foot": qsTr("Terminal"), "Alacritty": qsTr("Terminal"), "com.mitchellh.ghostty": qsTr("Terminal"),
         "firefox": qsTr("Firefox"), "": qsTr("Archivos")
     })
     function nameFor(appId) {

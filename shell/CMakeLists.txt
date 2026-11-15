@@ -27,7 +27,7 @@ set(BC_QML_FILES
     qml/LoginPanel.qml qml/PowerButton.qml qml/PowerDialog.qml qml/BigClock.qml qml/LockScreen.qml
     qml/Splash.qml qml/AppWindow.qml qml/MonitorApp.qml qml/SettingsApp.qml qml/LauncherPanel.qml qml/StoreApp.qml
     qml/Glass.qml qml/MenuBar.qml qml/DesktopWidgets.qml qml/DockGG.qml qml/ControlCenterGG.qml
-    qml/NotificationCenter.qml qml/Spotlight.qml qml/Launchpad.qml qml/Genie.qml qml/MissionControl.qml qml/AppSwitcher.qml qml/DesktopIcons.qml qml/CalculatorApp.qml qml/NotesApp.qml qml/PreviewApp.qml qml/RemindersApp.qml qml/CalendarApp.qml qml/SidebarGlass.qml)
+    qml/NotificationCenter.qml qml/Spotlight.qml qml/Launchpad.qml qml/Genie.qml qml/MissionControl.qml qml/AppSwitcher.qml qml/DesktopIcons.qml qml/CalculatorApp.qml qml/NotesApp.qml qml/PreviewApp.qml qml/RemindersApp.qml qml/CalendarApp.qml qml/SidebarGlass.qml qml/MusicApp.qml)
 set(BC_GREETER_QML qml/Greeter.qml qml/LoginPanel.qml qml/PowerButton.qml qml/PowerDialog.qml qml/BigClock.qml
     qml/Theme.qml qml/Icons.qml qml/IconCache.qml qml/Icon.qml qml/Wallpaper.qml qml/Brand.qml qml/UiState.qml qml/AppMenus.qml)
 foreach(f ${BC_QML_FILES} qml/Greeter.qml)
@@ -54,7 +54,7 @@ file(GLOB BC_ICON_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/assets/ico
 qt_add_resources(bc-shell bcicons PREFIX /BCShell/icons BASE ${CMAKE_CURRENT_SOURCE_DIR}/assets/icons FILES ${BC_ICON_FILES})
 qt_add_resources(bc-shell bcappicons PREFIX /BCShell/apps BASE ${CMAKE_CURRENT_SOURCE_DIR}/assets/apps FILES ${BC_APPICON_FILES})
 
-target_link_libraries(bc-shell PRIVATE bccommon Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::DBus ${PAM_LIBRARY})
+target_link_libraries(bc-shell PRIVATE bccommon Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::DBus Qt6::Network ${PAM_LIBRARY})
 if(LayerShellQt_FOUND)
     target_link_libraries(bc-shell PRIVATE LayerShellQt::Interface)
     target_compile_definitions(bc-shell PRIVATE BC_HAVE_LAYERSHELL)

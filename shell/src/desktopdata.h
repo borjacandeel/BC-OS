@@ -218,3 +218,45 @@ private:
     QString m_dir;
     QVariantList m_notes, m_deleted;
 };
+
+// Música: biblioteca de ~/Música y reproducción con mpv (controlado por su socket IPC JSON).
+class MusicPlayer : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QVariantList songs READ songs NOTIFY libraryChanged)   // [{path, title, artist, album}]
+    Q_PROPERTY(int current READ current NOTIFY stateChanged)
+    Q_PROPERTY(bool playing READ playing NOTIFY stateChanged)
+    Q_PROPERTY(double position READ position NOTIFY progressChanged)
+    Q_PROPERTY(double duration READ duration NOTIFY progressChanged)
+    Q_PROPERTY(bool available READ available CONSTANT)
+public:
+    explicit MusicPlayer(QObject *parent = nullptr);
+    ~MusicPlayer() override;
+    QVariantList songs() const { return m_songs; }
+    int current() const { return m_current; }
+    bool playing() const { return m_playing; }
+    double position() const { return m_pos; }
+    double duration() const { return m_dur; }
+    bool available() const;
+    Q_INVOKABLE void scan();
+    Q_INVOKABLE void play(int index);
+    Q_INVOKABLE void toggle();
+    Q_INVOKABLE void next();
+    Q_INVOKABLE void previous();
+    Q_INVOKABLE void seek(double seconds);
+    static QVariantMap describe(const QString &path);
+signals:
+    void libraryChanged();
+    void stateChanged();
+    void progressChanged();
+private:
+    void send(const QByteArray &json);
+    void poll();
+    QVariantList m_songs;
+    int m_current = -1;
+    bool m_playing = false;
+    double m_pos = 0, m_dur = 0;
+    class QProcess *m_mpv = nullptr;
+    class QLocalSocket *m_sock = nullptr;
+    QTimer m_timer;
+    QString m_sockPath;
+};

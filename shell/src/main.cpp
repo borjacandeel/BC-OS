@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
     const QString appName = p.value(oApp);
     const bool appMode = !appName.isEmpty();
     if (appMode) {
-        static const QStringList known{"files", "monitor", "settings", "store", "calculator", "notes", "preview", "reminders", "calendar"};
+        static const QStringList known{"files", "monitor", "settings", "store", "calculator", "notes", "preview", "reminders", "calendar", "music"};
         if (!known.contains(appName)) { qCritical() << "App desconocida:" << appName; return 2; }
         app.setDesktopFileName("bc-" + appName);  // app_id en sway
         app.setApplicationName("bc-" + appName);
@@ -102,6 +102,7 @@ int main(int argc, char *argv[]) {
     SoundPlayer sounds;
     Processes processes;
     NotesStore notesStore;
+    MusicPlayer music;
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Settings", &appSettings);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Monitor", &monitor);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Store", &store);
@@ -118,6 +119,7 @@ int main(int argc, char *argv[]) {
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Sounds", &sounds);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Processes", &processes);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Notes", &notesStore);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Music", &music);
 
     // Solo del panel
     PamAuth pam;

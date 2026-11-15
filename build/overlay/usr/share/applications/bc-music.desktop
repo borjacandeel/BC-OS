@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Música
+Comment=Escucha tu biblioteca de música
+Exec=bc-shell --app music
+Icon=bc-music
+Categories=AudioVideo;Audio;Player;
+StartupNotify=false

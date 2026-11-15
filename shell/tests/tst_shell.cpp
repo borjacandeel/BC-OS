@@ -116,7 +116,8 @@ private slots:
         QCOMPARE(Launcher::appIdFor("navegador"), QString("firefox"));
         qputenv("BC_SHELL_BIN", "/bin/true");
         QCOMPARE(l.launch("tienda"), QString("started"));
-        QCOMPARE(l.launch("musica"), QString("unavailable"));
+        QCOMPARE(l.launch("musica"), QString("started"));          // Música ya es una app de BC
+        QCOMPARE(l.launch("no-existe"), QString("unavailable"));
         qputenv("BC_TERMINAL", "bc-no-existe-xyz");
         QCOMPARE(l.launch("terminal"), QString("failed"));
         qputenv("BC_TERMINAL", "sleep");  // sin argumentos termina con error; basta para ver el ciclo de vida

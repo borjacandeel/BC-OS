@@ -51,7 +51,6 @@ LayerWindow {
 
     function launch(kind, name) {
         if (kind === "lanzador") { UiState.toggleLauncher(); return }
-        if (kind === "musica") { Notifications.push("BC OS", name, qsTr("En desarrollo"), "", 4000); return }
         const appId = Launcher.appIdFor(kind)
         if (kind === "papelera") {
             if (Sway.hasApp("bc-files")) { Shell.invokeApp("files", "trash"); Sway.focusApp("bc-files") }

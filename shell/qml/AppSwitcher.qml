@@ -23,7 +23,7 @@ Item {
             seen[w.appId] = true
             const info = Apps.infoFor(w.appId)
             out.push({ appId: w.appId, id: w.id, name: info.name || AppMenus.nameFor(w.appId), icon: info.iconPath || "",
-                       kind: ({ "bc-files": "archivos", "bc-settings": "ajustes", "bc-monitor": "monitor", "bc-store": "tienda", "bc-notes": "notas", "bc-calculator": "calculadora", "bc-preview": "vista" })[w.appId] || "" })
+                       kind: ({ "bc-files": "archivos", "bc-settings": "ajustes", "bc-monitor": "monitor", "bc-store": "tienda", "bc-notes": "notas", "bc-calculator": "calculadora", "bc-preview": "vista", "bc-music": "musica" })[w.appId] || "" })
         }
         apps = out
     }

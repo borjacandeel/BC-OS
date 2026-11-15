@@ -82,6 +82,7 @@ picom
 rofi
 dunst
 playerctl
+mpv
 pavucontrol
 pcmanfm
 ttf-cascadia-code-nerd
