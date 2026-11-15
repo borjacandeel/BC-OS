@@ -79,7 +79,7 @@ void AppIndex::reload() {
 bool AppIndex::isHiddenId(const QString &id) {
     // Herramientas de desarrollo y variantes técnicas que no deben aparecer en el lanzador del usuario.
     static const QStringList prefixes{"cmake", "assistant", "designer", "linguist", "qdbusviewer", "qv4l", "foot-server", "footclient",
-                                      "foot.desktop", "avahi", "bssh", "bvnc", "qt6ct", "qtcreator", "org.freedesktop.IBus", "nm-"};
+                                      "foot.desktop", "Alacritty", "com.mitchellh.ghostty", "avahi", "bssh", "bvnc", "qt6ct", "qtcreator", "org.freedesktop.IBus", "nm-"};
     for (const QString &p : prefixes) if (id.startsWith(p)) return true;
     return false;
 }
@@ -135,7 +135,9 @@ bool AppIndex::launch(const QString &id) {
 
 QVariantMap AppIndex::infoFor(const QString &appId) const {
     if (appId.isEmpty()) return {};
-    const QString a = appId.toLower();
+    QString a = appId.toLower();
+    // Las terminales reales (ocultas en el lanzador) se presentan como «Terminal» de BC
+    if (a == "com.mitchellh.ghostty" || a == "alacritty" || a == "foot") a = "bc-terminal";
     for (const Entry &e : m_entries) {
         const QString id = e.id.toLower();
         const QString prog = commandFor(e.exec, false).value(0).section('/', -1).toLower();

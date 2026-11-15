@@ -19,8 +19,8 @@ Window {
     onCloseRequested: { if (Theme.reducedMotion) Qt.quit(); else closeAnim.start() }
     ParallelAnimation {
         id: closeAnim
-        NumberAnimation { target: frame; property: "scale"; to: 0.94; duration: 140; easing.type: Easing.InCubic }
-        NumberAnimation { target: frame; property: "opacity"; to: 0; duration: 140 }
+        NumberAnimation { target: frame; property: "scale"; to: Theme.gg ? 0.92 : 0.94; duration: Theme.gg ? Theme.durWindowClose : 140; easing.type: Easing.InCubic }
+        NumberAnimation { target: frame; property: "opacity"; to: 0; duration: Theme.gg ? Theme.durWindowClose : 140 }
         onFinished: Qt.quit()
     }
 
@@ -35,6 +35,8 @@ Window {
     // Minimizar: la ventana se encoge hacia el Dock y pasa al scratchpad de sway; al volver, se despliega.
     function minimizeAnimated() {
         if (Theme.reducedMotion) { WindowControl.minimize(); return }
+        // Golden Gate: el panel hace el efecto genio hacia el Dock (captura la ventana y la minimiza)
+        if (Theme.gg && Launcher.run("bc-ctl", ["minimize"])) return
         minAnim.restart()
     }
     onActiveChanged: if (active && frame.opacity < 0.1) {
@@ -62,12 +64,12 @@ Window {
         border.color: Theme.gg ? (Theme.dark ? Qt.rgba(1, 1, 1, 0.14) : Qt.rgba(0, 0, 0, 0.16)) : Theme.hairline
         Behavior on color { ColorAnimation { duration: Theme.d(Theme.durHover) } }
         clip: true
-        scale: 0.97
+        scale: Theme.gg ? 0.94 : 0.97
         opacity: 0
         transformOrigin: Item.Center
         Component.onCompleted: { scale = 1; opacity = 1 }
-        Behavior on scale { NumberAnimation { duration: Theme.dur(220); easing.type: Easing.OutCubic } }
-        Behavior on opacity { NumberAnimation { duration: Theme.dur(180); easing.type: Theme.easing } }
+        Behavior on scale { NumberAnimation { duration: Theme.dur(Theme.gg ? Theme.durWindowOpen : 220); easing.type: Theme.gg ? Theme.easeEmphasized : Easing.OutCubic } }
+        Behavior on opacity { NumberAnimation { duration: Theme.dur(Theme.gg ? Theme.durWindowOpen * 0.8 : 180); easing.type: Theme.easing } }
 
         Rectangle {
             id: titlebar

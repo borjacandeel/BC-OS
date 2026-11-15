@@ -46,6 +46,8 @@ install -D -m644 "$HERE/overlay/etc/bc/sway/efectos.conf" "$R/etc/bc/sway/efecto
 install -D -m644 "$HERE/overlay/etc/bc/sway/claro.conf" "$R/etc/bc/sway/claro.conf"
 install -D -m644 "$HERE/overlay/etc/bc/alacritty.toml" "$R/etc/bc/alacritty.toml"
 install -D -m644 "$HERE/overlay/etc/bc/ghostty.conf" "$R/etc/bc/ghostty.conf"
+# Apps de BC en el lanzador, Spotlight y el Dock (Archivos, Ajustes del Sistema, Monitor de Actividad, Tienda, Terminal)
+install -m644 "$HERE"/overlay/usr/share/applications/bc-*.desktop "$R/usr/share/applications/"
 install -D -m644 "$HERE/overlay/etc/xdg/foot/foot.ini" "$R/etc/xdg/foot/foot.ini"
 install -D -m644 "$HERE/../shell/assets/wallpaper-default.png" "$R/usr/share/bc/wallpaper-default.png"
 mkdir -p "$R/usr/share/bc/wallpapers"; install -m644 "$HERE"/../assets/wallpapers/*.jpg "$R/usr/share/bc/wallpapers/"

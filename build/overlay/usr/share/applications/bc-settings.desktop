@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Ajustes del Sistema
+Comment=Configura BC OS
+Exec=bc-shell --app settings
+Icon=preferences-system
+Categories=Settings;
+StartupNotify=false

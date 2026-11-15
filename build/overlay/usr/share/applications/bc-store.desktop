@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Tienda
+Comment=Instala y actualiza aplicaciones
+Exec=bc-shell --app store
+Icon=gnome-software
+Categories=System;PackageManager;
+StartupNotify=false

@@ -6,7 +6,7 @@ AppWindow {
     id: win
     width: 760
     height: 560
-    title: qsTr("Monitor del sistema")
+    title: Theme.gg ? qsTr("Monitor de Actividad") : qsTr("Monitor del sistema")
     Component.onCompleted: Monitor.active = Qt.binding(() => win.visible)
     Component.onDestruction: Monitor.active = false
 
