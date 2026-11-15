@@ -162,10 +162,13 @@ AppWindow {
                             width: 120; height: 78; radius: 10; clip: true
                             border.width: Settings.appearance === modelData.v ? 3 : 1
                             border.color: Settings.appearance === modelData.v ? Theme.accent : Theme.hairline
-                            color: modelData.v === "light" ? "#E9E9EE" : (modelData.v === "dark" ? "#1E1E22" : "#8E8E93")
+                            color: modelData.v === "dark" ? "#1E1E22" : "#E9E9EE"
                             Rectangle { x: 10; y: 10; width: 70; height: 46; radius: 6; color: modelData.v === "dark" ? "#2C2C31" : "#FFFFFF"
                                         Row { x: 6; y: 6; spacing: 3; Repeater { model: [Theme.close, Theme.minimize, Theme.zoom]; Rectangle { required property color modelData; width: 6; height: 6; radius: 3; color: modelData } } } }
-                            Rectangle { visible: modelData.v === "auto"; x: 60; width: 60; height: 78; color: "#1E1E22" }
+                            // Automático: mitad clara y mitad oscura, cada una con su ventana (como en macOS)
+                            Item { visible: modelData.v === "auto"; x: 60; width: 60; height: 78; clip: true
+                                   Rectangle { x: -60; width: 120; height: 78; color: "#1E1E22" }
+                                   Rectangle { x: -50; y: 10; width: 70; height: 46; radius: 6; color: "#2C2C31" } }
                             MouseArea { anchors.fill: parent; onClicked: Settings.appearance = modelData.v }
                         }
                         Label { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.t; font.pixelSize: 13 }
