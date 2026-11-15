@@ -18,7 +18,7 @@ ST="$W/stage"
 
 # --- bc-shell ---------------------------------------------------------------------------------
 DEPS="$(grep -v '^#' "$HERE/packages/build-deps.txt" | tr '\n' ' ')"
-sh "pacman -S --needed --noconfirm --disable-sandbox $DEPS fakeroot"
+sh "pacman -S --needed --noconfirm --disable-sandbox $DEPS fakeroot qt6-base qt6-declarative qt6-wayland qt6-svg layer-shell-qt"
 cp -a "$TOP/shell" "$W/src-shell"
 sh "cd /tmp/bcrepo/src-shell && rm -rf build && cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr \
     && cmake --build build && DESTDIR=/tmp/bcrepo/stage/bc-shell cmake --install build"
