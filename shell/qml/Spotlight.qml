@@ -23,7 +23,7 @@ Item {
         { t: qsTr("Ajustes del Sistema"), c: "sway:exec bc-shell --app settings", k: ["ajustes", "configuracion", "preferencias"] },
         { t: qsTr("Vaciar papelera"), c: "bc:trash:empty", k: ["papelera", "vaciar"] }
     ]
-    function norm(x) { return x.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "") }
+    function norm(x) { const s = x.toLowerCase(); try { return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "") } catch (e) { return s } }
     function reset() { field.text = ""; refresh(); field.forceActiveFocus() }
     function refresh() {
         const q = field.text.trim(), out = []
