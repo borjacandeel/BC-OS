@@ -297,6 +297,7 @@ LayerWindow {
     }
     Timer { id: demoQ; interval: 300; onTriggered: spotlightRef.setText("a") }
     property var spotlightRef: null
+    property var ccRef: null
     Timer { id: welcomeTimer; interval: 3500; onTriggered: if (!UiState.locked) UiState.welcomeOpen = true }
 
     // Botones de ventana para las apps que no son de BC
@@ -425,7 +426,10 @@ LayerWindow {
         margins: [UiState.topInset, 0, UiState.win ? UiState.taskH : 0, 0]
         keyboard: UiState.launcherOpen || UiState.clipboardOpen || UiState.startOpen || UiState.spotlightOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
         width: UiState.sw; height: UiState.sh
-        shown: UiState.popupOpen
+        // Al cerrar, la capa sigue visible un momento para que menús, Spotlight y paneles se desvanezcan
+        shown: UiState.popupOpen || popHold.running
+        Timer { id: popHold; interval: Theme.reduced ? 1 : 260 }
+        Connections { target: UiState; function onPopupOpenChanged() { if (UiState.popupOpen) popHold.stop(); else popHold.restart() } }
         Loader {
             id: popLoader
             anchors.fill: parent
@@ -441,6 +445,7 @@ LayerWindow {
 
                 ControlCenterGG {
                     id: centerGG
+                    Component.onCompleted: root.ccRef = centerGG
                     visible: !UiState.classic && opacity > 0
                     x: pop.width - pop.m - width
                     y: Theme.px(6)
@@ -464,15 +469,21 @@ LayerWindow {
                     Component.onCompleted: root.spotlightRef = spotlight
                     anchors.horizontalCenter: parent.horizontalCenter
                     y: Math.round(pop.height * 0.22)
-                    visible: UiState.spotlightOpen
+                    visible: opacity > 0
+                    opacity: UiState.spotlightOpen ? 1 : 0
+                    scale: UiState.spotlightOpen ? 1 : 0.97
+                    Behavior on opacity { NumberAnimation { duration: Theme.d(UiState.spotlightOpen ? Theme.durSpotlight : 150); easing.type: Theme.easeStandard } }
+                    Behavior on scale { NumberAnimation { duration: Theme.d(Theme.durSpotlight); easing.type: Theme.easeStandard } }
                     onDone: UiState.closePopups()
                     Connections { target: UiState; function onSpotlightOpenChanged() { if (UiState.spotlightOpen) spotlight.reset() } }
                 }
-                SlideIn { target: spotlight; dy: -10; duration: Theme.durSpotlight }
+                SlideIn { target: spotlight; dy: -10; duration: Theme.durSpotlight; fade: false }
                 // Pila de Descargas (en rejilla, sobre su icono del Dock)
                 Item {
                     id: stack
-                    visible: UiState.stackOpen
+                    visible: opacity > 0
+                    opacity: UiState.stackOpen ? 1 : 0
+                    Behavior on opacity { NumberAnimation { duration: Theme.d(UiState.stackOpen ? Theme.durPopover : 160) } }
                     width: Theme.px(360); height: Theme.px(330)
                     x: Math.min(pop.width - width - Theme.px(10), dockGG.minimizeTarget.x + dockGG.bs - width / 2)
                     y: pop.height - height - dockGG.plateH - Theme.px(18)
@@ -499,11 +510,13 @@ LayerWindow {
                            font.family: Theme.font; font.pixelSize: Theme.px(12)
                            MouseArea { anchors.fill: parent; onClicked: { UiState.closePopups(); Launcher.launch("archivos", Files.placePath("downloads")) } } }
                 }
-                SlideIn { target: stack; dy: 14; duration: Theme.durPopover }
+                SlideIn { target: stack; dy: 14; duration: Theme.durPopover; fade: false }
                 // Galería de widgets («Editar widgets…» de macOS): añadir y quitar widgets del escritorio
                 Item {
                     id: gallery
-                    visible: UiState.widgetGalleryOpen
+                    visible: opacity > 0
+                    opacity: UiState.widgetGalleryOpen ? 1 : 0
+                    Behavior on opacity { NumberAnimation { duration: Theme.d(UiState.widgetGalleryOpen ? Theme.durPopover : 180) } }
                     width: Math.min(pop.width - Theme.px(40), Theme.px(900)); height: Theme.px(230)
                     anchors.horizontalCenter: parent.horizontalCenter
                     y: pop.height - height - Theme.px(90)
@@ -538,17 +551,24 @@ LayerWindow {
                         }
                     }
                 }
-                SlideIn { target: gallery; dy: 30; duration: Theme.durPopover }
+                SlideIn { target: gallery; dy: 30; duration: Theme.durPopover; fade: false }
                 // Menú contextual (Dock, escritorio, widgets…)
                 MenuPopup {
                     id: ctx
-                    visible: UiState.contextItems.length > 0
-                    items: UiState.contextItems
+                    // Se guardan los elementos para que el menú se desvanezca al cerrarse
+                    property var keep: []
+                    readonly property bool opened: UiState.contextItems.length > 0
+                    onOpenedChanged: if (opened) keep = UiState.contextItems
+                    Connections { target: UiState; function onContextItemsChanged() { if (UiState.contextItems.length) ctx.keep = UiState.contextItems } }
+                    visible: opacity > 0
+                    opacity: opened ? 1 : 0
+                    Behavior on opacity { NumberAnimation { duration: Theme.d(ctx.opened ? Theme.durMenuOpen : Theme.durMenuClose) } }
+                    items: keep
                     x: Math.max(8, Math.min(pop.width - width - 8, UiState.contextPos.x))
                     y: Math.max(4, Math.min(pop.height - height - 8, UiState.contextPos.y - UiState.topInset - (UiState.contextPos.y > pop.height * 0.7 ? height : 0)))
                     onActivated: (cmd) => { UiState.closePopups(); UiState.run(cmd) }
                 }
-                SlideIn { target: ctx; dy: -4; duration: Theme.durMenuOpen }
+                SlideIn { target: ctx; dy: -4; duration: Theme.durMenuOpen; fade: false }
                 ControlCenter {
                     id: center
                     scale: root.u
@@ -560,7 +580,7 @@ LayerWindow {
                     Behavior on opacity { NumberAnimation { duration: Theme.dur(160); easing.type: Theme.easing } }
                 }
                 SlideIn { target: center; dy: -12; fade: false }
-                SlideIn { target: menu; dy: -6; duration: 150 }
+                SlideIn { target: menu; dy: -6; duration: 150; fade: false }
                 SlideIn { target: launcherWrap; dy: -14; duration: 220 }
                 SlideIn { target: startMenu; dy: 28; duration: 240 }
                 MenuPopup {
@@ -568,20 +588,25 @@ LayerWindow {
                     readonly property var all: UiState.menu === "system" ? AppMenus.systemItems
                         : UiState.menu === "app" ? AppMenus.appMenu(Sway.focusedAppId)
                         : (UiState.menu.indexOf("m") === 0 ? (AppMenus.menusFor(Sway.focusedAppId)[parseInt(UiState.menu.substring(1))] || {items: []}).items : [])
-                    items: all
-                    visible: UiState.menu !== "" && items.length > 0
+                    property var keep: []
+                    readonly property bool opened: UiState.menu !== "" && all.length > 0
+                    onAllChanged: if (all.length) keep = all
+                    items: keep
+                    visible: opacity > 0
+                    opacity: opened ? 1 : 0
+                    Behavior on opacity { NumberAnimation { duration: Theme.d(menu.opened ? Theme.durMenuOpen : Theme.durMenuClose) } }
                     x: Math.max(8, Math.min(pop.width - width - 8, UiState.menuX))
                     y: 4
                     onActivated: (cmd) => { UiState.closePopups(); UiState.run(cmd) }
                 }
                 Launchpad {
                     id: launchpad
-                    visible: UiState.launcherOpen && !UiState.classic
-                    opacity: visible ? 1 : 0
-                    Behavior on opacity { NumberAnimation { duration: Theme.d(Theme.durLaunchpad); easing.type: Theme.easeStandard } }
+                    visible: opacity > 0 && !UiState.classic
+                    opacity: UiState.launcherOpen ? 1 : 0
+                    Behavior on opacity { NumberAnimation { duration: Theme.d(UiState.launcherOpen ? Theme.durLaunchpad : 220); easing.type: Theme.easeStandard } }
                     onDone: UiState.closePopups()
                     onLaunch: (id, name) => { UiState.closePopups(); if (!Apps.launch(id)) Notifications.push("BC OS", name, qsTr("No se pudo abrir la aplicación"), "", 4000) }
-                    Connections { target: UiState; function onLauncherOpenChanged() { if (UiState.launcherOpen && !UiState.classic) launchpad.reset() } }
+                    Connections { target: UiState; function onLauncherOpenChanged() { if (UiState.classic) return; if (UiState.launcherOpen) launchpad.reset(); else launchpad.leave() } }
                 }
                 Item {
                     id: launcherWrap
@@ -650,6 +675,7 @@ LayerWindow {
         const d = AppConfig.demo
         if (d === "lock") UiState.locked = true
         else if (d === "center") UiState.centerOpen = true
+        else if (d === "center-edit") { UiState.centerOpen = true; if (ccRef) ccRef.editing = true }
         else if (d === "notif") UiState.notifCenterOpen = true
         else if (d === "spotlight") UiState.spotlightOpen = true
         else if (d === "spotlight-q") { UiState.spotlightOpen = true; demoQ.start() }

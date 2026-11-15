@@ -57,6 +57,7 @@ void AppSettings::setDockAutohide(bool on) { if (on == m_dockAutohide) return; m
 void AppSettings::setDockMagnify(bool on) { if (on == m_dockMagnify) return; m_dockMagnify = on; store("dockAmpliar", on); }
 void AppSettings::setDockSize(int px) { px = qBound(32, px, 96); if (px == m_dockSize) return; m_dockSize = px; store("dockTamano", px); }
 void AppSettings::setDockApps(const QStringList &l) { if (l == m_dockApps) return; m_dockApps = l; store("dockApps", l); }
+void AppSettings::setCcModules(const QString &j) { if (j == m_ccModules) return; m_ccModules = j; store("centroControles", j); }
 void AppSettings::setWidgetLayout(const QString &j) { if (j == m_widgetLayout) return; m_widgetLayout = j; store("widgetsPosicion", j); }
 void AppSettings::setDockRecent(const QStringList &l) { const QStringList v = l.mid(0, 3); if (v == m_dockRecent) return; m_dockRecent = v; store("dockRecientes", v); }
 void AppSettings::setDockShowRecent(bool on) { if (on == m_dockShowRecent) return; m_dockShowRecent = on; store("dockMostrarRecientes", on); }
@@ -81,6 +82,7 @@ void AppSettings::reload() {
     m_dockSize = qBound(32, s.value("dockTamano", 46).toInt(), 96);
     m_dockApps = s.value("dockApps").toStringList();
     m_widgetLayout = s.value("widgetsPosicion").toString();
+    m_ccModules = s.value("centroControles").toString();
     m_sounds = s.value("sonidos", true).toBool();
     m_dockRecent = s.value("dockRecientes").toStringList();
     m_dockShowRecent = s.value("dockMostrarRecientes", true).toBool();

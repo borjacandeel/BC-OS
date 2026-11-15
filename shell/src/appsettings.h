@@ -22,6 +22,7 @@ class AppSettings : public QObject {
     Q_PROPERTY(int dockSize READ dockSize WRITE setDockSize NOTIFY changed)
     Q_PROPERTY(QStringList dockApps READ dockApps WRITE setDockApps NOTIFY changed)
     Q_PROPERTY(QString widgetLayout READ widgetLayout WRITE setWidgetLayout NOTIFY changed)
+    Q_PROPERTY(QString ccModules READ ccModules WRITE setCcModules NOTIFY changed)
     Q_PROPERTY(bool sounds READ sounds WRITE setSounds NOTIFY changed)
     Q_PROPERTY(QStringList dockRecent READ dockRecent WRITE setDockRecent NOTIFY changed)
     Q_PROPERTY(bool dockShowRecent READ dockShowRecent WRITE setDockShowRecent NOTIFY changed)
@@ -42,6 +43,8 @@ public:
     QStringList dockApps() const { return m_dockApps; }
     void setDockApps(const QStringList &l);
     QString widgetLayout() const { return m_widgetLayout; }
+    QString ccModules() const { return m_ccModules; }
+    void setCcModules(const QString &j);
     void setWidgetLayout(const QString &json);
     bool sounds() const { return m_sounds; }
     QStringList dockRecent() const { return m_dockRecent; }
@@ -81,7 +84,7 @@ private:
     bool m_widgets = true, m_welcomed = false;
     QString m_wallpaper, m_accent = "#2F7BF5";
     QString m_mode;
-    QString m_appearance = "dark", m_widgetLayout;
+    QString m_appearance = "dark", m_widgetLayout, m_ccModules;
     double m_glass = 0.35;
     bool m_dockAutohide = false, m_dockMagnify = true, m_sounds = true;
     int m_dockSize = 46;

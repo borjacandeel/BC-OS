@@ -151,14 +151,14 @@ Item {
                 width: Math.round(29 * bar.s); height: Math.round(13 * bar.s)
                 Rectangle {
                     id: shell; width: parent.width - Math.round(3 * bar.s); height: parent.height; radius: Math.round(3.5 * bar.s)
-                    color: Qt.rgba(1, 1, 1, 0.35)
+                    color: Qt.rgba(bar.ink.r, bar.ink.g, bar.ink.b, 0.35)
                     Rectangle { width: parent.width * Math.max(0.06, SystemStatus.batteryPercent / 100); height: parent.height; radius: parent.radius
-                                color: SystemStatus.batteryPercent <= 10 ? "#FF453A" : bar.ink }
+                                color: SystemStatus.batteryPercent <= 10 ? "#FF453A" : SystemStatus.batteryCharging ? "#30D158" : bar.ink }
                     Text { anchors.centerIn: parent; text: SystemStatus.batteryCharging ? "⚡" : SystemStatus.batteryPercent
-                           color: "#101018"; font.family: Theme.font; font.pixelSize: Math.round(9 * bar.s); font.weight: Font.Black }
+                           color: bar.ink.hslLightness > 0.5 ? "#101018" : "#ffffff"; font.family: Theme.font; font.pixelSize: Math.round(9 * bar.s); font.weight: Font.Black }
                 }
                 Rectangle { anchors.left: shell.right; anchors.leftMargin: Math.round(1 * bar.s); anchors.verticalCenter: parent.verticalCenter
-                            width: Math.round(2 * bar.s); height: Math.round(5 * bar.s); radius: 1; color: Qt.rgba(1, 1, 1, 0.45) }
+                            width: Math.round(2 * bar.s); height: Math.round(5 * bar.s); radius: 1; color: Qt.rgba(bar.ink.r, bar.ink.g, bar.ink.b, 0.45) }
             }
         }
         // Red

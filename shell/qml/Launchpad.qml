@@ -45,8 +45,11 @@ Item {
 
     // Entrada: la rejilla se acerca desde un poco más grande (el fondo no se escala)
     property real zoom: 1
-    onVisibleChanged: if (visible) { zoom = 1.08; zoomIn.restart() }
+    onVisibleChanged: if (visible) { zoomOut.stop(); zoom = 1.08; zoomIn.restart() }
     NumberAnimation { id: zoomIn; target: lp; property: "zoom"; to: 1; duration: Theme.d(Theme.durLaunchpad); easing.type: Theme.easeEmphasized }
+    // Salida: la rejilla vuelve a agrandarse mientras se desvanece (como al cerrar Launchpad)
+    function leave() { zoomIn.stop(); zoomOut.restart() }
+    NumberAnimation { id: zoomOut; target: lp; property: "zoom"; to: 1.06; duration: Theme.d(220); easing.type: Easing.InCubic }
     // Categorías (vista Aplicaciones de Tahoe/Golden Gate)
     Row {
         id: chips

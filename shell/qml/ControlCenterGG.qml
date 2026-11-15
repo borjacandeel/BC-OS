@@ -11,14 +11,43 @@ Item {
     height: col.height + px(24)
     Binding { target: Quick; property: "active"; value: cc.visible }
 
+    // Controles editables (como «Editar controles» de macOS): qué módulos se muestran, guardado en Ajustes
+    readonly property var defaults: ["red", "accesos", "pantalla", "sonido", "musica"]
+    readonly property var catalog: [
+        { k: "red", t: qsTr("Red, Concentración y Mosaico"), i: "network-wireless-signal-excellent-symbolic" },
+        { k: "accesos", t: qsTr("Aspecto, Captura, Bloquear, Portapapeles"), i: "camera-photo-symbolic" },
+        { k: "pantalla", t: qsTr("Pantalla"), i: "display-brightness-symbolic" },
+        { k: "sonido", t: qsTr("Sonido"), i: "audio-volume-high-symbolic" },
+        { k: "musica", t: qsTr("En reproducción"), i: "media-playback-start-symbolic" },
+        { k: "noche", t: qsTr("Turno de noche"), i: "weather-clear-night-symbolic" },
+        { k: "calculadora", t: qsTr("Calculadora"), i: "view-grid-symbolic" },
+        { k: "notas", t: qsTr("Nota rápida"), i: "document-edit-symbolic" },
+        { k: "ajustes", t: qsTr("Ajustes del Sistema"), i: "preferences-system-symbolic" } ]
+    readonly property var extras: ["noche", "calculadora", "notas", "ajustes"]
+    readonly property var shownList: { try { const v = JSON.parse(Settings.ccModules || "null"); return Array.isArray(v) ? v : defaults } catch (e) { return defaults } }
+    property bool editing: false
+    onVisibleChanged: if (!visible) editing = false
+    function has(k) { return shownList.indexOf(k) >= 0 }
+    function toggleModule(k) { const v = shownList.slice(); const i = v.indexOf(k); if (i >= 0) v.splice(i, 1); else v.push(k); Settings.ccModules = JSON.stringify(v) }
+    readonly property bool main: UiState.centerPanel === ""
+
     Glass { anchors.fill: parent; radius: px(26); tintBoost: 0.30 }
 
     component Module: Item {
         id: mod
         default property alias content: inner.data
         property bool hot: false
+        property string key: ""
         Rectangle { anchors.fill: parent; radius: px(18); color: Theme.fill; border.width: 1; border.color: Theme.separator }
-        Item { id: inner; anchors.fill: parent }
+        Item { id: inner; anchors.fill: parent; enabled: !cc.editing }
+        // En edición: tiembla un poco y muestra «−» para quitarlo
+        rotation: cc.editing && key !== "" ? wob.r : 0
+        Rectangle {
+            visible: cc.editing && mod.key !== ""
+            x: -px(6); y: -px(6); width: px(20); height: width; radius: width / 2; color: Theme.dark ? "#5A5A5E" : "#8E8E93"
+            Rectangle { anchors.centerIn: parent; width: px(9); height: px(2); radius: 1; color: "white" }
+            MouseArea { anchors.fill: parent; anchors.margins: -px(4); onClicked: cc.toggleModule(mod.key) }
+        }
     }
     component Toggle: Item {
         id: tg
@@ -68,6 +97,14 @@ Item {
         }
     }
 
+    QtObject { id: wob; property real r: 0 }
+    SequentialAnimation {
+        running: cc.editing && !Theme.reduced; loops: Animation.Infinite
+        onStopped: wob.r = 0
+        NumberAnimation { target: wob; property: "r"; to: 0.6; duration: 110 }
+        NumberAnimation { target: wob; property: "r"; to: -0.6; duration: 220 }
+        NumberAnimation { target: wob; property: "r"; to: 0; duration: 110 }
+    }
     Column {
         id: col
         x: px(12); y: px(12); width: parent.width - px(24); spacing: px(10)
@@ -75,8 +112,9 @@ Item {
         // Fila superior: red (izquierda) y Concentración + Mosaico (derecha)
         Row {
             spacing: px(10); width: parent.width
-            visible: UiState.centerPanel === ""
+            visible: cc.main && cc.has("red")
             Module {
+                key: "red"
                 width: (parent.width - px(10)) / 2; height: px(150)
                 Column {
                     anchors.fill: parent; anchors.margins: px(4); spacing: 0
@@ -110,7 +148,7 @@ Item {
         }
         // Accesos rápidos: aspecto, captura, bloqueo, portapapeles
         Row {
-            visible: UiState.centerPanel === ""
+            visible: cc.main && cc.has("accesos")
             spacing: px(10)
             Repeater {
                 model: [ { i: Theme.dark ? "weather-clear-symbolic" : "weather-clear-night-symbolic", t: Theme.dark ? qsTr("Claro") : qsTr("Oscuro"), c: "appearance" },
@@ -119,6 +157,8 @@ Item {
                          { i: "edit-paste-symbolic", t: qsTr("Portapapeles"), c: "clip" } ]
                 delegate: Module {
                     required property var modelData
+                    key: index === 0 ? "accesos" : ""
+                    required property int index
                     width: (col.width - px(30)) / 4; height: px(70)
                     Icon { anchors.horizontalCenter: parent.horizontalCenter; y: px(14); name: modelData.i; size: px(20); color: Theme.label }
                     Text { anchors.horizontalCenter: parent.horizontalCenter; y: px(44); text: modelData.t; color: Theme.label; font.family: Theme.font; font.pixelSize: px(10) }
@@ -131,20 +171,23 @@ Item {
             }
         }
         Module {
-            visible: UiState.centerPanel === ""
+            key: "pantalla"
+            visible: cc.main && cc.has("pantalla")
             width: parent.width; height: px(66)
             Slider { anchors.verticalCenter: parent.verticalCenter; title: qsTr("Pantalla"); icon: "display-brightness-symbolic"
                      available: SystemStatus.hasBacklight; value: SystemStatus.brightness; onMoved: (v) => SystemStatus.setBrightness(Math.max(0.05, v)) }
         }
         Module {
-            visible: UiState.centerPanel === ""
+            key: "sonido"
+            visible: cc.main && cc.has("sonido")
             width: parent.width; height: px(66)
             Slider { anchors.verticalCenter: parent.verticalCenter; title: qsTr("Sonido"); icon: Icons.volumeIcon(SystemStatus.volume, SystemStatus.muted)
                      available: SystemStatus.audioAvailable; value: SystemStatus.muted ? 0 : SystemStatus.volume; onMoved: (v) => SystemStatus.setVolume(v) }
         }
         // Reproducción en curso
         Module {
-            visible: UiState.centerPanel === ""
+            key: "musica"
+            visible: cc.main && cc.has("musica")
             width: parent.width; height: px(64)
             Column {
                 x: px(14); anchors.verticalCenter: parent.verticalCenter; width: parent.width - px(120)
@@ -163,6 +206,68 @@ Item {
                     Icon { required property var modelData; name: modelData.i; size: px(20); color: Theme.label
                            MouseArea { anchors.fill: parent; anchors.margins: -px(4); enabled: Quick.media.available; onClicked: Quick.mediaCommand(modelData.c) } }
                 }
+            }
+        }
+
+        // Controles añadidos (cuadrados pequeños, como los de macOS)
+        Row {
+            visible: cc.main && cc.extras.some(k => cc.has(k))
+            spacing: px(10)
+            Repeater {
+                model: cc.catalog.filter(m => cc.extras.indexOf(m.k) >= 0 && cc.has(m.k))
+                delegate: Module {
+                    required property var modelData
+                    key: modelData.k
+                    width: (col.width - px(30)) / 4; height: px(70)
+                    readonly property bool lit: modelData.k === "noche" && UiState.mode === "night"
+                    Rectangle { anchors.fill: parent; radius: px(18); color: Theme.selection; visible: parent.lit }
+                    Icon { anchors.horizontalCenter: parent.horizontalCenter; y: px(14); name: modelData.i; size: px(20); color: parent.lit ? "white" : Theme.label }
+                    Text { anchors.horizontalCenter: parent.horizontalCenter; y: px(44); width: parent.width - px(6); horizontalAlignment: Text.AlignHCenter; elide: Text.ElideRight
+                           text: modelData.t; color: parent.lit ? "white" : Theme.label; font.family: Theme.font; font.pixelSize: px(10) }
+                    MouseArea { anchors.fill: parent; enabled: !cc.editing; onClicked: {
+                        const k = modelData.k
+                        if (k === "noche") { Settings.mode = (UiState.mode === "night" ? "" : "night"); return }
+                        UiState.closePopups()
+                        if (k === "calculadora") Launcher.run("bc-shell", ["--app", "calculator"])
+                        else if (k === "notas") Launcher.run("bc-shell", ["--app", "notes"])
+                        else Launcher.run("bc-shell", ["--app", "settings"]) } }
+                }
+            }
+        }
+        // Edición: controles que se pueden añadir
+        Module {
+            visible: cc.main && cc.editing
+            width: parent.width; height: addCol.height + px(12)
+            Column {
+                id: addCol; x: px(6); y: px(6); width: parent.width - px(12)
+                Text { padding: px(6); text: qsTr("Añadir controles"); color: Theme.labelSecondary; font.family: Theme.font; font.pixelSize: px(11); font.weight: Font.Bold }
+                Text { visible: cc.catalog.every(m => cc.has(m.k)); padding: px(6); text: qsTr("Ya están todos"); color: Theme.labelTertiary; font.family: Theme.font; font.pixelSize: px(12) }
+                Repeater {
+                    model: cc.catalog.filter(m => !cc.has(m.k))
+                    delegate: Rectangle {
+                        required property var modelData
+                        width: addCol.width; height: px(34); radius: px(8); color: ama.containsMouse ? Theme.fillHover : "transparent"
+                        Icon { x: px(8); anchors.verticalCenter: parent.verticalCenter; name: modelData.i; size: px(15); color: Theme.label }
+                        Text { x: px(32); anchors.verticalCenter: parent.verticalCenter; width: parent.width - px(70); elide: Text.ElideRight
+                               text: modelData.t; color: Theme.label; font.family: Theme.font; font.pixelSize: px(13) }
+                        Rectangle { anchors.right: parent.right; anchors.rightMargin: px(8); anchors.verticalCenter: parent.verticalCenter
+                                    width: px(20); height: width; radius: width / 2; color: "#30D158"
+                                    Text { anchors.centerIn: parent; text: "+"; color: "white"; font.pixelSize: px(15); font.weight: Font.Bold } }
+                        MouseArea { id: ama; anchors.fill: parent; hoverEnabled: true; onClicked: cc.toggleModule(modelData.k) }
+                    }
+                }
+            }
+        }
+        // «Editar controles…» / «Listo»
+        Item {
+            visible: cc.main
+            width: parent.width; height: px(26)
+            Rectangle {
+                anchors.centerIn: parent; height: px(24); width: editTxt.implicitWidth + px(24); radius: height / 2
+                color: cc.editing ? Theme.selection : (ema.containsMouse ? Theme.fillHover : "transparent")
+                Text { id: editTxt; anchors.centerIn: parent; text: cc.editing ? qsTr("Listo") : qsTr("Editar controles…")
+                       color: cc.editing ? "white" : Theme.labelSecondary; font.family: Theme.font; font.pixelSize: px(12); font.weight: cc.editing ? Font.DemiBold : Font.Normal }
+                MouseArea { id: ema; anchors.fill: parent; hoverEnabled: true; onClicked: cc.editing = !cc.editing }
             }
         }
 
