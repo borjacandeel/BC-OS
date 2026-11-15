@@ -125,6 +125,10 @@ public:
     Q_INVOKABLE static QString machineKind();       // elección guardada o, si no hay, la detectada
     Q_INVOKABLE static bool setMachineKind(const QString &kind);
     Q_INVOKABLE static bool hasGpu();               // hay /dev/dri/renderD*
+    // Bloqueo a prueba de fallos: marca en $XDG_RUNTIME_DIR/bc-bloqueado mientras la pantalla está bloqueada.
+    // Si el panel se cae bloqueado, la sesión lanza swaylock y el panel, al volver, se vuelve a bloquear.
+    Q_INVOKABLE static void setLockFlag(bool on);
+    Q_INVOKABLE static bool lockFlag();
     // Captura con grim de la pantalla (geom vacía) o de una región «x,y wxh» → señal captured(tag, ruta)
     Q_INVOKABLE void capture(const QString &tag, const QString &geom);
     static QVariantList parseWifi(const QString &nmcliTerse);

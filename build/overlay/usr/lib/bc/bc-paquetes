@@ -1,0 +1,15 @@
+#!/bin/sh
+# Ayudante con privilegios de la Tienda (pkexec): solo estas operaciones y solo con nombres de paquete válidos.
+#   instalar <paquete> · quitar <paquete> · actualizar
+set -eu
+op="${1:-}"; pkg="${2:-}"
+valid() { printf '%s' "$1" | grep -Eq '^[a-z0-9@_+][a-z0-9@._+-]{0,127}$'; }
+case "$op" in
+  instalar) valid "$pkg" || { echo "Nombre de paquete no válido" >&2; exit 2; }; exec pacman -S --noconfirm --needed -- "$pkg" ;;
+  quitar)   valid "$pkg" || { echo "Nombre de paquete no válido" >&2; exit 2; }
+            case "$pkg" in bc-os|bc-shell|bc-core|bc-escritorio|base|linux|linux-aarch64|systemd|pacman|sudo|sway|greetd)
+              echo "«$pkg» es parte del sistema y no se puede quitar desde la Tienda" >&2; exit 3 ;; esac
+            exec pacman -Rns --noconfirm -- "$pkg" ;;
+  actualizar) if [ -x /usr/bin/bc-actualizar ]; then exec /usr/bin/bc-actualizar; else exec pacman -Syu --noconfirm; fi ;;
+  *) echo "uso: bc-paquetes instalar|quitar <paquete> | actualizar" >&2; exit 2 ;;
+esac

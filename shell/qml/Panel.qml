@@ -226,7 +226,7 @@ LayerWindow {
     }
 
     // Sonidos del sistema (originales de BC OS)
-    Connections { target: UiState; function onLockedChanged() { if (UiState.locked && !UiState.classic) Sounds.play("lock") } }
+    Connections { target: UiState; function onLockedChanged() { Quick.setLockFlag(UiState.locked); if (UiState.locked && !UiState.classic) Sounds.play("lock") } }
     property bool _notifWas: false
     property bool _notifWasShown: false
     property bool _soundsReady: false
@@ -704,6 +704,8 @@ LayerWindow {
     Component.onCompleted: {
         UiState.classic = AppConfig.classic
         UiState.splashing = AppConfig.splash
+        // El panel se reinició con la pantalla bloqueada (fallo): sigue bloqueada
+        if (AppConfig.demo === "" && Quick.lockFlag()) UiState.locked = true
         UiState.style = Settings.desktopStyle === "win" ? "win" : "mac"
         UiState.widgets = Settings.widgets
         UiState.mode = Settings.mode

@@ -17,7 +17,7 @@ AppWindow {
     function reload() { if (section !== "discover" && section !== "updates") go(section) }
     function ask(action, name) {
         pending = { action: action, name: name }
-        if (Store.flathub || password !== "") run()
+        if (Store.flathub || Store.passwordless || password !== "") run()
         else { pwDialog.open = true; pwInput.text = ""; pwInput.forceActiveFocus() }
     }
     function run() {

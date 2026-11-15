@@ -51,6 +51,10 @@ install -m644 "$HERE"/overlay/usr/share/applications/bc-*.desktop "$R/usr/share/
 # Repositorio propio de BC OS ([bc], publicado en GitHub Releases por .github/workflows/repo.yml) antes de [core],
 # para que los paquetes de BC tengan prioridad. bc-actualizar actualiza desde ahí (y la Tienda lo usa).
 install -m755 "$HERE/repo/bc-actualizar" "$R/usr/bin/bc-actualizar"
+# Tienda sin contraseña para administradores con sesión activa (polkit + ayudante restringido)
+install -D -m755 "$HERE/overlay/usr/lib/bc/bc-paquetes" "$R/usr/lib/bc/bc-paquetes"
+install -D -m644 "$HERE/overlay/usr/share/polkit-1/actions/org.bcos.paquetes.policy" "$R/usr/share/polkit-1/actions/org.bcos.paquetes.policy"
+install -D -m644 "$HERE/overlay/etc/polkit-1/rules.d/50-bcos-paquetes.rules" "$R/etc/polkit-1/rules.d/50-bcos-paquetes.rules"
 if ! grep -q '^\[bc\]' "$R/etc/pacman.conf"; then
   sed -i '0,/^\[core\]/s//# Repositorio propio de BC OS (GitHub). Firmado cuando el creador añada la clave (ver build\/repo\/LEEME.md)\n[bc]\nSigLevel = Optional TrustAll\nServer = https:\/\/github.com\/borjacandeel\/BC-OS\/releases\/download\/repo-$arch\n\n[core]/' "$R/etc/pacman.conf"
 fi

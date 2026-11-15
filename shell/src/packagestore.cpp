@@ -241,16 +241,40 @@ void PackageStore::runPrivileged(const QStringList &pacmanArgs, const QString &p
     p->closeWriteChannel();   // sin esto, con contraseña errónea sudo se queda esperando más datos
 }
 
+// Con polkit (pkexec + ayudante bc-paquetes) no hace falta contraseña para administradores con sesión activa
+static bool usePkexec() { return QFileInfo::exists("/usr/lib/bc/bc-paquetes") && !QStandardPaths::findExecutable("pkexec").isEmpty(); }
+bool PackageStore::passwordless() { return usePkexec(); }
 void PackageStore::install(const QString &name, const QString &password) {
     if (m_flathub) { if (!validFlatpakId(name)) return; runFlatpakWrite({"install", "--user", "-y", "--noninteractive", "flathub", "--", name}, "install"); return; }
+    if (usePkexec()) { runPolkit({"instalar", name}, "install"); return; }
     runPrivileged({"-S", "--noconfirm", "--needed", "--", name}, password, "install");
 }
 void PackageStore::remove(const QString &name, const QString &password) {
     if (m_flathub) { if (!validFlatpakId(name)) return; runFlatpakWrite({"uninstall", "--user", "-y", "--noninteractive", "--", name}, "remove"); return; }
+    if (usePkexec()) { runPolkit({"quitar", name}, "remove"); return; }
     runPrivileged({"-Rns", "--noconfirm", "--", name}, password, "remove");
 }
 void PackageStore::updateAll(const QString &password) {
     if (m_flathub) { runFlatpakWrite({"update", "--user", "-y", "--noninteractive"}, "update"); return; }
+    if (usePkexec()) { runPolkit({"actualizar"}, "update"); return; }
     if (QFileInfo::exists("/usr/bin/bc-actualizar")) runPrivileged({"@bc-actualizar"}, password, "update");
     else runPrivileged({"-Syu", "--noconfirm"}, password, "update");
+}
+
+void PackageStore::runPolkit(const QStringList &args, const QString &action) {
+    if (m_busy) return;
+    m_log.clear(); emit logChanged();
+    auto *p = new QProcess(this);
+    p->setProcessChannelMode(QProcess::MergedChannels);
+    setBusy(true);
+    connect(p, &QProcess::readyRead, this, [this, p] {
+        m_log += QString::fromUtf8(p->readAll());
+        if (m_log.size() > 20000) m_log = m_log.right(15000);
+        emit logChanged();
+    });
+    connect(p, &QProcess::finished, this, [this, p, action](int code) {
+        if (code == 126 || code == 127) m_log += "\n" + tr("Permiso denegado");
+        setBusy(false); emit logChanged(); emit finished(code == 0, action); p->deleteLater();
+    });
+    p->start(QStandardPaths::findExecutable("pkexec"), QStringList{"/usr/lib/bc/bc-paquetes"} + args);
 }

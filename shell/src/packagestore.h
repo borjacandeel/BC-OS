@@ -7,6 +7,7 @@
 // actualizar con sudo (la contraseña se envía por la entrada estándar de sudo y no se guarda en disco).
 class PackageStore : public QAbstractListModel {
     Q_OBJECT
+    Q_PROPERTY(bool passwordless READ passwordless CONSTANT)   // polkit: sin contraseña para administradores
     Q_PROPERTY(bool busy READ busy NOTIFY busyChanged)
     Q_PROPERTY(QString log READ log NOTIFY logChanged)
     Q_PROPERTY(QVariantMap details READ details NOTIFY detailsChanged)
@@ -52,6 +53,9 @@ signals:
 private:
     void runRead(const QStringList &args, std::function<void(const QString &)> done);
     void runPrivileged(const QStringList &pacmanArgs, const QString &password, const QString &action);
+    void runPolkit(const QStringList &args, const QString &action);
+public:
+    static bool passwordless();
     void setBusy(bool b);
     void runFlatpakRead(const QStringList &args, std::function<void(const QString &)> done);
     void runFlatpakWrite(const QStringList &args, const QString &action);

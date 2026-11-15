@@ -1,0 +1,7 @@
+// BC OS: como en la App Store, un usuario administrador (grupo wheel) con sesión local activa instala, quita y
+// actualiza apps de los repositorios (firmados) sin escribir la contraseña. Solo para el ayudante bc-paquetes.
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.bcos.paquetes" && subject.local && subject.active && subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+    }
+});

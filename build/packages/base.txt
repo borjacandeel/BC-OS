@@ -90,3 +90,4 @@ wmname
 xsecurelock
 xss-lock
 gnome-themes-extra
+swaylock

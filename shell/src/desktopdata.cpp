@@ -743,3 +743,11 @@ bool QuickTools::setMachineKind(const QString &kind) {
     return f.commit();
 }
 bool QuickTools::hasGpu() { return !QDir("/dev/dri").entryList({"renderD*"}, QDir::System).isEmpty(); }
+
+static QString lockFlagPath() { const QString d = qEnvironmentVariable("XDG_RUNTIME_DIR"); return d.isEmpty() ? QString() : d + "/bc-bloqueado"; }
+void QuickTools::setLockFlag(bool on) {
+    if (lockFlagPath().isEmpty()) return;
+    if (on) { QFile f(lockFlagPath()); if (f.open(QIODevice::WriteOnly)) f.write("1\n"); }
+    else QFile::remove(lockFlagPath());
+}
+bool QuickTools::lockFlag() { return !lockFlagPath().isEmpty() && QFile::exists(lockFlagPath()); }
