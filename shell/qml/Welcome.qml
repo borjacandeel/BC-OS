@@ -14,7 +14,7 @@ Item {
         { f: "ondas.jpg", n: qsTr("Ondas") }, { f: "medianoche.jpg", n: qsTr("Medianoche") }, { f: "oceano.jpg", n: qsTr("Océano") },
         { f: "grafito.jpg", n: qsTr("Grafito") }, { f: "plata.jpg", n: qsTr("Plata") }]
     // Solo los colores base de BC OS (los del semáforo y los de las tarjetas del Monitor)
-    readonly property var accents: ["#2F7BF5", "#34C759", "#FF9F0A", "#FF5F57", "#8E9BB2"]
+    readonly property var accents: [Theme.gg ? "#0A84FF" : "#2F7BF5", "#34C759", "#FF9F0A", "#FF5F57", "#8E9BB2"]
 
     property bool dotfilesChosen: Sessions.runningId === "dotfiles"
     function pickStyle(id) { Settings.desktopStyle = id; UiState.style = id; if (dotfilesChosen) { Sessions.remember(Sessions.currentUserName(), "bc"); dotfilesChosen = false } }

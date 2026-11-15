@@ -68,7 +68,7 @@ void AppSettings::reload() {
     m_style = s.value("estiloEscritorio", "mac").toString();
     if (m_style != "win" && m_style != "minimal") m_style = "mac";
     m_wallpaper = s.value("fondo", "").toString();
-    m_accent = s.value("acento", "#2F7BF5").toString();
+    m_accent = s.value("acento", qEnvironmentVariableIntValue("BC_CLASSIC") == 1 ? "#2F7BF5" : "#0A84FF").toString();
     m_welcomed = s.value("bienvenida", false).toBool();
     m_widgets = s.value("widgets", true).toBool();
     m_mode = s.value("modo", "").toString();

@@ -99,7 +99,18 @@ rm -rf "$R/usr/share/icons/McMojave-cursors"; cp -a "$HERE/../icons/mcmojave/McM
 mkdir -p "$R/usr/share/licenses/mcmojave-cursors"; cp "$HERE/../icons/mcmojave/LICENSE" "$R/usr/share/licenses/mcmojave-cursors/"
 ICONS=MacOS-Like-Dark; [ -d "$R/usr/share/icons/MacOS-Like-Dark" ] || ICONS=Qogir
 mkdir -p "$R/etc/gtk-3.0" "$R/etc/gtk-4.0"
-printf '[Settings]\ngtk-icon-theme-name=%s\ngtk-cursor-theme-name=McMojave-cursors\ngtk-cursor-theme-size=24\ngtk-font-name=CaskaydiaCove Nerd Font 10\ngtk-application-prefer-dark-theme=1\n' "$ICONS" | tee "$R/etc/gtk-3.0/settings.ini" > "$R/etc/gtk-4.0/settings.ini"
+# Tema GTK estilo macOS para las apps externas: MacTahoe (vinceliuice, MIT), versiones ya compiladas del repositorio
+GTKSHA=1e45e19f510edb8cde18fa84d6cd5319f60b086b
+GTKTHEME=Adwaita-dark
+mkdir -p "$R/usr/share/themes"
+for t in MacTahoe-Dark MacTahoe-Light; do
+  curl -fsSL "https://raw.githubusercontent.com/vinceliuice/MacTahoe-gtk-theme/$GTKSHA/release/$t.tar.xz" | tar -xJ -C "$R/usr/share/themes" \
+    || echo "AVISO: no se pudo descargar el tema GTK $t"
+done
+[ -d "$R/usr/share/themes/MacTahoe-Dark" ] && GTKTHEME=MacTahoe-Dark && \
+  curl -fsSL "https://raw.githubusercontent.com/vinceliuice/MacTahoe-gtk-theme/$GTKSHA/COPYING" -o "$R/usr/share/themes/MacTahoe-Dark/COPYING" || true
+# Interfaz con Inter (métricas próximas a SF Pro, como el escritorio Golden Gate); monoespaciada: CaskaydiaCove
+printf '[Settings]\ngtk-theme-name=%s\ngtk-icon-theme-name=%s\ngtk-cursor-theme-name=McMojave-cursors\ngtk-cursor-theme-size=24\ngtk-font-name=Inter 10\ngtk-application-prefer-dark-theme=1\n' "$GTKTHEME" "$ICONS" | tee "$R/etc/gtk-3.0/settings.ini" > "$R/etc/gtk-4.0/settings.ini"
 
 install -D -m644 /dev/stdin "$R/usr/share/icons/default/index.theme" <<'CUR'
 [Icon Theme]

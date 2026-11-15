@@ -7,10 +7,10 @@ if [ "$m" = auto ]; then h=$(date +%H); if [ "$h" -ge 8 ] && [ "$h" -lt 20 ]; th
 [ "$m" = light ] || m=dark
 echo "$m" > "$D/appearance"
 if [ "$m" = light ]; then
-  scheme=prefer-light; gtk=Adwaita; dark=false
+  scheme=prefer-light; gtk=Adwaita; [ -d /usr/share/themes/MacTahoe-Light ] && gtk=MacTahoe-Light; dark=false
   cols='client.focused #ECECEE #ECECEE #1D1D1F #ECECEE #ECECEE; client.focused_inactive #F6F6F7 #F6F6F7 #A1A1A6 #F6F6F7 #F6F6F7; client.unfocused #F6F6F7 #F6F6F7 #A1A1A6 #F6F6F7 #F6F6F7'
 else
-  scheme=prefer-dark; gtk=Adwaita-dark; dark=true
+  scheme=prefer-dark; gtk=Adwaita-dark; [ -d /usr/share/themes/MacTahoe-Dark ] && gtk=MacTahoe-Dark; dark=true
   cols='client.focused #2C2C31 #2C2C31 #ECECEE #2C2C31 #2C2C31; client.focused_inactive #1F1F23 #1F1F23 #7D7D83 #1F1F23 #1F1F23; client.unfocused #1F1F23 #1F1F23 #7D7D83 #1F1F23 #1F1F23'
 fi
 [ -n "$SWAYSOCK" ] && swaymsg "$cols" >/dev/null 2>&1
@@ -21,6 +21,7 @@ fi
 for v in 3.0 4.0; do
   f="${XDG_CONFIG_HOME:-$HOME/.config}/gtk-$v/settings.ini"; mkdir -p "$(dirname "$f")"
   [ -f "$f" ] || printf '[Settings]\n' > "$f"
+  if grep -q '^gtk-theme-name' "$f"; then sed -i "s/^gtk-theme-name=.*/gtk-theme-name=$gtk/" "$f"; else printf 'gtk-theme-name=%s\n' "$gtk" >> "$f"; fi
   if grep -q '^gtk-application-prefer-dark-theme' "$f"; then sed -i "s/^gtk-application-prefer-dark-theme=.*/gtk-application-prefer-dark-theme=$dark/" "$f"
   else printf 'gtk-application-prefer-dark-theme=%s\n' "$dark" >> "$f"; fi
 done
