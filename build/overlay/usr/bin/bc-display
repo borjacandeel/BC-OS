@@ -3,6 +3,8 @@
 #  auto  : aplica el modo preferido (el que anuncia el monitor o la ventana de la máquina virtual)
 #  watch : vigila cambios de pantalla (DRM) y aplica «auto»; así la ventana de VirtualBox/QEMU se adapta al redimensionarla
 cmd="${1:-auto}"
+# Hyprland adapta solo la resolución (monitor «preferred»)
+[ -n "$HYPRLAND_INSTANCE_SIGNATURE" ] && [ "${1:-}" = watch ] && exit 0
 outs() { swaymsg -t get_outputs -r 2>/dev/null; }
 case "$cmd" in
   list) outs | jq -r '.[] | select(.active) | .modes[] | "\(.width)x\(.height)"' | sort -u -t x -k1,1nr -k2,2nr ;;

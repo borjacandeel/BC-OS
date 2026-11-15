@@ -32,6 +32,7 @@ Pendiente (en este orden):
 - [x] Repositorio propio `[bc]` en GitHub Releases (`repo.yml`, `build/repo/`), `bc-actualizar`; la Tienda actualiza con él.
 - [x] Ghostty: compila (Zig descarga dentro del chroot, sin --system); activado por defecto (BC_GHOSTTY=0 lo desactiva) (BC_GHOSTTY=1 para probar). En CI Zig 0.17 da «panic: reached unreachable code» dentro del chroot; Terminal = Alacritty mientras tanto.
 - [x] Sistema: ISO live UEFI, imagen x86_64 (Arch normal), instalador x86_64/GRUB/Secure Boot, instantáneas + bc-restaurar, Tienda con polkit, bloqueo a prueba de fallos, box64 (ARM), bc-rendimiento.
+- [x] Hyprland 0.57 (config Lua `/etc/bc/hypr/hyprland.lua`, animaciones tipo macOS, desenfoque real) por defecto con aceleración 3D; sway por software si no. BC Shell traduce sus órdenes a `hyprctl eval`.
 - [ ] Firma del repositorio [bc]: falta la clave GPG del creador (secreto BC_REPO_GPG_KEY + clave pública).
 - [ ] Verificar en QEMU cada parte con capturas antes de dar nada por hecho.
 - [x] README actualizado con capturas 1–14 (2026-11-15).

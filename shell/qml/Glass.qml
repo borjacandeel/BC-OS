@@ -43,14 +43,17 @@ Item {
     }
     Image {
         id: blur
+        visible: !Quick.realBlur
         anchors.fill: parent
         cache: false; asynchronous: false; smooth: false
-        source: g.width > 2 && g.height > 2
+        source: !Quick.realBlur && g.width > 2 && g.height > 2
             ? "image://glass/" + [g.gp.x, g.gp.y, Math.round(g.width), Math.round(g.height), Math.round(g.radius), Math.round(g.scrW), Math.round(g.scrH), g.version].join("_") + (g.leftOnly ? "_L" : "")
             : ""
     }
     // Tinte (deslizador ultratransparente ↔ tintado)
-    Rectangle { anchors.fill: parent; radius: g.radius; color: g.tintColor; opacity: Math.min(0.97, Theme.glassOpacity + g.tintBoost) }
+    // Con desenfoque real (Hyprland) el tinte es algo más ligero para que se vea lo de detrás, como Liquid Glass
+    Rectangle { anchors.fill: parent; radius: g.radius; color: g.tintColor
+                opacity: Math.min(0.97, (Quick.realBlur ? 0.75 : 1) * (Theme.glassOpacity + g.tintBoost)) }
     // Reflejo superior: refracción uniforme de Golden Gate
     Rectangle {
         anchors.fill: parent; radius: g.radius

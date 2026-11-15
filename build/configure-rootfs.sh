@@ -43,6 +43,8 @@ sed -i '/# BC OS: iniciar la sesión gráfica/,$d' "$S/.bash_profile"
 cat "$HERE/overlay/etc/skel/.bash_profile" >> "$S/.bash_profile"
 install -m755 "$HERE/overlay/usr/bin/bc-session" "$HERE/overlay/usr/bin/bc-wm-mode" "$HERE/overlay/usr/bin/bc-ctl" "$HERE/overlay/usr/bin/bc-terminal" "$HERE/overlay/usr/bin/bc-screenshot" "$HERE/overlay/usr/bin/bc-display" "$HERE/overlay/usr/bin/bc-appearance" "$R/usr/bin/"
 install -D -m644 "$HERE/overlay/etc/bc/sway/efectos.conf" "$R/etc/bc/sway/efectos.conf"
+# Hyprland (con aceleración 3D): animaciones fluidas tipo macOS
+install -D -m644 "$HERE/overlay/etc/bc/hypr/hyprland.lua" "$R/etc/bc/hypr/hyprland.lua"
 install -D -m644 "$HERE/overlay/etc/bc/sway/claro.conf" "$R/etc/bc/sway/claro.conf"
 install -D -m644 "$HERE/overlay/etc/bc/alacritty.toml" "$R/etc/bc/alacritty.toml"
 install -D -m644 "$HERE/overlay/etc/bc/ghostty.conf" "$R/etc/bc/ghostty.conf"

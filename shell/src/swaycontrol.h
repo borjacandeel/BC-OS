@@ -1,5 +1,7 @@
 #pragma once
 #include <QFileSystemWatcher>
+#include <QHash>
+#include <QLocalSocket>
 #include <QObject>
 #include <QProcess>
 #include <QTimer>
@@ -48,6 +50,11 @@ public:
     Q_INVOKABLE void setTiling(bool on);
     Q_INVOKABLE void refresh();
 
+    Q_PROPERTY(bool hyprland READ hyprland CONSTANT)
+    bool hyprland() const { return m_hypr; }
+    // Hyprland: traduce una orden de sway (las que usa BC Shell) a despachos de hyprctl (pruebas)
+    static QStringList translateToHyprland(const QString &swayCmd, const QHash<int, QString> &addr, const QString &activeWs);
+    static QVariantList parseHyprClients(const QByteArray &clients, QHash<int, QString> *addr = nullptr);
     // Analiza la salida de `swaymsg -t get_tree` (pruebas).
     static QVariantList parseTree(const QByteArray &json);
     static QString modeFilePath();
@@ -60,6 +67,12 @@ signals:
 
 private:
     void readMode();
+    void refreshHypr();
+    void hyprConnect();
+    bool m_hypr = false;
+    QHash<int, QString> m_addr;      // id entero → dirección de Hyprland (0x…)
+    QString m_activeWs = "1";
+    QLocalSocket m_hyprEvents;
     QString m_exe;
     bool m_available = false;
     QVariantList m_windows, m_chrome;

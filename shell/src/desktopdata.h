@@ -84,8 +84,11 @@ class QuickTools : public QObject {
     Q_PROPERTY(QPoint windowPos READ windowPos NOTIFY windowPosChanged)
     Q_PROPERTY(bool trackWindow READ trackWindow WRITE setTrackWindow NOTIFY windowPosChanged)
     Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)   // sondeo de reproducción solo con el panel visible
+    // Con Hyprland el compositor desenfoca de verdad lo que hay detrás: el cristal no pinta el fondo precalculado
+    Q_PROPERTY(bool realBlur READ realBlur CONSTANT)
 public:
     bool active() const { return m_mediaTimer.isActive(); }
+    static bool realBlur() { return qEnvironmentVariable("BC_COMPOSITOR") == "hyprland" || !qEnvironmentVariable("HYPRLAND_INSTANCE_SIGNATURE").isEmpty(); }
     void setActive(bool on) { if (on == active()) return; if (on) { refreshMedia(); m_mediaTimer.start(); } else m_mediaTimer.stop(); emit activeChanged(); }
     explicit QuickTools(QObject *parent = nullptr);
     QVariantList networks() const { return m_networks; }

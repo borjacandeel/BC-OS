@@ -37,6 +37,15 @@ OUT="${XDG_RUNTIME_DIR:?sin XDG_RUNTIME_DIR}/bc-sway.conf"
   printf 'for_window [window_role="pop-up"] floating enable\nfor_window [window_type="dialog"] floating enable\n'
   [ -f "$D/sway-user.conf" ] && cat "$D/sway-user.conf"; true; } > "$OUT.tmp.$$" && mv "$OUT.tmp.$$" "$OUT"
 [ "$1" = init ] && exit 0
+# Hyprland: la configuración lee el modo al cargar; se recarga y se aplica a las ventanas abiertas
+if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
+  hyprctl dispatch 'hl.dsp.reload_config()' >/dev/null 2>&1
+  act=set; [ "$new" = tiling ] && act=unset
+  for a in $(hyprctl -j clients 2>/dev/null | grep -o '"address": *"0x[0-9a-f]*"' | grep -o '0x[0-9a-f]*'); do
+    hyprctl dispatch "hl.dsp.window.float({ action = \"$act\", window = \"address:$a\" })" >/dev/null 2>&1
+  done
+  exit 0
+fi
 # En caliente no se recarga sway (recargar reinicia el fondo y parpadea): se aplican las reglas por IPC.
 if [ -n "$SWAYSOCK" ]; then
   if [ "$new" = tiling ]; then

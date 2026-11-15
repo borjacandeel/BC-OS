@@ -94,3 +94,5 @@ swaylock
 grub
 efibootmgr
 sbctl
+hyprland
+mesa-utils

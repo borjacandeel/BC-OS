@@ -6,7 +6,8 @@ mkdir -p "$DIR"
 F="$DIR/captura-$(date +%F_%H-%M-%S).png"
 case "${1:-pantalla}" in
   area)    G="$(slurp)" || exit 0; grim -g "$G" "$F" ;;
-  ventana) G="$(swaymsg -t get_tree | jq -r '.. | select(.focused?==true) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')"; grim -g "$G" "$F" ;;
+  ventana) if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then G="$(hyprctl -j activewindow | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')"
+           else G="$(swaymsg -t get_tree | jq -r '.. | select(.focused?==true) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')"; fi; grim -g "$G" "$F" ;;
   *)       grim "$F" ;;
 esac || exit 1
 [ -f /usr/share/sounds/bc/screenshot.wav ] && { pw-play /usr/share/sounds/bc/screenshot.wav >/dev/null 2>&1 || paplay /usr/share/sounds/bc/screenshot.wav >/dev/null 2>&1; } &

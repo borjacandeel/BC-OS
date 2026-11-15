@@ -86,6 +86,7 @@ LayerWindow {
         }
     }
     function fadeIn(id) {
+        if (Sway.hyprland) return   // Hyprland anima la apertura
         fading[id] = 0.35
         Sway.command("[con_id=" + id + "] opacity 0.35")
         fadeTick.start()
@@ -107,7 +108,8 @@ LayerWindow {
     function closeAnimated(id) {
         if (id === undefined || id < 0 || isNaN(id)) id = Sway.focusedId
         const w = Sway.windows.find(x => x.id === id)
-        if (!w || UiState.classic || Theme.reduced || w.rectW <= 0 || w.minimized) { if (w) Sway.closeWindow(w.id); return }
+        // Hyprland ya anima el cierre (encoger + desvanecer) en el compositor
+        if (!w || Sway.hyprland || UiState.classic || Theme.reduced || w.rectW <= 0 || w.minimized) { if (w) Sway.closeWindow(w.id); return }
         closePending = { id: w.id, rect: Qt.rect(w.decoX, w.decoY, w.rectW, w.rectH) }
         Quick.capture("close-" + w.id, w.decoX + "," + w.decoY + " " + w.rectW + "x" + w.rectH)
     }

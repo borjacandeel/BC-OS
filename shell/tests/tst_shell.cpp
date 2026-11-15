@@ -183,6 +183,29 @@ private slots:
         QCOMPARE(m.value("size").toString(), QString("5.00 MiB"));
         QCOMPARE(PackageStore::sudoArgs({"-S", "x"}), QStringList({"-S", "-p", "", "--", "pacman", "-S", "x"}));
     }
+    void hyprland() {
+        const QByteArray j = R"([{"address":"0x5a1b2c3d","mapped":true,"at":[100,80],"size":[800,600],"workspace":{"id":1,"name":"1"},
+          "floating":true,"fullscreen":0,"class":"Alacritty","title":"bc@bcos","pid":42,"focusHistoryID":0,"monitor":0},
+          {"address":"0x5a1b2c4e","mapped":true,"at":[0,0],"size":[10,10],"workspace":{"id":-99,"name":"special:minimized"},
+          "floating":true,"fullscreen":false,"class":"firefox","title":"Web","pid":43,"focusHistoryID":1,"monitor":0}])";
+        QHash<int, QString> addr;
+        const QVariantList w = SwayControl::parseHyprClients(j, &addr);
+        QCOMPARE(w.size(), 2);
+        const int id = w[0].toMap().value("id").toInt();
+        QCOMPARE(addr.value(id), QString("0x5a1b2c3d"));
+        QVERIFY(w[0].toMap().value("focused").toBool());
+        QVERIFY(w[1].toMap().value("minimized").toBool());
+        const QString t = QString::number(id);
+        QCOMPARE(SwayControl::translateToHyprland("[con_id=" + t + "] focus", addr, "1"),
+                 QStringList{"hl.dispatch(hl.dsp.focus({ window = [==[address:0x5a1b2c3d]==] }))"});
+        QCOMPARE(SwayControl::translateToHyprland("[con_id=" + t + "] move scratchpad", addr, "1"),
+                 QStringList{"hl.dispatch(hl.dsp.window.move({ workspace = \"special:minimized\", window = [==[address:0x5a1b2c3d]==] }))"});
+        QCOMPARE(SwayControl::translateToHyprland("[con_id=" + t + "] floating enable, resize set 400 300, move absolute position 8 40", addr, "1").size(), 3);
+        QCOMPARE(SwayControl::translateToHyprland("workspace \"3\"", addr, "1"), QStringList{"hl.dispatch(hl.dsp.focus({ workspace = 3 }))"});
+        QCOMPARE(SwayControl::translateToHyprland("exec bc-shell --app files", addr, "1"),
+                 QStringList{"hl.dispatch(hl.dsp.exec_cmd([==[bc-shell --app files]==]))"});
+        QCOMPARE(SwayControl::translateToHyprland("kill", addr, "1"), QStringList{"hl.dispatch(hl.dsp.window.close())"});
+    }
     void arbolDeSway() {
         const QByteArray j = R"({"type":"root","nodes":[{"type":"output","nodes":[
           {"type":"workspace","name":"1","nodes":[
