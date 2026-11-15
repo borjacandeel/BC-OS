@@ -197,6 +197,20 @@ BC OS se actualiza desde su propio repositorio pacman, publicado en GitHub Relea
 `bc-shell`, `bc-core`, `bc-escritorio` y el metapaquete `bc-os`. En el sistema: **Tienda ▸ Actualizaciones** o
 `sudo bc-actualizar`. Detalles en [`build/repo/LEEME.md`](build/repo/LEEME.md).
 
+## Descargas: ARM64 y x86_64, disco o ISO live
+
+Cada versión trae, para **ARM64** (Mac Apple Silicon, Raspberry Pi…) y **x86_64** (PC; Arch Linux normal):
+`BC-OS-<versión>-<arq>.vdi.zip` (disco para VirtualBox) y `BC-OS-<versión>-<arq>.iso` (live UEFI, con el instalador).
+En VirtualBox hay que **activar EFI**. Instalar: `sudo bc-install` (opciones `--bootloader grub` y `--secure-boot`).
+
+## Sistema
+
+- **Instantáneas**: antes de cada instalación o actualización se guarda el estado de los paquetes y `/etc`;
+  `bc-restaurar` (o Ajustes ▸ General) vuelve atrás.
+- **Tienda sin contraseña** para administradores con sesión activa (polkit, ayudante restringido `bc-paquetes`).
+- **Bloqueo a prueba de fallos**: si el panel se cae con la pantalla bloqueada, swaylock la protege al instante.
+- **Programas x86_64 en ARM** con box64 (se abren solos). **`bc-rendimiento`**: informe de arranque, memoria y CPU.
+
 ## Primer arranque: máquina virtual o equipo físico
 
 La bienvenida pregunta dónde se ejecuta BC OS (y lo detecta solo). **Máquina virtual** (VirtualBox, UTM, QEMU):

@@ -31,6 +31,8 @@ Pendiente (en este orden):
 - [x] Primer arranque: «Máquina virtual» o «Equipo físico» (detectado); físico + GPU → swayfx con desenfoque real.
 - [x] Repositorio propio `[bc]` en GitHub Releases (`repo.yml`, `build/repo/`), `bc-actualizar`; la Tienda actualiza con él.
 - [x] Ghostty: compila (Zig descarga dentro del chroot, sin --system); activado por defecto (BC_GHOSTTY=0 lo desactiva) (BC_GHOSTTY=1 para probar). En CI Zig 0.17 da «panic: reached unreachable code» dentro del chroot; Terminal = Alacritty mientras tanto.
+- [x] Sistema: ISO live UEFI, imagen x86_64 (Arch normal), instalador x86_64/GRUB/Secure Boot, instantáneas + bc-restaurar, Tienda con polkit, bloqueo a prueba de fallos, box64 (ARM), bc-rendimiento.
+- [ ] Firma del repositorio [bc]: falta la clave GPG del creador (secreto BC_REPO_GPG_KEY + clave pública).
 - [ ] Verificar en QEMU cada parte con capturas antes de dar nada por hecho.
 - [x] README actualizado con capturas 1–14 (2026-11-15).
 - [~] 0.7.0-beta (prerelease) en CI para probar en VirtualBox.
