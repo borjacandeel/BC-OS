@@ -6,11 +6,25 @@ if [ "$1" = "--classic" ]; then export BC_CLASSIC=1; shift; fi
 # estable en VirtualBox/UTM/QEMU; «fisico» → GPU con swayfx (desenfoque real, sombras, esquinas). bc.gpu=0/1 en el
 # kernel fuerza una u otra.
 EQUIPO="$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/bc/equipo" 2>/dev/null || cat /etc/bc/equipo 2>/dev/null)"
+# ¿Máquina virtual? systemd-detect-virt y, por si no la reconoce (VirtualBox en ARM), el fabricante DMI
+es_vm() {
+  systemd-detect-virt --vm -q 2>/dev/null && return 0
+  cat /sys/class/dmi/id/sys_vendor /sys/class/dmi/id/product_name /sys/class/dmi/id/board_vendor 2>/dev/null \
+    | grep -qiE 'virtualbox|innotek|oracle|qemu|vmware|parallels|kvm|hyper-v|microsoft corporation|utm|apple virtualization'
+}
 if [ "$EQUIPO" != vm ] && [ "$EQUIPO" != fisico ]; then
-  if systemd-detect-virt --vm -q 2>/dev/null; then EQUIPO=vm; else EQUIPO=fisico; fi
+  if es_vm; then EQUIPO=vm; else EQUIPO=fisico; fi
 fi
+# GPU solo con un controlador de GPU real (los virtuales de VirtualBox/QEMU no sirven para swayfx)
+gpu_real() {
+  for d in /sys/class/drm/renderD*/device/driver; do
+    [ -e "$d" ] || continue
+    case "$(basename "$(readlink -f "$d")")" in vmwgfx|vboxvideo|bochs*|qxl|cirrus*|simpledrm|virtio*|virtio_gpu) ;; *) return 0 ;; esac
+  done
+  return 1
+}
 GPU=0
-[ "$EQUIPO" = fisico ] && ls /dev/dri/renderD* >/dev/null 2>&1 && GPU=1
+[ "$EQUIPO" = fisico ] && ! es_vm && gpu_real && GPU=1
 grep -qw "bc.gpu=1" /proc/cmdline && ls /dev/dri/renderD* >/dev/null 2>&1 && GPU=1
 grep -qw "bc.gpu=0" /proc/cmdline && GPU=0
 export BC_EQUIPO="$EQUIPO"
@@ -26,10 +40,17 @@ bc-wm-mode init >> "$LOG" 2>&1
 [ -x /usr/bin/bc-appearance ] && bc-appearance "$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/bc/appearance" 2>/dev/null || echo dark)" >> "$LOG" 2>&1
 # Efectos (esquinas redondeadas, sombras, desenfoque): swayfx + GPU. Sin GPU o si falla, sway normal.
 SWAY=sway
+# Arranque a prueba de fallos: si sway con GPU muere enseguida, se reintenta por software (si no, volvería al login)
+arranca() { t0=$(date +%s); "$@" >> "$LOG" 2>&1; rc=$?; [ $rc -ne 0 ] && [ $(( $(date +%s) - t0 )) -lt 15 ]; }
+software() { echo "sway con GPU falló enseguida: se reintenta por software" >> "$LOG"; unset BC_FX
+  export WLR_RENDERER=pixman WLR_NO_HARDWARE_CURSORS=1 QT_QUICK_BACKEND=software; bc-wm-mode init >> "$LOG" 2>&1
+  sway -c "${XDG_RUNTIME_DIR:-/tmp}/bc-sway.conf" >> "$LOG" 2>&1; }
 if [ "$GPU" = 1 ] && [ -x /opt/swayfx/bin/sway ]; then
   export BC_FX=1
   bc-wm-mode init >> "$LOG" 2>&1
-  /opt/swayfx/bin/sway -c "${XDG_RUNTIME_DIR:-/tmp}/bc-sway.conf" >> "$LOG" 2>&1 || { echo "swayfx falló: se usa sway sin efectos" >> "$LOG"; unset BC_FX; bc-wm-mode init >> "$LOG" 2>&1; sway -c "${XDG_RUNTIME_DIR:-/tmp}/bc-sway.conf" >> "$LOG" 2>&1; }
+  if arranca /opt/swayfx/bin/sway -c "${XDG_RUNTIME_DIR:-/tmp}/bc-sway.conf"; then software; fi
+elif [ "$GPU" = 1 ]; then
+  if arranca sway -c "${XDG_RUNTIME_DIR:-/tmp}/bc-sway.conf"; then software; fi
 else
   sway -c "${XDG_RUNTIME_DIR:-/tmp}/bc-sway.conf" >> "$LOG" 2>&1
 fi

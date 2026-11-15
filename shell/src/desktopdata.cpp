@@ -709,6 +709,15 @@ void MusicPlayer::seek(double s) { send(QString(R"({"command":["seek",%1,"absolu
 // ---------------------------------------------------------------------------------------------
 // Máquina virtual o equipo físico
 QString QuickTools::detectedMachine() {
+    // Primero el fabricante DMI (VirtualBox en ARM no siempre lo reconoce systemd-detect-virt)
+    {
+        QString id;
+        for (const char *f : {"/sys/class/dmi/id/sys_vendor", "/sys/class/dmi/id/product_name", "/sys/class/dmi/id/board_vendor"}) {
+            QFile fl(f); if (fl.open(QIODevice::ReadOnly)) id += QString::fromUtf8(fl.readAll());
+        }
+        static const QRegularExpression re("VirtualBox|innotek|Oracle|QEMU|VMware|Parallels|KVM|Hyper-V|Microsoft Corporation|UTM|Apple Virtualization", QRegularExpression::CaseInsensitiveOption);
+        if (re.match(id).hasMatch()) return "vm";
+    }
     QProcess p;
     p.start("systemd-detect-virt", {"--vm"});
     if (p.waitForFinished(2000)) {
