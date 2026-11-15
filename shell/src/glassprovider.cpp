@@ -21,12 +21,14 @@ QString GlassProvider::wallpaperPath() {
 QImage GlassProvider::blurred(const QImage &src, int r) {
     if (src.isNull()) return src;
     // Reducir mucho y volver a ampliar con filtrado suave dos veces ≈ desenfoque gaussiano, en milisegundos
+    // Reducción a mitades sucesivas (cada paso promedia 2×2: elimina el tramado y el ruido), luego ampliación
+    // suave en dos pasos: equivale a un desenfoque gaussiano amplio y cuesta milisegundos.
     const QSize full = src.size();
-    const int f = qMax(2, r / 3);
-    QImage small = src.scaled(qMax(8, full.width() / f), qMax(8, full.height() / f), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    QImage tiny = small.scaled(qMax(4, small.width() / 2), qMax(4, small.height() / 2), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    small = tiny.scaled(small.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    return small.scaled(full, Qt::IgnoreAspectRatio, Qt::SmoothTransformation).convertToFormat(QImage::Format_ARGB32_Premultiplied);
+    const int target = qMax(8, full.height() / qMax(2, r / 2));
+    QImage small = src.convertToFormat(QImage::Format_RGB32);
+    while (small.height() / 2 >= target) small = small.scaled(small.width() / 2, small.height() / 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    const QImage mid = small.scaled(small.width() * 4, small.height() * 4, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    return mid.scaled(full, Qt::IgnoreAspectRatio, Qt::SmoothTransformation).convertToFormat(QImage::Format_ARGB32_Premultiplied);
 }
 
 QImage GlassProvider::requestImage(const QString &id, QSize *size, const QSize &) {

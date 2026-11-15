@@ -24,7 +24,7 @@ Item {
         const m = ("0" + d.getMinutes()).slice(-2)
         if (AppConfig.language.indexOf("es") !== 0)
             return d.toLocaleDateString(loc, "ddd d MMM") + "  " + d.toLocaleTimeString(loc, "h:mm AP")
-        return days[d.getDay()] + " " + d.getDate() + " " + months[d.getMonth()] + " " + h + ":" + m + (pm ? "p.m." : "a.m.")
+        return days[d.getDay()] + " " + d.getDate() + " " + months[d.getMonth()] + " " + h + ":" + m + (pm ? " p.m." : " a.m.")
     }
 
     // Elemento de la barra con resaltado al pasar / abrir (Golden Gate: cápsula redondeada suave)

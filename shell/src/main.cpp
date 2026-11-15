@@ -4,6 +4,7 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickWindow>
+#include <QPainter>
 #include <QSettings>
 #include <QTimer>
 #include <QTranslator>
@@ -154,6 +155,7 @@ int main(int argc, char *argv[]) {
     }
 
     g_prev = qInstallMessageHandler(countingHandler);
+    QQuickWindow::setDefaultAlphaBuffer(true);   // superficies del panel transparentes (y capturas compuestas con alfa)
     QQmlApplicationEngine engine;
     engine.addImageProvider("glass", new GlassProvider);
     // Qt.quit() desde QML (cerrar la ventana de una app) debe terminar el proceso
@@ -181,6 +183,37 @@ int main(int argc, char *argv[]) {
             int rc = 0;
             if (p.isSet(oShot)) {
                 QImage img = win->grabWindow();
+                // Captura compuesta: sin layer-shell (pruebas) cada superficie del panel es una ventana aparte;
+                // se pintan encima en orden de capa y en su posición en pantalla (originX/originY de LayerWindow).
+                if (!img.isNull() && !LayerHelper().supported()) {
+                    QPainter pa(&img);
+                    const QStringList order{"background", "bottom", "top", "overlay"};
+                    for (const QString &layerName : order) {
+                        for (QWindow *w : QGuiApplication::topLevelWindows()) {
+                            auto *qw = qobject_cast<QQuickWindow *>(w);
+                            if (!qw || qw == win || !qw->isVisible() || qw->property("layer").toString() != layerName) continue;
+                            // La plataforma de pruebas devuelve RGB sin alfa: se renderiza sobre negro y sobre blanco
+                            // y se recupera el alfa de la diferencia (matting), para componer igual que el compositor.
+                            const QColor old = qw->color();
+                            qw->setColor(Qt::black);
+                            const QImage onBlack = qw->grabWindow().convertToFormat(QImage::Format_RGB32);
+                            qw->setColor(Qt::white);
+                            const QImage onWhite = qw->grabWindow().convertToFormat(QImage::Format_RGB32);
+                            qw->setColor(old);
+                            QImage part(onBlack.size(), QImage::Format_ARGB32);
+                            for (int y = 0; y < part.height(); ++y) {
+                                const QRgb *b = reinterpret_cast<const QRgb *>(onBlack.constScanLine(y));
+                                const QRgb *wl = reinterpret_cast<const QRgb *>(onWhite.constScanLine(y));
+                                QRgb *o = reinterpret_cast<QRgb *>(part.scanLine(y));
+                                for (int x = 0; x < part.width(); ++x) {
+                                    const int a = 255 - qBound(0, ((qRed(wl[x]) - qRed(b[x])) + (qGreen(wl[x]) - qGreen(b[x])) + (qBlue(wl[x]) - qBlue(b[x]))) / 3, 255);
+                                    o[x] = a == 0 ? 0 : qRgba(qMin(255, qRed(b[x]) * 255 / a), qMin(255, qGreen(b[x]) * 255 / a), qMin(255, qBlue(b[x]) * 255 / a), a);
+                                }
+                            }
+                            pa.drawImage(QPointF(qw->property("originX").toReal(), qw->property("originY").toReal()), part);
+                        }
+                    }
+                }
                 if (img.isNull() || !img.save(p.value(oShot))) {
                     qCritical() << "Fallo al guardar captura";
                     rc = 3;

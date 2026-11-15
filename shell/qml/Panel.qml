@@ -431,6 +431,12 @@ LayerWindow {
         if (!AppConfig.splash && AppConfig.demo === "") Notifications.push("BC OS", qsTr("Actualizaciones"), qsTr("BC OS está al día"), "", 600000)
         const d = AppConfig.demo
         if (d === "lock") UiState.locked = true
+        else if (d === "center") UiState.centerOpen = true
+        else if (d === "notif") UiState.notifCenterOpen = true
+        else if (d === "spotlight") UiState.spotlightOpen = true
+        else if (d === "launchpad") UiState.launcherOpen = true
+        else if (d === "menu") UiState.menu = "system"
+        else if (d === "light") Settings.appearance = "light"
         else if (d === "menu") UiState.openMenu("system", 12)
         else if (d === "power") UiState.openPower("poweroff")
         else if (d === "launcher") UiState.toggleLauncher()
