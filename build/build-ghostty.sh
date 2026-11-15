@@ -8,6 +8,8 @@ set -euo pipefail
 R="$(realpath "$1")"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 source "$HERE/lib/chroot.sh"
+# /proc, /dev y /sys montados: Zig necesita /proc/self/exe dentro del chroot
+bc_binfmt; bc_mount "$R"; trap 'bc_umount "$R"' EXIT
 sh() { bc_chroot "$R" bash -c "$*"; }
 GHOSTTY_TAG="${GHOSTTY_TAG:-v1.4.0}"
 ZIG_VER="${ZIG_VER:-0.17.0}"
