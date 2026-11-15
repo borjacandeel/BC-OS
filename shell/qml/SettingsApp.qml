@@ -278,13 +278,14 @@ AppWindow {
             visible: win.page === 8; width: parent.width; spacing: 12
             Label { text: qsTr("Fondo de pantalla"); font.pixelSize: 20; font.weight: Font.Bold }
             Grid {
-                columns: 3; spacing: 12
+                columns: 4; spacing: 12
                 Repeater {
-                    model: ["ondas.jpg", "medianoche.jpg", "oceano.jpg", "montanas.jpg", "grafito.jpg", "plata.jpg"]
+                    model: ["ondas.jpg", "aurora.jpg", "atardecer.jpg", "rubi.jpg", "bosque.jpg", "carbon.jpg", "noche.jpg", "medianoche.jpg",
+                            "amanecer.jpg", "lavanda.jpg", "menta.jpg", "niebla.jpg", "oceano.jpg", "montanas.jpg", "grafito.jpg", "plata.jpg"]
                     Rectangle {
                         required property string modelData
                         readonly property string path: "/usr/share/bc/wallpapers/" + modelData
-                        width: 170; height: 96; radius: 10; clip: true; color: Theme.tileFill
+                        width: 150; height: 84; radius: 10; clip: true; color: Theme.tileFill
                         border.width: (Settings.wallpaper === path || (Settings.wallpaper === "" && modelData === "ondas.jpg")) ? 3 : 0; border.color: Theme.accent
                         Image { anchors.fill: parent; anchors.margins: parent.border.width; source: win.page === 8 ? "file://" + parent.path : ""; sourceSize: Qt.size(340, 192); fillMode: Image.PreserveAspectCrop; asynchronous: true }
                         MouseArea { anchors.fill: parent; onClicked: Settings.wallpaper = (modelData === "ondas.jpg" ? "" : parent.path) }

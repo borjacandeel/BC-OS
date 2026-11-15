@@ -11,8 +11,8 @@ Item {
     signal finished()
     readonly property string wallDir: "/usr/share/bc/wallpapers/"
     readonly property var wallpapers: [
-        { f: "ondas.jpg", n: qsTr("Ondas") }, { f: "medianoche.jpg", n: qsTr("Medianoche") }, { f: "oceano.jpg", n: qsTr("Océano") },
-        { f: "grafito.jpg", n: qsTr("Grafito") }, { f: "plata.jpg", n: qsTr("Plata") }]
+        { f: "ondas.jpg", n: qsTr("Ondas") }, { f: "aurora.jpg", n: qsTr("Aurora") }, { f: "atardecer.jpg", n: qsTr("Atardecer") },
+        { f: "amanecer.jpg", n: qsTr("Amanecer") }, { f: "lavanda.jpg", n: qsTr("Lavanda") }, { f: "noche.jpg", n: qsTr("Noche") }]
     // Solo los colores base de BC OS (los del semáforo y los de las tarjetas del Monitor)
     readonly property var accents: [Theme.gg ? "#0A84FF" : "#2F7BF5", "#34C759", "#FF9F0A", "#FF5F57", "#8E9BB2"]
 

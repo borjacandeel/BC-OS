@@ -83,6 +83,33 @@ Qué incluye (detalle técnico y decisiones en [`docs/escritorio/ESTADO.md`](doc
 
 <sub>Capturas del shell renderizado en el anfitrión de desarrollo (por eso aparece el usuario <code>root</code>), no dentro de la máquina virtual.</sub>
 
+### Fondos de pantalla
+
+Colección propia «Ondas» con el logo BC en el centro, en tonos oscuros, claros y minimalistas (4K, generados con
+`assets/wallpapers/generar-fondos.py`). Se eligen en **Ajustes ▸ Fondo de pantalla** o en la bienvenida.
+
+<table>
+  <tr>
+    <td width="33%"><img src="docs/escritorio/fondos/ondas.jpg" alt="Fondo Ondas"><br><sub><b>Ondas</b> · oscuro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/aurora.jpg" alt="Fondo Aurora"><br><sub><b>Aurora</b> · oscuro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/atardecer.jpg" alt="Fondo Atardecer"><br><sub><b>Atardecer</b> · oscuro</sub></td>
+  </tr>
+  <tr>
+    <td width="33%"><img src="docs/escritorio/fondos/rubi.jpg" alt="Fondo Rubí"><br><sub><b>Rubí</b> · oscuro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/bosque.jpg" alt="Fondo Bosque"><br><sub><b>Bosque</b> · oscuro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/carbon.jpg" alt="Fondo Carbón"><br><sub><b>Carbón</b> · oscuro</sub></td>
+  </tr>
+  <tr>
+    <td width="33%"><img src="docs/escritorio/fondos/noche.jpg" alt="Fondo Noche"><br><sub><b>Noche</b> · minimal oscuro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/amanecer.jpg" alt="Fondo Amanecer"><br><sub><b>Amanecer</b> · claro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/lavanda.jpg" alt="Fondo Lavanda"><br><sub><b>Lavanda</b> · claro</sub></td>
+  </tr>
+  <tr>
+    <td width="33%"><img src="docs/escritorio/fondos/menta.jpg" alt="Fondo Menta"><br><sub><b>Menta</b> · claro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/niebla.jpg" alt="Fondo Niebla"><br><sub><b>Niebla</b> · minimal claro</sub></td>
+  </tr>
+</table>
+
 ### Atajos principales
 
 | Atajo | Acción |
