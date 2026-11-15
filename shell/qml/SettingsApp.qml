@@ -108,8 +108,12 @@ AppWindow {
                      Hint { text: qsTr("Cuenta local de BC OS"); font.pixelSize: 11 } }
             MouseArea { id: um; anchors.fill: parent; hoverEnabled: true; onClicked: win.page = 4 }
         }
+        Flickable {
+            x: 10; y: 100; width: parent.width - 20; height: parent.height - 108; clip: true
+            contentHeight: sideCol.height; boundsBehavior: Flickable.StopAtBounds
         Column {
-            x: 10; y: 100; width: parent.width - 20; spacing: 1
+            id: sideCol
+            width: parent.width; spacing: 1
             Repeater {
                 model: win.pages
                 Item {
@@ -132,6 +136,7 @@ AppWindow {
                     }
                 }
             }
+        }
         }
     }
 
