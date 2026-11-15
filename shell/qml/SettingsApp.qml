@@ -229,7 +229,7 @@ AppWindow {
                         readonly property string path: "/usr/share/bc/wallpapers/" + modelData
                         width: 170; height: 96; radius: 10; clip: true; color: Theme.tileFill
                         border.width: (Settings.wallpaper === path || (Settings.wallpaper === "" && modelData === "ondas.jpg")) ? 3 : 0; border.color: Theme.accent
-                        Image { anchors.fill: parent; anchors.margins: parent.border.width; source: "file://" + parent.path; sourceSize: Qt.size(340, 192); fillMode: Image.PreserveAspectCrop; asynchronous: true }
+                        Image { anchors.fill: parent; anchors.margins: parent.border.width; source: win.page === 8 ? "file://" + parent.path : ""; sourceSize: Qt.size(340, 192); fillMode: Image.PreserveAspectCrop; asynchronous: true }
                         MouseArea { anchors.fill: parent; onClicked: Settings.wallpaper = (modelData === "ondas.jpg" ? "" : parent.path) }
                     }
                 }

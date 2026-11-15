@@ -1,18 +1,22 @@
 #include "filebrowser.h"
 #include <QDateTime>
+#include <cerrno>
 #include <QProcess>
 #include <QSaveFile>
 #include <QUrl>
 #include <QDir>
 #include <QMimeDatabase>
 #include <QStandardPaths>
+#include <QLocale>
+#include <sys/xattr.h>
 
 FileBrowser::FileBrowser(QObject *parent) : QAbstractListModel(parent) {
     open(QDir::homePath());
 }
 
 QHash<int, QByteArray> FileBrowser::roleNames() const {
-    return {{NameRole, "name"}, {PathRole, "filePath"}, {KindRole, "kind"}, {IsDirRole, "isDir"}};
+    return {{NameRole, "name"}, {PathRole, "filePath"}, {KindRole, "kind"}, {IsDirRole, "isDir"},
+            {SizeRole, "sizeText"}, {ModifiedRole, "modifiedText"}, {TagsRole, "tags"}, {MimeRole, "mime"}};
 }
 
 QVariant FileBrowser::data(const QModelIndex &i, int role) const {
@@ -23,6 +27,10 @@ QVariant FileBrowser::data(const QModelIndex &i, int role) const {
     case PathRole: return fi.absoluteFilePath();
     case KindRole: return kindFor(fi);
     case IsDirRole: return fi.isDir();
+    case SizeRole: return fi.isDir() ? QString("—") : QLocale(QLocale::Spanish).formattedDataSize(fi.size());
+    case ModifiedRole: return QLocale(QLocale::Spanish).toString(fi.lastModified(), "d MMM yyyy, H:mm");
+    case TagsRole: return tagsOf(fi.absoluteFilePath());
+    case MimeRole: return QMimeDatabase().mimeTypeForFile(fi, QMimeDatabase::MatchExtension).comment();
     }
     return {};
 }
@@ -51,7 +59,8 @@ void FileBrowser::load(const QString &path) {
                                 QDir::DirsFirst | QDir::IgnoreCase | QDir::Name);
     m_items.clear();
     for (const auto &fi : std::as_const(m_all))
-        if (m_filter.isEmpty() || fi.fileName().contains(m_filter, Qt::CaseInsensitive)) m_items << fi;
+        if ((m_filter.isEmpty() || fi.fileName().contains(m_filter, Qt::CaseInsensitive))
+            && (m_tagFilter.isEmpty() || tagsOf(fi.absoluteFilePath()).contains(m_tagFilter))) m_items << fi;
     endResetModel();
     emit pathChanged();
     emit countChanged();
@@ -250,4 +259,37 @@ QVariantList FileBrowser::crumbs() const {
         out.push_back(QVariantMap{{"name", p}, {"path", acc}, {"home", false}});
     }
     return out;
+}
+
+QStringList FileBrowser::tagsOf(const QString &path) {
+    char buf[512];
+    const QByteArray p = QFile::encodeName(path);
+    const ssize_t n = getxattr(p.constData(), "user.xdg.tags", buf, sizeof(buf) - 1);
+    if (n <= 0) return {};
+    return QString::fromUtf8(buf, int(n)).split(',', Qt::SkipEmptyParts);
+}
+bool FileBrowser::setTag(int row, const QString &color) {
+    static const QStringList ok{"rojo", "naranja", "amarillo", "verde", "azul", "morado", "gris"};
+    if (row < 0 || row >= m_items.size() || (!color.isEmpty() && !ok.contains(color))) return false;
+    const QByteArray p = QFile::encodeName(m_items.at(row).absoluteFilePath());
+    QStringList t = tagsOf(m_items.at(row).absoluteFilePath());
+    if (color.isEmpty()) t.clear(); else if (t.contains(color)) t.removeAll(color); else t << color;
+    int r = t.isEmpty() ? removexattr(p.constData(), "user.xdg.tags") : setxattr(p.constData(), "user.xdg.tags", t.join(',').toUtf8().constData(), t.join(',').toUtf8().size(), 0);
+    if (r != 0 && !(t.isEmpty() && errno == ENODATA)) { emit operationFailed(tr("Este sistema de archivos no admite etiquetas")); return false; }
+    emit dataChanged(index(row), index(row), {TagsRole});
+    return true;
+}
+void FileBrowser::setTagFilter(const QString &color) { m_tagFilter = color; load(m_path); }
+QString FileBrowser::textPreview(const QString &path, int maxBytes) const {
+    QFile f(path);
+    if (!f.open(QIODevice::ReadOnly)) return {};
+    const QByteArray b = f.read(qBound(256, maxBytes, 200000));
+    if (b.contains('\0')) return {};
+    return QString::fromUtf8(b);
+}
+QVariantMap FileBrowser::infoAt(int row) const {
+    if (row < 0 || row >= m_items.size()) return {};
+    const QFileInfo &fi = m_items.at(row);
+    return {{"name", fi.fileName()}, {"path", fi.absoluteFilePath()}, {"kind", kindFor(fi)}, {"isDir", fi.isDir()},
+            {"size", data(index(row), SizeRole)}, {"modified", data(index(row), ModifiedRole)}, {"mime", data(index(row), MimeRole)}};
 }

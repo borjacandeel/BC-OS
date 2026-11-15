@@ -131,6 +131,7 @@ int main(int argc, char *argv[]) {
     // Solo de las apps
     NotificationClient notifClient;
     AppActions actions(appName);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Quick", &quickTools);   // también en las apps (Archivos: búsqueda, abrir)
     if (!appMode) {
         notifications.setDnd(status.dnd());
         QObject::connect(&status, &SystemStatus::changed, &notifications, [&] { notifications.setDnd(status.dnd()); });
@@ -142,7 +143,6 @@ int main(int argc, char *argv[]) {
         qmlRegisterSingletonInstance("BCShell", 1, 0, "Power", &power);
         qmlRegisterSingletonInstance("BCShell", 1, 0, "Clipboard", &clipboard);
         qmlRegisterSingletonInstance("BCShell", 1, 0, "WidgetHost", &widgetHost);
-        qmlRegisterSingletonInstance("BCShell", 1, 0, "Quick", &quickTools);
         if (updates) QObject::connect(updates.get(), &UpdateChecker::updatesFound, &notifications, [&notifications](int n) {
             notifications.push("BC OS", QObject::tr("Actualizaciones disponibles"), QObject::tr("%1 paquetes pueden actualizarse desde la Tienda").arg(n), "", 8000);
         });

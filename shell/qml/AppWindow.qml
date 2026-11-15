@@ -71,6 +71,7 @@ Window {
 
         Rectangle {
             id: titlebar
+            z: 2      // por encima del contenido: las barras laterales de borde a borde suben bajo el semáforo
             width: parent.width
             height: win.titlebarHeight
             color: Theme.gg ? "transparent" : Qt.rgba(1, 1, 1, 0.04)

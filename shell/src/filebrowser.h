@@ -16,7 +16,7 @@ class FileBrowser : public QAbstractListModel {
     Q_PROPERTY(QVariantList crumbs READ crumbs NOTIFY pathChanged)
     Q_PROPERTY(bool inTrash READ inTrash NOTIFY pathChanged)
 public:
-    enum Roles { NameRole = Qt::UserRole + 1, PathRole, KindRole, IsDirRole };
+    enum Roles { NameRole = Qt::UserRole + 1, PathRole, KindRole, IsDirRole, SizeRole, ModifiedRole, TagsRole, MimeRole };
     explicit FileBrowser(QObject *parent = nullptr);
     int rowCount(const QModelIndex &p = {}) const override { return p.isValid() ? 0 : m_items.size(); }
     QVariant data(const QModelIndex &i, int role) const override;
@@ -49,6 +49,13 @@ public:
     Q_INVOKABLE bool deleteAt(int row);                   // eliminación definitiva, solo en la papelera
     Q_INVOKABLE bool emptyTrash();
     Q_INVOKABLE void reload() { load(m_path); }
+    // Golden Gate (Archivos como Finder): etiquetas de color (atributo extendido user.xdg.tags, estándar de freedesktop),
+    // filtro por etiqueta y vista rápida de texto.
+    Q_INVOKABLE bool setTag(int row, const QString &color);      // color vacío = quitar etiquetas
+    Q_INVOKABLE void setTagFilter(const QString &color);
+    Q_INVOKABLE QString textPreview(const QString &path, int maxBytes = 20000) const;
+    Q_INVOKABLE QVariantMap infoAt(int row) const;
+    static QStringList tagsOf(const QString &path);
     static QString kindFor(const QFileInfo &fi);
 signals:
     void operationFailed(const QString &message);
@@ -60,7 +67,7 @@ signals:
 private:
     void load(const QString &path);
     void refilter();
-    QString m_path, m_filter;
+    QString m_path, m_filter, m_tagFilter;
     bool m_available = false;
     QFileInfoList m_all, m_items;
     QStringList m_history;
