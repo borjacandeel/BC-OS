@@ -103,6 +103,17 @@ disponible en el login como **«BC clásico»**.
 - Repositorio propio `[bc]` (GitHub Releases, etiqueta `repo`): ver `build/repo/LEEME.md`.
 - Ventanas externas: fundido de opacidad al aparecer (sway no escala ventanas). Mission Control en cada pantalla.
 
+## Quinta ronda: Hyprland
+- Con aceleración 3D, `bc-session` arranca **Hyprland 0.57** (configuración Lua en `/etc/bc/hypr/hyprland.lua`): ventanas
+  flotantes centradas, radio 20 con esquina continua (`rounding_power 4`), sombra difusa, desenfoque real de capas `bc-*`,
+  curvas `mac` (0.25,1 · 0.5,1) y muelle al abrir, `popin` al cerrar, Spaces que se deslizan, gestos de 3 dedos.
+  Sin 3D (renderizador llvmpipe) o si Hyprland cae en <15 s: sway por software.
+- BC Shell detecta Hyprland (`HYPRLAND_INSTANCE_SIGNATURE`): lee `hyprctl -j clients/workspaces/monitors/devices`, escucha
+  `.socket2.sock` y traduce sus órdenes de sway a `hyprctl eval "hl.dispatch(hl.dsp.…)"` (`SwayControl::translateToHyprland`).
+- El cristal no pinta el fondo precalculado con Hyprland (`Quick.realBlur`): el compositor desenfoca lo de detrás.
+- En sway: órdenes por el socket IPC (sin procesos), bordes de 1 px como el filo de macOS, texto con hinting nativo,
+  escala 2 automática en pantallas Retina.
+
 ## Sin confirmar frente a Golden Gate
 - Todas las duraciones y curvas (Apple no las publica): menús 120 ms, Control Center 240 ms, genio 500 ms,
   Mission Control 330 ms, cambio de escritorio 420 ms, Dock 90 ms, rebote 180+520 ms ×2.
