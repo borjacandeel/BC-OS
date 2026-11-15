@@ -4,7 +4,10 @@ Aplicaciones
   Ctrl+Intro            Abrir terminal (también Súper+Intro)
   Ctrl+B                Abrir Firefox (también Súper+B)
   Súper+E               Abrir Archivos
-  Ctrl+Espacio          Lanzador de aplicaciones (también Súper+Espacio)
+  Ctrl+Espacio          Spotlight: apps, archivos, cálculos y acciones (también Súper+Espacio)
+  F4 / Súper+A          Aplicaciones (rejilla a pantalla completa)
+  F3 / Ctrl+↑           Mission Control  ·  F11: ver el escritorio
+  Súper+N               Centro de notificaciones
   Súper+C               Centro de control
   Súper+V               Historial del portapapeles
   Ctrl+Súper+Q          Bloquear pantalla
@@ -15,10 +18,11 @@ Ventanas
   Ctrl+arrastrar        Mover cualquier ventana (botón izquierdo) · redimensionar (botón derecho)
   Súper+Q / Ctrl+Q      Cerrar ventana
   Súper+F               Pantalla completa
-  Súper+M               Minimizar  ·  Súper+Mayús+M: restaurar
-  Ctrl+flechas          Cambiar de ventana (izquierda, derecha, arriba, abajo)  ·  con Mayús: mover la ventana
-  Súper+flechas         Lo mismo (alternativa)
-  Alt+Tab               Siguiente ventana
+  Súper+M               Minimizar al Dock  ·  Súper+Mayús+M: restaurar
+  Súper+flechas         Cambiar de ventana  ·  Ctrl+Mayús+flechas: mover la ventana
+  Alt+Tab / Súper+Tab   Selector de aplicaciones (Mayús: hacia atrás)
+  Ctrl+←/→              Escritorio anterior / siguiente (como en macOS)
+  Trackpad 3 dedos      ↑ Mission Control · ↓ escritorio · ←/→ cambiar de escritorio · 4 dedos ↑ Aplicaciones
   Ctrl+1…9 / Súper+1…4  Ir al escritorio  ·  con Mayús: llevar la ventana
   Súper+Ctrl+←/→        Escritorio anterior / siguiente
 

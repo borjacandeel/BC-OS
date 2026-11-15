@@ -322,3 +322,15 @@ void SoundPlayer::play(const QString &name) {
         if (!exe.isEmpty()) { QProcess::startDetached(exe, QStringList{(QString(p) == "aplay" ? "-q" : "--volume=0.6"), f}); return; }
     }
 }
+
+void QuickTools::capture(const QString &tag, const QString &geom) {
+    static const QRegularExpression g(R"(^-?\d+,-?\d+ \d+x\d+$)"), t(R"(^[a-z0-9-]{1,32}$)");
+    if (!t.match(tag).hasMatch() || (!geom.isEmpty() && !g.match(geom).hasMatch())) { emit captured(tag, QString(), false); return; }
+    const QString dir = QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation) + "/bc-captures";
+    QDir().mkpath(dir);
+    const QString path = dir + "/" + tag + ".ppm";      // PPM: sin compresión, lo más rápido de escribir y leer
+    QStringList a{"-t", "ppm"};
+    if (!geom.isEmpty()) a << "-g" << geom;
+    a << path;
+    run("grim", a, [this, tag, path](int code, const QString &) { emit captured(tag, path, code == 0); });
+}

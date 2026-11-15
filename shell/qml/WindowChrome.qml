@@ -25,7 +25,7 @@ Instantiator {
                     MouseArea {
                         anchors.fill: parent; anchors.margins: -4
                         onClicked: modelData.a === 0 ? Sway.closeWindow(chrome.modelData.id)
-                                 : (modelData.a === 1 ? Sway.minimizeWindow(chrome.modelData.id) : Sway.toggleFullscreen(chrome.modelData.id))
+                                 : (modelData.a === 1 ? UiState.run("bc:minimize:" + chrome.modelData.id) : Sway.toggleFullscreen(chrome.modelData.id))
                     }
                 }
             }

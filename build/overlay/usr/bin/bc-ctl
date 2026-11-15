@@ -1,5 +1,6 @@
 #!/bin/sh
-# Controla el panel de BC Shell por D-Bus (lo usan los atajos de sway). Uso: bc-ctl launcher|center|lock|tiling|style <mac|win|minimal>|welcome|power <acción>
+# Controla el panel de BC Shell por D-Bus (lo usan los atajos de sway). Uso: bc-ctl launcher|center|lock|tiling|style <mac|win>|welcome|power <acción>
+# Golden Gate: bc-ctl spotlight|mission|switcher|switcher-back|launchpad|notifications|minimize|appearance|desktop
 case "$1" in
   launcher) m=ToggleLauncher; set -- ;;
   center)   m=ToggleControlCenter; set -- ;;
@@ -11,6 +12,7 @@ case "$1" in
   style)    [ -n "$2" ] || { echo "uso: bc-ctl style <mac|win|minimal>" >&2; exit 2; }; m=SetStyle; a="$2"; set -- s "$a" ;;
   option)   [ -n "$3" ] || { echo "uso: bc-ctl option <clave> <valor>" >&2; exit 2; }; m=SetOption; k="$2"; v="$3"; set -- ss "$k" "$v" ;;
   power)    m=Power; a="$2"; set -- s "$a" ;;
+  spotlight|mission|switcher|switcher-back|launchpad|notifications|minimize|appearance|desktop) m=Action; a="$1"; set -- s "$a" ;;
   *) echo "uso: bc-ctl launcher|center|lock|tiling|welcome|style <mac|win|minimal>|option <clave> <valor>|power <poweroff|reboot|suspend|logout>" >&2; exit 2 ;;
 esac
 exec busctl --user call org.bcos.Shell /org/bcos/Shell org.bcos.Shell "$m" "$@"

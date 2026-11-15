@@ -135,7 +135,7 @@ Item {
                 readonly property var info: Apps.infoFor(modelData.appId)
                 kind: modelData.appId.indexOf("bc-") === 0 ? ({ "bc-files": "archivos", "bc-settings": "ajustes", "bc-monitor": "monitor", "bc-store": "tienda" })[modelData.appId] || "" : ""
                 icon: info.iconPath || ""; name: modelData.title; minimizedWindow: true
-                onActivated: Sway.command("[con_id=" + modelData.id + "] scratchpad show")
+                onActivated: UiState.run("bc:restore:" + modelData.id)
             }
         }
         // Pila de Descargas

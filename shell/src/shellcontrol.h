@@ -22,7 +22,13 @@ public slots:
     void ShowOsd(const QString &kind) { if (kind == "volume" || kind == "brightness") emit osdRequested(kind); }
     void SetStyle(const QString &style) { emit styleChanged(style); }
     void SetOption(const QString &key, const QString &value);   // valida clave y valor antes de emitir
+    // Golden Gate: spotlight, mission, switcher, switcher-back, launchpad, notifications, minimize, appearance
+    void Action(const QString &name) {
+        static const QStringList ok{"spotlight", "mission", "switcher", "switcher-back", "launchpad", "notifications", "minimize", "appearance", "desktop"};
+        if (ok.contains(name)) emit actionRequested(name);
+    }
 signals:
+    void actionRequested(const QString &name);
     void launcherToggled();
     void controlCenterToggled();
     void lockRequested();

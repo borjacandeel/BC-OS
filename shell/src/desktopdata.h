@@ -98,6 +98,8 @@ public:
     Q_INVOKABLE void searchFiles(const QString &text);
     Q_INVOKABLE static QString calculate(const QString &expr);   // «2+2*3» → «8»; vacío si no es una operación
     Q_INVOKABLE void open(const QString &path);              // xdg-open
+    // Captura con grim de la pantalla (geom vacía) o de una región «x,y wxh» → señal captured(tag, ruta)
+    Q_INVOKABLE void capture(const QString &tag, const QString &geom);
     static QVariantList parseWifi(const QString &nmcliTerse);
     static QVariantList parseBluetooth(const QString &devices, const QString &connected);
 signals:
@@ -108,6 +110,7 @@ signals:
     void activeChanged();
     void wifiResult(bool ok, const QString &ssid);
     void filesChanged();
+    void captured(const QString &tag, const QString &path, bool ok);
 private:
     void run(const QString &prog, const QStringList &args, std::function<void(int, const QString &)> done);
     QVariantList m_networks, m_bt, m_files;

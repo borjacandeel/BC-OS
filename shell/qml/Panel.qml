@@ -61,6 +61,86 @@ LayerWindow {
         const r = Launcher.launch(kind)
         if (r === "failed") Notifications.push("BC OS", name, qsTr("No se pudo abrir la aplicación"), "", 4000)
     }
+    // ---- Minimizar al Dock con efecto genio ----------------------------------------------------
+    property var genieShots: ({})       // id de ventana → { path, rect }
+    property var geniePending: null
+    function minimizeGenie(id) {
+        if (id === undefined || id < 0 || isNaN(id)) id = Sway.focusedId
+        const w = Sway.windows.find(x => x.id === id)
+        if (!w || UiState.classic || Theme.reduced || w.rectW <= 0) { if (w) Sway.minimizeWindow(w.id); return }
+        geniePending = { id: w.id, rect: Qt.rect(w.decoX, w.decoY, w.rectW, w.rectH), back: false }
+        Quick.capture("genie-" + w.id, w.decoX + "," + w.decoY + " " + w.rectW + "x" + w.rectH)
+    }
+    function restoreGenie(id) {
+        const shot = genieShots[id]
+        if (!shot || UiState.classic || Theme.reduced) { Sway.command("[con_id=" + id + "] scratchpad show"); return }
+        genieWin.shown = true
+        geniePending = { id: id, rect: shot.rect, back: true }
+        genie.run("file://" + shot.path, shot.rect, Qt.point(dockGG.minimizeTarget.x + dockWin.originX, dockGG.minimizeTarget.y + dockWin.originY), dockGG.bs, true)
+    }
+    Connections {
+        target: Quick
+        function onCaptured(tag, path, ok) {
+            if (tag.indexOf("genie-") !== 0 || !root.geniePending) return
+            const g = root.geniePending
+            Sway.minimizeWindow(g.id)
+            if (!ok) { root.geniePending = null; return }
+            const s = Object.assign({}, root.genieShots); s[g.id] = { path: path, rect: g.rect }; root.genieShots = s
+            genieWin.shown = true
+            genie.run("file://" + path, g.rect, Qt.point(dockGG.minimizeTarget.x + dockWin.originX, dockGG.minimizeTarget.y + dockWin.originY), dockGG.bs, false)
+        }
+    }
+    LayerWindow {
+        id: genieWin
+        layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-genie"; passthrough: true
+        width: UiState.sw; height: UiState.sh
+        shown: false
+        Genie {
+            id: genie
+            onFinished: {
+                genieWin.shown = false
+                const g = root.geniePending
+                if (g && g.back) Sway.command("[con_id=" + g.id + "] scratchpad show")
+                root.geniePending = null
+            }
+        }
+    }
+
+    // ---- Mission Control y selector de aplicaciones --------------------------------------------
+    LayerWindow {
+        layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-mission"
+        keyboard: UiState.missionOpen ? "exclusive" : "none"
+        width: UiState.sw; height: UiState.sh
+        shown: !UiState.classic && (UiState.missionOpen || mission.t > 0)
+        MissionControl { id: mission }
+    }
+    LayerWindow {
+        layer: "overlay"; scope: "bc-switcher"
+        keyboard: UiState.switcherOpen ? "exclusive" : "none"
+        width: switcher.width; height: switcher.height
+        shown: UiState.switcherOpen
+        AppSwitcher { id: switcher }
+    }
+    Connections {
+        target: Shell
+        function onActionRequested(name) {
+            if (UiState.locked) return
+            if (name === "spotlight") UiState.toggleSpotlight()
+            else if (name === "mission") UiState.toggleMission()
+            else if (name === "switcher") switcher.step(1)
+            else if (name === "switcher-back") switcher.step(-1)
+            else if (name === "launchpad") UiState.toggleLaunchpad()
+            else if (name === "notifications") UiState.toggleNotifCenter()
+            else if (name === "minimize") root.minimizeGenie(Sway.focusedId)
+            else if (name === "appearance") Settings.appearance = Theme.dark ? "light" : "dark"
+            else if (name === "desktop") {
+                const vis = Sway.windows.filter(w => !w.minimized)
+                if (vis.length) for (const w of vis) Sway.minimizeWindow(w.id)
+                else for (const w of Sway.windows) Sway.command("[con_id=" + w.id + "] scratchpad show")
+            }
+        }
+    }
+
     // Mover y redimensionar (menú Ventana y menú del botón verde): mitades, rellenar y centrar
     function tile(how) {
         const id = Sway.focusedId
@@ -99,6 +179,8 @@ LayerWindow {
                 else if (arg === "hideOthers") { for (const w of Sway.windows) if (!w.focused && !w.minimized) Sway.minimizeWindow(w.id) }
                 else if (arg === "showAll") { for (const w of Sway.windows) if (w.minimized) Sway.command("[con_id=" + w.id + "] scratchpad show") }
                 else if (arg.indexOf("tile:") === 0) root.tile(arg.substring(5))
+                else if (arg.indexOf("minimize:") === 0) root.minimizeGenie(parseInt(arg.substring(9)))
+                else if (arg.indexOf("restore:") === 0) root.restoreGenie(parseInt(arg.substring(8)))
                 else if (arg === "about") Notifications.push("BC OS", qsTr("BC OS"), qsTr("Versión alpha · ARM64"), "", 4000)
             }
         }

@@ -36,8 +36,15 @@ bindsym $mod+Return exec $term
 bindsym Ctrl+b exec firefox
 bindsym $mod+b exec firefox
 bindsym $mod+e exec bc-shell --app files
-bindsym Ctrl+space exec bc-ctl launcher
-bindsym $mod+space exec bc-ctl launcher
+# Golden Gate: Spotlight (Ctrl/Súper+Espacio), Aplicaciones (F4), Mission Control (Ctrl+↑, F3), Centro de notificaciones
+bindsym Ctrl+space exec bc-ctl spotlight
+bindsym $mod+space exec bc-ctl spotlight
+bindsym F4 exec bc-ctl launchpad
+bindsym $mod+a exec bc-ctl launchpad
+bindsym F3 exec bc-ctl mission
+bindsym Ctrl+Up exec bc-ctl mission
+bindsym $mod+n exec bc-ctl notifications
+bindsym F11 exec bc-ctl desktop
 bindsym $mod+c exec bc-ctl center
 bindsym $mod+v exec bc-ctl clipboard
 bindsym Ctrl+$mod+q exec bc-ctl lock
@@ -48,7 +55,7 @@ bindsym $mod+F1 exec mousepad /etc/bc/atajos.txt
 bindsym $mod+q kill
 bindsym Ctrl+q kill
 bindsym $mod+f fullscreen toggle
-bindsym $mod+m move scratchpad
+bindsym $mod+m exec bc-ctl minimize
 bindsym $mod+Shift+m scratchpad show
 bindsym $mod+Shift+f floating toggle
 bindsym $mod+Shift+space exec bc-wm-mode toggle
@@ -63,16 +70,25 @@ bindsym $mod+Shift+Down move down
 bindsym $mod+Shift+Up move up
 bindsym $mod+Shift+Right move right
 # Ctrl + flechas: cambiar de ventana en esa dirección (en mosaico y en flotante); con Mayús, mover la ventana
-bindsym Ctrl+Left focus left
-bindsym Ctrl+Right focus right
-bindsym Ctrl+Up focus up
-bindsym Ctrl+Down focus down
+# Como en macOS: Ctrl+←/→ cambia de escritorio (Ctrl+↑ es Mission Control); el foco se mueve con Súper+flechas
+bindsym Ctrl+Left workspace prev_on_output
+bindsym Ctrl+Right workspace next_on_output
+bindsym Ctrl+Down exec bc-ctl mission
 bindsym Ctrl+Shift+Left move left
 bindsym Ctrl+Shift+Right move right
 bindsym Ctrl+Shift+Up move up
 bindsym Ctrl+Shift+Down move down
-bindsym Alt+Tab focus next
-bindsym Alt+Shift+Tab focus prev
+# Selector de aplicaciones (como ⌘Tab)
+bindsym Alt+Tab exec bc-ctl switcher
+bindsym Alt+Shift+Tab exec bc-ctl switcher-back
+bindsym $mod+Tab exec bc-ctl switcher
+# Gestos del trackpad (sway: discretos, se disparan al terminar el gesto)
+bindgesture swipe:3:up exec bc-ctl mission
+bindgesture swipe:3:down exec bc-ctl desktop
+bindgesture swipe:3:left workspace next_on_output
+bindgesture swipe:3:right workspace prev_on_output
+bindgesture swipe:4:up exec bc-ctl launchpad
+bindgesture pinch:4:inward exec bc-ctl launchpad
 
 # Mosaico (como bspwm): dividir y cambiar disposición
 bindsym $mod+h splith
