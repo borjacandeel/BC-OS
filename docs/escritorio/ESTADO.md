@@ -51,7 +51,7 @@ disponible en el login como **«BC clásico»**.
 | 7 | Ventanas: semáforo con símbolos al pasar, gris en inactivas, pantalla completa, mosaico (mitades/rellenar/centrar), ventanas BC radio 20 | hecho |
 | 8 | Mission Control (Spaces, «+», arrastrar ventana a escritorio), escritorios, selector de apps | hecho, compilado; pendiente de prueba real |
 | 9 | Gestos de trackpad | **parcial**: `bindgesture` de sway (3/4 dedos) es discreto: se dispara al terminar, **no sigue el dedo** |
-| 10 | Multimonitor: barra y Dock por pantalla, conexión en caliente | **parcial**: barra/Dock por pantalla; widgets, Mission Control y cristal usan la principal |
+| 10 | Multimonitor: barra, Dock y cristal por pantalla, conexión en caliente | **parcial**: widgets y Mission Control solo en la principal |
 | 11 | Archivos (Finder): barra lateral (Favoritos/Ubicaciones/Etiquetas), iconos/lista/columnas/galería, ruta, Vista rápida, etiquetas xattr, pestañas, búsqueda | hecho; captura en anfitrión |
 | 12 | Spotlight: apps, archivos (find en ~), cálculos (evaluador propio), acciones | hecho |
 | 13 | Aplicaciones (rejilla por páginas, búsqueda) desde el 2.º icono del Dock | hecho |
@@ -85,6 +85,16 @@ disponible en el login como **«BC clásico»**.
 - Widgets editables (galería), Calendario y Reloj; Spotlight por secciones; vista Aplicaciones con categorías;
   flecha de iconos ocultos; Terminal con aspecto del de macOS; Archivos ▸ Recientes.
 - Ghostty desactivado (fallo de Zig en CI): Terminal = Alacritty.
+
+## Tercera ronda (2026-11-15 tarde)
+- Animaciones de salida: la capa emergente se mantiene 260 ms al cerrar para que menús, Spotlight, Aplicaciones (se agranda
+  y desvanece), pila y galería se desvanezcan; cerrar ventanas externas con captura que se encoge y desvanece.
+- Control Center editable («Editar controles…»: quitar con «−», añadir Turno de noche, Calculadora, Nota rápida, Ajustes;
+  se guarda en `centroControles`).
+- Archivos ▸ Recientes: agrupado por Hoy/Ayer/7 días/30 días, miniaturas reales, xbel + archivos modificados en 30 días.
+- Multimonitor: cada superficie recorta el cristal del fondo de su pantalla (caché por tamaño).
+- Cristal claro con suelo de tinte 0,55 (texto oscuro legible sobre fondos oscuros); barras de herramientas sin línea con
+  fundido del contenido («scroll edge effect»).
 
 ## Sin confirmar frente a Golden Gate
 - Todas las duraciones y curvas (Apple no las publica): menús 120 ms, Control Center 240 ms, genio 500 ms,

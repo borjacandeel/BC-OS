@@ -23,11 +23,12 @@ Pendiente (en este orden):
 - [x] Iconos: el creador prefiere los MacOS-Like anteriores (2026-11-15) → restaurados; no rehacer salvo que lo pida. Nunca copiar los de Apple.
 - [~] Apps BC al nivel de las de macOS. Hechas: Monitor de Actividad, Tienda (App Store), Calculadora, Notas, Vista previa.
       Hechas también: Calendario, Recordatorios, Ajustes (Wi-Fi, Bluetooth, Pantallas, Teclado, Fecha y hora), widgets editables, vibrancy.
-      Hecha Música. Faltan: pulir Archivos (Recientes), Control Center editable.
-- [~] Animaciones (hecho: cerrar externas encoger+desvanecer, genio minimizar/restaurar): abrir/cerrar ventanas BC, hojas, menús, Control Center, Mission Control, Launchpad/Aplicaciones, Spotlight.
-- [ ] Transparencias y materiales por componente (barra lateral, barra de herramientas, menús, popovers) en claro y oscuro.
-- [ ] Barra de menús: iconos de estado propios exactos en forma/tamaño (Wi-Fi, batería, Control Center, Concentración, Spotlight).
-- [ ] Ghostty: compilación desactivada (BC_GHOSTTY=1 para probar). En CI Zig 0.17 da «panic: reached unreachable code» dentro del chroot; Terminal = Alacritty mientras tanto.
+      Hechas Música, Archivos ▸ Recientes (por fecha, miniaturas) y Control Center editable.
+- [x] Animaciones: entrada y salida de menús, Spotlight, Aplicaciones, Control Center, pila, galería, Mission Control, ventanas BC, hojas; cerrar externas (encoger+desvanecer), genio. Abrir externas: no (sway).
+- [x] Materiales: cristal claro legible, barra de herramientas sin línea con fundido, barras laterales de vidrio, menús y popovers de vidrio.
+- [x] Barra de menús: iconos de estado propios (icon-designer) + batería adaptable claro/oscuro.
+- [~] Multimonitor: barra, Dock y cristal por pantalla (Mission Control y widgets solo en la principal).
+- [ ] Ghostty: compilación desactivada (workflow `ghostty.yml` para depurar con strace) (BC_GHOSTTY=1 para probar). En CI Zig 0.17 da «panic: reached unreachable code» dentro del chroot; Terminal = Alacritty mientras tanto.
 - [ ] Verificar en QEMU cada parte con capturas antes de dar nada por hecho.
 - [x] README actualizado con capturas 1–14 (2026-11-15).
 - [~] 0.7.0-beta (prerelease) en CI para probar en VirtualBox.
