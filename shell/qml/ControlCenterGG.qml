@@ -7,8 +7,9 @@ Item {
     id: cc
     readonly property real s: Theme.s
     function px(v) { return Math.round(v * s) }
-    width: px(320)
-    height: col.height + px(24)
+    // macOS 27: sin panel de fondo, módulos de vidrio sueltos (pastillas de 140×62, círculos de 62, sliders de 292×60)
+    width: px(292) + (main ? 0 : px(24))
+    height: col.height + (main ? px(2) : px(24))
     Binding { target: Quick; property: "active"; value: cc.visible }
 
     // Controles editables (como «Editar controles» de macOS): qué módulos se muestran, guardado en Ajustes
@@ -31,7 +32,70 @@ Item {
     function toggleModule(k) { const v = shownList.slice(); const i = v.indexOf(k); if (i >= 0) v.splice(i, 1); else v.push(k); Settings.ccModules = JSON.stringify(v) }
     readonly property bool main: UiState.centerPanel === ""
 
-    Glass { anchors.fill: parent; radius: px(26); tintBoost: 0.30 }
+    Glass { visible: !cc.main; anchors.fill: parent; radius: px(26); tintBoost: 0.30 }
+
+    // ---- Piezas de macOS 27 ----
+    component Badge: Rectangle {
+        property string key
+        visible: cc.editing && key !== ""
+        x: -px(5); y: -px(5); width: px(20); height: width; radius: width / 2; color: Theme.dark ? "#5A5A5E" : "#8E8E93"; z: 5
+        Rectangle { anchors.centerIn: parent; width: px(9); height: px(2); radius: 1; color: "white" }
+        MouseArea { anchors.fill: parent; anchors.margins: -px(4); onClicked: cc.toggleModule(parent.key) }
+    }
+    // Pastilla: círculo con icono (activo: blanco con el icono en azul) + nombre y estado
+    component Pill: Item {
+        id: pl
+        property string icon; property string label; property string status
+        property bool on: false; property bool available: true; property string key: ""
+        signal toggled(); signal expand()
+        width: px(140); height: px(62); opacity: available ? 1 : 0.5
+        rotation: cc.editing && key !== "" ? wob.r : 0
+        Glass { anchors.fill: parent; radius: height / 2; tintBoost: 0.10; shadow: false }
+        Rectangle { x: px(12); anchors.verticalCenter: parent.verticalCenter; width: px(38); height: width; radius: width / 2
+                    color: pl.on ? "#FFFFFF" : Qt.rgba(1, 1, 1, Theme.dark ? 0.16 : 0.55)
+                    Behavior on color { ColorAnimation { duration: Theme.d(Theme.durHover) } }
+                    Icon { anchors.centerIn: parent; name: pl.icon; size: px(18); color: pl.on ? Theme.accent : Theme.label }
+                    MouseArea { anchors.fill: parent; enabled: pl.available && !cc.editing; onClicked: pl.toggled() } }
+        Column { x: px(58); anchors.verticalCenter: parent.verticalCenter; width: parent.width - px(64)
+                 Text { text: pl.label; color: Theme.label; font.family: Theme.font; font.pixelSize: px(13); font.weight: Font.DemiBold; width: parent.width; elide: Text.ElideRight }
+                 Text { visible: text !== ""; text: pl.status; color: Theme.labelSecondary; font.family: Theme.font; font.pixelSize: px(11); width: parent.width; elide: Text.ElideRight } }
+        MouseArea { x: px(54); width: parent.width - px(54); height: parent.height; enabled: pl.available && !cc.editing; onClicked: pl.expand() }
+        Badge { key: pl.key }
+    }
+    // Botón redondo de 62
+    component Round: Item {
+        id: rd
+        property string icon; property bool on: false; property string key: ""; property string tip
+        signal clicked()
+        width: px(62); height: px(62)
+        rotation: cc.editing && key !== "" ? wob.r : 0
+        Glass { anchors.fill: parent; radius: width / 2; tintBoost: 0.10; shadow: false }
+        Rectangle { anchors.fill: parent; radius: width / 2; color: rd.on ? Theme.accent : (rma.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : "transparent") }
+        Icon { anchors.centerIn: parent; name: rd.icon; size: px(22); color: rd.on ? "white" : Theme.label }
+        MouseArea { id: rma; anchors.fill: parent; hoverEnabled: true; enabled: !cc.editing; onClicked: rd.clicked() }
+        Badge { key: rd.key }
+    }
+    // Deslizador en pastilla de 292×60 (título arriba, iconos a los lados)
+    component SliderPill: Item {
+        id: sp
+        property string title; property string icon; property string iconMax; property real value: 0; property bool available: true; property string key: ""
+        signal moved(real v)
+        width: px(292); height: px(60); opacity: available ? 1 : 0.5
+        rotation: cc.editing && key !== "" ? wob.r : 0
+        Glass { anchors.fill: parent; radius: px(26); tintBoost: 0.10; shadow: false }
+        Text { x: px(16); y: px(9); text: sp.title; color: Theme.label; font.family: Theme.font; font.pixelSize: px(13); font.weight: Font.DemiBold }
+        Icon { x: px(14); y: px(33); name: sp.icon; size: px(15); color: Theme.label }
+        Icon { anchors.right: parent.right; anchors.rightMargin: px(14); y: px(33); name: sp.iconMax || sp.icon; size: px(17); color: Theme.label }
+        Item {
+            x: px(38); y: px(36); width: parent.width - px(76); height: px(8)
+            Rectangle { anchors.fill: parent; radius: height / 2; color: Qt.rgba(Theme.label.r, Theme.label.g, Theme.label.b, 0.18) }
+            Rectangle { width: Math.max(height, sp.value * parent.width); height: parent.height; radius: height / 2; color: Theme.label }
+            MouseArea { anchors.fill: parent; anchors.margins: -px(10); enabled: sp.available && !cc.editing
+                        function upd(m) { sp.moved(Math.max(0, Math.min(1, (m.x - px(10)) / (width - px(20))))) }
+                        onPressed: (m) => upd(m); onPositionChanged: (m) => { if (pressed) upd(m) } }
+        }
+        Badge { key: sp.key }
+    }
 
     component Module: Item {
         id: mod
@@ -107,137 +171,86 @@ Item {
     }
     Column {
         id: col
-        x: px(12); y: px(12); width: parent.width - px(24); spacing: px(10)
+        x: cc.main ? 0 : px(12); y: cc.main ? 0 : px(12); width: px(292); spacing: px(14)
 
-        // Fila superior: red (izquierda) y Concentración + Mosaico (derecha)
+        // Filas 1-2: Wi-Fi y Bluetooth (izquierda) y En reproducción (derecha, 140×140)
         Row {
-            spacing: px(10); width: parent.width
-            visible: cc.main && cc.has("red")
-            Module {
-                key: "red"
-                width: (parent.width - px(10)) / 2; height: px(150)
-                Column {
-                    anchors.fill: parent; anchors.margins: px(4); spacing: 0
-                    Toggle { icon: "network-wireless-signal-excellent-symbolic"; label: qsTr("Wi-Fi"); available: SystemStatus.hasWifi
-                             on: SystemStatus.wifiEnabled; status: SystemStatus.online && !SystemStatus.wired ? SystemStatus.connection : (SystemStatus.wifiEnabled ? qsTr("Activado") : qsTr("Desactivado"))
-                             onToggled: SystemStatus.setWifi(!SystemStatus.wifiEnabled); onExpand: { UiState.centerPanel = "wifi"; Quick.scanWifi() } }
-                    Toggle { icon: "bluetooth-active-symbolic"; label: qsTr("Bluetooth"); available: SystemStatus.bluetoothAvailable
-                             on: SystemStatus.bluetoothOn; status: SystemStatus.bluetoothOn ? qsTr("Activado") : qsTr("Desactivado")
-                             onToggled: SystemStatus.setBluetooth(!SystemStatus.bluetoothOn); onExpand: { UiState.centerPanel = "bluetooth"; Quick.scanBluetooth() } }
-                    Toggle { icon: "network-wired-symbolic"; label: qsTr("Red"); on: SystemStatus.online
-                             status: SystemStatus.online ? (SystemStatus.wired ? qsTr("Ethernet") : SystemStatus.connection) : qsTr("Sin conexión")
-                             onToggled: Launcher.run("bc-shell", ["--app", "settings", "--open", "red"]); onExpand: toggled() }
-                }
-            }
+            visible: cc.main && (cc.has("red") || cc.has("musica")); spacing: px(12)
             Column {
-                width: (parent.width - px(10)) / 2; spacing: px(10)
-                Module {
-                    width: parent.width; height: px(70)
-                    Toggle { anchors.verticalCenter: parent.verticalCenter; x: px(4); width: parent.width - px(8)
-                             icon: "weather-clear-night-fill-symbolic"; label: qsTr("Concentración")
-                             on: UiState.mode === "focus" || SystemStatus.dnd; status: on ? qsTr("Activado") : ""
-                             onToggled: Settings.mode = (UiState.mode === "focus" ? "" : "focus"); onExpand: UiState.centerPanel = "focus" }
+                visible: cc.has("red"); spacing: px(14)
+                Pill { key: "red"; icon: "network-wireless-signal-excellent-symbolic"; label: qsTr("Wi-Fi"); available: SystemStatus.hasWifi
+                       on: SystemStatus.wifiEnabled; status: SystemStatus.online && !SystemStatus.wired ? SystemStatus.connection : (SystemStatus.wifiEnabled ? qsTr("Activado") : qsTr("Desactivado"))
+                       onToggled: SystemStatus.setWifi(!SystemStatus.wifiEnabled); onExpand: { UiState.centerPanel = "wifi"; Quick.scanWifi() } }
+                Pill { icon: "bluetooth-active-symbolic"; label: qsTr("Bluetooth"); available: SystemStatus.bluetoothAvailable
+                       on: SystemStatus.bluetoothOn; status: SystemStatus.bluetoothOn ? qsTr("Activado") : qsTr("Desactivado")
+                       onToggled: SystemStatus.setBluetooth(!SystemStatus.bluetoothOn); onExpand: { UiState.centerPanel = "bluetooth"; Quick.scanBluetooth() } }
+            }
+            Item {
+                visible: cc.has("musica"); width: px(140); height: px(138)
+                rotation: cc.editing ? wob.r : 0
+                Glass { anchors.fill: parent; radius: px(30); tintBoost: 0.10; shadow: false }
+                Rectangle { x: px(14); y: px(14); width: px(42); height: width; radius: px(9); color: Qt.rgba(1, 1, 1, 0.16)
+                            Icon { anchors.centerIn: parent; name: "media-playback-start-symbolic"; size: px(16); color: Theme.labelSecondary } }
+                Text { x: px(14); y: px(70); width: parent.width - px(28); elide: Text.ElideRight
+                       text: Quick.media.available ? Quick.media.title : qsTr("Sin reproducción"); color: Theme.label
+                       font.family: Theme.font; font.pixelSize: px(13); font.weight: Font.DemiBold }
+                Row {
+                    x: px(18); y: px(100); spacing: px(18); opacity: Quick.media.available ? 1 : 0.45
+                    Repeater {
+                        model: [ { i: "media-skip-backward-symbolic", c: "previous" },
+                                 { i: Quick.media.playing ? "media-playback-pause-symbolic" : "media-playback-start-symbolic", c: "play-pause" },
+                                 { i: "media-skip-forward-symbolic", c: "next" } ]
+                        Icon { required property var modelData; name: modelData.i; size: px(20); color: Theme.label
+                               MouseArea { anchors.fill: parent; anchors.margins: -px(4); enabled: Quick.media.available && !cc.editing; onClicked: Quick.mediaCommand(modelData.c) } }
+                    }
                 }
-                Module {
-                    width: parent.width; height: px(70)
-                    Toggle { anchors.verticalCenter: parent.verticalCenter; x: px(4); width: parent.width - px(8)
-                             icon: "view-grid-symbolic"; label: qsTr("Mosaico"); on: Sway.tiling; status: on ? qsTr("Ventanas en mosaico") : qsTr("Flotantes")
-                             onToggled: Sway.toggleTiling(); onExpand: toggled() }
-                }
+                Badge { key: "musica" }
             }
         }
-        // Accesos rápidos: aspecto, captura, bloqueo, portapapeles
+        // Fila 3: Red (pastilla) y Mosaico + Portapapeles (círculos)
         Row {
-            visible: cc.main && cc.has("accesos")
-            spacing: px(10)
-            Repeater {
-                model: [ { i: Theme.dark ? "weather-clear-symbolic" : "weather-clear-night-symbolic", t: Theme.dark ? qsTr("Claro") : qsTr("Oscuro"), c: "appearance" },
-                         { i: "camera-photo-symbolic", t: qsTr("Captura"), c: "shot" },
-                         { i: "system-lock-screen-symbolic", t: qsTr("Bloquear"), c: "lock" },
-                         { i: "edit-paste-symbolic", t: qsTr("Portapapeles"), c: "clip" } ]
-                delegate: Module {
-                    required property var modelData
-                    key: index === 0 ? "accesos" : ""
-                    required property int index
-                    width: (col.width - px(30)) / 4; height: px(70)
-                    Icon { anchors.horizontalCenter: parent.horizontalCenter; y: px(14); name: modelData.i; size: px(20); color: Theme.label }
-                    Text { anchors.horizontalCenter: parent.horizontalCenter; y: px(44); text: modelData.t; color: Theme.label; font.family: Theme.font; font.pixelSize: px(10) }
-                    MouseArea { anchors.fill: parent; onClicked: {
-                        if (modelData.c === "appearance") Settings.appearance = Theme.dark ? "light" : "dark"
-                        else if (modelData.c === "shot") { UiState.closePopups(); Launcher.run("bc-screenshot", []) }
-                        else if (modelData.c === "lock") UiState.run("bc:lock")
-                        else UiState.toggleClipboard() } }
-                }
-            }
+            visible: cc.main && cc.has("red"); spacing: px(12)
+            Pill { icon: "network-wired-symbolic"; label: qsTr("Red"); on: SystemStatus.online
+                   status: SystemStatus.online ? (SystemStatus.wired ? qsTr("Ethernet") : SystemStatus.connection) : qsTr("Sin conexión")
+                   onToggled: Launcher.run("bc-shell", ["--app", "settings", "--open", "red"]); onExpand: toggled() }
+            Round { icon: "view-grid-symbolic"; on: Sway.tiling; onClicked: Sway.toggleTiling() }
+            Round { icon: "edit-paste-symbolic"; onClicked: UiState.toggleClipboard() }
         }
-        Module {
-            key: "pantalla"
-            visible: cc.main && cc.has("pantalla")
-            width: parent.width; height: px(66)
-            Slider { anchors.verticalCenter: parent.verticalCenter; title: qsTr("Pantalla"); icon: "display-brightness-symbolic"
+        // Fila 4: Aspecto y Captura (círculos) y Concentración (pastilla)
+        Row {
+            visible: cc.main && cc.has("accesos"); spacing: px(12)
+            Round { key: "accesos"; icon: Theme.dark ? "weather-clear-symbolic" : "weather-clear-night-symbolic"
+                    onClicked: Settings.appearance = Theme.dark ? "light" : "dark" }
+            Round { icon: "camera-photo-symbolic"; onClicked: { UiState.closePopups(); Launcher.run("bc-screenshot", []) } }
+            Pill { icon: "weather-clear-night-fill-symbolic"; label: qsTr("Concentración")
+                   on: UiState.mode === "focus" || SystemStatus.dnd; status: on ? qsTr("Activado") : ""
+                   onToggled: Settings.mode = (UiState.mode === "focus" ? "" : "focus"); onExpand: UiState.centerPanel = "focus" }
+        }
+        SliderPill { visible: cc.main && cc.has("pantalla"); key: "pantalla"; title: qsTr("Pantalla"); icon: "display-brightness-symbolic"
                      available: SystemStatus.hasBacklight; value: SystemStatus.brightness; onMoved: (v) => SystemStatus.setBrightness(Math.max(0.05, v)) }
-        }
-        Module {
-            key: "sonido"
-            visible: cc.main && cc.has("sonido")
-            width: parent.width; height: px(66)
-            Slider { anchors.verticalCenter: parent.verticalCenter; title: qsTr("Sonido"); icon: Icons.volumeIcon(SystemStatus.volume, SystemStatus.muted)
+        SliderPill { visible: cc.main && cc.has("sonido"); key: "sonido"; title: qsTr("Sonido"); icon: "audio-volume-low-symbolic"; iconMax: "audio-volume-high-symbolic"
                      available: SystemStatus.audioAvailable; value: SystemStatus.muted ? 0 : SystemStatus.volume; onMoved: (v) => SystemStatus.setVolume(v) }
-        }
-        // Reproducción en curso
-        Module {
-            key: "musica"
-            visible: cc.main && cc.has("musica")
-            width: parent.width; height: px(64)
-            Column {
-                x: px(14); anchors.verticalCenter: parent.verticalCenter; width: parent.width - px(120)
-                Text { text: Quick.media.available ? Quick.media.title : qsTr("Sin reproducción"); color: Theme.label; font.family: Theme.font
-                       font.pixelSize: px(13); font.weight: Font.DemiBold; width: parent.width; elide: Text.ElideRight }
-                Text { text: Quick.media.available ? (Quick.media.artist || "") : qsTr("Abre música o un vídeo"); color: Theme.labelSecondary
-                       font.family: Theme.font; font.pixelSize: px(11); width: parent.width; elide: Text.ElideRight }
-            }
-            Row {
-                anchors.right: parent.right; anchors.rightMargin: px(12); anchors.verticalCenter: parent.verticalCenter; spacing: px(10)
-                opacity: Quick.media.available ? 1 : 0.4
-                Repeater {
-                    model: [ { i: "media-skip-backward-symbolic", c: "previous" },
-                             { i: Quick.media.playing ? "media-playback-pause-symbolic" : "media-playback-start-symbolic", c: "play-pause" },
-                             { i: "media-skip-forward-symbolic", c: "next" } ]
-                    Icon { required property var modelData; name: modelData.i; size: px(20); color: Theme.label
-                           MouseArea { anchors.fill: parent; anchors.margins: -px(4); enabled: Quick.media.available; onClicked: Quick.mediaCommand(modelData.c) } }
-                }
-            }
-        }
-
-        // Controles añadidos (cuadrados pequeños, como los de macOS)
-        Row {
-            visible: cc.main && cc.extras.some(k => cc.has(k))
-            spacing: px(10)
+        // Controles añadidos: círculos
+        Flow {
+            visible: cc.main && cc.extras.some(k => cc.has(k)); width: parent.width; spacing: px(12)
             Repeater {
                 model: cc.catalog.filter(m => cc.extras.indexOf(m.k) >= 0 && cc.has(m.k))
-                delegate: Module {
-                    required property var modelData
-                    key: modelData.k
-                    width: (col.width - px(30)) / 4; height: px(70)
-                    readonly property bool lit: modelData.k === "noche" && UiState.mode === "night"
-                    Rectangle { anchors.fill: parent; radius: px(18); color: Theme.selection; visible: parent.lit }
-                    Icon { anchors.horizontalCenter: parent.horizontalCenter; y: px(14); name: modelData.i; size: px(20); color: parent.lit ? "white" : Theme.label }
-                    Text { anchors.horizontalCenter: parent.horizontalCenter; y: px(44); width: parent.width - px(6); horizontalAlignment: Text.AlignHCenter; elide: Text.ElideRight
-                           text: modelData.t; color: parent.lit ? "white" : Theme.label; font.family: Theme.font; font.pixelSize: px(10) }
-                    MouseArea { anchors.fill: parent; enabled: !cc.editing; onClicked: {
-                        const k = modelData.k
-                        if (k === "noche") { Settings.mode = (UiState.mode === "night" ? "" : "night"); return }
-                        UiState.closePopups()
-                        if (k === "calculadora") Launcher.run("bc-shell", ["--app", "calculator"])
-                        else if (k === "notas") Launcher.run("bc-shell", ["--app", "notes"])
-                        else Launcher.run("bc-shell", ["--app", "settings"]) } }
-                }
+                Round { required property var modelData; key: modelData.k; icon: modelData.i
+                        on: modelData.k === "noche" && UiState.mode === "night"
+                        onClicked: {
+                            const k = modelData.k
+                            if (k === "noche") { Settings.mode = (UiState.mode === "night" ? "" : "night"); return }
+                            UiState.closePopups()
+                            if (k === "calculadora") Launcher.run("bc-shell", ["--app", "calculator"])
+                            else if (k === "notas") Launcher.run("bc-shell", ["--app", "notes"])
+                            else Launcher.run("bc-shell", ["--app", "settings"]) } }
             }
         }
-        // Edición: controles que se pueden añadir
-        Module {
+        // Edición: controles para añadir
+        Item {
             visible: cc.main && cc.editing
             width: parent.width; height: addCol.height + px(12)
+            Glass { anchors.fill: parent; radius: px(22); tintBoost: 0.18; shadow: false }
             Column {
                 id: addCol; x: px(6); y: px(6); width: parent.width - px(12)
                 Text { padding: px(6); text: qsTr("Añadir controles"); color: Theme.labelSecondary; font.family: Theme.font; font.pixelSize: px(11); font.weight: Font.Bold }
@@ -258,15 +271,15 @@ Item {
                 }
             }
         }
-        // «Editar controles…» / «Listo»
+        // «Editar controles» (pastilla centrada, como en macOS 27)
         Item {
             visible: cc.main
             width: parent.width; height: px(26)
             Rectangle {
-                anchors.centerIn: parent; height: px(24); width: editTxt.implicitWidth + px(24); radius: height / 2
-                color: cc.editing ? Theme.selection : (ema.containsMouse ? Theme.fillHover : "transparent")
-                Text { id: editTxt; anchors.centerIn: parent; text: cc.editing ? qsTr("Listo") : qsTr("Editar controles…")
-                       color: cc.editing ? "white" : Theme.labelSecondary; font.family: Theme.font; font.pixelSize: px(12); font.weight: cc.editing ? Font.DemiBold : Font.Normal }
+                anchors.centerIn: parent; height: px(24); width: editTxt.implicitWidth + px(22); radius: height / 2
+                color: cc.editing ? Theme.accent : Qt.rgba(1, 1, 1, ema.containsMouse ? 0.42 : 0.30)
+                Text { id: editTxt; anchors.centerIn: parent; text: cc.editing ? qsTr("Listo") : qsTr("Editar controles")
+                       color: "white"; font.family: Theme.font; font.pixelSize: px(12); font.weight: Font.DemiBold }
                 MouseArea { id: ema; anchors.fill: parent; hoverEnabled: true; onClicked: cc.editing = !cc.editing }
             }
         }
