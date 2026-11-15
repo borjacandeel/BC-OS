@@ -167,3 +167,28 @@ private:
     int m_threads = 0;
     double m_userCpu = 0, m_sysCpu = 0;
 };
+
+// Notas: cada nota es un archivo de texto en ~/.local/share/bc/notas (la primera línea es el título).
+// Eliminar las mueve a «Eliminadas recientemente» (subcarpeta .eliminadas).
+class NotesStore : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QVariantList notes READ notes NOTIFY changed)       // [{id, title, snippet, date, modified}]
+    Q_PROPERTY(QVariantList deleted READ deleted NOTIFY changed)
+public:
+    explicit NotesStore(QObject *parent = nullptr, const QString &dir = QString());
+    QVariantList notes() const { return m_notes; }
+    QVariantList deleted() const { return m_deleted; }
+    Q_INVOKABLE QString create();                          // devuelve el id de la nota nueva
+    Q_INVOKABLE QString text(const QString &id) const;
+    Q_INVOKABLE void save(const QString &id, const QString &text);
+    Q_INVOKABLE void remove(const QString &id);            // a Eliminadas recientemente (o definitivo si ya estaba)
+    Q_INVOKABLE void restore(const QString &id);
+    Q_INVOKABLE void reload();
+signals:
+    void changed();
+private:
+    QString path(const QString &id) const;
+    QVariantList scan(const QString &dir) const;
+    QString m_dir;
+    QVariantList m_notes, m_deleted;
+};

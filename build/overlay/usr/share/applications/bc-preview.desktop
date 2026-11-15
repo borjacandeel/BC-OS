@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Vista previa
+Comment=Ver imágenes y documentos
+Exec=bc-shell --app preview --open %f
+Icon=bc-preview
+MimeType=image/png;image/jpeg;image/gif;image/webp;image/bmp;image/svg+xml;
+Categories=Graphics;Viewer;
+StartupNotify=false

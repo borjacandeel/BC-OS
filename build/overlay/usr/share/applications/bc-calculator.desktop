@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Calculadora
+Comment=Cálculos rápidos
+Exec=bc-shell --app calculator
+Icon=bc-calculator
+Categories=Utility;Calculator;
+StartupNotify=false

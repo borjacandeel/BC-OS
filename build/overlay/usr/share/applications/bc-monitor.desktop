@@ -3,6 +3,6 @@ Type=Application
 Name=Monitor de Actividad
 Comment=Procesos, CPU y memoria
 Exec=bc-shell --app monitor
-Icon=utilities-system-monitor
+Icon=bc-monitor
 Categories=System;Monitor;
 StartupNotify=false

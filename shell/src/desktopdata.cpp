@@ -432,3 +432,65 @@ QString QuickTools::iconPath(const QString &name) {
     static const QRegularExpression ok("^[A-Za-z0-9._-]{1,80}$");
     return ok.match(name).hasMatch() ? AppIndex::resolveIcon(name) : QString();
 }
+
+// ---------------------------------------------------------------------------------------------
+NotesStore::NotesStore(QObject *parent, const QString &dir) : QObject(parent), m_dir(dir) {
+    if (m_dir.isEmpty()) m_dir = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/bc/notas";
+    reload();
+}
+static bool validNoteId(const QString &id) { static const QRegularExpression re("^[0-9]{6,20}$"); return re.match(id).hasMatch(); }
+QString NotesStore::path(const QString &id) const {
+    if (!validNoteId(id)) return {};
+    if (QFileInfo::exists(m_dir + "/" + id + ".txt")) return m_dir + "/" + id + ".txt";
+    if (QFileInfo::exists(m_dir + "/.eliminadas/" + id + ".txt")) return m_dir + "/.eliminadas/" + id + ".txt";
+    return m_dir + "/" + id + ".txt";
+}
+QVariantList NotesStore::scan(const QString &dir) const {
+    QVariantList out;
+    const QLocale es(QLocale::Spanish, QLocale::Spain);
+    for (const QFileInfo &fi : QDir(dir).entryInfoList({"*.txt"}, QDir::Files, QDir::Time)) {
+        QFile f(fi.filePath());
+        if (!f.open(QIODevice::ReadOnly)) continue;
+        const QString t = QString::fromUtf8(f.read(2000));
+        const QStringList lines = t.split('\n');
+        QString title = lines.value(0).trimmed(); if (title.isEmpty()) title = QObject::tr("Nota nueva");
+        QString snippet; for (int i = 1; i < lines.size() && snippet.isEmpty(); ++i) snippet = lines[i].trimmed();
+        const QDateTime m = fi.lastModified();
+        const QString date = m.date() == QDate::currentDate() ? es.toString(m.time(), "H:mm") : es.toString(m.date(), "d/M/yy");
+        out.append(QVariantMap{{"id", fi.completeBaseName()}, {"title", title.left(80)}, {"snippet", snippet.left(80)}, {"date", date}, {"modified", m}});
+    }
+    return out;
+}
+void NotesStore::reload() { m_notes = scan(m_dir); m_deleted = scan(m_dir + "/.eliminadas"); emit changed(); }
+QString NotesStore::create() {
+    QDir().mkpath(m_dir);
+    const QString id = QString::number(QDateTime::currentMSecsSinceEpoch());
+    QFile f(m_dir + "/" + id + ".txt");
+    if (f.open(QIODevice::WriteOnly)) f.close();
+    reload();
+    return id;
+}
+QString NotesStore::text(const QString &id) const {
+    QFile f(path(id));
+    return f.open(QIODevice::ReadOnly) ? QString::fromUtf8(f.readAll()) : QString();
+}
+void NotesStore::save(const QString &id, const QString &t) {
+    const QString p = path(id);
+    if (p.isEmpty()) return;
+    QDir().mkpath(QFileInfo(p).absolutePath());
+    QSaveFile f(p);
+    if (f.open(QIODevice::WriteOnly)) { f.write(t.toUtf8()); f.commit(); }
+    reload();
+}
+void NotesStore::remove(const QString &id) {
+    const QString p = path(id);
+    if (p.isEmpty()) return;
+    if (p.contains("/.eliminadas/")) QFile::remove(p);
+    else { QDir().mkpath(m_dir + "/.eliminadas"); QFile::rename(p, m_dir + "/.eliminadas/" + id + ".txt"); }
+    reload();
+}
+void NotesStore::restore(const QString &id) {
+    if (!validNoteId(id)) return;
+    QFile::rename(m_dir + "/.eliminadas/" + id + ".txt", m_dir + "/" + id + ".txt");
+    reload();
+}

@@ -3,6 +3,6 @@ Type=Application
 Name=Terminal
 Comment=Línea de órdenes
 Exec=bc-terminal
-Icon=com.mitchellh.ghostty
+Icon=bc-terminal
 Categories=System;TerminalEmulator;
 StartupNotify=false

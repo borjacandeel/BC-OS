@@ -3,6 +3,6 @@ Type=Application
 Name=Archivos
 Comment=Explora y organiza tus archivos
 Exec=bc-shell --app files
-Icon=system-file-manager
+Icon=bc-files
 Categories=System;FileManager;
 StartupNotify=false

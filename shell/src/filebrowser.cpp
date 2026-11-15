@@ -27,7 +27,7 @@ QVariant FileBrowser::data(const QModelIndex &i, int role) const {
     case PathRole: return fi.absoluteFilePath();
     case KindRole: return kindFor(fi);
     case IsDirRole: return fi.isDir();
-    case SizeRole: return fi.isDir() ? QString("—") : QLocale(QLocale::Spanish).formattedDataSize(fi.size());
+    case SizeRole: return fi.isDir() ? QString("—") : QLocale(QLocale::Spanish).formattedDataSize(fi.size(), 1, QLocale::DataSizeSIFormat);
     case ModifiedRole: return QLocale(QLocale::Spanish).toString(fi.lastModified(), "d MMM yyyy, H:mm");
     case TagsRole: return tagsOf(fi.absoluteFilePath());
     case MimeRole: return QMimeDatabase().mimeTypeForFile(fi, QMimeDatabase::MatchExtension).comment();

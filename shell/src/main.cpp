@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
     QCommandLineOption oFixed("fixed-time", "Hora fija ISO-8601", "iso");
     QCommandLineOption oSize("size", "Tamaño de ventana, p. ej. 1280x800", "AxA");
     QCommandLineOption oPanel("panel", "Modo panel (por defecto): barra, Dock y ventanas emergentes");
-    QCommandLineOption oApp("app", "Modo aplicación: files, monitor, settings o store", "nombre");
+    QCommandLineOption oApp("app", "Modo aplicación: files, monitor, settings, store, calculator, notes o preview", "nombre");
     QCommandLineOption oOpen("open", "Argumento de apertura de la app (carpeta o «trash»)", "arg");
     p.addOptions({oPanel, oApp, oOpen, oLang, oShot, oCheck, oTitle, oReduced, oNoSplash, oFixed, oSize});
     p.process(app);
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
     const QString appName = p.value(oApp);
     const bool appMode = !appName.isEmpty();
     if (appMode) {
-        static const QStringList known{"files", "monitor", "settings", "store"};
+        static const QStringList known{"files", "monitor", "settings", "store", "calculator", "notes", "preview"};
         if (!known.contains(appName)) { qCritical() << "App desconocida:" << appName; return 2; }
         app.setDesktopFileName("bc-" + appName);  // app_id en sway
         app.setApplicationName("bc-" + appName);
@@ -101,6 +101,7 @@ int main(int argc, char *argv[]) {
     Reminders reminders;
     SoundPlayer sounds;
     Processes processes;
+    NotesStore notesStore;
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Settings", &appSettings);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Monitor", &monitor);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Store", &store);
@@ -116,6 +117,7 @@ int main(int argc, char *argv[]) {
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Reminders", &reminders);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Sounds", &sounds);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Processes", &processes);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Notes", &notesStore);
 
     // Solo del panel
     PamAuth pam;

@@ -16,7 +16,7 @@ Item {
         archivos: "system-file-manager",
         ajustes: "preferences-system",
         monitor: "utilities-system-monitor",
-        terminal: "com.mitchellh.ghostty",
+        terminal: "utilities-terminal",
         tienda: "gnome-software",
         navegador: "firefox",
         musica: "multimedia-audio-player",
@@ -25,7 +25,7 @@ Item {
 
     Image {
         anchors.fill: parent
-        source: root.kind === "papelera" && root.full ? "qrc:/BCShell/icons/user-trash-full.svg"
+        source: root.kind === "papelera" && root.full ? "qrc:/BCShell/apps/user-trash-full.svg"
               : "qrc:/BCShell/apps/" + (root.names[root.kind] || "system-file-manager") + ".svg"
         sourceSize: Qt.size(root.size * 2, root.size * 2)
         fillMode: Image.PreserveAspectFit

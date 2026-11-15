@@ -3,6 +3,6 @@ Type=Application
 Name=Tienda
 Comment=Instala y actualiza aplicaciones
 Exec=bc-shell --app store
-Icon=gnome-software
+Icon=bc-store
 Categories=System;PackageManager;
 StartupNotify=false

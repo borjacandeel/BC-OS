@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Notas
+Comment=Apunta ideas y listas
+Exec=bc-shell --app notes
+Icon=bc-notes
+Categories=Office;
+StartupNotify=false

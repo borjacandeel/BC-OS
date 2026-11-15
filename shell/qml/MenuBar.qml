@@ -106,7 +106,7 @@ Item {
             visible: SystemStatus.dnd || UiState.mode !== ""
             width: rightRow.cell
             onClicked: UiState.toggleCenter()
-            Icon { anchors.centerIn: parent; name: "weather-clear-night-fill-symbolic"; size: Math.round((Theme.barIconPx - 1) * bar.s); color: bar.ink }
+            Icon { anchors.centerIn: parent; name: "focus-moon-fill-symbolic"; size: Math.round((Theme.barIconPx - 1) * bar.s); color: bar.ink }
         }
         // Fuente de entrada: «ES» en una placa redondeada rellena
         BarItem {
@@ -145,6 +145,13 @@ Item {
             onClicked: UiState.openCenterPanel("wifi")
             Icon { anchors.centerIn: parent; size: Math.round(Theme.barIconPx * bar.s); color: bar.ink
                    name: Icons.networkIcon(SystemStatus.online, SystemStatus.wired, SystemStatus.signalBars(SystemStatus.signal)) }
+        }
+        // Spotlight (lupa), como en la barra de macOS
+        BarItem {
+            width: rightRow.cell
+            open: UiState.spotlightOpen
+            onClicked: UiState.toggleSpotlight()
+            Icon { anchors.centerIn: parent; name: "system-search-symbolic"; size: Math.round((Theme.barIconPx - 1) * bar.s); color: bar.ink }
         }
         // Control Center
         BarItem {

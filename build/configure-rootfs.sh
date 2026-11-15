@@ -48,6 +48,25 @@ install -D -m644 "$HERE/overlay/etc/bc/alacritty.toml" "$R/etc/bc/alacritty.toml
 install -D -m644 "$HERE/overlay/etc/bc/ghostty.conf" "$R/etc/bc/ghostty.conf"
 # Apps de BC en el lanzador, Spotlight y el Dock (Archivos, Ajustes del Sistema, Monitor de Actividad, Tienda, Terminal)
 install -m644 "$HERE"/overlay/usr/share/applications/bc-*.desktop "$R/usr/share/applications/"
+# Iconos propios de las apps de BC (estilo Golden Gate, icons/src/app) como bc-<app> en hicolor
+HI="$R/usr/share/icons/hicolor/scalable/apps"; mkdir -p "$HI"
+for pair in bc-files:system-file-manager bc-settings:preferences-system bc-monitor:utilities-system-monitor bc-store:gnome-software \
+            bc-terminal:utilities-terminal bc-calculator:accessories-calculator bc-notes:accessories-notes bc-preview:multimedia-photo-viewer; do
+  src="$HERE/../shell/assets/apps/${pair#*:}.svg"; [ -f "$src" ] || src="$HERE/../shell/assets/icons/${pair#*:}.svg"
+  [ -f "$src" ] && install -m644 "$src" "$HI/${pair%%:*}.svg"
+done
+sh "gtk-update-icon-cache -q -f /usr/share/icons/hicolor" 2>/dev/null || true
+# Vista previa abre las imágenes por defecto; Archivos, las carpetas
+install -D -m644 /dev/stdin "$R/etc/xdg/mimeapps.list" <<'MIME'
+[Default Applications]
+image/png=bc-preview.desktop
+image/jpeg=bc-preview.desktop
+image/gif=bc-preview.desktop
+image/webp=bc-preview.desktop
+image/bmp=bc-preview.desktop
+image/svg+xml=bc-preview.desktop
+inode/directory=bc-files.desktop
+MIME
 install -D -m644 "$HERE/overlay/etc/xdg/foot/foot.ini" "$R/etc/xdg/foot/foot.ini"
 install -D -m644 "$HERE/../shell/assets/wallpaper-default.png" "$R/usr/share/bc/wallpaper-default.png"
 mkdir -p "$R/usr/share/bc/wallpapers"; install -m644 "$HERE"/../assets/wallpapers/*.jpg "$R/usr/share/bc/wallpapers/"
