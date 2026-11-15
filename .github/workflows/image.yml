@@ -1,4 +1,4 @@
-name: Imagen ARM64
+name: Imagen (ARM64 y x86_64)
 
 # Construye la imagen de BC OS en un runner ARM64 NATIVO (sin qemu-user: el chroot de Arch Linux ARM corre directo).
 # Solo publica un prerelease si se marca "publicar" (o si se hace push de build/PUBLICAR).
@@ -31,8 +31,23 @@ concurrency:
 
 jobs:
   imagen:
-    name: Imagen BC OS (ARM64 nativo)
-    runs-on: ubuntu-24.04-arm
+    name: Imagen BC OS (${{ matrix.suf }})
+    runs-on: ${{ matrix.runner }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: aarch64
+            suf: ARM64
+            runner: ubuntu-24.04-arm
+          - arch: x86_64
+            suf: x86_64
+            runner: ubuntu-24.04
+    env:
+      BC_ARCH: ${{ matrix.arch }}
+    outputs:
+      version: ${{ steps.v.outputs.version }}
+      publicar: ${{ steps.v.outputs.publicar }}
     # Límite total del trabajo (descarga + pacman + compilaciones + imagen + subida). Cada paso largo tiene además el suyo.
     timeout-minutes: 150
     steps:
@@ -57,7 +72,7 @@ jobs:
           echo "version=$version" >> "$GITHUB_OUTPUT"; echo "publicar=$publicar" >> "$GITHUB_OUTPUT"
           echo "Versión: $version · publicar: $publicar"
       - name: Verificar arquitectura
-        run: test "$(uname -m)" = "aarch64"
+        run: test "$(uname -m)" = "$BC_ARCH"
       - name: Liberar disco
         # La construcción necesita ~12-15 GB libres a la vez (rootfs + copia ext4 + imagen raw de 6 GiB + VDI + zip).
         # Se borran herramientas preinstaladas que no se usan y se limpian imágenes de Docker y caché de apt.
@@ -89,14 +104,14 @@ jobs:
         timeout-minutes: 120
         env:
           VERSION: ${{ steps.v.outputs.version }}
-        run: sudo build/build-all.sh "$VERSION" "$RUNNER_TEMP/bcwork"
+        run: sudo -E build/build-all.sh "$VERSION" "$RUNNER_TEMP/bcwork"
       - name: Verificar integridad
         # Comprueba la suma SHA256 del zip y que existan los ficheros que se van a publicar.
         run: |
           cd build/out
           ls -lh
-          test -s SHA256SUMS && ls ./*.zip >/dev/null
-          sha256sum --check SHA256SUMS
+          ls ./*.zip >/dev/null
+          sha256sum --check SHA256SUMS-*
       - name: Limpiar montajes huérfanos
         if: always()
         # Si el build falló a medias pueden quedar montajes de proc/sys/dev en el chroot.
@@ -105,29 +120,39 @@ jobs:
       - name: Guardar artefacto
         uses: actions/upload-artifact@v4
         with:
-          name: bc-os-arm64-${{ steps.v.outputs.version }}
+          name: bc-os-${{ matrix.suf }}-${{ steps.v.outputs.version }}
           path: |
             build/out/*.zip
-            build/out/SHA256SUMS
+            build/out/SHA256SUMS-*
           if-no-files-found: error
           compression-level: 0
           retention-days: 14
+
+  publicar:
+    name: Publicar prerelease (ARM64 + x86_64)
+    needs: imagen
+    if: ${{ always() && needs.imagen.outputs.publicar == 'true' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: out
+          merge-multiple: true
       - name: Preparar notas
-        # build/RELEASE-NOTES.md es la plantilla del release; @VERSION@ se sustituye por la versión real.
         env:
-          VERSION: ${{ steps.v.outputs.version }}
+          VERSION: ${{ needs.imagen.outputs.version }}
         run: |
           sed -i "s/@VERSION@/$VERSION/g" build/RELEASE-NOTES.md
           ! grep -q '@VERSION@' build/RELEASE-NOTES.md
+          cat out/SHA256SUMS-* > out/SHA256SUMS; ls -lh out
       - name: Publicar prerelease
-        # Crea el tag v<versión> sobre el commit construido; adjunta el .zip y SHA256SUMS; el cuerpo son las notas.
-        if: ${{ steps.v.outputs.publicar == 'true' }}
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.v.outputs.version }}
-          name: BC OS ${{ steps.v.outputs.version }} (ARM64)
+          tag_name: v${{ needs.imagen.outputs.version }}
+          name: BC OS ${{ needs.imagen.outputs.version }} (ARM64 y x86_64)
           prerelease: true
           body_path: build/RELEASE-NOTES.md
           files: |
-            build/out/*.zip
-            build/out/SHA256SUMS
+            out/*.zip
+            out/SHA256SUMS

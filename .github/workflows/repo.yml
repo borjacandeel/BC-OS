@@ -2,7 +2,7 @@ name: Repositorio [bc]
 
 # Construye los paquetes de BC OS (bc-shell, bc-core, bc-escritorio y el metapaquete bc-os) en un chroot de
 # Arch Linux ARM sobre un runner ARM64 nativo y los publica como repositorio pacman en la release «repo»
-# (https://github.com/borjacandeel/BC-OS/releases/download/repo). El sistema se actualiza desde ahí con bc-actualizar.
+# (https://github.com/borjacandeel/BC-OS/releases/download/repo-<arch>), para aarch64 y x86_64. El sistema se actualiza desde ahí con bc-actualizar.
 on:
   push:
     branches: [main]
@@ -18,9 +18,19 @@ concurrency:
 
 jobs:
   repo:
-    name: Paquetes y base de datos [bc]
-    runs-on: ubuntu-24.04-arm
+    name: Paquetes y base de datos [bc] (${{ matrix.arch }})
+    runs-on: ${{ matrix.runner }}
     timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+          - arch: x86_64
+            runner: ubuntu-24.04
+    env:
+      BC_ARCH: ${{ matrix.arch }}
     steps:
       - uses: actions/checkout@v4
       - name: Herramientas
@@ -29,34 +39,31 @@ jobs:
           sudo apt-get install -y --no-install-recommends libarchive-tools curl ca-certificates xz-utils zstd
       - name: Compilar BC Core (Rust)
         run: cd core && cargo build --release --locked
-      - name: Rootfs de Arch Linux ARM
+      - name: Rootfs de Arch
         run: |
           set -euo pipefail
-          R="$RUNNER_TEMP/root"; sudo mkdir -p "$R"
-          curl -fSL -o "$RUNNER_TEMP/alarm.tar.gz" http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz
-          sudo bsdtar -xpf "$RUNNER_TEMP/alarm.tar.gz" -C "$R"
-          sudo bash -c "source build/lib/chroot.sh; bc_mount $R; sed -i 's/^CheckSpace/#CheckSpace/' $R/etc/pacman.conf
-            bc_chroot $R bash -c 'pacman-key --init && pacman-key --populate archlinuxarm && pacman -Syu --noconfirm --disable-sandbox'
-            bc_umount $R"
+          R="$RUNNER_TEMP/root"
+          sudo -E bash -c "source build/lib/chroot.sh; source build/lib/rootfs.sh; bc_rootfs $R; bc_mount $R; bc_rootfs_keys $R
+            bc_chroot $R pacman -Syu --noconfirm --disable-sandbox; bc_umount $R"
       - name: Construir paquetes
         run: |
           VER="$(date -u +%Y%m%d.%H%M)"
-          sudo bash build/repo/build-repo.sh "$RUNNER_TEMP/root" "$RUNNER_TEMP/repo" "$VER"
+          sudo -E bash build/repo/build-repo.sh "$RUNNER_TEMP/root" "$RUNNER_TEMP/repo" "$VER"
           sudo chown -R "$(id -u)" "$RUNNER_TEMP/repo"
           echo "VER=$VER" >> "$GITHUB_ENV"
       - name: Publicar en la release «repo»
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: repo
-          name: Repositorio de paquetes [bc]
+          tag_name: repo-${{ matrix.arch }}
+          name: Repositorio de paquetes [bc] (${{ matrix.arch }})
           prerelease: true
           make_latest: false
           body: |
-            Repositorio pacman de BC OS (aarch64). No es una versión para descargar: lo usa el sistema.
+            Repositorio pacman de BC OS (${{ matrix.arch }}). No es una versión para descargar: lo usa el sistema.
             ```
             [bc]
             SigLevel = Optional TrustAll
-            Server = https://github.com/borjacandeel/BC-OS/releases/download/repo
+            Server = https://github.com/borjacandeel/BC-OS/releases/download/repo-$arch
             ```
             Actualizar: `sudo bc-actualizar` (o Tienda ▸ Actualizaciones). Última construcción: ${{ env.VER }}
           files: |

@@ -5,7 +5,7 @@
 #   bc-escritorio — sesión, scripts bc-*, configuración de sway, .desktop, iconos de apps, fondos y sonidos
 #   bc-os         — metapaquete: depende de los tres y de los paquetes base de la imagen (build/packages/base.txt)
 # El repositorio se publica en GitHub Releases (etiqueta «repo») y el sistema se actualiza desde ahí (bc-actualizar).
-# Uso (root, rootfs de Arch Linux ARM aarch64 con red): build-repo.sh <rootfs> <carpeta_salida> [versión]
+# Uso (root, rootfs de Arch de la arquitectura BC_ARCH con red): build-repo.sh <rootfs> <carpeta_salida> [versión]
 set -euo pipefail
 R="$(realpath "${1:?uso: $0 <rootfs> <salida> [versión]}")"; OUT="$(realpath -m "${2:?falta la salida}")"
 HERE="$(cd "$(dirname "$0")/.." && pwd)"; TOP="$HERE/.."
@@ -50,7 +50,8 @@ for pair in bc-files:system-file-manager bc-settings:preferences-system bc-monit
 done
 
 # --- PKGBUILDs --------------------------------------------------------------------------------
-BASE="$(grep -v '^#' "$HERE/packages/base.txt" | grep -v '^$' | sed "s/.*/'&'/" | tr '\n' ' ')"
+source "$HERE/lib/rootfs.sh"
+BASE="$(bc_packages "${BC_ARCH:-aarch64}" | tr ' ' '\n' | grep -v '^$' | sed "s/.*/'&'/" | tr '\n' ' ')"
 mk() {   # nombre arch descripción depends backup
   local n="$1" a="$2" d="$3" deps="$4" bk="${5:-}"
   mkdir -p "$W/pkg/$n"
@@ -68,8 +69,9 @@ options=(!strip !debug !lto)
 package() { [ -d /tmp/bcrepo/stage/$n ] && cp -a /tmp/bcrepo/stage/$n/. "\$pkgdir/" || true; }
 P
 }
-mk bc-shell aarch64 "BC Shell: escritorio Golden Gate y apps de BC OS" "'qt6-declarative' 'layer-shell-qt'"
-mk bc-core aarch64 "BC Core: servicios del sistema de BC OS" ""
+A="${BC_ARCH:-aarch64}"
+mk bc-shell "$A" "BC Shell: escritorio Golden Gate y apps de BC OS" "'qt6-declarative' 'layer-shell-qt'"
+mk bc-core "$A" "BC Core: servicios del sistema de BC OS" ""
 mk bc-escritorio any "Sesión, configuración, fondos y sonidos de BC OS" "'bc-shell' 'sway'"
 mk bc-os any "BC OS: metapaquete del sistema completo" "'bc-shell' 'bc-core' 'bc-escritorio' $BASE"
 sh "id builder >/dev/null 2>&1 || useradd -m builder; chown -R builder /tmp/bcrepo/pkg"

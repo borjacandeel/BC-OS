@@ -1,7 +1,7 @@
 # Repositorio propio de BC OS: `[bc]`
 
-- **Qué es**: un repositorio pacman alojado en GitHub Releases (etiqueta `repo`):
-  `https://github.com/borjacandeel/BC-OS/releases/download/repo`.
+- **Qué es**: un repositorio pacman alojado en GitHub Releases (etiquetas `repo-aarch64` y `repo-x86_64`):
+  `https://github.com/borjacandeel/BC-OS/releases/download/repo-$arch`.
 - **Paquetes**: `bc-shell` (escritorio y apps), `bc-core` (servicios), `bc-escritorio` (sesión, scripts `bc-*`,
   configuración de sway, `.desktop`, iconos de apps, fondos y sonidos) y `bc-os` (metapaquete: los tres + los paquetes
   base de la imagen, `build/packages/base.txt`; si se añade un paquete a la lista, llega a todos en la siguiente

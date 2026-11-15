@@ -3,7 +3,7 @@
 # Uso: build-core.sh <rootfs>
 set -euo pipefail
 R="${1:?uso: $0 <rootfs>}"; HERE="$(cd "$(dirname "$0")" && pwd)"; CORE="$HERE/../core"
-if [[ "$(uname -m)" == "aarch64" ]]; then
+if [[ "$(uname -m)" == "${BC_ARCH:-aarch64}" ]]; then
   [[ -x "$CORE/target/release/bc-daemon" ]] || ( cd "$CORE" && cargo build --release --locked )
   OUT="$CORE/target/release"
 else

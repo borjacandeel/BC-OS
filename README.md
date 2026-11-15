@@ -193,7 +193,7 @@ Detalle de cada versión en [`build/RELEASE-NOTES.md`](build/RELEASE-NOTES.md) y
 ## Actualizaciones: repositorio propio `[bc]`
 
 BC OS se actualiza desde su propio repositorio pacman, publicado en GitHub Releases
-([`repo`](https://github.com/borjacandeel/BC-OS/releases/tag/repo)) por `.github/workflows/repo.yml` en cada cambio:
+([`repo-aarch64`](https://github.com/borjacandeel/BC-OS/releases/tag/repo-aarch64) y [`repo-x86_64`](https://github.com/borjacandeel/BC-OS/releases/tag/repo-x86_64)) por `.github/workflows/repo.yml` en cada cambio:
 `bc-shell`, `bc-core`, `bc-escritorio` y el metapaquete `bc-os`. En el sistema: **Tienda ▸ Actualizaciones** o
 `sudo bc-actualizar`. Detalles en [`build/repo/LEEME.md`](build/repo/LEEME.md).
 

@@ -1,13 +1,24 @@
-## BC OS @VERSION@ (ARM64) — beta (prerrelease), para probar en máquinas virtuales
+## BC OS @VERSION@ — beta (prerrelease), para probar en máquinas virtuales
 
-Imagen de disco arrancable (UEFI, ARM64). **Aún no hay ISO**: el instalador (`sudo bc-install`) viene dentro de la imagen.
+Imágenes de disco arrancables (UEFI) para **ARM64** (Mac con Apple Silicon) y **x86_64** (PC Intel/AMD).
+**Aún no hay ISO**: el instalador (`sudo bc-install`) viene dentro de la imagen.
 
-### Probar en VirtualBox (Mac Apple Silicon)
-1. Descomprime `BC-OS-@VERSION@-ARM64.vdi.zip`.
-2. VirtualBox → Nueva: Linux / Arch Linux (ARM 64-bit), ≥ 2 GB RAM, 2 CPU. **Sistema → Habilitar EFI.** Gráficos: VMSVGA.
-3. Disco: usar el `.vdi`. Red → Avanzado → Reenvío de puertos: TCP 2222 → 22 si quieres SSH (`ssh -p 2222 bc@127.0.0.1`).
-4. Arranca: menú de 5 s con **BC OS** (animación de arranque con el logo, por defecto) y **BC OS (modo seguro, sin animación)**.
-5. Aparece el **panel de login**. Usuario `bc`, contraseña `bcos` (**solo alpha**; cámbiala con `passwd`).
+### Probar en VirtualBox
+1. Descomprime `BC-OS-@VERSION@-ARM64.vdi.zip` (Mac Apple Silicon) o `BC-OS-@VERSION@-x86_64.vdi.zip` (PC).
+2. VirtualBox → Nueva: Linux / Arch Linux (**ARM 64-bit** o **64-bit**), ≥ 4 GB RAM, 2-4 CPU.
+   **Sistema → Habilitar EFI (obligatorio, también en x86_64).** Pantalla: VMSVGA, 128 MB.
+3. Disco: usar el `.vdi`. SSH opcional: Red → Avanzado → Reenvío de puertos TCP 2222 → 22 (`ssh -p 2222 bc@127.0.0.1`).
+4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
+5. En la bienvenida elige **Máquina virtual** (se detecta sola).
+
+### Novedades de 0.8.0
+- **Imagen x86_64** además de ARM64 (en x86_64 incluye las Guest Additions de VirtualBox).
+- **Primer arranque: máquina virtual o equipo físico** (detectado). En equipo físico con GPU: swayfx con esquinas,
+  sombras y **desenfoque real** detrás de las ventanas. Cambiable en Ajustes ▸ General.
+- **Repositorio propio `[bc]`** en GitHub: Tienda ▸ Actualizaciones o `sudo bc-actualizar`.
+- Animaciones de macOS: cerrar y abrir ventanas, menús, Spotlight, Aplicaciones, Control Center; Control Center
+  **editable**; Archivos ▸ **Recientes**; **10 fondos nuevos**; Mission Control y cristal por pantalla; modo claro legible;
+  iconos MacOS-Like de antes.
 
 ### Novedades de 0.6.0: escritorio «Golden Gate»
 - Escritorio por defecto rehecho al estilo de **macOS 27 Golden Gate**: barra de menús transparente, widgets de vidrio a la izquierda (baterías, uso del equipo o widget de otra app, recordatorios), Dock de vidrio con ampliación, pila de Descargas y Papelera, **Liquid Glass** con deslizador, modo **claro/oscuro** en caliente, fuente Inter.

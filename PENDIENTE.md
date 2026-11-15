@@ -10,6 +10,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - ARM64 únicamente. Base Arch Linux ARM.
 
 ## En curso
+- [~] 2026-11-15 (creador): imagen ARM **y x86_64** para VirtualBox YA; luego todo lo pendiente del sistema menos idiomas y Android (bloqueo seguro, instalador/GRUB/arranque seguro, ISO live, copias antes de actualizar, polkit, juegos x86 en ARM, benchmarks, bug del primer inicio).
 - [x] 2026-11-15 HECHO (falta probar el repo en CI y en la imagen) (creador): Golden Gate restante sin trackpad (Mission Control/widgets multipantalla, animación de abrir ventanas externas); GPU solo en equipos físicos; **primer arranque: elegir Máquina virtual o Equipo físico** y adaptar; **repositorio propio de paquetes en GitHub** y que el sistema se base en él.
 - [~] 2026-11-15 tarde (creador): HECHO animaciones, materiales, iconos de barra, Control Center editable, Recientes, multimonitor (cristal). EN CURSO Ghostty (strace en `ghostty.yml`). Luego → 0.8.0-beta.
 - [~] 2026-11-15 **0.7.0-beta** (prerelease): iconos MacOS-Like restaurados (petición del creador), animación de cierre de ventanas externas, README con capturas 1–14. CI lanzado; falta prueba del creador en VirtualBox.

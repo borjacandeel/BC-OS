@@ -52,7 +52,7 @@ install -m644 "$HERE"/overlay/usr/share/applications/bc-*.desktop "$R/usr/share/
 # para que los paquetes de BC tengan prioridad. bc-actualizar actualiza desde ahí (y la Tienda lo usa).
 install -m755 "$HERE/repo/bc-actualizar" "$R/usr/bin/bc-actualizar"
 if ! grep -q '^\[bc\]' "$R/etc/pacman.conf"; then
-  sed -i '0,/^\[core\]/s//# Repositorio propio de BC OS (GitHub). Firmado cuando el creador añada la clave (ver build\/repo\/LEEME.md)\n[bc]\nSigLevel = Optional TrustAll\nServer = https:\/\/github.com\/borjacandeel\/BC-OS\/releases\/download\/repo\n\n[core]/' "$R/etc/pacman.conf"
+  sed -i '0,/^\[core\]/s//# Repositorio propio de BC OS (GitHub). Firmado cuando el creador añada la clave (ver build\/repo\/LEEME.md)\n[bc]\nSigLevel = Optional TrustAll\nServer = https:\/\/github.com\/borjacandeel\/BC-OS\/releases\/download\/repo-$arch\n\n[core]/' "$R/etc/pacman.conf"
 fi
 # Iconos propios de las apps de BC (estilo Golden Gate, icons/src/app) como bc-<app> en hicolor
 HI="$R/usr/share/icons/hicolor/scalable/apps"; mkdir -p "$HI"

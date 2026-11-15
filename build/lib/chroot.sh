@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
-# Utilidades de chroot aarch64 para BC OS (host x86_64 con qemu-user, o host aarch64 nativo).
+# Utilidades de chroot para BC OS (BC_ARCH=aarch64 por defecto: nativo o qemu-user en x86_64; BC_ARCH=x86_64: nativo).
 set -euo pipefail
 
 bc_binfmt() {
-  [[ "$(uname -m)" == "aarch64" ]] && return 0
+  [[ "$(uname -m)" == "${BC_ARCH:-aarch64}" ]] && return 0
+  [[ "${BC_ARCH:-aarch64}" == aarch64 ]] || { echo "BC_ARCH=${BC_ARCH} necesita un anfitrión ${BC_ARCH}" >&2; return 1; }
   mountpoint -q /proc/sys/fs/binfmt_misc || mount -t binfmt_misc binfmt_misc /proc/sys/fs/binfmt_misc
   if [[ ! -e /proc/sys/fs/binfmt_misc/qemu-aarch64 ]]; then
     echo ':qemu-aarch64:M::\x7fELF\x02\x01\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x02\x00\xb7\x00:\xff\xff\xff\xff\xff\xff\xff\x00\xff\xff\xff\xff\xff\xff\xff\xff\xfe\xff\xff\xff:/usr/bin/qemu-aarch64-static:FC' \
