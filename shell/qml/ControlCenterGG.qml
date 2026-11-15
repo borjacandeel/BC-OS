@@ -39,11 +39,12 @@ Item {
             MouseArea { anchors.fill: parent; enabled: tg.available; onClicked: tg.toggled() }
         }
         Column {
+            id: txt
             anchors.left: dot.right; anchors.leftMargin: px(8); anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter
             Text { text: tg.label; color: Theme.label; font.family: Theme.font; font.pixelSize: px(13); font.weight: Font.DemiBold; width: parent.width; elide: Text.ElideRight }
             Text { visible: text !== ""; text: tg.status; color: Theme.labelSecondary; font.family: Theme.font; font.pixelSize: px(11); width: parent.width; elide: Text.ElideRight }
-            MouseArea { anchors.fill: parent; enabled: tg.available; onClicked: tg.expand() }
         }
+        MouseArea { anchors.fill: txt; enabled: tg.available; onClicked: tg.expand() }
     }
     component Slider: Item {
         id: sl

@@ -241,6 +241,8 @@ LayerWindow {
         Osd { id: osd; scale: UiState.classic ? root.u : 1; transformOrigin: Item.TopLeft; onHidden: osdWin.shown = false
               width: UiState.classic ? 260 : osdWin.width; height: UiState.classic ? 64 : osdWin.height }
     }
+    Timer { id: demoQ; interval: 300; onTriggered: spotlightRef.setText("a") }
+    property var spotlightRef: null
     Timer { id: welcomeTimer; interval: 3500; onTriggered: if (!UiState.locked) UiState.welcomeOpen = true }
 
     // Botones de ventana para las apps que no son de BC
@@ -405,6 +407,7 @@ LayerWindow {
                 }
                 Spotlight {
                     id: spotlight
+                    Component.onCompleted: root.spotlightRef = spotlight
                     anchors.horizontalCenter: parent.horizontalCenter
                     y: Math.round(pop.height * 0.22)
                     visible: UiState.spotlightOpen
@@ -595,6 +598,7 @@ LayerWindow {
         else if (d === "center") UiState.centerOpen = true
         else if (d === "notif") UiState.notifCenterOpen = true
         else if (d === "spotlight") UiState.spotlightOpen = true
+        else if (d === "spotlight-q") { UiState.spotlightOpen = true; demoQ.start() }
         else if (d === "launchpad") UiState.launcherOpen = true
         else if (d === "menu") UiState.menu = "system"
         else if (d === "light") Settings.appearance = "light"
