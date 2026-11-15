@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Autoría de los iconos de app «Golden Gate» (SPEC §7.8: glifo por capas de vidrio).
+// Autoría de los iconos de app «Golden Gate» (SPEC §7.7: glifo por capas de vidrio).
 // No forma parte del build: escribe SVG limpios en src/. Las coordenadas de cada glifo
 // están escritas a mano aquí; el squircle sale de lib/geom.mjs (SPEC §7.1).
 //   node scripts/authoring/golden-gate.mjs

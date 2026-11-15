@@ -953,14 +953,14 @@
     "category": "apps"
   },
   "system-software-install": {
-    "es": "Tienda",
+    "es": "Instalar software",
     "tags": [
-      "tienda",
-      "bolsa",
-      "software",
       "instalar",
-      "store",
-      "apps"
+      "paquete",
+      "caja",
+      "software",
+      "install",
+      "package"
     ],
     "category": "apps"
   },
@@ -1423,9 +1423,14 @@
       "launchpad",
       "apps",
       "cuadrícula",
-      "grid"
+      "grid",
+      "aplicaciones",
+      "teselas"
     ],
-    "category": "navigation"
+    "category": "navigation",
+    "also": [
+      "apps"
+    ]
   },
   "document-open": {
     "es": "Abrir",
@@ -1557,6 +1562,75 @@
       "batería",
       "power",
       "bolt"
+    ],
+    "category": "status"
+  },
+  "gnome-software": {
+    "es": "Tienda",
+    "tags": [
+      "tienda",
+      "bolsa",
+      "compras",
+      "apps",
+      "software",
+      "store",
+      "BC"
+    ],
+    "category": "apps"
+  },
+  "folder-download-stack": {
+    "es": "Pila de Descargas",
+    "tags": [
+      "descargas",
+      "pila",
+      "hojas",
+      "dock",
+      "downloads",
+      "stack"
+    ],
+    "category": "places"
+  },
+  "focus-moon": {
+    "es": "Concentración",
+    "tags": [
+      "concentración",
+      "luna",
+      "no molestar",
+      "focus",
+      "moon"
+    ],
+    "category": "status"
+  },
+  "system-search": {
+    "es": "Búsqueda",
+    "tags": [
+      "buscar",
+      "lupa",
+      "búsqueda del sistema",
+      "spotlight",
+      "search"
+    ],
+    "category": "actions"
+  },
+  "menubar-overflow": {
+    "es": "Mostrar iconos ocultos",
+    "tags": [
+      "barra de menús",
+      "ocultos",
+      "desbordamiento",
+      "chevron",
+      "overflow"
+    ],
+    "category": "status"
+  },
+  "media-now-playing": {
+    "es": "Reproduciendo ahora",
+    "tags": [
+      "música",
+      "reproduciendo",
+      "onda",
+      "audio",
+      "now playing"
     ],
     "category": "status"
   }

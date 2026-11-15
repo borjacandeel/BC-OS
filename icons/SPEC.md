@@ -1,6 +1,6 @@
 # SPEC — Pack de iconos BC OS (macOS minimal)
 
-Fuente de verdad del pack. Versión 0.1.0. La parte ejecutable vive en `icons/scripts/lib/spec.mjs` (constantes) y `icons/scripts/lint.mjs` (reglas): si algo de aquí cambia, cambia también allí. Todo icono nuevo debe pasar `npm run lint` sin errores ni avisos.
+Fuente de verdad del pack. Versión 0.2.0 (añade §7.7, capas de vidrio «Golden Gate»). La parte ejecutable vive en `icons/scripts/lib/spec.mjs` (constantes) y `icons/scripts/lint.mjs` (reglas): si algo de aquí cambia, cambia también allí. Todo icono nuevo debe pasar `npm run lint` sin errores ni avisos.
 
 Originalidad: se capta la sensación de macOS (proporciones, suavidad, luz) sin copiar glifos de SF Symbols ni iconos de apps de Apple. Cada path es propio. Sin logo ni nombres de Apple.
 
@@ -67,6 +67,15 @@ Una categoría puede existir en varios `kind` (p.ej. `places` en `color` y en `s
 
 ### 3.5 Hinting 16 / 32
 Todos los symbolic deben verse nítidos a 16. Llevan `@16` obligatorio (el lint avisa si falta): `battery-level-*` (con y sin carga), `audio-volume-low|medium|high`, `network-wireless-signal-*`, `edit-find`, `weather-clear[-fill]`. Si a 16 un icono se empasta (separaciones < 3, más de 3 barras...), se añade `<stem>@16.svg` con la silueta simplificada. Ejemplos candidatos: baterías cargando, wifi. Los `@32` se reservan para iconos `color` y `app`.
+
+### 3.6 Barra de menús (0.2.0)
+Iconos de estado a la derecha de la barra, pensados para 16–18 px lógicos:
+- `control-center`: interruptor encendido (pastilla llena 18×7, mando hueco r 1.75 por `evenodd`) sobre interruptor apagado (pastilla de contorno 16.5×5.5, mando lleno r 1.25). Separación vertical de 2 entre siluetas.
+- `focus-moon[-fill]`: creciente = círculo (12,12) r 8.5 menos círculo (16.5,7.5) r 6.5. Más llena que `weather-clear-night` (dos radios 8) para no confundirse.
+- `system-search`: lupa de lente r 7 en (10.5,10.5), mango de 45° hasta (20.5,20.5). `edit-find` sigue siendo la búsqueda dentro de una ventana.
+- `menubar-overflow`: doble chevron a la izquierda (dos chevrons de §3.2 separados 5 en X).
+- `media-now-playing`: forma de onda de cinco barras verticales separadas 4 (alturas 3, 10, 16, 7, 4).
+- `network-wireless-offline`: arcos y punto a .3 y barra diagonal (4.5,4.5)→(19.5,19.5) a plena opacidad. Llevan `@16`: `control-center`, `system-search`, `network-wireless-offline`.
 
 ## 4. Iconos color (48x48): diálogos, lugares, MIME, dispositivos
 
@@ -139,7 +148,7 @@ Familia común de saturación/luminosidad: tono claro arriba (L≈72%), oscuro a
 |---|---|---|---|
 | azul | `#5CB0FF` | `#1B6FF0` | Archivos (`system-file-manager`) |
 | cian | `#67D3FF` | `#1A8CF2` | Navegador (`web-browser`) |
-| teal | `#5BE0C8` | `#16A085` | Tienda (`system-software-install`) |
+| teal | `#5BE0C8` | `#16A085` | Tienda (`gnome-software`), Instalar software (`system-software-install`) |
 | grafito | `#B4BDCC` | `#5E6A80` | Configuración (`preferences-system`), Lanzador (`bc-launcher`) |
 | verde | `#6BE591` | `#1FA84F` | Monitor de actividad (`utilities-system-monitor`) |
 | noche | `#3A4660` | `#0B1220` | Terminal (`utilities-terminal`) |
@@ -151,18 +160,32 @@ Familia común de saturación/luminosidad: tono claro arriba (L≈72%), oscuro a
 | magenta | `#FF8FC2` | `#D6336C` | Mission Control (`bc-mission-control`) |
 | papel | `#F5F5F7` | `#E4E9F2` | Calendario (`office-calendar`), Fotos (`multimedia-photo-viewer`) |
 | plata | `#F5F5F7` | `#C3CCDB` | Papelera (`user-trash`, `user-trash-full`) |
+| niebla | `#E6EBF5` | `#A7B3CC` | Aplicaciones (`view-app-grid`, fondo claro) |
 
 Regla (lint): como máximo dos apps del Dock por familia de color. Un color nuevo se añade aquí y en `PALETTE` (`spec.mjs`).
 
-**Fondos claros (papel y plata).** El borde de luz blanco no se ve sobre ventanas claras, así que en estos fondos se sustituye por un borde oscuro `#000000` con `stroke-opacity .10` y `stroke-width 6` (en los demás colores sigue siendo `#FFFFFF` .14 / 3). El extremo claro del degradado baja a `#F5F5F7`.
+**Fondos claros (papel, plata y niebla).** El borde de luz blanco no se ve sobre ventanas claras, así que en estos fondos se sustituye por un borde oscuro `#000000` con `stroke-opacity .10` y `stroke-width 6` (en los demás colores sigue siendo `#FFFFFF` .14 / 3). El extremo claro del degradado baja a `#F5F5F7`.
 
-Sobre "papel" y "plata" el glifo usa `#0B1220`, `#1F63D6`, `#E8453C` o colores de la paleta semántica.
+Sobre "papel", "plata" y "niebla" el glifo usa `#0B1220`, `#1F63D6`, `#E8453C` o colores de la paleta semántica.
 
 ### 7.5 Papelera del Dock
-`user-trash` y `user-trash-full` son excepción: cubo sobre el mismo squircle en "plata" (sin degradado de color), glifo en `#0B1220` con opacidad .8; `-full` añade papeles en azul `#1F63D6` que sobresalen de la tapa. Es el mismo archivo para Dock y Lugares (el lote C no lo duplica).
+`user-trash` y `user-trash-full` son excepción: cubo abierto (sin tapa) de vidrio sobre el squircle "plata". Borde (elipse cx 512, cy 336, rx 208, ry 60) y costados en `#1B2742` opaco con trazo 56 (equivale a `#0B1220` a .8 pero sin oscurecer los solapes de las terminaciones); cuerpo `#0B1220` .08 y boca `#0B1220` .16; tres costillas verticales `#0B1220` .55. `-full` dibuja dos papeles (`#1F63D6` y `#6AA8FF`, rectángulos girados -12° y 9°, esquinas 28) entre el arco trasero y el delantero del borde, de modo que se ven a través del vidrio. Es el mismo archivo para Dock y Lugares (el lote C no lo duplica).
 
 ### 7.6 Salidas
 `dist/png/<tamaño>/<stem>.png`, `dist/icns/<stem>.icns` (tipos `icp4 icp5 icp6 ic07 ic08 ic09 ic10 ic11 ic12 ic13 ic14`, PNG embebido), tema Freedesktop `scalable/apps` + `<N>x<N>/apps`.
+
+### 7.7 Glifo por capas de vidrio («Golden Gate», v0.2)
+Opcional para cualquier app y obligatorio en las apps del Dock rediseñadas desde la 0.2.0 (`system-file-manager`, `preferences-system`, `utilities-system-monitor`, `gnome-software`, `utilities-terminal`, `view-app-grid`, papeleras). Mantiene §7.1–7.4: mismo squircle, mismas sombras del cuerpo, una sola luz cenital. El glifo se compone, de abajo arriba, con como mucho estas capas:
+
+1. **Placa de vidrio** (opcional, una): forma secundaria detrás del objeto. `fill="#FFFFFF" fill-opacity=".3"` (.16 sobre fondo "noche", .35 en piezas pequeñas) y borde de vidrio `stroke="#FFFFFF" stroke-opacity=".5" stroke-width="4"` (única excepción al trazo mínimo de §7.3; el lint la reconoce por ancho 4 y opacidad ≤ .6).
+2. **Sombra del objeto**: la silueta del objeto principal desplazada **+16 en Y**, `fill="#000000" fill-opacity=".16"` (.3 sobre "noche"). Un solo path (nunca piezas solapadas, que duplicarían la opacidad).
+3. **Objeto principal**: blanco con el degradado `gl` (vertical `userSpaceOnUse` de y=252 `#FFFFFF` a y=772 `#E4E9F2`), que da volumen con la misma luz cenital. No es un segundo highlight.
+4. **Detalle recortado** (opcional): sobre el objeto blanco, en el color inferior del propio fondo (p.ej. `#1B6FF0`, `#16A085`), como si fuera un hueco. Trazo ≥ 56 o relleno con esquinas ≥ 24. Huecos reales con `fill-rule="evenodd"` (engranajes).
+5. **Acentos de color**: solo piezas pequeñas (≤ 5 % del glifo) con colores semánticos de §6 (p.ej. los tres puntos de ventana de Terminal). Excepción: `view-app-grid`, cuya metáfora son 9 teselas de color (152×152, rx 44, separación 32) con un degradado propio `tl` (`objectBoundingBox`, blanco .32 → 0 a .55) que hace de vidrio de cada tesela.
+
+`@32` conserva las capas 1, 3 y 4 sin borde de vidrio ni sombra del objeto (trazos 64); `@16` deja solo el objeto principal (trazo ≥ 80, sin degradados de glifo ni detalles). Autoría reproducible: `node scripts/authoring/golden-gate.mjs` (coordenadas del glifo escritas a mano; squircle de `geom.mjs`).
+
+Variantes oscura y tintada: aún no forman parte del formato (ver propuesta en `REVIEW.md`, «Propuesta 0.3»).
 
 ## 8. Proceso de diseño de un icono
 

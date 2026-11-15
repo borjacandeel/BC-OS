@@ -116,7 +116,7 @@ for (const s of sources) {
       const a = e.attrs;
       if (!('stroke-width' in a) || !a.stroke || a.stroke === 'none') continue;
       if (a.stroke === '#000000' || (a.stroke === '#FFFFFF' && a['stroke-opacity'] === '.14')) continue; // sombras y borde de luz
-      if (a.stroke === '#FFFFFF' && num(a['stroke-width']) === 4 && num(a['stroke-opacity']) <= 0.6) continue; // borde de vidrio (SPEC §7.8)
+      if (a.stroke === '#FFFFFF' && num(a['stroke-width']) === 4 && num(a['stroke-opacity']) <= 0.6) continue; // borde de vidrio (SPEC §7.7)
       if (num(a['stroke-width']) < min) err(f, `<${e.tag}> stroke-width ${a['stroke-width']} < ${min} (SPEC §7.3; <!-- lint-allow: stroke motivo --> si es deliberado)`);
     }
   }

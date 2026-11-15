@@ -149,3 +149,17 @@ Revisado `shell/qml` (TopBar, Dock, FilesWindow, ControlCenter, NotificationCard
 - P1-13 resto: `folder-open`, `folder-publicshare`, `network-workgroup`, `system-search` (el shell mapea a `edit-find`), `drive-harddisk-solidstate`, `video-camera`, `accessibility`, `dialog-password` color.
 - `@16` de `airplane-mode`, micrófono, impresora y teclado: ya cumplen la separación mínima de 3; sin hint hasta que el shell lo pida.
 - P2-1 a P2-11: sin tocar (pulido).
+
+---
+
+## Propuesta 0.3 — variantes oscura y tintada de iconos de app (2026-11-15, icon-designer)
+
+El SPEC 0.2.0 no contempla variantes de app por apariencia; esto es una propuesta, no formato vigente. No se ha generado ningún archivo de estas variantes.
+
+**Nombres.** Junto al icono base: `<stem>-dark.svg` y `<stem>-tinted.svg` en `src/app/apps/`. No son nombres Freedesktop nuevos: el build los publicaría en `dist/svg/variants/` y fuera del tema `BC` (que solo admite un archivo por nombre). El shell elegiría el archivo según `Theme.dark` / `Theme.tinted`.
+
+**Oscura (`-dark`).** Mismo glifo y misma geometría. Cuerpo con degradado `#1B2742` → `#04111F` (azul noche de marca) para todas las apps; el color propio pasa al glifo: el objeto principal toma el par de §7.4 de la app (arriba → abajo) en lugar de blanco, y la placa de vidrio queda en blanco .12 con borde .3. Borde de luz `#FFFFFF` .14 / 3 en todas (no hay fondos claros). Las papeleras y `view-app-grid` cambian su fondo plata/niebla por el oscuro y sus trazos `#1B2742` por `#F5F5F7`.
+
+**Tintada (`-tinted`).** Monocroma para colorear con el acento del sistema. Cuerpo `#1B2742` → `#0B1220`; glifo entero en un único color `#F5F5F7` con opacidades (objeto 1, placa .3, detalles .55) y sin degradado `gl`. El shell la colorea multiplicando el glifo por el acento (`Theme.accent`) con `MultiEffect.colorization` o sustituyendo `#F5F5F7` en el SVG como ya hace `IconCache` con `currentColor`. Requiere que el lint admita en `-tinted` solo `#F5F5F7`, `#1B2742`, `#0B1220` y `#000000`.
+
+**Coste.** 8 apps × 2 variantes × 3 resoluciones (base, `@32`, `@16`) = 48 SVG generables con `scripts/authoring/golden-gate.mjs` (añadir un parámetro de apariencia). Cambios de lint: sufijos `-dark`/`-tinted` válidos solo en `kind=app`, regla de la familia de color excluida para ellas.

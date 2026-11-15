@@ -13,6 +13,7 @@ icons/
   preview/index.html             catálogo (abrir en el navegador tras build)
   scripts/build.mjs lint.mjs     herramientas
   scripts/lib/geom.mjs           squircle() y polígonos redondeados para autoría
+  scripts/authoring/golden-gate.mjs  apps del Dock con capas de vidrio (SPEC §7.7) y pila de Descargas
   templates/app-template.svg     plantilla de icono de app
 ```
 
@@ -45,7 +46,7 @@ Instalar el tema: `cp -r dist/theme/BC /usr/share/icons/` y `gtk-update-icon-cac
 4. `npm run check`. Revisa en la vista previa a 16 px y en claro/oscuro.
 5. Commit en castellano a `main`.
 
-Para apps: copia `templates/app-template.svg`, cambia colores del degradado (SPEC §7.4) y el glifo. El cuerpo se genera con `node scripts/lib/geom.mjs squircle 824 185 0.6 100 100`.
+Para apps: copia `templates/app-template.svg`, cambia colores del degradado (SPEC §7.4) y el glifo. El cuerpo se genera con `node scripts/lib/geom.mjs squircle 824 185 0.6 100 100`. Las apps del Dock con capas de vidrio (SPEC §7.7) se regeneran con `node scripts/authoring/golden-gate.mjs` (coordenadas del glifo escritas a mano en el script); después `npm run check` y copia `dist/svg/<nombre>.svg` a `shell/assets/apps/` o `shell/assets/icons/`.
 
 ## Estado
 

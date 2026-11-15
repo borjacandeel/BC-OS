@@ -51,14 +51,14 @@
       "label": "Acciones",
       "context": "Actions",
       "lote": "A",
-      "count": 42
+      "count": 43
     },
     {
       "id": "status",
       "label": "Barra de menús y estado",
       "context": "Status",
       "lote": "A",
-      "count": 38
+      "count": 41
     },
     {
       "id": "dialogs",
@@ -72,14 +72,14 @@
       "label": "Apps del sistema",
       "context": "Apps",
       "lote": "B",
-      "count": 17
+      "count": 19
     },
     {
       "id": "places",
       "label": "Lugares y carpetas",
       "context": "Places",
       "lote": "C",
-      "count": 21
+      "count": 22
     },
     {
       "id": "mimetypes",
@@ -832,6 +832,35 @@
       "file": "dist/svg/system-reboot-symbolic.svg"
     },
     {
+      "name": "system-search",
+      "label": "Búsqueda",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "system-search-symbolic"
+      },
+      "tags": [
+        "buscar",
+        "lupa",
+        "búsqueda del sistema",
+        "spotlight",
+        "search"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "hints": [
+        16
+      ],
+      "file": "dist/svg/system-search-symbolic.svg"
+    },
+    {
       "name": "system-shutdown",
       "label": "Apagar",
       "category": "actions",
@@ -1283,6 +1312,40 @@
       "file": "dist/svg/bc-mission-control.svg"
     },
     {
+      "name": "gnome-software",
+      "label": "Tienda",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "gnome-software"
+      },
+      "tags": [
+        "tienda",
+        "bolsa",
+        "compras",
+        "apps",
+        "software",
+        "store",
+        "BC"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/gnome-software.svg"
+    },
+    {
       "name": "multimedia-audio-player",
       "label": "Música",
       "category": "apps",
@@ -1480,7 +1543,7 @@
     },
     {
       "name": "system-software-install",
-      "label": "Tienda",
+      "label": "Instalar software",
       "category": "apps",
       "context": "Apps",
       "kind": "app",
@@ -1489,12 +1552,12 @@
         "regular": "system-software-install"
       },
       "tags": [
-        "tienda",
-        "bolsa",
-        "software",
         "instalar",
-        "store",
-        "apps"
+        "paquete",
+        "caja",
+        "software",
+        "install",
+        "package"
       ],
       "sizes": [
         16,
@@ -1640,6 +1703,40 @@
         32
       ],
       "file": "dist/svg/utilities-terminal.svg"
+    },
+    {
+      "name": "view-app-grid",
+      "label": "Aplicaciones",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "view-app-grid"
+      },
+      "tags": [
+        "lanzador",
+        "launchpad",
+        "apps",
+        "cuadrícula",
+        "grid",
+        "aplicaciones",
+        "teselas"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/view-app-grid.svg"
     },
     {
       "name": "web-browser",
@@ -3157,7 +3254,9 @@
         "launchpad",
         "apps",
         "cuadrícula",
-        "grid"
+        "grid",
+        "aplicaciones",
+        "teselas"
       ],
       "sizes": [
         16,
@@ -3525,6 +3624,38 @@
         16
       ],
       "file": "dist/svg/folder-download.svg"
+    },
+    {
+      "name": "folder-download-stack",
+      "label": "Pila de Descargas",
+      "category": "places",
+      "context": "Places",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "folder-download-stack"
+      },
+      "tags": [
+        "descargas",
+        "pila",
+        "hojas",
+        "dock",
+        "downloads",
+        "stack"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "hints": [
+        16
+      ],
+      "file": "dist/svg/folder-download-stack.svg"
     },
     {
       "name": "folder-music",
@@ -4542,6 +4673,9 @@
         32,
         48
       ],
+      "hints": [
+        16
+      ],
       "file": "dist/svg/control-center-symbolic.svg"
     },
     {
@@ -4593,6 +4727,85 @@
         48
       ],
       "file": "dist/svg/do-not-disturb-symbolic.svg"
+    },
+    {
+      "name": "focus-moon",
+      "label": "Concentración",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "fill": "focus-moon-fill-symbolic",
+        "regular": "focus-moon-symbolic"
+      },
+      "tags": [
+        "concentración",
+        "luna",
+        "no molestar",
+        "focus",
+        "moon"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/focus-moon-symbolic.svg"
+    },
+    {
+      "name": "media-now-playing",
+      "label": "Reproduciendo ahora",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "media-now-playing-symbolic"
+      },
+      "tags": [
+        "música",
+        "reproduciendo",
+        "onda",
+        "audio",
+        "now playing"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/media-now-playing-symbolic.svg"
+    },
+    {
+      "name": "menubar-overflow",
+      "label": "Mostrar iconos ocultos",
+      "category": "status",
+      "context": "Status",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "menubar-overflow-symbolic"
+      },
+      "tags": [
+        "barra de menús",
+        "ocultos",
+        "desbordamiento",
+        "chevron",
+        "overflow"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/menubar-overflow-symbolic.svg"
     },
     {
       "name": "microphone-sensitivity-muted",
@@ -4668,6 +4881,9 @@
         24,
         32,
         48
+      ],
+      "hints": [
+        16
       ],
       "file": "dist/svg/network-wireless-offline-symbolic.svg"
     },

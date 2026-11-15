@@ -150,8 +150,8 @@ body.grid-on .ov { display: block; }
     $('#cl').onclick = () => $('#detail').classList.remove('on');
   });
 
-  // Dock simulado: 8 huecos del shell (nombres Freedesktop objetivo)
-  const DOCK = [['system-file-manager', 'Archivos'], ['preferences-system', 'Configuración'], ['utilities-system-monitor', 'Monitor'], ['utilities-terminal', 'Terminal'], ['system-software-install', 'Tienda'], ['web-browser', 'Navegador'], ['multimedia-audio-player', 'Música'], ['user-trash', 'Papelera']];
+  // Dock simulado: huecos del Dock Golden Gate del shell (nombres Freedesktop objetivo)
+  const DOCK = [['view-app-grid', 'Aplicaciones'], ['system-file-manager', 'Archivos'], ['preferences-system', 'Ajustes del Sistema'], ['utilities-system-monitor', 'Monitor de Actividad'], ['utilities-terminal', 'Terminal'], ['gnome-software', 'Tienda'], ['web-browser', 'Navegador'], ['multimedia-audio-player', 'Música'], ['user-trash-full', 'Papelera']];
   const dock = $('#dock');
   dock.innerHTML = DOCK.map(([n, l]) => svgOf(n) ? `<a class="di" data-n="${n}"><span class="tip">${l}</span>${svgOf(n)}</a>` : `<a class="di ph"><span class="tip">${l}</span>${l}<br>(pendiente)</a>`).join('');
   const items = [...dock.children];
@@ -159,7 +159,7 @@ body.grid-on .ov { display: block; }
   dock.addEventListener('mouseleave', () => items.forEach((el) => (el.style.transform = '')));
 
   // Barra de menús simulada con iconos de estado
-  const MB = ['network-wireless-signal-excellent-symbolic', 'audio-volume-medium-symbolic', 'bluetooth-active-symbolic', 'battery-level-80-charging-symbolic', 'notification-symbolic', 'control-center-symbolic'];
+  const MB = ['menubar-overflow-symbolic', 'media-now-playing-symbolic', 'focus-moon-fill-symbolic', 'battery-level-80-charging-symbolic', 'network-wireless-signal-excellent-symbolic', 'system-search-symbolic', 'control-center-symbolic'];
   $('#menubar').innerHTML = MB.map((s) => `<span class="ic">${svgOf(s)}</span>`).join('');
   render();
 })();
