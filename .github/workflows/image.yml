@@ -45,6 +45,7 @@ jobs:
             runner: ubuntu-24.04
     env:
       BC_ARCH: ${{ matrix.arch }}
+      BC_ISO: "1"
     outputs:
       version: ${{ steps.v.outputs.version }}
       publicar: ${{ steps.v.outputs.publicar }}
@@ -93,7 +94,7 @@ jobs:
         # xz-utils (tar -xJ del tema de cursores), zstd, util-linux (mountpoint, mount).
         run: |
           sudo apt-get update
-          sudo apt-get install -y --no-install-recommends libarchive-tools dosfstools mtools e2fsprogs fdisk zstd qemu-utils rsync curl ca-certificates zip xz-utils util-linux git python3-pil librsvg2-bin
+          sudo apt-get install -y --no-install-recommends libarchive-tools dosfstools mtools e2fsprogs fdisk zstd qemu-utils rsync curl ca-certificates zip xz-utils util-linux git python3-pil librsvg2-bin squashfs-tools xorriso
       - name: Compilar BC Core (Rust)
         # build-core.sh reutiliza core/target/release si ya existe (en aarch64), así sudo no necesita cargo/rustup.
         timeout-minutes: 30
@@ -123,6 +124,7 @@ jobs:
           name: bc-os-${{ matrix.suf }}-${{ steps.v.outputs.version }}
           path: |
             build/out/*.zip
+            build/out/*.iso
             build/out/SHA256SUMS-*
           if-no-files-found: error
           compression-level: 0
@@ -155,4 +157,5 @@ jobs:
           body_path: build/RELEASE-NOTES.md
           files: |
             out/*.zip
+            out/*.iso
             out/SHA256SUMS

@@ -34,7 +34,9 @@ bash "$HERE/configure-rootfs.sh" "$R"
 
 IMG="$OUT/BC-OS-$VER-$SUF.img"
 bash "$HERE/mkimage.sh" "$R" "$IMG" 6144
+# ISO live (BC_ISO=1): mismo sistema, arranca desde squashfs con el instalador; si falla, solo se avisa
+if [ "${BC_ISO:-0}" = 1 ]; then bash "$HERE/mkiso.sh" "$R" "$OUT/BC-OS-$VER-$SUF.iso" || { echo "AVISO: no se pudo crear la ISO"; rm -f "$OUT/BC-OS-$VER-$SUF.iso"; }; fi
 if grep -q " $(realpath "$R")/" /proc/self/mountinfo; then echo "Aviso: quedan montajes en $R; no se borra"; else rm -rf --one-file-system "$R"; fi
 qemu-img convert -f raw -O vdi "$IMG" "$OUT/BC-OS-$VER-$SUF.vdi"
 rm -f "$IMG" "$IMG.sha256"
-(cd "$OUT" && zip -q -6 "BC-OS-$VER-$SUF.vdi.zip" "BC-OS-$VER-$SUF.vdi" && rm -f "BC-OS-$VER-$SUF.vdi" && sha256sum "BC-OS-$VER-$SUF.vdi.zip" > "SHA256SUMS-$SUF" && cat "SHA256SUMS-$SUF")
+(cd "$OUT" && zip -q -6 "BC-OS-$VER-$SUF.vdi.zip" "BC-OS-$VER-$SUF.vdi" && rm -f "BC-OS-$VER-$SUF.vdi" && sha256sum "BC-OS-$VER-$SUF.vdi.zip" $(ls "BC-OS-$VER-$SUF.iso" 2>/dev/null) > "SHA256SUMS-$SUF" && cat "SHA256SUMS-$SUF")
