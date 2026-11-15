@@ -9,9 +9,10 @@ Item {
     function px(v) { return Math.round(v * s) }
     property var apps: []
     property int index: 0
-    readonly property real cell: px(112)
-    width: Math.max(px(140), apps.length * cell + px(24))
-    height: px(150)
+    // macOS 27: iconos de 104 cada 134 pt, placa muy redondeada de 176 de alto, nombre bajo el elegido
+    readonly property real cell: px(134)
+    width: Math.max(px(176), apps.length * cell + px(36))
+    height: px(176)
     signal done()
 
     function build() {
@@ -43,7 +44,7 @@ Item {
     }
     Timer { id: commitTimer; interval: 1100; onTriggered: sw.commit() }
 
-    Glass { anchors.fill: parent; radius: px(26); tintBoost: 0.35 }
+    Glass { anchors.fill: parent; radius: px(44); tintBoost: 0.30 }
     Item {
         id: keys
         focus: true
@@ -55,20 +56,20 @@ Item {
         Keys.onTabPressed: sw.step(1)
     }
     Row {
-        x: px(12); anchors.verticalCenter: parent.verticalCenter
+        x: px(18); anchors.verticalCenter: parent.verticalCenter
         Repeater {
             model: sw.apps
             delegate: Item {
                 required property var modelData
                 required property int index
-                width: sw.cell; height: px(126)
-                Rectangle { anchors.fill: parent; anchors.margins: px(4); radius: px(16); color: Qt.rgba(1, 1, 1, 0.16); visible: index === sw.index }
-                AppIcon { visible: modelData.kind !== ""; kind: modelData.kind; size: px(84); anchors.horizontalCenter: parent.horizontalCenter; y: px(10) }
-                Image { visible: modelData.kind === ""; width: px(84); height: width; anchors.horizontalCenter: parent.horizontalCenter; y: px(10)
-                        source: modelData.icon ? "file://" + modelData.icon : "qrc:/BCShell/apps/system-file-manager.svg"; sourceSize: Qt.size(168, 168); smooth: true }
-                Text { visible: index === sw.index; anchors.horizontalCenter: parent.horizontalCenter; y: px(100); width: parent.width - px(8)
+                width: sw.cell; height: px(156)
+                Rectangle { x: (parent.width - width) / 2; y: px(6); width: px(124); height: px(124); radius: px(26); color: Qt.rgba(0, 0, 0, Theme.dark ? 0.30 : 0.16); visible: index === sw.index }
+                AppIcon { visible: modelData.kind !== ""; kind: modelData.kind; size: px(104); anchors.horizontalCenter: parent.horizontalCenter; y: px(16) }
+                Image { visible: modelData.kind === ""; width: px(104); height: width; anchors.horizontalCenter: parent.horizontalCenter; y: px(16)
+                        source: modelData.icon ? "file://" + modelData.icon : "qrc:/BCShell/apps/system-file-manager.svg"; sourceSize: Qt.size(208, 208); smooth: true; mipmap: true }
+                Text { visible: index === sw.index; anchors.horizontalCenter: parent.horizontalCenter; y: px(134); width: parent.width - px(4)
                        horizontalAlignment: Text.AlignHCenter; elide: Text.ElideRight; text: modelData.name; color: Theme.label
-                       font.family: Theme.font; font.pixelSize: px(12) }
+                       font.family: Theme.font; font.pixelSize: px(13); font.weight: Font.DemiBold }
                 MouseArea { anchors.fill: parent; hoverEnabled: true; onEntered: sw.index = index; onClicked: sw.commit() }
             }
         }
