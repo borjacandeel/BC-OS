@@ -151,8 +151,8 @@ QtObject {
     // Material = fondo desenfocado (capa precalculada del fondo) + tinte + reflejo de borde + sombra.
     readonly property real glassBlur: 48                       // radio de desenfoque del fondo (px a 1080p)
     readonly property color glassTintColor: dark ? Qt.rgba(0.035, 0.04, 0.11, 1) : Qt.rgba(0.97, 0.97, 0.99, 1)
-    readonly property real glassTintMin: dark ? 0.12 : 0.30    // ultratransparente
-    readonly property real glassTintMax: dark ? 0.86 : 0.92    // totalmente tintado
+    readonly property real glassTintMin: dark ? 0.12 : 0.55    // ultratransparente (claro: suelo más alto para que el texto oscuro se lea sobre fondos oscuros)
+    readonly property real glassTintMax: dark ? 0.86 : 0.94    // totalmente tintado
     readonly property real glassOpacity: glassTintMin + (glassTintMax - glassTintMin) * tint
     readonly property color glassRim: dark ? Qt.rgba(1, 1, 1, 0.20) : Qt.rgba(1, 1, 1, 0.75)       // borde fino luminoso (captura)
     readonly property color glassRimLow: dark ? Qt.rgba(1, 1, 1, 0.05) : Qt.rgba(1, 1, 1, 0.30)

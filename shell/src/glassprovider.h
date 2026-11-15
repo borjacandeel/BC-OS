@@ -17,6 +17,5 @@ public:
 
 private:
     QMutex m_lock;
-    QString m_key;
-    QImage m_blur;
+    QHash<QString, QImage> m_blur;   // un fondo desenfocado por tamaño de pantalla (multimonitor)
 };

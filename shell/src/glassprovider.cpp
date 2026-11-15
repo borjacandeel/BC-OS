@@ -41,16 +41,16 @@ QImage GlassProvider::requestImage(const QString &id, QSize *size, const QSize &
     QImage blur;
     {
         QMutexLocker l(&m_lock);
-        if (key != m_key) {
+        if (!m_blur.contains(key)) {
+            if (m_blur.size() >= 4) m_blur.clear();
             QImage src(path);
             if (src.isNull()) src = QImage(":/BCShell/assets/wallpaper-default.png");
             // Igual que sway («fill»): cubrir la pantalla recortando el sobrante centrado
             src = src.scaled(sw, sh, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
             src = src.copy((src.width() - sw) / 2, (src.height() - sh) / 2, sw, sh);
-            m_blur = blurred(src, qMax(12, sh / 22));
-            m_key = key;
+            m_blur.insert(key, blurred(src, qMax(12, sh / 22)));
         }
-        blur = m_blur;
+        blur = m_blur.value(key);
     }
     QImage out(w, h, QImage::Format_ARGB32_Premultiplied);
     out.fill(Qt::transparent);

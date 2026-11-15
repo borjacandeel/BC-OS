@@ -24,8 +24,12 @@ Window {
     readonly property bool _r: edges.indexOf("right") >= 0
     readonly property bool _t: edges.indexOf("top") >= 0
     readonly property bool _b: edges.indexOf("bottom") >= 0
-    readonly property real originX: _l ? margins[3] : (_r ? UiState.sw - width - margins[1] : (UiState.sw - width) / 2)
-    readonly property real originY: _t ? margins[0] : (_b ? UiState.sh - height - margins[2] : (UiState.sh - height) / 2)
+    // Tamaño de SU pantalla (multimonitor: cada superficie recorta el fondo de la pantalla en la que está)
+    readonly property bool _other: screen && Qt.application.screens.length > 1 && screen !== Qt.application.screens[0]
+    readonly property real scrW: _other ? screen.width : UiState.sw
+    readonly property real scrH: _other ? screen.height : UiState.sh
+    readonly property real originX: _l ? margins[3] : (_r ? scrW - width - margins[1] : (scrW - width) / 2)
+    readonly property real originY: _t ? margins[0] : (_b ? scrH - height - margins[2] : (scrH - height) / 2)
     function apply() {
         Layer.configure(w, { layer: layer, anchors: edges, exclusive: (fullscreenSurface || absolute) ? -1 : exclusive, margins: margins, keyboard: keyboard,
                              scope: scope, width: edges.indexOf("left") >= 0 && edges.indexOf("right") >= 0 ? 0 : width,
