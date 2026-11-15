@@ -54,7 +54,7 @@ install -m755 "$HERE/repo/bc-actualizar" "$R/usr/bin/bc-actualizar"
 # Instantáneas antes de cada cambio de paquetes (gancho de pacman) y bc-restaurar; la caché guarda 3 versiones
 install -D -m755 "$HERE/overlay/usr/lib/bc/bc-instantanea" "$R/usr/lib/bc/bc-instantanea"
 install -D -m644 "$HERE/overlay/usr/share/libalpm/hooks/00-bc-instantanea.hook" "$R/usr/share/libalpm/hooks/00-bc-instantanea.hook"
-install -m755 "$HERE/overlay/usr/bin/bc-restaurar" "$R/usr/bin/bc-restaurar"
+install -m755 "$HERE/overlay/usr/bin/bc-restaurar" "$HERE/overlay/usr/bin/bc-rendimiento" "$R/usr/bin/"
 sh "systemctl enable paccache.timer 2>/dev/null || true"
 # Tienda sin contraseña para administradores con sesión activa (polkit + ayudante restringido)
 install -D -m755 "$HERE/overlay/usr/lib/bc/bc-paquetes" "$R/usr/lib/bc/bc-paquetes"

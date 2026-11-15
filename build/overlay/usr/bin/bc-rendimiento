@@ -1,0 +1,21 @@
+#!/bin/sh
+# Informe de rendimiento de BC OS: arranque, memoria, CPU en reposo, disco y tiempo de apertura de apps.
+#   bc-rendimiento            muestra el informe
+#   bc-rendimiento --md       en Markdown (para docs/rendimiento.md)
+set -u
+md=0; [ "${1:-}" = "--md" ] && md=1
+row() { if [ $md = 1 ]; then printf '| %s | %s |\n' "$1" "$2"; else printf '%-34s %s\n' "$1" "$2"; fi; }
+[ $md = 1 ] && { echo "## Rendimiento — $(. /etc/os-release; echo "$PRETTY_NAME") · $(uname -m) · $(date +%F)"; echo; echo "| Medida | Valor |"; echo "|---|---|"; }
+row "Equipo" "$(cat ~/.config/bc/equipo 2>/dev/null || systemd-detect-virt 2>/dev/null || echo ?)"
+row "CPU" "$(nproc) núcleos · $(awk -F: '/model name|Model/{print $2; exit}' /proc/cpuinfo | sed 's/^ *//')"
+row "Arranque (systemd-analyze)" "$(systemd-analyze 2>/dev/null | head -n1 | sed 's/Startup finished in //')"
+row "Memoria usada" "$(free -m | awk '/Mem:/{printf "%d MB de %d MB", $3, $2}')"
+row "Memoria de BC Shell (panel)" "$(ps -C bc-shell -o rss= 2>/dev/null | awk '{s+=$1} END{printf "%d MB", s/1024}')"
+row "Memoria de sway" "$(ps -C sway -o rss= 2>/dev/null | awk '{s+=$1} END{printf "%d MB", s/1024}')"
+c1=$(awk '/^cpu /{print $2+$3+$4+$6+$7+$8, $5}' /proc/stat); sleep 2; c2=$(awk '/^cpu /{print $2+$3+$4+$6+$7+$8, $5}' /proc/stat)
+row "CPU en reposo (2 s)" "$(echo "$c1 $c2" | awk '{b=$3-$1; i=$4-$2; printf "%.1f %% ocupada", 100*b/(b+i)}')"
+row "Disco usado (/)" "$(df -h / | awk 'NR==2{print $3 " de " $2}')"
+row "Paquetes instalados" "$(pacman -Q | wc -l)"
+t0=$(date +%s%N); bc-shell --app calculator --check >/dev/null 2>&1; t1=$(date +%s%N)
+row "Abrir y cerrar Calculadora (sin ventana)" "$(( (t1 - t0) / 1000000 )) ms"
+row "Render" "$(grep -o 'WLR_RENDERER=[a-z]*' ~/bc-session.log 2>/dev/null | head -n1 || echo GPU)"
