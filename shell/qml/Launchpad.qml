@@ -1,8 +1,9 @@
 import QtQuick
 import BCShell
 
-// Aplicaciones (segundo icono del Dock / F4): rejilla a pantalla completa sobre el fondo desenfocado,
-// con búsqueda arriba y páginas de 7×5 que se pasan con la rueda, flechas o arrastrando.
+// Aplicaciones (segundo icono del Dock / F4), calcado de macOS 27 Golden Gate: no ocupa la pantalla entera.
+// Arriba, una barra de búsqueda en pastilla (520 pt); debajo, un panel de vidrio de 842×520 con las categorías en
+// pastillas y la cuadrícula de 7 columnas (iconos de 62, nombre de 13) que se desplaza en vertical.
 Item {
     id: lp
     anchors.fill: parent
@@ -12,116 +13,96 @@ Item {
     property string cat: ""
     readonly property var apps: cat === "" ? all : all.filter(a => a.category === cat)
     readonly property int cols: 7
-    readonly property int rows: 5
-    readonly property int perPage: cols * rows
-    readonly property int pages: Math.max(1, Math.ceil(apps.length / perPage))
-    property int page: 0
     signal launch(string id, string name)
     signal done()
-    function reset() { field.text = ""; cat = ""; all = Apps.search(""); page = 0; field.forceActiveFocus() }
+    function reset() { field.text = ""; cat = ""; all = Apps.search(""); grid.contentY = 0; field.forceActiveFocus() }
 
-    // Fondo: el escritorio desenfocado y oscurecido
-    Glass { anchors.fill: parent; radius: 0; shadow: false; rim: false; tintBoost: 0.25 }
-    MouseArea { anchors.fill: parent; onClicked: lp.done()
-                onWheel: (w) => { if (w.angleDelta.y < 0 || w.angleDelta.x < 0) lp.page = Math.min(lp.pages - 1, lp.page + 1); else lp.page = Math.max(0, lp.page - 1) } }
+    // Clic fuera: se cierra (el escritorio se ve detrás, sin oscurecer)
+    MouseArea { anchors.fill: parent; onClicked: lp.done() }
+
+    property real zoom: 1
+    onVisibleChanged: if (visible) { zoomOut.stop(); zoom = 0.94; zoomIn.restart() }
+    NumberAnimation { id: zoomIn; target: lp; property: "zoom"; to: 1; duration: Theme.d(Theme.durLaunchpad); easing.type: Theme.easeEmphasized }
+    function leave() { zoomIn.stop(); zoomOut.restart() }
+    NumberAnimation { id: zoomOut; target: lp; property: "zoom"; to: 0.96; duration: Theme.d(200); easing.type: Easing.InCubic }
 
     Item {
-        id: search
-        anchors.horizontalCenter: parent.horizontalCenter; y: px(48)
-        width: px(420); height: px(36)
-        Glass { anchors.fill: parent; radius: height / 2; tintBoost: 0.3; shadow: false }
-        Icon { x: px(10); anchors.verticalCenter: parent.verticalCenter; name: Icons.search; size: px(14); color: Qt.rgba(1, 1, 1, 0.7) }
-        TextInput {
-            id: field; x: px(30); width: parent.width - px(40); anchors.verticalCenter: parent.verticalCenter
-            color: "white"; font.family: Theme.font; font.pixelSize: px(13); focus: true
-            onTextChanged: { lp.all = Apps.search(text); lp.page = 0 }
-            Keys.onEscapePressed: lp.done()
-            Keys.onReturnPressed: if (lp.apps.length) lp.launch(lp.apps[0].id, lp.apps[0].name)
-            Keys.onRightPressed: lp.page = Math.min(lp.pages - 1, lp.page + 1)
-            Keys.onLeftPressed: lp.page = Math.max(0, lp.page - 1)
-            Text { visible: !parent.text; text: qsTr("Buscar"); color: Qt.rgba(1, 1, 1, 0.55); font: parent.font }
-        }
-    }
+        id: box
+        width: px(842); height: px(84) + px(14) + px(520)
+        anchors.horizontalCenter: parent.horizontalCenter
+        y: Math.max(px(40), (parent.height - height) / 2 - px(40))
+        scale: lp.zoom
+        MouseArea { anchors.fill: parent }   // no cerrar al pulsar dentro
 
-    // Entrada: la rejilla se acerca desde un poco más grande (el fondo no se escala)
-    property real zoom: 1
-    onVisibleChanged: if (visible) { zoomOut.stop(); zoom = 1.08; zoomIn.restart() }
-    NumberAnimation { id: zoomIn; target: lp; property: "zoom"; to: 1; duration: Theme.d(Theme.durLaunchpad); easing.type: Theme.easeEmphasized }
-    // Salida: la rejilla vuelve a agrandarse mientras se desvanece (como al cerrar Launchpad)
-    function leave() { zoomIn.stop(); zoomOut.restart() }
-    NumberAnimation { id: zoomOut; target: lp; property: "zoom"; to: 1.06; duration: Theme.d(220); easing.type: Easing.InCubic }
-    // Categorías (vista Aplicaciones de Tahoe/Golden Gate)
-    Row {
-        id: chips
-        anchors.horizontalCenter: parent.horizontalCenter; y: px(98); spacing: px(8)
-        Repeater {
-            model: [ { k: "", t: qsTr("Todas") }, { k: "productividad", t: qsTr("Productividad") }, { k: "creatividad", t: qsTr("Creatividad") },
-                     { k: "internet", t: qsTr("Internet") }, { k: "utilidades", t: qsTr("Utilidades") }, { k: "desarrollo", t: qsTr("Desarrollo") },
-                     { k: "juegos", t: qsTr("Juegos") }, { k: "sistema", t: qsTr("Sistema") } ]
-            Rectangle {
-                required property var modelData
-                visible: modelData.k === "" || lp.all.some(a => a.category === modelData.k)
-                width: ct.implicitWidth + px(24); height: px(28); radius: height / 2
-                color: lp.cat === modelData.k ? Qt.rgba(1, 1, 1, 0.92) : Qt.rgba(1, 1, 1, cm.containsMouse ? 0.22 : 0.12)
-                Text { id: ct; anchors.centerIn: parent; text: modelData.t; color: lp.cat === modelData.k ? "#1D1D1F" : "white"
-                       font.family: Theme.font; font.pixelSize: px(12); font.weight: Font.DemiBold }
-                MouseArea { id: cm; anchors.fill: parent; hoverEnabled: true; onClicked: { lp.cat = modelData.k; lp.page = 0 } }
+        // Barra de búsqueda
+        Item {
+            id: search
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: px(520); height: px(84)
+            Glass { anchors.fill: parent; radius: height / 2; tintBoost: 0.55 }
+            Icon { x: px(32); anchors.verticalCenter: parent.verticalCenter; name: "view-app-grid-symbolic"; size: px(24); color: Theme.labelSecondary }
+            TextInput {
+                id: field; x: px(74); width: parent.width - px(110); anchors.verticalCenter: parent.verticalCenter
+                color: Theme.label; font.family: Theme.font; font.pixelSize: px(22); focus: true; selectionColor: Theme.selection
+                onTextChanged: { lp.all = Apps.search(text); grid.contentY = 0 }
+                Keys.onEscapePressed: lp.done()
+                Keys.onReturnPressed: if (lp.apps.length) lp.launch(lp.apps[0].id, lp.apps[0].name)
+                Text { visible: !parent.text; text: qsTr("Aplicaciones"); color: Theme.labelSecondary; font: parent.font }
             }
         }
-    }
-    Item {
-        id: viewport
-        scale: lp.zoom
-        x: px(160); y: px(150); width: parent.width - px(320); height: parent.height - px(280)
-        clip: true
-        Row {
-            id: strip
-            x: -lp.page * viewport.width + dragOffset
-            property real dragOffset: 0
-            Behavior on x { enabled: !dragMa.pressed; NumberAnimation { duration: Theme.d(Theme.durSpaceSwitch); easing.type: Theme.easeEmphasized } }
-            Repeater {
-                model: lp.pages
-                delegate: Grid {
-                    required property int index
-                    readonly property int pg: index
-                    width: viewport.width; height: viewport.height
-                    columns: lp.cols
+
+        // Panel con categorías y cuadrícula
+        Item {
+            id: panel
+            y: search.height + px(14); width: parent.width; height: px(520)
+            Glass { anchors.fill: parent; radius: px(40); tintBoost: 0.35 }
+            Flickable {
+                id: chipsFlick
+                x: px(18); y: px(18); width: parent.width - px(36); height: px(32)
+                contentWidth: chips.width; clip: true; boundsBehavior: Flickable.StopAtBounds
+                Row {
+                    id: chips; spacing: px(8)
                     Repeater {
-                        model: lp.apps.slice(pg * lp.perPage, (pg + 1) * lp.perPage)
-                        delegate: Item {
+                        model: [ { k: "", t: qsTr("Todas") }, { k: "utilidades", t: qsTr("Utilidades") }, { k: "productividad", t: qsTr("Productividad") },
+                                 { k: "creatividad", t: qsTr("Creatividad") }, { k: "internet", t: qsTr("Internet") }, { k: "desarrollo", t: qsTr("Desarrollo") },
+                                 { k: "juegos", t: qsTr("Juegos") }, { k: "sistema", t: qsTr("Sistema") } ]
+                        Rectangle {
                             required property var modelData
-                            width: viewport.width / lp.cols; height: viewport.height / lp.rows
-                            Image {
-                                id: ic; anchors.horizontalCenter: parent.horizontalCenter; y: (parent.height - height - px(26)) / 2
-                                width: px(84); height: width; sourceSize: Qt.size(168, 168); smooth: true; asynchronous: true
-                                source: modelData.iconPath ? "file://" + modelData.iconPath : "qrc:/BCShell/apps/system-file-manager.svg"
-                                scale: am.pressed ? 0.9 : 1
-                                Behavior on scale { NumberAnimation { duration: 90 } }
-                            }
-                            Text { anchors.horizontalCenter: parent.horizontalCenter; anchors.top: ic.bottom; anchors.topMargin: px(8); width: parent.width - px(12)
-                                   horizontalAlignment: Text.AlignHCenter; elide: Text.ElideRight; text: modelData.name; color: "white"
-                                   font.family: Theme.font; font.pixelSize: px(12); style: Text.Raised; styleColor: Qt.rgba(0, 0, 0, 0.35) }
-                            MouseArea { id: am; anchors.fill: parent; onClicked: lp.launch(modelData.id, modelData.name) }
+                            visible: modelData.k === "" || lp.all.some(a => a.category === modelData.k)
+                            width: visible ? ct.implicitWidth + px(24) : 0; height: px(30); radius: height / 2
+                            color: lp.cat === modelData.k ? (Theme.dark ? Qt.rgba(1, 1, 1, 0.28) : Qt.rgba(0, 0, 0, 0.14))
+                                                         : (Theme.dark ? Qt.rgba(1, 1, 1, cm.containsMouse ? 0.16 : 0.08) : Qt.rgba(0, 0, 0, cm.containsMouse ? 0.08 : 0.04))
+                            Text { id: ct; anchors.centerIn: parent; text: modelData.t; color: Theme.label
+                                   font.family: Theme.font; font.pixelSize: px(14); font.weight: Font.Medium }
+                            MouseArea { id: cm; anchors.fill: parent; hoverEnabled: true; onClicked: { lp.cat = modelData.k; grid.contentY = 0 } }
                         }
                     }
                 }
             }
+            GridView {
+                id: grid
+                x: px(18); y: px(64); width: parent.width - px(36); height: parent.height - px(72)
+                cellWidth: width / lp.cols; cellHeight: px(104)
+                clip: true; boundsBehavior: Flickable.StopAtBounds
+                model: lp.apps
+                delegate: Item {
+                    required property var modelData
+                    width: grid.cellWidth; height: grid.cellHeight
+                    Image {
+                        id: ic; anchors.horizontalCenter: parent.horizontalCenter; y: px(6)
+                        width: px(62); height: width; sourceSize: Qt.size(128, 128); smooth: true; mipmap: true; asynchronous: true
+                        source: modelData.iconPath ? "file://" + modelData.iconPath : "qrc:/BCShell/apps/system-file-manager.svg"
+                        scale: am.pressed ? 0.9 : (am.containsMouse ? 1.04 : 1)
+                        Behavior on scale { NumberAnimation { duration: Theme.d(Theme.durHover); easing.type: Theme.easeStandard } }
+                    }
+                    Text { anchors.horizontalCenter: parent.horizontalCenter; anchors.top: ic.bottom; anchors.topMargin: px(8); width: parent.width - px(8)
+                           horizontalAlignment: Text.AlignHCenter; elide: Text.ElideRight; text: modelData.name; color: Theme.label
+                           font.family: Theme.font; font.pixelSize: px(13) }
+                    MouseArea { id: am; anchors.fill: parent; hoverEnabled: true; onClicked: lp.launch(modelData.id, modelData.name) }
+                }
+            }
+            Text { visible: lp.apps.length === 0; anchors.centerIn: grid; text: qsTr("Sin resultados"); color: Theme.labelSecondary
+                   font.family: Theme.font; font.pixelSize: px(15) }
         }
-        MouseArea {
-            id: dragMa; anchors.fill: parent; z: -1
-            property real sx: 0
-            onPressed: (m) => sx = m.x
-            onPositionChanged: (m) => strip.dragOffset = m.x - sx
-            onReleased: { if (strip.dragOffset < -px(80)) lp.page = Math.min(lp.pages - 1, lp.page + 1); else if (strip.dragOffset > px(80)) lp.page = Math.max(0, lp.page - 1); strip.dragOffset = 0 }
-            onClicked: if (Math.abs(strip.dragOffset) < 4) lp.done()
-        }
-    }
-    // Puntos de página
-    Row {
-        anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; anchors.bottomMargin: px(110); spacing: px(10)
-        visible: lp.pages > 1
-        Repeater { model: lp.pages
-                   Rectangle { required property int index; width: px(7); height: width; radius: width / 2; color: "white"; opacity: index === lp.page ? 0.95 : 0.35
-                               MouseArea { anchors.fill: parent; anchors.margins: -px(4); onClicked: lp.page = index } } }
     }
 }
