@@ -13,7 +13,8 @@ T="$(mktemp -d)"; trap 'bc_umount "$R" 2>/dev/null || true; rm -rf "$T"' EXIT
 
 # 1) initramfs live con los ganchos de archiso (squashfs + capa en RAM)
 bc_binfmt; bc_mount "$R"
-bc_chroot "$R" bash -c "pacman -S --needed --noconfirm --disable-sandbox mkinitcpio-archiso squashfs-tools"
+# La imagen se entrega sin las bases de datos de paquetes (se borran para ahorrar espacio): se descargan aquí
+bc_chroot "$R" bash -c "pacman -Sy --needed --noconfirm --disable-sandbox mkinitcpio-archiso squashfs-tools && rm -rf /var/lib/pacman/sync/* /var/cache/pacman/pkg/*"
 cat > "$R/etc/mkinitcpio-live.conf" <<C
 MODULES=(virtio_blk virtio_pci virtio_scsi virtio_gpu nvme ahci xhci_pci usb_storage uas sr_mod isofs squashfs overlay loop vfat ext4)
 HOOKS=(base udev modconf kms memdisk archiso archiso_loop_mnt block filesystems keyboard)
