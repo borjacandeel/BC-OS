@@ -30,7 +30,9 @@ PATH="$W/zig-$HOSTARCH-linux-$ZIG_VER:$PATH" ZIG_GLOBAL_CACHE_DIR="$W/cache" sh 
   || PATH="$W/zig-$HOSTARCH-linux-$ZIG_VER:$PATH" ZIG_GLOBAL_CACHE_DIR="$W/cache" bash "$W/src/nix/build-support/fetch-zig-cache.sh"
 
 # GHOSTTY_ARGS: opciones extra para depurar (p. ej. "-j1 --verbose"); BC_GHOSTTY_LOG: guardar la salida completa
-sh "cd /tmp/ghostty-build/src && ZIG_GLOBAL_CACHE_DIR=/tmp/ghostty-build/cache /tmp/ghostty-build/zig-aarch64-linux-$ZIG_VER/zig build \
+# BC_GHOSTTY_WRAP: envoltorio de depuración (p. ej. «strace -f -o /tmp/st.txt»)
+build_sh() { ${BC_GHOSTTY_WRAP:-} chroot "$R" /usr/bin/env -i HOME=/root TERM=xterm PATH=/usr/local/sbin:/usr/local/bin:/usr/bin bash -c "$*"; }
+build_sh "cd /tmp/ghostty-build/src && ZIG_GLOBAL_CACHE_DIR=/tmp/ghostty-build/cache /tmp/ghostty-build/zig-aarch64-linux-$ZIG_VER/zig build \
   --prefix /usr --system /tmp/ghostty-build/cache/p -Doptimize=ReleaseFast -Dcpu=baseline -Dpie=true -Demit-docs=false ${GHOSTTY_ARGS:-}" \
   2>&1 | tee "${BC_GHOSTTY_LOG:-/dev/null}" | tail -n 200
 [ "${PIPESTATUS[0]}" = 0 ]

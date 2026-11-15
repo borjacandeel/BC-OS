@@ -26,8 +26,12 @@ jobs:
         include:
           - variante: chroot
             args: "--summary all"
-          - variante: chroot-j1
-            args: "-j1 --summary all --verbose"
+          - variante: strace
+            args: "--summary all"
+            wrap: "strace -f -qq -s 160 -e trace=%file,%process,%signal,%ipc,prlimit64,getrandom,sched_getaffinity,uname,ioctl,mmap -o /tmp/ghostty-strace.txt"
+          - variante: anfitrion-ubuntu
+            args: "--summary all"
+            host: "1"
           - variante: v1.2.3-zig0.14.1
             args: "--summary all"
             tag: "v1.2.3"
@@ -48,19 +52,39 @@ jobs:
             bc_chroot $R bash -c 'pacman-key --init && pacman-key --populate archlinuxarm && pacman -Syu --noconfirm --disable-sandbox'
             bc_umount $R"
       - name: Compilar Ghostty
+        if: matrix.host != '1'
         env:
           GHOSTTY_TAG: ${{ matrix.tag || inputs.ghostty_tag }}
           ZIG_VER: ${{ matrix.zig || inputs.zig_ver }}
           GHOSTTY_ARGS: ${{ matrix.args }}
+          BC_GHOSTTY_WRAP: ${{ matrix.wrap }}
         run: |
           R="$RUNNER_TEMP/root"
           sudo -E BC_GHOSTTY_LOG="$RUNNER_TEMP/ghostty.log" bash build/build-ghostty.sh "$R" && echo "RESULTADO: OK" || echo "RESULTADO: FALLO"
+          if [ -f /tmp/ghostty-strace.txt ]; then
+            echo "--- strace: últimas líneas de cada hilo que entró en pánico ---"
+            sudo grep -n "SIGABRT\|tgkill\|+++ killed" /tmp/ghostty-strace.txt | head -20 || true
+            for t in $(sudo grep -o "^[0-9]* .*tgkill([0-9]*, \([0-9]*\)" /tmp/ghostty-strace.txt | grep -o "[0-9]*$" | sort -u | head -3); do
+              echo "--- hilo $t ---"; sudo grep "^$t " /tmp/ghostty-strace.txt | tail -n 60
+            done
+            sudo tail -n 150 /tmp/ghostty-strace.txt
+            sudo cp /tmp/ghostty-strace.txt "$RUNNER_TEMP/" ; sudo chmod a+r "$RUNNER_TEMP/ghostty-strace.txt"
+          fi
           echo "--- dmesg ---"; sudo dmesg | tail -n 20 || true
           echo "--- ulimit/cpus ---"; ulimit -a; nproc
+      - name: Compilar en el anfitrión (sin chroot)
+        if: matrix.host == '1'
+        run: |
+          sudo apt-get install -y --no-install-recommends libgtk-4-dev libadwaita-1-dev blueprint-compiler gettext pkg-config libgtk4-layer-shell-dev || true
+          cd "$RUNNER_TEMP"; git clone -q --depth 1 --branch "${{ inputs.ghostty_tag }}" https://github.com/ghostty-org/ghostty g
+          curl -fsSL "https://ziglang.org/download/${{ inputs.zig_ver }}/zig-aarch64-linux-${{ inputs.zig_ver }}.tar.xz" | tar -xJ
+          cd g && ../zig-aarch64-linux-${{ inputs.zig_ver }}/zig build -Doptimize=ReleaseFast -Demit-docs=false --summary all 2>&1 | tail -n 80 && echo "RESULTADO ANFITRIÓN: OK" || echo "RESULTADO ANFITRIÓN: FALLO"
       - name: Registro
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ghostty-${{ matrix.variante }}
-          path: ${{ runner.temp }}/ghostty.log
+          path: |
+            ${{ runner.temp }}/ghostty.log
+            ${{ runner.temp }}/ghostty-strace.txt
           if-no-files-found: ignore
