@@ -46,9 +46,15 @@ Item {
         visible: !Quick.realBlur
         anchors.fill: parent
         cache: false; asynchronous: false; smooth: false
-        source: !Quick.realBlur && g.width > 2 && g.height > 2
+        // Durante animaciones de tamaño (Dock, paneles) no se recorta el fondo en cada fotograma: como mucho cada 70 ms
+        // (entretanto la imagen anterior se estira). Así la ampliación del Dock va fluida con render por software.
+        readonly property string want: !Quick.realBlur && g.width > 2 && g.height > 2
             ? "image://glass/" + [g.gp.x, g.gp.y, Math.round(g.width), Math.round(g.height), Math.round(g.radius), Math.round(g.scrW), Math.round(g.scrH), g.version].join("_") + (g.leftOnly ? "_L" : "")
             : ""
+        onWantChanged: { if (source == "" || !throttle.running) { source = want; throttle.restart() } else throttle.pending = true }
+        Component.onCompleted: source = want
+        Timer { id: throttle; interval: 70; property bool pending: false
+                onTriggered: if (pending) { pending = false; blur.source = blur.want; restart() } }
     }
     // Tinte (deslizador ultratransparente ↔ tintado)
     // Con desenfoque real (Hyprland) el tinte es algo más ligero para que se vea lo de detrás, como Liquid Glass
