@@ -585,27 +585,48 @@ void QuickTools::pollWindow() {
 
 #include <QUrl>
 #include <QXmlStreamReader>
+#include <QDirIterator>
+#include <QDateTime>
+#include "filebrowser.h"
 QVariantList QuickTools::recentFiles(int max) {
+    // Como Recientes de macOS: lo que las apps anotan en recently-used.xbel y, además, los archivos de la
+    // carpeta personal modificados en los últimos 30 días (las apps BC y muchas de terminal no escriben el xbel).
     QFile f(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/recently-used.xbel");
-    QList<QPair<QString, QString>> items;   // (modificado, ruta)
+    QHash<QString, QDateTime> when;
     if (f.open(QIODevice::ReadOnly)) {
         QXmlStreamReader x(&f);
         while (!x.atEnd()) {
             if (x.readNext() == QXmlStreamReader::StartElement && x.name() == QLatin1String("bookmark")) {
                 const QUrl u(x.attributes().value("href").toString());
-                if (u.isLocalFile()) items.append({x.attributes().value("modified").toString(), u.toLocalFile()});
+                const QDateTime t = QDateTime::fromString(x.attributes().value("modified").toString(), Qt::ISODate);
+                if (u.isLocalFile() && (!when.contains(u.toLocalFile()) || when[u.toLocalFile()] < t)) when[u.toLocalFile()] = t;
             }
         }
     }
+    const QString home = QDir::homePath();
+    const QDateTime limit = QDateTime::currentDateTime().addDays(-30);
+    QDirIterator it(home, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+    int scanned = 0;
+    while (it.hasNext() && scanned < 20000) {
+        const QString p = it.next(); ++scanned;
+        const QString rel = p.mid(home.size() + 1);
+        if (rel.startsWith('.') || rel.contains("/.") || rel.contains("node_modules/")) continue;
+        const QDateTime m = it.fileInfo().lastModified();
+        if (m >= limit && (!when.contains(p) || when[p] < m)) when[p] = m;
+    }
+    QList<QPair<QDateTime, QString>> items;
+    for (auto i = when.cbegin(); i != when.cend(); ++i) if (QFileInfo::exists(i.key())) items.append({i.value(), i.key()});
     std::sort(items.begin(), items.end(), [](auto &a, auto &b) { return a.first > b.first; });
     QVariantList out;
-    const QString home = QDir::homePath();
-    QStringList seen;
-    for (const auto &it : items) {
-        if (seen.contains(it.second) || !QFileInfo::exists(it.second)) continue;
-        seen << it.second;
-        const QFileInfo fi(it.second);
-        out.append(QVariantMap{{"path", it.second}, {"name", fi.fileName()}, {"dir", fi.isDir()}, {"parent", QString(fi.absolutePath()).replace(home, "~")}});
+    const QDate today = QDate::currentDate();
+    for (const auto &i : items) {
+        const QFileInfo fi(i.second);
+        const qint64 days = i.first.date().daysTo(today);
+        const QString group = days <= 0 ? tr("Hoy") : days == 1 ? tr("Ayer") : days < 7 ? tr("Últimos 7 días")
+                            : days < 30 ? tr("Últimos 30 días") : tr("Anteriores");
+        out.append(QVariantMap{{"path", i.second}, {"name", fi.fileName()}, {"dir", fi.isDir()}, {"kind", FileBrowser::kindFor(fi)},
+                               {"parent", QString(fi.absolutePath()).replace(home, "~")}, {"group", group},
+                               {"date", QLocale().toString(i.first, QLocale::ShortFormat)}});
         if (out.size() >= max) break;
     }
     return out;

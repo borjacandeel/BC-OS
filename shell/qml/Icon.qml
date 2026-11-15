@@ -13,7 +13,10 @@ Item {
     height: size
 
     readonly property bool symbolic: name.endsWith("-symbolic")
-    readonly property string resolved: filled && symbolic && name.indexOf("-fill-") < 0 ? name.replace("-symbolic", "-fill-symbolic") : name
+    // Si no existe la variante rellena, se usa la normal
+    property bool noFill: false
+    onNameChanged: noFill = false
+    readonly property string resolved: filled && !noFill && symbolic && name.indexOf("-fill-") < 0 ? name.replace("-symbolic", "-fill-symbolic") : name
     readonly property real dpr: Screen.devicePixelRatio > 0 ? Screen.devicePixelRatio : 1
 
     Image {
@@ -22,6 +25,7 @@ Item {
         fillMode: Image.PreserveAspectFit
         smooth: true
         opacity: root.symbolic ? root.color.a : 1
+        onStatusChanged: if (status === Image.Error && root.filled && !root.noFill) root.noFill = true
         source: root.name === "" ? ""
               : root.symbolic ? IconCache.uri(root.resolved, root.color)
               : "qrc:/BCShell/icons/" + root.name + ".svg"

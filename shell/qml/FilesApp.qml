@@ -32,7 +32,7 @@ AppWindow {
     readonly property var tagColors: ({ rojo: "#FF453A", naranja: "#FF9F0A", amarillo: "#FFD60A", verde: "#30D158", azul: "#0A84FF", morado: "#BF5AF2", gris: "#8E8E93" })
     property string tagFilter: ""
     Connections { target: Files; function onPathChanged() { win.current = -1; const t = win.tabs.slice(); t[win.tab] = Files.path; win.tabs = t } }
-    Component.onCompleted: { if (AppConfig.openArg === "trash") Files.openTrash(); else if (AppConfig.openArg !== "") Files.open(AppConfig.openArg) }
+    Component.onCompleted: { if (AppConfig.openArg === "trash") Files.openTrash(); else if (AppConfig.openArg === "recientes") { recents = true; recentList = Quick.recentFiles() } else if (AppConfig.openArg !== "") Files.open(AppConfig.openArg) }
 
     function newTab() { const t = tabs.slice(); t.push(Files.path); tabs = t; tab = t.length - 1 }
     function closeTab(i) { if (tabs.length < 2) { win.closeRequested(); return } const t = tabs.slice(); t.splice(i, 1); tabs = t; tab = Math.min(tab, t.length - 1); Files.open(tabs[tab]) }
@@ -46,11 +46,12 @@ AppWindow {
                 property string label
                 property bool on: false
                 property color tint: Theme.accent
+                property bool fill: true
                 signal hit()
                 x: 10; width: side.width - 20; height: 28; radius: 7
                 color: on ? (win.active ? Theme.tileFill : Theme.tileFill) : (phov.containsMouse ? Qt.rgba(0.5, 0.5, 0.5, 0.08) : "transparent")
                 // Golden Gate: iconos en color solo en la ventana activa
-                Icon { x: 10; anchors.verticalCenter: parent.verticalCenter; name: pl.icon; size: 16; color: win.active ? pl.tint : Theme.textSecondary; filled: pl.on }
+                Icon { x: 10; anchors.verticalCenter: parent.verticalCenter; name: pl.icon; size: 16; color: win.active ? pl.tint : Theme.textSecondary; filled: pl.on && pl.fill }
                 Text { x: 34; anchors.verticalCenter: parent.verticalCenter; text: pl.label; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 13 }
                 MouseArea { id: phov; anchors.fill: parent; hoverEnabled: true; onClicked: pl.hit() }
             }
@@ -156,11 +157,11 @@ AppWindow {
             Column {
                 y: win.titlebarHeight + 4; width: parent.width
                 Head { text: qsTr("Favoritos") }
-                Place { icon: "document-open-symbolic"; label: qsTr("Recientes"); on: win.recents
+                Place { icon: "document-open-symbolic"; label: qsTr("Recientes"); on: win.recents; fill: false
                         onHit: { win.recents = true; win.recentList = Quick.recentFiles() } }
                 Repeater {
                     model: win.places
-                    Place { icon: modelData.icon; label: modelData.name; on: Files.path === Files.placePath(modelData.key) && !Files.inTrash
+                    Place { icon: modelData.icon; label: modelData.name; on: Files.path === Files.placePath(modelData.key) && !Files.inTrash && !win.recents
                             onHit: { win.tagFilter = ""; Files.setTagFilter(""); Files.place(modelData.key) } }
                 }
                 Head { text: qsTr("Ubicaciones") }
@@ -390,10 +391,62 @@ AppWindow {
                     }
                 }
                 // Resultados de búsqueda en toda la carpeta personal
+                // Recientes como en macOS: iconos agrupados por fecha (Hoy, Ayer, Últimos 7 días…)
+                Flickable {
+                    id: recentView
+                    visible: win.recents && !win.searchAll
+                    anchors.fill: parent; anchors.margins: 14; clip: true
+                    contentHeight: recentCol.height; boundsBehavior: Flickable.StopAtBounds
+                    readonly property var groups: {
+                        const g = []
+                        for (const r of win.recentList) { if (!g.length || g[g.length - 1].t !== r.group) g.push({ t: r.group, items: [] }); g[g.length - 1].items.push(r) }
+                        return g
+                    }
+                    Column {
+                        id: recentCol; width: recentView.width; spacing: 6
+                        Text { visible: win.recentList.length === 0; topPadding: 40; width: parent.width; horizontalAlignment: Text.AlignHCenter
+                               text: qsTr("No hay archivos recientes"); color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 15 }
+                        Repeater {
+                            model: recentView.groups
+                            Column {
+                                required property var modelData
+                                width: recentCol.width; spacing: 4
+                                Text { text: modelData.t; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 13; font.weight: Font.Bold; topPadding: 6 }
+                                Rectangle { width: parent.width; height: 1; color: Theme.separator }
+                                Flow {
+                                    width: parent.width; spacing: 4
+                                    Repeater {
+                                        model: modelData.items
+                                        Rectangle {
+                                            required property var modelData
+                                            width: 104; height: 108; radius: 8
+                                            color: rma.containsMouse ? Theme.tileFill : "transparent"
+                                            readonly property bool audio: /\.(mp3|ogg|oga|opus|flac|wav|m4a|aac)$/i.test(modelData.name)
+                                            FileGlyph { visible: parent.modelData.kind !== "imagen" && !parent.audio; anchors.horizontalCenter: parent.horizontalCenter; y: 2; width: 60; height: 60; scale: 0.8; kind: parent.modelData.kind || "texto" }
+                                            Image { visible: parent.audio; anchors.horizontalCenter: parent.horizontalCenter; y: 6; width: 54; height: 54; sourceSize: Qt.size(108, 108)
+                                                    source: visible ? "qrc:/BCShell/apps/multimedia-audio-player.svg" : "" }
+                                            // Imágenes: miniatura real con borde blanco, como en Finder
+                                            Rectangle {
+                                                visible: parent.modelData.kind === "imagen"; anchors.horizontalCenter: parent.horizontalCenter; y: 8
+                                                width: thumb.paintedWidth + 6; height: thumb.paintedHeight + 6; color: "white"; radius: 2
+                                                Image { id: thumb; anchors.centerIn: parent; width: 58; height: 46; fillMode: Image.PreserveAspectFit; asynchronous: true
+                                                        sourceSize: Qt.size(116, 92); source: parent.visible ? "file://" + parent.parent.modelData.path : "" }
+                                            }
+                                            Text { x: 4; y: 66; width: parent.width - 8; horizontalAlignment: Text.AlignHCenter; maximumLineCount: 2; wrapMode: Text.Wrap
+                                                   elide: Text.ElideMiddle; text: parent.modelData.name; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 11 }
+                                            MouseArea { id: rma; anchors.fill: parent; hoverEnabled: true
+                                                        onDoubleClicked: parent.modelData.dir ? Files.open(parent.modelData.path) : Quick.open(parent.modelData.path) }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
                 ListView {
-                    visible: win.searchAll || win.recents
+                    visible: win.searchAll
                     anchors.fill: parent; anchors.margins: 10; clip: true
-                    model: win.recents ? win.recentList : Quick.fileResults
+                    model: Quick.fileResults
                     delegate: Rectangle {
                         required property var modelData
                         required property int index
