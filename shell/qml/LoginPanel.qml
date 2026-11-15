@@ -26,13 +26,13 @@ Item {
     Column {
         id: col
         width: parent.width
-        spacing: 18
+        spacing: Theme.gg ? 10 : 18
         property real shiftX: 0
         transform: Translate { x: col.shiftX }
 
         Rectangle {
             id: avatar
-            width: 108; height: 108; radius: 54
+            width: Theme.gg ? 64 : 108; height: width; radius: width / 2
             anchors.horizontalCenter: parent.horizontalCenter
             gradient: Gradient {
                 GradientStop { position: 0.0; color: "#6E86B8" }
@@ -45,7 +45,7 @@ Item {
                 text: root.displayName.length > 0 ? root.displayName.charAt(0).toUpperCase() : "?"
                 color: Theme.white
                 font.family: Theme.fontFamily
-                font.pixelSize: 46
+                font.pixelSize: Theme.gg ? 28 : 46
                 font.weight: Font.DemiBold
             }
         }
@@ -56,13 +56,13 @@ Item {
             text: root.displayName
             color: Theme.white
             font.family: Theme.fontFamily
-            font.pixelSize: 22
+            font.pixelSize: Theme.gg ? 15 : 22
             font.weight: Font.DemiBold
         }
 
         Rectangle {
             id: field
-            width: 280; height: 42; radius: 21
+            width: Theme.gg ? 220 : 280; height: Theme.gg ? 34 : 42; radius: height / 2
             anchors.horizontalCenter: parent.horizontalCenter
             color: Qt.rgba(1, 1, 1, pw.activeFocus ? 0.20 : 0.14)
             border.width: 1
@@ -81,7 +81,7 @@ Item {
                 color: Theme.white
                 selectionColor: Theme.accent
                 font.family: Theme.fontFamily
-                font.pixelSize: 17
+                font.pixelSize: Theme.gg ? 14 : 17
                 clip: true
                 enabled: !root.busy
                 focus: true

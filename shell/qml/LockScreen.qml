@@ -12,12 +12,15 @@ Item {
     z: 5000
     opacity: active ? 1 : 0
     visible: opacity > 0
-    Behavior on opacity { NumberAnimation { duration: Theme.dur(300); easing.type: Easing.InOutCubic } }
+    Behavior on opacity { NumberAnimation { duration: Theme.d(active ? Theme.durLock : Theme.durUnlock); easing.type: Easing.InOutCubic } }
+    // Golden Gate: al desbloquear el reloj sube y se desvanece; al bloquear baja a su sitio
+    property real lift: active ? 0 : -60
+    Behavior on lift { NumberAnimation { duration: Theme.d(Theme.durUnlock); easing.type: Theme.easeEmphasized } }
 
     onActiveChanged: if (active) { panel.clear(); panel.busy = false; panel.focusField() }
 
     Rectangle { anchors.fill: parent; color: Theme.midnight }
-    Wallpaper { anchors.fill: parent; source: "qrc:/BCShell/assets/wallpaper-login.png" }
+    Wallpaper { anchors.fill: parent; source: Theme.gg ? "qrc:/BCShell/assets/wallpaper-default.png" : "qrc:/BCShell/assets/wallpaper-login.png" }
     Rectangle {
         anchors.fill: parent
         gradient: Gradient {
@@ -29,7 +32,7 @@ Item {
 
     BigClock {
         anchors.horizontalCenter: parent.horizontalCenter
-        y: Math.round(root.height * 0.07)
+        y: Math.round(root.height * 0.07) + root.lift
         scale: Math.min(1, root.height / 800)
         transformOrigin: Item.Top
     }
@@ -37,7 +40,7 @@ Item {
     LoginPanel {
         id: panel
         anchors.horizontalCenter: parent.horizontalCenter
-        y: Math.round(root.height * 0.42)
+        y: Math.round(root.height * (Theme.gg ? 0.70 : 0.42))
         userName: PamAuth.currentUser
         displayName: root.displayName
         placeholder: qsTr("Introduce la contraseña")

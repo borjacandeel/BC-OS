@@ -18,7 +18,7 @@ Window {
     Component.onCompleted: Sessions.selectFor(current.name)
     readonly property var current: userList.length > 0 ? userList[Math.min(userIndex, userList.length - 1)] : ({ name: "bc", display: "BC" })
 
-    Wallpaper { anchors.fill: parent; source: "qrc:/BCShell/assets/wallpaper-login.png" }
+    Wallpaper { anchors.fill: parent; source: Theme.gg ? "qrc:/BCShell/assets/wallpaper-default.png" : "qrc:/BCShell/assets/wallpaper-login.png" }
     Rectangle {
         anchors.fill: parent
         gradient: Gradient {
@@ -42,7 +42,7 @@ Window {
     LoginPanel {
         id: panel
         anchors.horizontalCenter: parent.horizontalCenter
-        y: Math.round(win.height * 0.42) + (1 - win.enter) * 30
+        y: Math.round(win.height * (Theme.gg ? 0.66 : 0.42)) + (1 - win.enter) * 30
         opacity: win.enter
         userName: win.current.name
         displayName: win.current.display

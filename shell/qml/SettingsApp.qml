@@ -4,20 +4,28 @@ import BCShell
 // Configuración: Apariencia, Sonido, Red, Energía, Usuarios y Acerca de (datos reales).
 AppWindow {
     id: win
-    width: 780
-    height: 520
-    title: qsTr("Configuración")
-    property int page: 0
+    width: 860
+    height: 580
+    title: qsTr("Ajustes del Sistema")
+    property int page: AppConfig.classic ? 0 : 6
     Component.onCompleted: Monitor.active = Qt.binding(() => win.visible && win.page === 5)
 
+    // Golden Gate: barra lateral de borde a borde con iconos en color (cuadrado redondeado + glifo blanco)
     readonly property var pages: [
-        { name: qsTr("Apariencia"), icon: "preferences-system-symbolic" },
-        { name: qsTr("Sonido"), icon: "audio-volume-high-symbolic" },
-        { name: qsTr("Red"), icon: "network-wireless-signal-excellent-symbolic" },
-        { name: qsTr("Energía"), icon: "preferences-system-power-symbolic" },
-        { name: qsTr("Usuarios"), icon: "system-users-symbolic" },
-        { name: qsTr("Acerca de"), icon: "dialog-information-symbolic" }
+        { idx: 2, name: qsTr("Red"), icon: "network-wireless-signal-excellent-symbolic", c: "#0A84FF" },
+        { idx: 1, name: qsTr("Sonido"), icon: "audio-volume-high-symbolic", c: "#FF375F" },
+        { idx: 9, name: qsTr("Notificaciones"), icon: "notification-symbolic", c: "#FF453A" },
+        { idx: 3, name: qsTr("Batería y energía"), icon: "preferences-system-power-symbolic", c: "#30D158" },
+        { sep: true },
+        { idx: 6, name: qsTr("Aspecto"), icon: "weather-clear-night-fill-symbolic", c: "#1C1C1E" },
+        { idx: 7, name: qsTr("Escritorio y Dock"), icon: "view-app-grid-symbolic", c: "#1C1C1E" },
+        { idx: 8, name: qsTr("Fondo de pantalla"), icon: "image-x-generic", c: "#32ADE6" },
+        { idx: 0, name: qsTr("General"), icon: "preferences-system-symbolic", c: "#8E8E93" },
+        { sep: true },
+        { idx: 4, name: qsTr("Usuarios"), icon: "system-users-symbolic", c: "#8E8E93" },
+        { idx: 5, name: qsTr("Acerca de"), icon: "dialog-information-symbolic", c: "#8E8E93" }
     ]
+    property string query: ""
 
     component Label: Text {
         color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 15
@@ -61,33 +69,187 @@ AppWindow {
         }
     }
 
-    // Barra lateral
+    // Barra lateral (de borde a borde; más oscura en la ventana activa, como en Golden Gate)
     Rectangle {
         id: side
-        width: 200; height: parent.height
-        color: Qt.rgba(0.03, 0.06, 0.16, 0.45)
+        width: 230; height: parent.height
+        color: Theme.gg ? (win.active ? Theme.sidebarBgActive : Theme.sidebarBg) : Qt.rgba(0.03, 0.06, 0.16, 0.45)
+        Rectangle { anchors.right: parent.right; width: 1; height: parent.height; color: Theme.hairline }
+        // Búsqueda
+        Rectangle {
+            x: 12; y: 8; width: parent.width - 24; height: 28; radius: 8; color: Theme.tileFill
+            Icon { x: 8; anchors.verticalCenter: parent.verticalCenter; name: Icons.search; size: 14; color: Theme.textSecondary }
+            TextInput { id: q; x: 28; width: parent.width - 36; anchors.verticalCenter: parent.verticalCenter; color: Theme.textPrimary
+                        font.family: Theme.fontFamily; font.pixelSize: 13; onTextChanged: win.query = text.toLowerCase()
+                        Text { visible: !parent.text; text: qsTr("Buscar"); color: Theme.textSecondary; font: parent.font } }
+        }
         Column {
-            x: 10; y: 12; width: parent.width - 20; spacing: 3
+            x: 10; y: 46; width: parent.width - 20; spacing: 1
             Repeater {
                 model: win.pages
-                Rectangle {
-                    width: parent.width; height: 38; radius: 9
-                    color: index === win.page ? Theme.accentSelected : (ma.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent")
-                    Icon { x: 12; anchors.verticalCenter: parent.verticalCenter; name: modelData.icon; size: 20 }
-                    Label { x: 44; anchors.verticalCenter: parent.verticalCenter; text: modelData.name }
-                    MouseArea { id: ma; anchors.fill: parent; hoverEnabled: true; onClicked: win.page = index }
+                Item {
+                    required property var modelData
+                    width: parent.width
+                    visible: modelData.sep ? win.query === "" : (win.query === "" || modelData.name.toLowerCase().indexOf(win.query) >= 0)
+                    height: !visible ? 0 : (modelData.sep ? 14 : 30)
+                    Rectangle { visible: !!modelData.sep; anchors.centerIn: parent; width: parent.width - 16; height: 1; color: Theme.hairline }
+                    Rectangle {
+                        visible: !modelData.sep
+                        anchors.fill: parent; radius: 7
+                        color: modelData.idx === win.page ? (win.active || !Theme.gg ? Theme.accent : Theme.tileFill) : (ma.containsMouse ? Theme.tileFill : "transparent")
+                        // Golden Gate: iconos en color solo en la ventana activa
+                        Rectangle { x: 6; anchors.verticalCenter: parent.verticalCenter; width: 20; height: 20; radius: 5
+                                    color: win.active || !Theme.gg ? (modelData.c || "#8E8E93") : Qt.rgba(0.5, 0.5, 0.55, 0.6)
+                                    Icon { anchors.centerIn: parent; name: modelData.icon || ""; size: 13; color: "white" } }
+                        Label { x: 34; anchors.verticalCenter: parent.verticalCenter; text: modelData.name || ""; font.pixelSize: 13
+                                color: modelData.idx === win.page && (win.active || !Theme.gg) ? "white" : Theme.textPrimary }
+                        MouseArea { id: ma; anchors.fill: parent; hoverEnabled: true; onClicked: win.page = modelData.idx }
+                    }
                 }
             }
         }
     }
 
-    Item {
-        x: 224; y: 22; width: parent.width - 224 - 24; height: parent.height - 22 - 12
+    Flickable {
+        x: 254; y: 18; width: parent.width - 254 - 24; height: parent.height - 18 - 12
+        contentHeight: Math.max(height, pageCol6.visible ? pageCol6.height : (pageCol7.visible ? pageCol7.height : height))
+        clip: true
+
+        // 6 Aspecto (Golden Gate)
+        Column {
+            id: pageCol6
+            visible: win.page === 6; width: parent.width; spacing: 14
+            Label { text: qsTr("Aspecto"); font.pixelSize: 20; font.weight: Font.Bold }
+            Row {
+                spacing: 18
+                Repeater {
+                    model: [ { v: "auto", t: qsTr("Automático") }, { v: "light", t: qsTr("Claro") }, { v: "dark", t: qsTr("Oscuro") } ]
+                    Column {
+                        required property var modelData
+                        spacing: 6
+                        Rectangle {
+                            width: 120; height: 78; radius: 10; clip: true
+                            border.width: Settings.appearance === modelData.v ? 3 : 1
+                            border.color: Settings.appearance === modelData.v ? Theme.accent : Theme.hairline
+                            color: modelData.v === "light" ? "#E9E9EE" : (modelData.v === "dark" ? "#1E1E22" : "#8E8E93")
+                            Rectangle { x: 10; y: 10; width: 70; height: 46; radius: 6; color: modelData.v === "dark" ? "#2C2C31" : "#FFFFFF"
+                                        Row { x: 6; y: 6; spacing: 3; Repeater { model: [Theme.close, Theme.minimize, Theme.zoom]; Rectangle { required property color modelData; width: 6; height: 6; radius: 3; color: modelData } } } }
+                            Rectangle { visible: modelData.v === "auto"; x: 60; width: 60; height: 78; color: "#1E1E22" }
+                            MouseArea { anchors.fill: parent; onClicked: Settings.appearance = modelData.v }
+                        }
+                        Label { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.t; font.pixelSize: 13 }
+                    }
+                }
+            }
+            Label { text: qsTr("Liquid Glass"); font.weight: Font.DemiBold }
+            Hint { width: parent.width; text: qsTr("De ultratransparente a totalmente tintado: afecta a la barra, el Dock, los widgets, los menús y los paneles.") }
+            Item {
+                width: parent.width; height: 34
+                Label { anchors.verticalCenter: parent.verticalCenter; text: qsTr("Transparente"); font.pixelSize: 12; color: Theme.textSecondary }
+                Rectangle {
+                    id: gtrack; x: 96; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 96 - 80; height: 6; radius: 3; color: Theme.tileFill
+                    Rectangle { width: Settings.glassTint * parent.width; height: parent.height; radius: 3; color: Theme.accent }
+                    Rectangle { x: Settings.glassTint * parent.width - 10; anchors.verticalCenter: parent.verticalCenter; width: 20; height: 20; radius: 10; color: "white"
+                                border.width: 1; border.color: Qt.rgba(0, 0, 0, 0.2) }
+                    MouseArea { anchors.fill: parent; anchors.margins: -10
+                                function upd(m) { Settings.glassTint = Math.max(0, Math.min(1, (m.x - 10) / gtrack.width)) }
+                                onPressed: (m) => upd(m); onPositionChanged: (m) => { if (pressed) upd(m) } }
+                }
+                Label { anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; text: qsTr("Tintado"); font.pixelSize: 12; color: Theme.textSecondary }
+            }
+            Label { text: qsTr("Color de resalte"); font.weight: Font.DemiBold }
+            Row {
+                spacing: 10
+                Repeater {
+                    model: ["#0A84FF", "#BF5AF2", "#FF375F", "#FF453A", "#FF9F0A", "#FFD60A", "#30D158", "#8E8E93"]
+                    Rectangle { required property string modelData; width: 22; height: 22; radius: 11; color: modelData
+                                border.width: Settings.accent.toUpperCase() === modelData ? 3 : 0; border.color: Theme.textPrimary
+                                MouseArea { anchors.fill: parent; onClicked: Settings.accent = modelData } }
+                }
+            }
+            Row2 { label: qsTr("Reducir movimiento"); value: ""
+                   Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
+                            on: Settings.reducedMotion; onToggled: (v) => Settings.reducedMotion = v } }
+            Row2 { label: qsTr("Sonidos de la interfaz"); value: ""
+                   Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
+                            on: Settings.sounds; onToggled: (v) => Settings.sounds = v } }
+        }
+
+        // 7 Escritorio y Dock
+        Column {
+            id: pageCol7
+            visible: win.page === 7; width: parent.width; spacing: 12
+            Label { text: qsTr("Escritorio y Dock"); font.pixelSize: 20; font.weight: Font.Bold }
+            Item {
+                width: parent.width; height: 44
+                Label { anchors.verticalCenter: parent.verticalCenter; text: qsTr("Tamaño") }
+                Rectangle {
+                    id: dtrack; x: 160; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 180; height: 6; radius: 3; color: Theme.tileFill
+                    readonly property real f: (Settings.dockSize - 32) / 64
+                    Rectangle { width: dtrack.f * parent.width; height: parent.height; radius: 3; color: Theme.accent }
+                    Rectangle { x: dtrack.f * parent.width - 10; anchors.verticalCenter: parent.verticalCenter; width: 20; height: 20; radius: 10; color: "white"; border.width: 1; border.color: Qt.rgba(0, 0, 0, 0.2) }
+                    MouseArea { anchors.fill: parent; anchors.margins: -10
+                                function upd(m) { Settings.dockSize = Math.round(32 + 64 * Math.max(0, Math.min(1, (m.x - 10) / dtrack.width))) }
+                                onPressed: (m) => upd(m); onPositionChanged: (m) => { if (pressed) upd(m) } }
+                }
+            }
+            Row2 { label: qsTr("Ampliación"); value: ""
+                   Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
+                            on: Settings.dockMagnify; onToggled: (v) => Settings.dockMagnify = v } }
+            Row2 { label: qsTr("Ocultar y mostrar el Dock automáticamente"); value: ""
+                   Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
+                            on: Settings.dockAutohide; onToggled: (v) => Settings.dockAutohide = v } }
+            Row2 { label: qsTr("Restablecer las apps del Dock"); value: ""
+                   Rectangle { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; width: 110; height: 26; radius: 7; color: Theme.tileFill
+                               Text { anchors.centerIn: parent; text: qsTr("Restablecer"); color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 12 }
+                               MouseArea { anchors.fill: parent; onClicked: Settings.dockApps = [] } } }
+            Label { text: qsTr("Widgets"); font.weight: Font.DemiBold }
+            Row2 { label: qsTr("Mostrar widgets en el escritorio"); value: ""
+                   Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
+                            on: Settings.widgets; onToggled: (v) => Settings.widgets = v } }
+            Row2 { label: qsTr("Volver a colocar los widgets en su columna"); value: ""
+                   Rectangle { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; width: 110; height: 26; radius: 7; color: Theme.tileFill
+                               Text { anchors.centerIn: parent; text: qsTr("Colocar"); color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 12 }
+                               MouseArea { anchors.fill: parent; onClicked: Settings.widgetLayout = "{}" } } }
+            Hint { width: parent.width; text: qsTr("Otras apps pueden añadir su widget dejando un archivo JSON en ~/.local/share/bc/widgets/.") }
+            Label { text: qsTr("Mission Control"); font.weight: Font.DemiBold }
+            Hint { width: parent.width; text: qsTr("Ctrl+↑ o F3, o desliza tres dedos hacia arriba. Ctrl+←/→ cambia de escritorio.") }
+        }
+
+        // 8 Fondo de pantalla
+        Column {
+            visible: win.page === 8; width: parent.width; spacing: 12
+            Label { text: qsTr("Fondo de pantalla"); font.pixelSize: 20; font.weight: Font.Bold }
+            Grid {
+                columns: 3; spacing: 12
+                Repeater {
+                    model: ["ondas.jpg", "medianoche.jpg", "oceano.jpg", "montanas.jpg", "grafito.jpg", "plata.jpg"]
+                    Rectangle {
+                        required property string modelData
+                        readonly property string path: "/usr/share/bc/wallpapers/" + modelData
+                        width: 170; height: 96; radius: 10; clip: true; color: Theme.tileFill
+                        border.width: (Settings.wallpaper === path || (Settings.wallpaper === "" && modelData === "ondas.jpg")) ? 3 : 0; border.color: Theme.accent
+                        Image { anchors.fill: parent; anchors.margins: parent.border.width; source: "file://" + parent.path; sourceSize: Qt.size(340, 192); fillMode: Image.PreserveAspectCrop; asynchronous: true }
+                        MouseArea { anchors.fill: parent; onClicked: Settings.wallpaper = (modelData === "ondas.jpg" ? "" : parent.path) }
+                    }
+                }
+            }
+        }
+
+        // 9 Notificaciones
+        Column {
+            visible: win.page === 9; width: parent.width; spacing: 12
+            Label { text: qsTr("Notificaciones"); font.pixelSize: 20; font.weight: Font.Bold }
+            Row2 { label: qsTr("No molestar"); value: ""
+                   Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
+                            on: Settings.mode === "focus"; onToggled: (v) => Settings.mode = v ? "focus" : "" } }
+            Hint { width: parent.width; text: qsTr("Con «No molestar» las notificaciones se guardan en el Centro de notificaciones sin mostrarse. Ábrelo pulsando la fecha y la hora.") }
+        }
 
         // 0 Apariencia
         Column {
             visible: win.page === 0; width: parent.width; spacing: 12
-            Label { text: qsTr("Apariencia"); font.pixelSize: 22; font.weight: Font.DemiBold }
+            Label { text: qsTr("General"); font.pixelSize: 22; font.weight: Font.DemiBold }
             Row2 { label: qsTr("Widgets en el escritorio"); value: ""
                    Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
                             on: Settings.widgets; onToggled: (v) => Settings.widgets = v } }

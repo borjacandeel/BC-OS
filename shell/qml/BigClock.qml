@@ -6,7 +6,7 @@ Item {
     id: root
     property date now: new Date()
     readonly property var loc: Qt.locale(AppConfig.language)
-    readonly property string dateFormat: AppConfig.language.indexOf("en") === 0 ? "dddd, MMMM d" : "dddd d 'de' MMMM"
+    readonly property string dateFormat: AppConfig.language.indexOf("en") === 0 ? "dddd, MMMM d" : (Theme.gg ? "dddd, d 'de' MMMM" : "dddd d 'de' MMMM")
     width: col.width
     height: col.height
 
@@ -22,17 +22,19 @@ Item {
             text: { const s = root.now.toLocaleDateString(root.loc, root.dateFormat); return s.charAt(0).toUpperCase() + s.slice(1) }
             color: Qt.rgba(1, 1, 1, 0.88)
             font.family: Theme.fontFamily
-            font.pixelSize: 24
-            font.weight: Font.Medium
+            font.pixelSize: Theme.gg ? 22 : 24
+            font.weight: Theme.gg ? Font.DemiBold : Font.Medium
         }
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             text: root.now.toLocaleTimeString(root.loc, "HH:mm")
-            color: Theme.white
+            // Golden Gate: hora enorme y gruesa, blanca translúcida (efecto vidrio sobre el fondo)
+            color: Theme.gg ? Qt.rgba(1, 1, 1, 0.9) : Theme.white
             font.family: Theme.fontFamily
-            font.pixelSize: 112
-            font.weight: Font.Light
-            font.letterSpacing: -2
+            font.pixelSize: Theme.gg ? 132 : 112
+            font.weight: Theme.gg ? Font.DemiBold : Font.Light
+            font.letterSpacing: Theme.gg ? -4 : -2
+            style: Theme.gg ? Text.Raised : Text.Normal; styleColor: Qt.rgba(0, 0, 0, 0.12)
         }
     }
 }
