@@ -27,7 +27,7 @@ Item {
     function reset() { field.text = ""; refresh(); field.forceActiveFocus() }
     function refresh() {
         const q = field.text.trim(), out = []
-        if (q.length === 0) { results = []; return }
+        if (q.length === 0) { results = []; return }   // (los accesos de la derecha pueden rellenar la lista)
         const calc = Quick.calculate(q)
         if (calc !== "") out.push({ kind: "calc", title: calc, sub: q + " =", icon: "accessories-calculator" })
         for (const a of Apps.search(q).slice(0, 6)) out.push({ kind: "app", title: a.name, sub: qsTr("Aplicación"), iconPath: a.iconPath, id: a.id })
@@ -63,6 +63,25 @@ Item {
         Keys.onDownPressed: sp.selected = Math.min(sp.results.length - 1, sp.selected + 1)
         Keys.onUpPressed: sp.selected = Math.max(0, sp.selected - 1)
         Text { visible: field.text.length === 0; anchors.verticalCenter: parent.verticalCenter; text: qsTr("Búsqueda Spotlight"); color: Theme.labelTertiary; font: field.font }
+    }
+    // Accesos de la barra vacía (como en Tahoe/Golden Gate): Aplicaciones, Archivos, Acciones y Portapapeles
+    Row {
+        visible: field.text.length === 0
+        anchors.right: parent.right; anchors.rightMargin: px(12); y: (px(56) - height) / 2; spacing: px(6)
+        Repeater {
+            model: [ { i: "view-app-grid-symbolic", t: qsTr("Aplicaciones"), c: "bc:launcher" },
+                     { i: "folder-symbolic", t: qsTr("Archivos"), c: "sway:exec bc-shell --app files" },
+                     { i: "preferences-system-symbolic", t: qsTr("Acciones"), c: "actions" },
+                     { i: "edit-paste-symbolic", t: qsTr("Portapapeles"), c: "bc:clipboard" } ]
+            Rectangle {
+                required property var modelData
+                width: px(34); height: width; radius: width / 2; color: qa.containsMouse ? Theme.fillHover : Theme.fill
+                Icon { anchors.centerIn: parent; name: modelData.i; size: px(16); color: Theme.label }
+                MouseArea { id: qa; anchors.fill: parent; hoverEnabled: true
+                            onClicked: { if (modelData.c === "actions") { sp.results = sp.actions.map(a => ({ kind: "action", title: a.t, sub: qsTr("Acción del sistema"), cmd: a.c })); sp.selected = 0 }
+                                         else { sp.done(); UiState.run(modelData.c) } } }
+            }
+        }
     }
     Rectangle { visible: sp.results.length > 0; y: px(56); x: px(14); width: parent.width - px(28); height: 1; color: Theme.separator }
     ListView {
