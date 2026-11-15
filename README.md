@@ -8,21 +8,21 @@
 Sistema operativo Linux (ARM64 y x86_64) creado por <b>Borja Candel</b>, en español por defecto.</p>
 
 <p align="center">
-  <img alt="Versión" src="https://img.shields.io/badge/versi%C3%B3n-0.8.0--beta%20(prerelease)-2F7BFF">
+  <img alt="Versión" src="https://img.shields.io/badge/versi%C3%B3n-0.9.0--beta%20(prerelease)-2F7BFF">
   <img alt="Arquitectura" src="https://img.shields.io/badge/arquitectura-ARM64%20%7C%20x86__64-04111F">
   <img alt="Base" src="https://img.shields.io/badge/base-Arch%20Linux%20%2F%20ARM-1793D1">
   <img alt="Idioma" src="https://img.shields.io/badge/idioma-espa%C3%B1ol%20(es__ES)-C60B1E">
   <img alt="Estado" src="https://img.shields.io/badge/estado-beta%20experimental-FFB340">
 </p>
 
-BC OS es un Linux ligero y en español para **ARM64** (sobre **Arch Linux ARM**) y **x86_64** (sobre **Arch Linux**), con compositor **sway** y un escritorio propio, **BC Shell** (Qt 6 / QML). Desde la serie 0.6 su escritorio por defecto es **«Golden Gate»**: una réplica del aspecto y del comportamiento de macOS 27 Golden Gate, hecha con código y recursos propios o libres (no usa recursos de Apple). Se prueba en máquinas virtuales (VirtualBox en Mac Apple Silicon o PC, QEMU) y se adapta a equipos físicos con GPU.
+BC OS es un Linux ligero y en español para **ARM64** (sobre **Arch Linux ARM**) y **x86_64** (sobre **Arch Linux**), con compositor **Hyprland** (con aceleración 3D) o **sway** (sin ella) y un escritorio propio, **BC Shell** (Qt 6 / QML). Desde la serie 0.6 su escritorio por defecto es **«Golden Gate»**: una réplica del aspecto y del comportamiento de macOS 27 Golden Gate, hecha con código y recursos propios o libres (no usa recursos de Apple). Se prueba en máquinas virtuales (VirtualBox en Mac Apple Silicon o PC, QEMU) y se adapta a equipos físicos con GPU.
 
 <p align="center">
   <img src="docs/escritorio/capturas/1-escritorio.jpg" alt="Escritorio Golden Gate de BC OS: barra de menús transparente, widgets de vidrio a la izquierda, fondo de ondas con el logo BC y Dock de vidrio" width="880">
   <br><sub>Escritorio Golden Gate: barra de menús, widgets de vidrio, iconos en el escritorio, aviso y Dock. Captura del shell en el anfitrión de desarrollo.</sub>
 </p>
 
-> **Estado honesto:** beta experimental. La **0.8.0-beta** sale para ARM64 y x86_64 (disco VDI e ISO live); la 0.6.0-beta arrancó en QEMU aarch64 con login y escritorio correctos. Muchas piezas están compiladas y vistas en capturas, pero **pendientes de prueba real**. Ver [estado y pendientes](#estado-honesto-de-golden-gate).
+> **Estado honesto:** beta experimental. La **0.9.0-beta** sale para ARM64 y x86_64 (disco VDI e ISO live) con **Hyprland** por defecto si hay 3D; la 0.6.0-beta arrancó en QEMU aarch64 con login y escritorio correctos. Muchas piezas están compiladas y vistas en capturas, pero **pendientes de prueba real**. Ver [estado y pendientes](#estado-honesto-de-golden-gate).
 
 ---
 
@@ -157,12 +157,12 @@ La sesión por defecto también se puede fijar en **Ajustes ▸ General ▸ «En
 - Repositorio propio `[bc]`, instantáneas antes de actualizar (`bc-restaurar`), Tienda sin contraseña (polkit),
   bloqueo a prueba de fallos, **Ghostty**, box64 (programas x86_64 en ARM) y `bc-rendimiento`.
 
-**Pendiente:** firma GPG del repositorio, idiomas, Android, gestos que sigan el dedo y probar todo en VirtualBox.
+**Pendiente:** firma GPG del repositorio, idiomas, Android y probar todo en máquinas virtuales con y sin 3D.
 
 **Limitaciones conocidas:**
-- El cristal (Liquid Glass) refleja el **fondo** desenfocado, no las ventanas de detrás: sin GPU no hay desenfoque real del compositor (con swayfx + GPU sí, opcional con `bc.gpu=1`).
-- Los **gestos** del trackpad (3/4 dedos) son **discretos**: se disparan al terminar y no siguen el dedo.
-- Ventanas de apps externas: cierre con captura que se encoge y apertura con fundido (sway no escala ventanas).
+- Cristal (Liquid Glass): con Hyprland desenfoca de verdad lo que hay detrás; con sway por software refleja el **fondo** desenfocado.
+- Gestos: con Hyprland el cambio de escritorio sigue al dedo; con sway son discretos (se disparan al terminar).
+- Ventanas de apps externas: con Hyprland, animaciones del compositor; con sway, cierre con captura que se encoge y apertura con fundido.
 - Multimonitor: barra, Dock, cristal y Mission Control por pantalla; los widgets, en la principal.
 - Iconos de apps: tema MacOS-Like (elegido por el creador).
 - Duraciones, curvas y algunas medidas son estimaciones (Apple no las publica); ver «Sin confirmar» en [`ESTADO.md`](docs/escritorio/ESTADO.md).
@@ -191,6 +191,7 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 | `0.3.x-alpha` | publicadas | **sway** (mosaico/flotante), menús globales por app, Dock con ventanas reales, Alacritty, animación de minimizar y swayfx experimental. |
 | `0.4.0-beta` / `0.4.1-beta` | publicadas (prerrelease) | Asistente de bienvenida, estilos, widgets, Modos, Flathub, fish, servicio de antivirus; resolución adaptable (`bc-display`), iconos Qogir, portapapeles (Súper+V). |
 | `0.5.0-beta` | prerrelease, en pruebas | Entorno **Dotfiles (bspwm)** elegible en el login. Verificado en QEMU; sin probar en VirtualBox. |
+| `0.9.0-beta` | prerelease | **Hyprland** por defecto con 3D (animaciones fluidas tipo macOS, desenfoque real), sway por software si no; arreglo del bucle de login en VirtualBox; Alacritty con marco. |
 | `0.8.0-beta` | prerelease | **x86_64** + ISO live, primer arranque VM/equipo físico, repositorio `[bc]`, instantáneas, Tienda sin contraseña, Ghostty, box64, instalador con GRUB/Secure Boot, Control Center editable, Recientes, 10 fondos, animaciones. |
 | `0.7.0-beta` | prerelease | Apps nuevas (Monitor, Tienda, Calculadora, Notas, Vista previa, Calendario, Recordatorios, Música), vibrancy, widgets editables, animaciones de cerrar/minimizar. |
 | `0.6.0-beta` | prerelease | Escritorio **Golden Gate** por defecto; «BC clásico» en el login. Arranca en QEMU con login y escritorio correctos. |
@@ -218,6 +219,15 @@ En VirtualBox hay que **activar EFI**. Instalar: `sudo bc-install` (opciones `--
 - **Tienda sin contraseña** para administradores con sesión activa (polkit, ayudante restringido `bc-paquetes`).
 - **Bloqueo a prueba de fallos**: si el panel se cae con la pantalla bloqueada, swaylock la protege al instante.
 - **Programas x86_64 en ARM** con box64 (se abren solos). **`bc-rendimiento`**: informe de arranque, memoria y CPU.
+
+## Animaciones fluidas: Hyprland
+
+Con aceleración 3D (equipo real, **UTM** en Mac con pantalla `virtio-gpu-gl-pci`, VirtualBox x86 con «Habilitar
+aceleración 3D», QEMU con virgl) BC OS arranca **Hyprland** con animaciones tipo macOS: apertura con muelle, cierre
+que encoge y desvanece, Spaces que se deslizan, menús con zoom, esquinas continuas, sombras y **desenfoque real**
+detrás del vidrio. Gestos de 3 dedos que siguen al dedo. Sin 3D (p. ej. VirtualBox en Mac ARM) entra **sway** por
+software automáticamente; si Hyprland fallara, también. Configuración: `/etc/bc/hypr/hyprland.lua` (personalizable en
+`~/.config/bc/hypr-user.lua`); forzar uno u otro: `~/.config/bc/compositor` (`hyprland` o `sway`).
 
 ## Primer arranque: máquina virtual o equipo físico
 
