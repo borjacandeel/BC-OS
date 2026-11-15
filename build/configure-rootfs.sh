@@ -190,6 +190,8 @@ install -D -m644 "$HERE/overlay/etc/ssh/sshd_config.d/10-bcos.conf" "$R/etc/ssh/
 install -D -m644 "$HERE/overlay/etc/systemd/zram-generator.conf" "$R/etc/systemd/zram-generator.conf"
 install -D -m644 "$HERE/overlay/etc/nftables.conf" "$R/etc/nftables.conf"
 
+# Bases de datos de todos los repositorios (también [bc]): sin ellas «pacman -S» y la Tienda fallan en el sistema
+sh "pacman -Sy --noconfirm --disable-sandbox" || echo "AVISO: no se pudieron descargar las bases de pacman (¿[bc] publicado?)"
 sh "pacman -Scc --noconfirm"
 install -D -m644 "$HERE/overlay/etc/mkinitcpio.conf.d/bcos.conf" "$R/etc/mkinitcpio.conf.d/bcos.conf"
 # Arranque animado: tema Plymouth bcos (debe ser el tema por defecto ANTES de generar el initramfs)
