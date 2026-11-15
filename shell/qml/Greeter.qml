@@ -53,11 +53,11 @@ Window {
     }
 
     // Entorno de escritorio: BC OS (sway) o Dotfiles (bspwm); se recuerda la última elección y la que cada usuario fija en Configuración
+    // Golden Gate: el selector de entorno va arriba a la derecha, discreto (en macOS ahí están los menús de estado)
     Row {
         visible: Sessions.sessions.length > 1
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: panel.bottom
-        anchors.topMargin: (win.userList.length > 1 ? 62 : 10) * panel.scale
+        x: Theme.gg ? parent.width - width - 16 : (parent.width - width) / 2
+        y: Theme.gg ? 14 : panel.y + panel.height * panel.scale + (win.userList.length > 1 ? 62 : 10) * panel.scale
         spacing: 8
         opacity: win.enter
         Repeater {
@@ -66,11 +66,11 @@ Window {
                 required property var modelData
                 required property int index
                 readonly property bool sel: index === Sessions.current
-                height: 30; width: st.implicitWidth + 28; radius: 15
+                height: Theme.gg ? 26 : 30; width: st.implicitWidth + (Theme.gg ? 22 : 28); radius: height / 2
                 color: sel ? Qt.rgba(1, 1, 1, 0.9) : Qt.rgba(1, 1, 1, 0.14)
                 Behavior on color { ColorAnimation { duration: Theme.dur(120) } }
                 Text { id: st; anchors.centerIn: parent; text: modelData.name; color: sel ? Theme.midnight : Theme.white
-                       font.family: Theme.fontFamily; font.pixelSize: 13; font.weight: sel ? Font.DemiBold : Font.Normal }
+                       font.family: Theme.fontFamily; font.pixelSize: Theme.gg ? 12 : 13; font.weight: sel ? Font.DemiBold : Font.Normal }
                 MouseArea { anchors.fill: parent; onClicked: { Sessions.current = index; panel.focusField() } }
             }
         }
