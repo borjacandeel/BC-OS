@@ -1,26 +1,47 @@
 # Alacritty en BC OS (copia a ~/.config/alacritty/alacritty.toml para personalizar)
+# Aspecto del Terminal de macOS (perfil oscuro): gris carbón casi opaco, texto claro, cursor de bloque.
 [window]
-opacity = 0.82
-padding = { x = 12, y = 10 }
+opacity = 0.95
+padding = { x = 10, y = 8 }
 decorations = "None"
 dynamic_padding = true
 
 [font]
-size = 11.5
-normal = { family = "CaskaydiaCove Nerd Font" }
+size = 12
+normal = { family = "CaskaydiaCove Nerd Font Mono" }
 
 [colors.primary]
-background = "#070d22"
-foreground = "#e8ecf5"
+background = "#1e1e1e"
+foreground = "#f2f2f2"
 
 [colors.cursor]
-cursor = "#2f7bff"
-text = "#070d22"
+cursor = "#c7c7c7"
+text = "#1e1e1e"
 
 [colors.selection]
-background = "#2f7bff"
+background = "#3f638b"
 text = "#ffffff"
 
+[colors.normal]
+black = "#000000"
+red = "#ff5f57"
+green = "#28c840"
+yellow = "#febc2e"
+blue = "#0a84ff"
+magenta = "#bf5af2"
+cyan = "#64d2ff"
+white = "#e5e5e7"
+
+[colors.bright]
+black = "#686868"
+red = "#ff6e67"
+green = "#5af78e"
+yellow = "#f4f99d"
+blue = "#57c7ff"
+magenta = "#ff6ac1"
+cyan = "#9aedfe"
+white = "#ffffff"
+
 [cursor.style]
-shape = "Beam"
+shape = "Block"
 blinking = "On"
