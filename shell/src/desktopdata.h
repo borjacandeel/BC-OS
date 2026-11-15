@@ -119,6 +119,12 @@ public:
     Q_INVOKABLE static bool writeData(const QString &name, const QString &json);
     // Archivos ▸ Recientes: ~/.local/share/recently-used.xbel (estándar freedesktop que escriben GTK y Qt)
     Q_INVOKABLE static QVariantList recentFiles(int max = 120);
+    // Dónde se ejecuta BC OS: «vm» (máquina virtual: render por software, sin efectos de GPU) o «fisico» (equipo real:
+    // GPU, swayfx con desenfoque, sombras y esquinas). Se guarda en ~/.config/bc/equipo y lo lee bc-session.
+    Q_INVOKABLE static QString detectedMachine();   // detección automática (systemd-detect-virt / DMI)
+    Q_INVOKABLE static QString machineKind();       // elección guardada o, si no hay, la detectada
+    Q_INVOKABLE static bool setMachineKind(const QString &kind);
+    Q_INVOKABLE static bool hasGpu();               // hay /dev/dri/renderD*
     // Captura con grim de la pantalla (geom vacía) o de una región «x,y wxh» → señal captured(tag, ruta)
     Q_INVOKABLE void capture(const QString &tag, const QString &geom);
     static QVariantList parseWifi(const QString &nmcliTerse);

@@ -2,20 +2,31 @@
 # Sesión gráfica de BC OS: sway (Wayland) + panel de BC Shell. Respaldo por software si no hay GPU.
 # «BC clásico»: el escritorio anterior a Golden Gate (barra, Dock y widgets de antes), elegible en el login
 if [ "$1" = "--classic" ]; then export BC_CLASSIC=1; shift; fi
-# Alpha: render por software siempre, salvo que el kernel arranque con bc.gpu=1
-if ! grep -qw "bc.gpu=1" /proc/cmdline || ! ls /dev/dri/renderD* >/dev/null 2>&1; then
+# Dónde se ejecuta (lo elige el usuario en la bienvenida; si no, se detecta): «vm» → render por software, ligero y
+# estable en VirtualBox/UTM/QEMU; «fisico» → GPU con swayfx (desenfoque real, sombras, esquinas). bc.gpu=0/1 en el
+# kernel fuerza una u otra.
+EQUIPO="$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/bc/equipo" 2>/dev/null || cat /etc/bc/equipo 2>/dev/null)"
+if [ "$EQUIPO" != vm ] && [ "$EQUIPO" != fisico ]; then
+  if systemd-detect-virt --vm -q 2>/dev/null; then EQUIPO=vm; else EQUIPO=fisico; fi
+fi
+GPU=0
+[ "$EQUIPO" = fisico ] && ls /dev/dri/renderD* >/dev/null 2>&1 && GPU=1
+grep -qw "bc.gpu=1" /proc/cmdline && ls /dev/dri/renderD* >/dev/null 2>&1 && GPU=1
+grep -qw "bc.gpu=0" /proc/cmdline && GPU=0
+export BC_EQUIPO="$EQUIPO"
+if [ "$GPU" = 0 ]; then
   export WLR_RENDERER=pixman WLR_NO_HARDWARE_CURSORS=1 QT_QUICK_BACKEND=software
 fi
 export XCURSOR_THEME=McMojave-cursors XCURSOR_SIZE=24
 export LANG="${LANG:-es_ES.UTF-8}" XDG_CURRENT_DESKTOP=BC XDG_SESSION_TYPE=wayland QT_QPA_PLATFORM=wayland
 LOG="$HOME/bc-session.log"
-{ date; echo "renderD: $(ls /dev/dri 2>&1 | tr '\n' ' ')"; echo "WLR_RENDERER=$WLR_RENDERER QT_QUICK_BACKEND=$QT_QUICK_BACKEND"; } > "$LOG" 2>&1
+{ date; echo "equipo: $EQUIPO  gpu: $GPU  renderD: $(ls /dev/dri 2>&1 | tr '\n' ' ')"; echo "WLR_RENDERER=$WLR_RENDERER QT_QUICK_BACKEND=$QT_QUICK_BACKEND"; } > "$LOG" 2>&1
 bc-wm-mode init >> "$LOG" 2>&1
 # Aspecto claro/oscuro recordado (GTK y barras de título)
 [ -x /usr/bin/bc-appearance ] && bc-appearance "$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/bc/appearance" 2>/dev/null || echo dark)" >> "$LOG" 2>&1
 # Efectos (esquinas redondeadas, sombras, desenfoque): swayfx + GPU. Sin GPU o si falla, sway normal.
 SWAY=sway
-if grep -qw "bc.gpu=1" /proc/cmdline && [ -x /opt/swayfx/bin/sway ] && ls /dev/dri/renderD* >/dev/null 2>&1; then
+if [ "$GPU" = 1 ] && [ -x /opt/swayfx/bin/sway ]; then
   export BC_FX=1
   bc-wm-mode init >> "$LOG" 2>&1
   /opt/swayfx/bin/sway -c "${XDG_RUNTIME_DIR:-/tmp}/bc-sway.conf" >> "$LOG" 2>&1 || { echo "swayfx falló: se usa sway sin efectos" >> "$LOG"; unset BC_FX; bc-wm-mode init >> "$LOG" 2>&1; sway -c "${XDG_RUNTIME_DIR:-/tmp}/bc-sway.conf" >> "$LOG" 2>&1; }

@@ -705,3 +705,41 @@ void MusicPlayer::toggle() {
 void MusicPlayer::next() { if (m_current + 1 < m_songs.size()) play(m_current + 1); }
 void MusicPlayer::previous() { if (m_pos > 3) seek(0); else if (m_current > 0) play(m_current - 1); }
 void MusicPlayer::seek(double s) { send(QString(R"({"command":["seek",%1,"absolute"]})").arg(qMax(0.0, s)).toUtf8()); }
+
+// ---------------------------------------------------------------------------------------------
+// Máquina virtual o equipo físico
+QString QuickTools::detectedMachine() {
+    QProcess p;
+    p.start("systemd-detect-virt", {"--vm"});
+    if (p.waitForFinished(2000)) {
+        const QString out = QString::fromUtf8(p.readAllStandardOutput()).trimmed();
+        if (p.exitCode() == 0 && !out.isEmpty() && out != "none") return "vm";
+        if (p.exitCode() != 0 && out == "none") return "fisico";
+    }
+    QFile f("/sys/class/dmi/id/product_name"), v("/sys/class/dmi/id/sys_vendor");
+    QString id;
+    if (f.open(QIODevice::ReadOnly)) id += QString::fromUtf8(f.readAll());
+    if (v.open(QIODevice::ReadOnly)) id += QString::fromUtf8(v.readAll());
+    static const QRegularExpression vmRe("VirtualBox|QEMU|VMware|Parallels|KVM|Hyper-V|innotek|Virtual Machine|UTM", QRegularExpression::CaseInsensitiveOption);
+    return vmRe.match(id).hasMatch() ? "vm" : "fisico";
+}
+QString QuickTools::machineKind() {
+    for (const QString &path : {QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/bc/equipo", QStringLiteral("/etc/bc/equipo")}) {
+        QFile f(path);
+        if (f.open(QIODevice::ReadOnly)) {
+            const QString k = QString::fromUtf8(f.readAll()).trimmed();
+            if (k == "vm" || k == "fisico") return k;
+        }
+    }
+    return detectedMachine();
+}
+bool QuickTools::setMachineKind(const QString &kind) {
+    if (kind != "vm" && kind != "fisico") return false;
+    const QString dir = QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/bc";
+    QDir().mkpath(dir);
+    QSaveFile f(dir + "/equipo");
+    if (!f.open(QIODevice::WriteOnly)) return false;
+    f.write(kind.toUtf8() + "\n");
+    return f.commit();
+}
+bool QuickTools::hasGpu() { return !QDir("/dev/dri").entryList({"renderD*"}, QDir::System).isEmpty(); }

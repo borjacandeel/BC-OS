@@ -7,7 +7,7 @@ import BCShell
 Item {
     id: root
     property int step: 0
-    readonly property int steps: 3
+    readonly property int steps: 4
     signal finished()
     readonly property string wallDir: "/usr/share/bc/wallpapers/"
     readonly property var wallpapers: [
@@ -22,6 +22,10 @@ Item {
     function pickWallpaper(f) { Settings.wallpaper = wallDir + f }
     function pickAccent(c) { Settings.accent = c; AppConfig.setAccent(c) }
     function pickTiling(on) { Sway.setTiling(on) }
+    // Paso 0: máquina virtual o equipo físico (se preselecciona lo detectado)
+    readonly property string detected: Quick.detectedMachine()
+    property string machine: Quick.machineKind()
+    function pickMachine(k) { machine = k; Quick.setMachineKind(k) }
     function next() { if (step < steps - 1) step++; else finish() }
     function finish() { Settings.welcomed = true; root.finished() }
     focus: true
@@ -121,7 +125,7 @@ Item {
               Brand { logoHeight: 14; anchors.verticalCenter: parent.verticalCenter }
               Text { text: qsTr("¡Bienvenido a BC OS!"); color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 14 } }
         Text { anchors.horizontalCenter: parent.horizontalCenter; color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 32; font.weight: Font.DemiBold
-               text: root.step === 0 ? qsTr("Elige cómo se ve tu escritorio") : (root.step === 1 ? qsTr("Elige tus colores y tu fondo") : qsTr("Elige cómo se organizan tus ventanas")) }
+               text: root.step === 0 ? qsTr("¿Dónde está instalado BC OS?") : root.step === 1 ? qsTr("Elige cómo se ve tu escritorio") : (root.step === 2 ? qsTr("Elige tus colores y tu fondo") : qsTr("Elige cómo se organizan tus ventanas")) }
         Text { anchors.horizontalCenter: parent.horizontalCenter; text: qsTr("Puedes cambiarlo cuando quieras desde Configuración."); color: Theme.textSecondary
                font.family: Theme.fontFamily; font.pixelSize: 14 }
     }
@@ -132,11 +136,40 @@ Item {
         y: Math.max(130, parent.height * 0.08 + 110)
         width: parent.width; height: 300
 
-        // Paso 0: estilo
-        Row {
+        // Paso 0: dónde se ejecuta (adapta el render: por software en VM, GPU y efectos en equipo físico)
+        Column {
             opacity: root.step === 0 ? 1 : 0; visible: opacity > 0
             Behavior on opacity { NumberAnimation { duration: Theme.dur(220); easing.type: Easing.OutCubic } }
-            scale: root.step === 0 ? 1 : 0.97
+            anchors.horizontalCenter: parent.horizontalCenter; spacing: 16
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter; spacing: 18
+                Card { title: qsTr("Máquina virtual"); badge: root.detected === "vm" ? qsTr("Detectado") : ""
+                       desc: qsTr("VirtualBox, UTM, QEMU… Dibujo por software, ligero y estable, sin efectos de GPU.")
+                       sel: root.machine === "vm"; onClicked: root.pickMachine("vm")
+                       Rectangle { anchors.fill: parent; radius: 10; color: "#101626"
+                           Rectangle { anchors.centerIn: parent; width: 120; height: 78; radius: 8; color: "#1B2740"; border.width: 1; border.color: Qt.rgba(1, 1, 1, 0.2)
+                               Rectangle { width: parent.width; height: 12; radius: 8; color: Qt.rgba(1, 1, 1, 0.12)
+                                   Row { x: 6; anchors.verticalCenter: parent.verticalCenter; spacing: 3
+                                         Repeater { model: ["#FF5F57", "#FEBC2E", "#28C840"]; Rectangle { required property string modelData; width: 5; height: 5; radius: 2.5; color: modelData } } } }
+                               Text { anchors.centerIn: parent; anchors.verticalCenterOffset: 6; text: "BC OS"; color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14; font.weight: Font.DemiBold } } } }
+                Card { title: qsTr("Equipo físico"); badge: root.detected === "fisico" ? qsTr("Detectado") : ""
+                       desc: Quick.hasGpu() ? qsTr("Usa la GPU: desenfoque real detrás de ventanas, sombras y esquinas redondeadas.")
+                                            : qsTr("Usa la GPU cuando la haya: desenfoque real, sombras y esquinas (aquí no se detecta GPU).")
+                       sel: root.machine === "fisico"; onClicked: root.pickMachine("fisico")
+                       Rectangle { anchors.fill: parent; radius: 10; color: "#101626"
+                           Rectangle { anchors.centerIn: parent; anchors.verticalCenterOffset: -8; width: 130; height: 82; radius: 6; color: "#05070D"; border.width: 3; border.color: "#3A4256"
+                               Image { anchors.fill: parent; anchors.margins: 3; source: "qrc:/BCShell/assets/wallpaper-default.png"; fillMode: Image.PreserveAspectCrop; sourceSize.width: 260 } }
+                           Rectangle { anchors.horizontalCenter: parent.horizontalCenter; y: parent.height / 2 + 34; width: 40; height: 6; radius: 3; color: "#3A4256" } } }
+            }
+            Text { anchors.horizontalCenter: parent.horizontalCenter; text: qsTr("Se aplica al volver a iniciar sesión. Se puede cambiar en Ajustes ▸ General.")
+                   color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 13 }
+        }
+
+        // Paso 1: estilo
+        Row {
+            opacity: root.step === 1 ? 1 : 0; visible: opacity > 0
+            Behavior on opacity { NumberAnimation { duration: Theme.dur(220); easing.type: Easing.OutCubic } }
+            scale: root.step === 1 ? 1 : 0.97
             Behavior on scale { NumberAnimation { duration: Theme.dur(260); easing.type: Easing.OutCubic } }
             anchors.horizontalCenter: parent.horizontalCenter; spacing: 18
             Card { title: qsTr("Windows"); badge: qsTr("Lo de siempre"); desc: qsTr("Barra de tareas abajo con menú Inicio y los atajos de siempre.")
@@ -148,7 +181,7 @@ Item {
         }
 
         Row {
-            visible: root.step === 0 && root.dotfilesChosen
+            visible: root.step === 1 && root.dotfilesChosen
             anchors.horizontalCenter: parent.horizontalCenter
             y: 282; spacing: 12
             Text { anchors.verticalCenter: parent.verticalCenter; text: qsTr("Cierra la sesión y vuelve a entrar para usar Dotfiles."); color: Theme.textSecondary
@@ -160,9 +193,9 @@ Item {
 
         // Paso 1: colores y fondo
         Column {
-            opacity: root.step === 1 ? 1 : 0; visible: opacity > 0
+            opacity: root.step === 2 ? 1 : 0; visible: opacity > 0
             Behavior on opacity { NumberAnimation { duration: Theme.dur(220); easing.type: Easing.OutCubic } }
-            scale: root.step === 1 ? 1 : 0.97
+            scale: root.step === 2 ? 1 : 0.97
             Behavior on scale { NumberAnimation { duration: Theme.dur(260); easing.type: Easing.OutCubic } }
             anchors.horizontalCenter: parent.horizontalCenter; spacing: 22
             Row { anchors.horizontalCenter: parent.horizontalCenter; spacing: 8
@@ -177,7 +210,7 @@ Item {
                         readonly property bool sel: Settings.wallpaper === root.wallDir + modelData.f || (Settings.wallpaper === "" && modelData.f === "ondas.jpg")
                         width: 150; height: 100; radius: 12; color: "#0A1020"; clip: true
                         border.width: sel ? 3 : 1; border.color: sel ? Theme.accent : Theme.hairline
-                        Image { anchors.fill: parent; anchors.margins: 3; source: root.step === 1 && visible ? "file://" + root.wallDir + modelData.f : ""; fillMode: Image.PreserveAspectCrop; asynchronous: true; sourceSize.width: 300 }
+                        Image { anchors.fill: parent; anchors.margins: 3; source: root.step === 2 && visible ? "file://" + root.wallDir + modelData.f : ""; fillMode: Image.PreserveAspectCrop; asynchronous: true; sourceSize.width: 300 }
                         Text { anchors.bottom: parent.bottom; anchors.horizontalCenter: parent.horizontalCenter; anchors.bottomMargin: 5; text: modelData.n
                                color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 12; style: Text.Outline; styleColor: "#000000" }
                         MouseArea { anchors.fill: parent; onClicked: root.pickWallpaper(modelData.f) }
@@ -199,9 +232,9 @@ Item {
 
         // Paso 2: ventanas
         Column {
-            opacity: root.step === 2 ? 1 : 0; visible: opacity > 0
+            opacity: root.step === 3 ? 1 : 0; visible: opacity > 0
             Behavior on opacity { NumberAnimation { duration: Theme.dur(220); easing.type: Easing.OutCubic } }
-            scale: root.step === 2 ? 1 : 0.97
+            scale: root.step === 3 ? 1 : 0.97
             Behavior on scale { NumberAnimation { duration: Theme.dur(260); easing.type: Easing.OutCubic } }
             anchors.horizontalCenter: parent.horizontalCenter; spacing: 22
             Row { anchors.horizontalCenter: parent.horizontalCenter; spacing: 18

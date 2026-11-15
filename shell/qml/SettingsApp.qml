@@ -455,6 +455,27 @@ AppWindow {
             Rectangle { width: 260; height: 40; radius: 12; color: Theme.accent
                         Text { anchors.centerIn: parent; text: qsTr("Abrir el asistente de bienvenida"); color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14 }
                         MouseArea { anchors.fill: parent; onClicked: Launcher.run("bc-ctl", ["welcome"]) } }
+            Label { text: qsTr("Dónde se ejecuta BC OS") }
+            Row {
+                id: eqRow; spacing: 12
+                property string kind: Quick.machineKind()
+                Repeater {
+                    model: [ { k: "vm", t: qsTr("Máquina virtual"), d: qsTr("Por software, sin efectos de GPU") },
+                             { k: "fisico", t: qsTr("Equipo físico"), d: Quick.hasGpu() ? qsTr("GPU: desenfoque, sombras, esquinas") : qsTr("GPU (no detectada ahora)") } ]
+                    delegate: Rectangle {
+                        required property var modelData
+                        readonly property bool sel: eqRow.kind === modelData.k
+                        width: 250; height: 66; radius: 14
+                        color: sel ? Theme.accentSelected : Theme.tileFill
+                        border.width: sel ? 2 : 0; border.color: Theme.accent
+                        Column { anchors.centerIn: parent; spacing: 4
+                                 Label { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.t + (Quick.detectedMachine() === modelData.k ? qsTr(" · detectado") : ""); font.weight: Font.DemiBold }
+                                 Hint { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.d } }
+                        MouseArea { anchors.fill: parent; onClicked: { if (Quick.setMachineKind(modelData.k)) eqRow.kind = modelData.k } }
+                    }
+                }
+            }
+            Hint { width: parent.width; text: qsTr("Se aplica al volver a iniciar sesión.") }
             Label { text: qsTr("Entorno al iniciar sesión") }
             Row {
                 spacing: 12
