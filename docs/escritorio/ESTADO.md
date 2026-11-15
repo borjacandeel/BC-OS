@@ -1,39 +1,86 @@
 # Escritorio «Golden Gate» de BC OS — estado y decisiones
 
-Objetivo (encargo del creador, 2026-11-15): que el escritorio por defecto de BC OS se vea y se comporte como
-macOS 27 Golden Gate, sobre la misma base (Arch Linux ARM, sway, BC Shell Qt6/QML), con la sesión anterior
+Encargo del creador (2026-11-15): que el escritorio por defecto de BC OS se vea y se comporte como macOS 27
+Golden Gate, sobre la misma base (Arch Linux ARM aarch64, sway, BC Shell Qt6/QML, greetd), con la sesión anterior
 disponible en el login como **«BC clásico»**.
 
-## Auditoría (punto de partida)
-- Compositor: **sway** (wlroots). Render por software (pixman) en VirtualBox/QEMU; swayfx opcional con GPU (`bc.gpu=1`).
-- Shell: **BC Shell** (Qt 6 / QML). Panel = superficies wlr-layer-shell (fondo, barra, Dock, emergentes);
-  apps BC = procesos `bc-shell --app …`. Control por D-Bus `org.bcos.Shell` (`bc-ctl`). Ventanas vía IPC de sway.
-- Sesión: greetd + `bc-greeter` → `bc-session` → `bc-wm-mode` monta la config de sway.
-- Reutilizable: todo (SwayControl, SystemStatus, Notificaciones, FileBrowser, AppIndex, LayerWindow…).
+## Arquitectura
+- **Compositor**: sway (sin cambios). swayfx opcional con GPU (`bc.gpu=1`): radio 20, desenfoque real de capas.
+- **BC Shell** (`shell/`): un proceso «panel» con superficies wlr-layer-shell y apps BC (`bc-shell --app …`).
+  - Fondo (capa background): `Wallpaper` (solo pruebas), `DesktopIcons`, `DesktopWidgets`.
+  - Barra de menús (`MenuBar.qml`), Dock (`DockGG.qml`), semáforos de ventanas externas (`WindowChrome.qml`).
+  - Capa emergente: menús (`MenuPopup.qml`), Control Center (`ControlCenterGG.qml`), Centro de notificaciones
+    (`NotificationCenter.qml`), Spotlight (`Spotlight.qml`), Aplicaciones (`Launchpad.qml`), pila de Descargas,
+    menús contextuales.
+  - Superposiciones: Mission Control (`MissionControl.qml`), selector de apps (`AppSwitcher.qml`), efecto genio
+    (`Genie.qml`), bloqueo/bienvenida/carga.
+  - Material: `Glass.qml` + `GlassProvider` (C++).
+  - Datos: `Batteries`, `Reminders`, `WidgetHost`, `QuickTools` (Wi-Fi, Bluetooth, reproducción, búsqueda de
+    archivos, calculadora, capturas grim), `SoundPlayer` (`src/desktopdata.*`).
+  - **Tokens únicos**: `shell/qml/Theme.qml`, bloque «Tokens de diseño Golden Gate» (medidas de la captura,
+    colores claro/oscuro, cristal, tipografía, duraciones y curvas). Para afinar tras la prueba: tocar solo ahí.
+- **Sesión**: `bc-session` (con `--classic` → `BC_CLASSIC=1`), `bc-appearance` (claro/oscuro en caliente),
+  atajos en `build/overlay/etc/bc/sway/config`, acciones D-Bus `bc-ctl spotlight|mission|switcher|…`.
 
 ## Decisiones
-1. **No se cambia compositor, toolkit ni gestor de sesión.** Justificación: sway + Qt ya dan superficies por capas,
-   IPC y rendimiento en ARM; cambiar a KWin/Hyprland rompería el arranque probado y exige GPU.
-2. **Liquid Glass sin shaders**: en VirtualBox Qt usa el renderizador por software (sin `ShaderEffect`). El fondo se
-   desenfoca una vez en C++ (`GlassProvider`, reducción/ampliación suave ≈ gaussiano) y cada superficie pide su recorte
-   ya redondeado (`image://glass/…`). Encima: tinte (deslizador), reflejo especular, borde luminoso y sombra (`Glass.qml`).
-   Limitación: el cristal refleja el **fondo**, no las ventanas que tenga detrás (un cliente Wayland no puede leer
-   otras superficies; solo el compositor: swayfx `blur` con GPU).
-3. **Tokens únicos en `shell/qml/Theme.qml`** (medidas de la captura, colores claro/oscuro, cristal, duraciones y curvas).
-   Iba a ser `Tokens.qml`, pero Qt 6.4 detecta un ciclo entre dos singletons que importan el módulo: se fusionó en Theme.
-4. **Tipografía**: Inter (OFL) en la interfaz por métricas cercanas a SF Pro; CaskaydiaCove Nerd Font en terminal y
-   monoespaciada (antes era la fuente de todo el sistema: cambia por fidelidad con la captura).
-5. Recursos: logo BC en lugar del de Apple; iconos MacOS-Like (GPL-3.0) y cursores McMojave (GPL-3.0); fondo «Ondas» propio.
+1. **No se cambia compositor, toolkit ni gestor de sesión.** sway + Qt ya dan capas, IPC y rendimiento en ARM sin GPU;
+   cambiar a KWin/Hyprland rompería el arranque probado y exige GPU (VirtualBox no la tiene).
+2. **Liquid Glass sin shaders**: con el renderizador por software de Qt no hay `ShaderEffect`. El fondo se desenfoca
+   una vez en C++ (reducción a mitades + ampliación suave ≈ gaussiano, sin ruido) y cada superficie pide su recorte
+   redondeado (`image://glass/…`); encima tinte (deslizador), reflejo especular, borde luminoso y sombra.
+3. **Tokens en `Theme.qml`** (no en un `Tokens.qml` aparte): Qt 6.4 detecta un ciclo entre dos singletons que importan
+   el módulo.
+4. **Tipografía**: Inter (OFL) en la interfaz por métricas cercanas a SF Pro (interletrado −0,15);
+   CaskaydiaCove Nerd Font queda para terminal y monoespaciada.
+5. **Atajos como en macOS**: Ctrl+←/→ cambia de escritorio y Ctrl+↑ abre Mission Control (antes Ctrl+flechas movía el
+   foco; ahora el foco va con Súper+flechas). Spotlight Ctrl/Súper+Espacio, Aplicaciones F4, selector Alt/Súper+Tab.
+6. **Reloj de la barra en 12 h** («Dom 15 nov 12:19 a.m.») porque así sale en la captura.
+7. **Menús globales**: las apps BC tienen menús reales; en apps externas Edición envía las pulsaciones reales con
+   `wtype` (no hay protocolo de menú global en Wayland que sway exponga).
+8. **Efecto genio** por franjas (28 tiras de la captura grim de la ventana) en lugar de shader.
 
 ## Estado por componente
 | # | Componente | Estado |
 |---|---|---|
-| — | Tokens, ajustes en caliente (aspecto, cristal, Dock, widgets, sonidos) | hecho, compilado |
-| 17 | Material Liquid Glass + deslizador | en curso |
-| 2 | Widgets: baterías (sysfs + BlueZ), recordatorios (JSON), widgets de otras apps (JSON) | backend hecho |
-| 3 | Barra superior | pendiente |
-| 5 | Dock | pendiente |
+| 1 | Escritorio: fondo, iconos (~/Escritorio), selección con rectángulo, arrastre con posición guardada, menús contextuales | hecho, compilado; capturas en anfitrión |
+| 2 | Widgets: baterías (sysfs + BlueZ), app de terceros (JSON), recordatorios (JSON), arrastrables | hecho; verificado en captura (sin baterías reales en el anfitrión) |
+| 3 | Barra de menús: logo BC, app activa en negrita, menús, estado (mosaico, concentración, ES, batería con %, red, Control Center), reloj | hecho; superpuesta a la captura |
+| 4 | Menús: menú BC, menú de app, Archivo/Edición/Visualización/Ventana/Ayuda, atajos con símbolos, submenús, marcas | hecho |
+| 5 | Dock: ampliación coseno, punto de abierta, rebote, reordenar arrastrando, Mantener/Quitar, apps abiertas no fijadas, minimizadas, pila Descargas, Papelera (vacía/llena), ocultación automática | hecho, compilado; pendiente de prueba real |
+| 6 | Menús contextuales: escritorio, iconos, widgets, Dock, Archivos, botón verde | hecho |
+| 7 | Ventanas: semáforo con símbolos al pasar, gris en inactivas, pantalla completa, mosaico (mitades/rellenar/centrar), ventanas BC radio 20 | hecho |
+| 8 | Mission Control (Spaces, «+», arrastrar ventana a escritorio), escritorios, selector de apps | hecho, compilado; pendiente de prueba real |
+| 9 | Gestos de trackpad | **parcial**: `bindgesture` de sway (3/4 dedos) es discreto: se dispara al terminar, **no sigue el dedo** |
+| 10 | Multimonitor: barra y Dock por pantalla, conexión en caliente | **parcial**: barra/Dock por pantalla; widgets, Mission Control y cristal usan la principal |
+| 11 | Archivos (Finder): barra lateral (Favoritos/Ubicaciones/Etiquetas), iconos/lista/columnas/galería, ruta, Vista rápida, etiquetas xattr, pestañas, búsqueda | hecho; captura en anfitrión |
+| 12 | Spotlight: apps, archivos (find en ~), cálculos (evaluador propio), acciones | hecho |
+| 13 | Aplicaciones (rejilla por páginas, búsqueda) desde el 2.º icono del Dock | hecho |
+| 14 | Control Center (Wi-Fi, Bluetooth, red, Concentración, mosaico, aspecto, captura, bloqueo, portapapeles, brillo, sonido, reproducción) y Centro de notificaciones (historial real, calendario) | hecho |
+| 15 | Ajustes del Sistema: Aspecto (claro/oscuro/auto, Liquid Glass, resalte, movimiento, sonidos), Escritorio y Dock, Fondo, Notificaciones + paneles existentes | hecho (paneles existentes con su lógica real) |
+| 16 | Bloqueo e inicio de sesión estilo Golden Gate | hecho |
+| 17 | Liquid Glass + deslizador | hecho (refleja el fondo; ver limitaciones) |
+| 18 | Sombras, bordes, radios, tipografía, colores | hecho (tokens) |
+| 19 | Claro/oscuro en caliente (shell, apps BC, GTK, sway) | hecho; apps Qt ajenas siguen su propio tema |
+| 20 | Sonidos originales (aviso, papelera, bloqueo, volumen, captura, error) | hecho |
+| — | Animaciones centralizadas en tokens | hecho; duraciones «sin confirmar» |
+
+## Sin confirmar frente a Golden Gate
+- Todas las duraciones y curvas (Apple no las publica): menús 120 ms, Control Center 240 ms, genio 500 ms,
+  Mission Control 330 ms, cambio de escritorio 420 ms, Dock 90 ms, rebote 180+520 ms ×2.
+- Radio de ventana 20 (fuentes secundarias: «≈20 pt, menos que Tahoe»), radio de menú 12, semáforo 12 px.
+- Barra de título unificada de 52 px en apps BC; colores exactos de barra lateral activa/inactiva.
+- Ampliación del Dock al 75 % y alcance de 150 px.
+
+## Limitaciones técnicas
+- El cristal muestra el **fondo** desenfocado, no las ventanas de detrás (solo el compositor puede: swayfx + GPU).
+- Abrir/cerrar ventanas de apps externas no se anima (sway no anima ventanas); sí las apps BC y el genio al minimizar.
+- Gestos discretos (ver 9). Selector de apps: se confirma al soltar Alt si la tecla llega, o tras 1,1 s.
+- Iconos de app: tema MacOS-Like (GPL-3.0), squircle, sin capas de vidrio dinámicas ni modo tintado.
+
+## Recursos de terceros
+- Iconos MacOS-Like (Scrimas, GPL-3.0), sobre MacTahoe (vinceliuice, GPL-3.0). Cursores McMojave (vinceliuice, GPL-3.0).
+- Inter (OFL-1.1). CaskaydiaCove Nerd Font (OFL-1.1). Fondo «Ondas» y sonidos: propios (`assets/`).
 
 ## Volver a la sesión anterior
-En la pantalla de inicio de sesión, elegir **«BC clásico»** (misma sesión sway con `BC_CLASSIC=1`: barra, Dock y
-widgets anteriores).
+En la pantalla de inicio de sesión, elegir **«BC clásico»** (misma sesión sway con `BC_CLASSIC=1`).
+También se puede fijar en Ajustes ▸ General ▸ «Entorno al iniciar sesión».

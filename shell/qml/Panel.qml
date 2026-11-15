@@ -249,6 +249,33 @@ LayerWindow {
         Loader { id: bar; anchors.fill: parent; source: UiState.classic ? "TopBar.qml" : "MenuBar.qml" }
     }
 
+    // Pantallas adicionales (conexión en caliente): barra de menús y Dock propios en cada monitor
+    Instantiator {
+        model: UiState.classic || UiState.win ? 0 : Math.max(0, Qt.application.screens.length - 1)
+        delegate: QtObject {
+            required property int index
+            readonly property var modelData: Qt.application.screens[index + 1]
+            property LayerWindow bar2: LayerWindow {
+                screen: modelData
+                layer: "top"; edges: ["top", "left", "right"]; exclusive: UiState.barH; scope: "bc-topbar"
+                width: modelData.width; height: UiState.barH
+                shown: !UiState.splashing && !UiState.locked
+                MenuBar { anchors.fill: parent }
+            }
+            property LayerWindow dock2: LayerWindow {
+                id: d2
+                screen: modelData
+                layer: "top"; edges: ["bottom", "left", "right"]; scope: "bc-dock"
+                exclusive: Settings.dockAutohide ? 0 : Math.round(dk2.plateH + Theme.px(Theme.dockBottom) + Theme.px(4))
+                width: modelData.width; height: Math.round(dk2.plateH + dk2.maxIcon - dk2.bs + Theme.px(60))
+                inputRect: dk2.inputRect
+                shown: !UiState.splashing && !UiState.locked && !UiState.missionOpen
+                DockGG { id: dk2; anchors.fill: parent; onLaunch: (k, n) => root.launch(k, n)
+                         onLaunchDesktop: (id, n) => { if (!Apps.launch(id)) Notifications.push("BC OS", n, qsTr("No se pudo abrir la aplicación"), "", 4000) } }
+            }
+        }
+    }
+
     // Barra de tareas (estilo Windows)
     LayerWindow {
         layer: "top"; edges: ["bottom", "left", "right"]; exclusive: UiState.taskH; scope: "bc-taskbar"

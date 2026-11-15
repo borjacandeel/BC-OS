@@ -9,6 +9,12 @@ Imagen de disco arrancable (UEFI, ARM64). **Aún no hay ISO**: el instalador (`s
 4. Arranca: menú de 5 s con **BC OS** (animación de arranque con el logo, por defecto) y **BC OS (modo seguro, sin animación)**.
 5. Aparece el **panel de login**. Usuario `bc`, contraseña `bcos` (**solo alpha**; cámbiala con `passwd`).
 
+### Novedades de 0.6.0: escritorio «Golden Gate»
+- Escritorio por defecto rehecho al estilo de **macOS 27 Golden Gate**: barra de menús transparente, widgets de vidrio a la izquierda (baterías, uso del equipo o widget de otra app, recordatorios), Dock de vidrio con ampliación, pila de Descargas y Papelera, **Liquid Glass** con deslizador, modo **claro/oscuro** en caliente, fuente Inter.
+- **Spotlight** (Ctrl/Súper+Espacio), **Aplicaciones** (F4 o el 2.º icono del Dock), **Mission Control** (Ctrl+↑ / F3, Ctrl+←/→ escritorios), **selector de apps** (Alt+Tab), **Control Center** y **Centro de notificaciones** (clic en la hora), minimizar al Dock con **efecto genio**, iconos en el escritorio.
+- **Archivos** como Finder (iconos, lista, columnas, galería, Vista rápida con Espacio, etiquetas, pestañas) y **Ajustes del Sistema** nuevos. Terminal **Ghostty** (si su compilación falla, Alacritty). Sonidos propios.
+- ¿Algo falla? En el login elige **«BC clásico»**: el escritorio anterior. Estado y decisiones: `docs/escritorio/ESTADO.md`.
+
 ### Novedades de 0.5.0: entorno «Dotfiles (bspwm)»
 - En el **login** (y en Configuración, y en la bienvenida) puedes elegir entre **BC OS** (sway) y **Dotfiles (bspwm)**, un entorno de mosaico X11 basado en `borjacandeel/dotfiles-2026`: **bspwm + sxhkd + polybar + picom + rofi + dunst**, con tus atajos (Súper+Intro, Súper+D, Ctrl+flechas, Ctrl+B Firefox…; lista en `/etc/bc/atajos-dotfiles.txt`, Súper+F1), fondo «Montañas», barra minimal (escritorios numerados, pista del reproductor, reloj) y la pantalla que se adapta a la ventana de la máquina virtual.
 - Verificado en QEMU aarch64: el login muestra el selector, Xorg arranca, polybar y el fondo aparecen, Ctrl+Intro abre la terminal y rofi funciona con iconos. **Sin probar en VirtualBox** (Xorg allí puede comportarse distinto: si queda en negro, vuelve a elegir «BC OS» en el login y envíame `~/bc-session.log`).

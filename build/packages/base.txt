@@ -43,6 +43,7 @@ xorg-xwayland
 sway
 layer-shell-qt
 grim
+wtype
 swaybg
 alacritty
 flatpak
