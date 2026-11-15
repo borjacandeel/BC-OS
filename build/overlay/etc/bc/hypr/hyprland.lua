@@ -110,7 +110,7 @@ hl.animation({ leaf = "zoomFactor",    enabled = true, speed = 5,   bezier = "ma
 local modo = leer(home .. "/.config/bc/layout-mode") or "floating"
 if modo ~= "tiling" then hl.window_rule({ name = "flotar", match = { class = ".*" }, float = true }) end
 hl.window_rule({ name = "centrar",      match = { class = ".*", float = true }, center = true })
-hl.window_rule({ name = "bc-sin-sombra-doble", match = { class = "^bc-.*$" }, rounding = 0, no_shadow = true })
+-- Las apps de BC dibujan su marco con el mismo radio (20): Hyprland las recorta igual y les da la sombra de macOS
 hl.window_rule({ name = "no-maximizar", match = { class = ".*" }, suppress_event = "maximize" })
 -- Superficies del panel (barra, Dock, menús, avisos): vidrio con el desenfoque del compositor
 hl.layer_rule({ name = "bc-vidrio", match = { namespace = "^bc-(popups|dock|notify|topbar|center)$" }, blur = true, ignore_alpha = 0.02 })

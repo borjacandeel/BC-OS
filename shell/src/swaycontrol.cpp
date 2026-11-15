@@ -175,6 +175,23 @@ QString SwayControl::parseLayout(const QByteArray &json) {
 void SwayControl::switchWorkspace(const QString &name) { command("workspace \"" + QString(name).remove('"') + "\""); }
 void SwayControl::moveToWorkspace(int id, const QString &name) { command(QString("[con_id=%1] move container to workspace \"%2\"").arg(id).arg(QString(name).remove('"'))); }
 
+bool SwayControl::sendIpc(const QString &cmd) {
+    const QString sock = qEnvironmentVariable("SWAYSOCK");
+    if (sock.isEmpty()) return false;
+    if (m_ipc.state() != QLocalSocket::ConnectedState) {
+        m_ipc.connectToServer(sock);
+        if (!m_ipc.waitForConnected(150)) return false;
+        connect(&m_ipc, &QLocalSocket::readyRead, &m_ipc, [this] { m_ipc.readAll(); }, Qt::UniqueConnection);
+    }
+    const QByteArray payload = cmd.toUtf8();
+    QByteArray msg("i3-ipc");
+    const quint32 len = quint32(payload.size()), type = 0;   // RUN_COMMAND
+    msg.append(reinterpret_cast<const char *>(&len), 4);
+    msg.append(reinterpret_cast<const char *>(&type), 4);
+    msg.append(payload);
+    return m_ipc.write(msg) == msg.size() && m_ipc.flush();
+}
+
 void SwayControl::command(const QString &cmd) {
     if (!m_available) return;
     if (m_hypr) {
@@ -183,7 +200,7 @@ void SwayControl::command(const QString &cmd) {
         m_debounce.start();
         return;
     }
-    QProcess::startDetached(m_exe, {cmd});
+    if (!sendIpc(cmd)) QProcess::startDetached(m_exe, {cmd});
     m_debounce.start();
 }
 

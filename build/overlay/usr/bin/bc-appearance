@@ -8,10 +8,10 @@ if [ "$m" = auto ]; then h=$(date +%H); if [ "$h" -ge 8 ] && [ "$h" -lt 20 ]; th
 echo "$m" > "$D/appearance"
 if [ "$m" = light ]; then
   scheme=prefer-light; gtk=Adwaita; [ -d /usr/share/themes/MacTahoe-Light ] && gtk=MacTahoe-Light; dark=false
-  cols='client.focused #ECECEE #ECECEE #1D1D1F #ECECEE #ECECEE; client.focused_inactive #F6F6F7 #F6F6F7 #A1A1A6 #F6F6F7 #F6F6F7; client.unfocused #F6F6F7 #F6F6F7 #A1A1A6 #F6F6F7 #F6F6F7'
+  cols='client.focused #C8C8CC #ECECEE #1D1D1F #ECECEE #C8C8CC; client.focused_inactive #D8D8DC #F6F6F7 #A1A1A6 #F6F6F7 #D8D8DC; client.unfocused #D8D8DC #F6F6F7 #A1A1A6 #F6F6F7 #D8D8DC'
 else
   scheme=prefer-dark; gtk=Adwaita-dark; [ -d /usr/share/themes/MacTahoe-Dark ] && gtk=MacTahoe-Dark; dark=true
-  cols='client.focused #2C2C31 #2C2C31 #ECECEE #2C2C31 #2C2C31; client.focused_inactive #1F1F23 #1F1F23 #7D7D83 #1F1F23 #1F1F23; client.unfocused #1F1F23 #1F1F23 #7D7D83 #1F1F23 #1F1F23'
+  cols='client.focused #4A4A50 #2C2C31 #ECECEE #2C2C31 #4A4A50; client.focused_inactive #36363B #1F1F23 #7D7D83 #1F1F23 #36363B; client.unfocused #36363B #1F1F23 #7D7D83 #1F1F23 #36363B'
 fi
 [ -n "$SWAYSOCK" ] && swaymsg "$cols" >/dev/null 2>&1
 if command -v gsettings >/dev/null 2>&1; then

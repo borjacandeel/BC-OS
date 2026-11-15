@@ -73,6 +73,8 @@ private:
     QHash<int, QString> m_addr;      // id entero → dirección de Hyprland (0x…)
     QString m_activeWs = "1";
     QLocalSocket m_hyprEvents;
+    QLocalSocket m_ipc;              // sway: órdenes por el socket IPC (sin lanzar swaymsg en cada una)
+    bool sendIpc(const QString &cmd);
     QString m_exe;
     bool m_available = false;
     QVariantList m_windows, m_chrome;
