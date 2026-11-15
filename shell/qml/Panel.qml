@@ -497,7 +497,7 @@ LayerWindow {
                 }
                 NotificationCenter {
                     id: notifCenter
-                    x: pop.width - width - Theme.px(10) + (UiState.notifCenterOpen ? 0 : width / 3)
+                    x: pop.width - width - Theme.px(16) + (UiState.notifCenterOpen ? 0 : width / 3)
                     y: Theme.px(6)
                     opacity: UiState.notifCenterOpen ? 1 : 0
                     visible: opacity > 0
