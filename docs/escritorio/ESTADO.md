@@ -74,6 +74,18 @@ disponible en el login como **«BC clásico»**.
 - Con GPU (swayfx): sombras de ventana y desenfoque real detrás del Dock, menús y avisos.
 - Verificado en sway real (headless, aarch64): `rect` empieza bajo la barra de título; semáforos y genio usan `rect.y − alto`.
 
+## Segunda ronda (2026-11-15, «réplica exacta»)
+- Fuentes: apple.com/es/os/macos (Liquid Glass «de cristalino a completamente tintado», barras de herramientas unificadas,
+  barras laterales de borde a borde, iconos de menú rediseñados, app Siri) y prensa (menús casi sin iconos, flecha nativa
+  para iconos ocultos de la barra, barras laterales con iconos en color, radio de ventana único).
+- Iconos propios estilo Golden Gate (icon-designer): 15 apps + symbolic de barra; ver `capturas/iconos-golden-gate.png`.
+- Apps nuevas o rehechas: Monitor de Actividad (procesos reales), Tienda (App Store), Calculadora, Notas, Vista previa,
+  Calendario, Recordatorios, Música (mpv), Ajustes (Wi-Fi, Bluetooth, Pantallas, Teclado, Fecha y hora, cuenta).
+- Vibrancy: barras laterales de vidrio en todas las apps (la app sigue su posición con sway).
+- Widgets editables (galería), Calendario y Reloj; Spotlight por secciones; vista Aplicaciones con categorías;
+  flecha de iconos ocultos; Terminal con aspecto del de macOS; Archivos ▸ Recientes.
+- Ghostty desactivado (fallo de Zig en CI): Terminal = Alacritty.
+
 ## Sin confirmar frente a Golden Gate
 - Todas las duraciones y curvas (Apple no las publica): menús 120 ms, Control Center 240 ms, genio 500 ms,
   Mission Control 330 ms, cambio de escritorio 420 ms, Dock 90 ms, rebote 180+520 ms ×2.
