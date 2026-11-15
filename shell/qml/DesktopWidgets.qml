@@ -48,7 +48,10 @@ Item {
             drag.minimumX: 0; drag.maximumX: UiState.sw - w.width
             drag.minimumY: UiState.topInset; drag.maximumY: UiState.sh - w.height
             onReleased: if (drag.active || w.x !== (root.layout[w.wid] ? root.layout[w.wid][0] * root.s : root.px(Theme.widgetX))) root.savePos(w.wid, w.x, w.y)
-            onClicked: (m) => { if (m.button === Qt.RightButton) UiState.openContext("widget", w.mapToItem(null, m.x, m.y)) }
+            onClicked: (m) => { if (m.button === Qt.RightButton) UiState.openContextMenu([
+                { label: qsTr("Volver a colocar los widgets"), cmd: "bc:widgetsReset" },
+                { label: qsTr("Ocultar widgets"), cmd: "bc:toggleWidgets" }, { sep: true },
+                { label: qsTr("Ajustes de widgets…"), cmd: "sway:exec bc-shell --app settings" } ], w.mapToItem(null, m.x, m.y)) }
         }
         Behavior on x { enabled: !Theme.reduced; NumberAnimation { duration: Theme.d(Theme.durPopover); easing.type: Theme.easeStandard } }
         Behavior on y { enabled: !Theme.reduced; NumberAnimation { duration: Theme.d(Theme.durPopover); easing.type: Theme.easeStandard } }

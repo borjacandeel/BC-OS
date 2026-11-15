@@ -23,6 +23,9 @@ Item {
     onXChanged: sync(); onYChanged: sync(); onWidthChanged: sync(); onHeightChanged: sync()
     onOriginXChanged: sync(); onOriginYChanged: sync()
     Component.onCompleted: sync()
+    // Los padres pueden moverse o escalarse (animaciones de entrada): se vuelve a calcular al aparecer y al asentarse
+    onVisibleChanged: if (visible) { sync(); settle.restart() }
+    Timer { id: settle; interval: 450; onTriggered: g.sync() }
     property int version: 0
     Connections { target: Settings; function onChanged() { g.version++ } }
 

@@ -41,8 +41,13 @@ Item {
         }
     }
 
+    // Entrada: la rejilla se acerca desde un poco más grande (el fondo no se escala)
+    property real zoom: 1
+    onVisibleChanged: if (visible) { zoom = 1.08; zoomIn.restart() }
+    NumberAnimation { id: zoomIn; target: lp; property: "zoom"; to: 1; duration: Theme.d(Theme.durLaunchpad); easing.type: Theme.easeEmphasized }
     Item {
         id: viewport
+        scale: lp.zoom
         x: px(160); y: px(130); width: parent.width - px(320); height: parent.height - px(260)
         clip: true
         Row {

@@ -39,6 +39,7 @@ LayerWindow {
 
     // Widgets (reloj, calendario, uso): columna derecha del fondo, bajo la barra superior
     // Golden Gate: widgets de escritorio a la izquierda (captura de referencia)
+    DesktopIcons { visible: !UiState.classic }
     DesktopWidgets { visible: !UiState.classic && UiState.widgets }
     Widgets {
         visible: UiState.classic && UiState.widgets && !UiState.minimal
@@ -440,9 +441,7 @@ LayerWindow {
                     id: launchpad
                     visible: UiState.launcherOpen && !UiState.classic
                     opacity: visible ? 1 : 0
-                    scale: visible ? 1 : 1.08
                     Behavior on opacity { NumberAnimation { duration: Theme.d(Theme.durLaunchpad); easing.type: Theme.easeStandard } }
-                    Behavior on scale { NumberAnimation { duration: Theme.d(Theme.durLaunchpad); easing.type: Theme.easeEmphasized } }
                     onDone: UiState.closePopups()
                     onLaunch: (id, name) => { UiState.closePopups(); if (!Apps.launch(id)) Notifications.push("BC OS", name, qsTr("No se pudo abrir la aplicación"), "", 4000) }
                     Connections { target: UiState; function onLauncherOpenChanged() { if (UiState.launcherOpen && !UiState.classic) launchpad.reset() } }
