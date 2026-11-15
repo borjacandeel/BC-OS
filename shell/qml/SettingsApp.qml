@@ -455,6 +455,25 @@ AppWindow {
             Rectangle { width: 260; height: 40; radius: 12; color: Theme.accent
                         Text { anchors.centerIn: parent; text: qsTr("Abrir el asistente de bienvenida"); color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14 }
                         MouseArea { anchors.fill: parent; onClicked: Launcher.run("bc-ctl", ["welcome"]) } }
+            Label { text: qsTr("Instantáneas del sistema") }
+            Hint { width: parent.width; text: qsTr("Se guarda una antes de cada actualización o instalación. Restaurar vuelve a las versiones de entonces.") }
+            Column {
+                width: parent.width; spacing: 6
+                property var list: win.page === 0 ? Quick.snapshots() : []
+                Hint { visible: parent.list.length === 0; text: qsTr("Todavía no hay instantáneas.") }
+                Repeater {
+                    model: parent.list.slice(0, 5)
+                    delegate: Rectangle {
+                        required property var modelData
+                        width: parent.width; height: 40; radius: 10; color: Theme.tileFill
+                        Label { x: 14; anchors.verticalCenter: parent.verticalCenter; text: modelData.fecha + "  ·  " + qsTr("%1 paquetes").arg(modelData.paquetes) }
+                        Rectangle { anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter
+                                    width: rT.implicitWidth + 24; height: 26; radius: 13; color: Theme.accent
+                                    Text { id: rT; anchors.centerIn: parent; text: qsTr("Restaurar"); color: "white"; font.family: Theme.fontFamily; font.pixelSize: 12 }
+                                    MouseArea { anchors.fill: parent; onClicked: Launcher.run("pkexec", ["/usr/lib/bc/bc-paquetes", "restaurar", modelData.id]) } }
+                    }
+                }
+            }
             Label { text: qsTr("Dónde se ejecuta BC OS") }
             Row {
                 id: eqRow; spacing: 12

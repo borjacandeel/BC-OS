@@ -751,3 +751,17 @@ void QuickTools::setLockFlag(bool on) {
     else QFile::remove(lockFlagPath());
 }
 bool QuickTools::lockFlag() { return !lockFlagPath().isEmpty() && QFile::exists(lockFlagPath()); }
+
+QVariantList QuickTools::snapshots() {
+    QVariantList out;
+    QDir d("/var/lib/bc/instantaneas");
+    const QStringList ids = d.entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name | QDir::Reversed);
+    for (const QString &id : ids) {
+        const QDateTime t = QDateTime::fromString(id, "yyyyMMdd-HHmmss");
+        QFile f(d.filePath(id + "/paquetes.txt"));
+        int n = 0;
+        if (f.open(QIODevice::ReadOnly)) n = QString::fromUtf8(f.readAll()).count('\n');
+        out.append(QVariantMap{{"id", id}, {"fecha", t.isValid() ? QLocale().toString(t, QLocale::ShortFormat) : id}, {"paquetes", n}});
+    }
+    return out;
+}

@@ -1,0 +1,28 @@
+#!/bin/sh
+# Vuelve el sistema a una instantánea anterior (las crea pacman antes de cada actualización).
+#   bc-restaurar            lista las instantáneas
+#   bc-restaurar <fecha>    reinstala las versiones de entonces (desde la caché de pacman) y quita lo añadido después
+#   bc-restaurar <fecha> --etc   además restaura /etc
+set -eu
+D=/var/lib/bc/instantaneas
+if [ $# -eq 0 ]; then
+  echo "Instantáneas (más reciente al final):"; for s in $(ls -1 "$D" 2>/dev/null); do echo "  $s  ($(wc -l < "$D/$s/paquetes.txt") paquetes)"; done; exit 0
+fi
+case "$1" in *[!0-9-]*) echo "Instantánea no válida" >&2; exit 2 ;; esac
+S="$D/$1"; [ -f "$S/paquetes.txt" ] || { echo "No existe la instantánea $1" >&2; exit 2; }
+[ "$(id -u)" = 0 ] || exec sudo "$0" "$@"
+C=/var/cache/pacman/pkg; files=""; missing=""
+cur="$(mktemp)"; pacman -Q > "$cur"
+while read -r name ver; do
+  now="$(awk -v n="$name" '$1==n{print $2}' "$cur")"
+  [ "$now" = "$ver" ] && continue
+  f="$(ls "$C/$name-$ver"-*.pkg.tar.* 2>/dev/null | grep -v '\.sig$' | head -n1 || true)"
+  if [ -n "$f" ]; then files="$files $f"; else missing="$missing $name-$ver"; fi
+done < "$S/paquetes.txt"
+added="$(awk 'NR==FNR{old[$1]=1;next} !($1 in old){print $1}' "$S/paquetes.txt" "$cur" | tr '\n' ' ')"
+rm -f "$cur"
+[ -n "$missing" ] && echo "Aviso: no están en la caché (se quedan como están):$missing"
+[ -n "$files" ] && pacman -U --noconfirm --needed $files
+[ -n "$(echo $added)" ] && pacman -Rns --noconfirm $added || true
+if [ "${2:-}" = "--etc" ] && [ -f "$S/etc.tar.zst" ]; then tar --zstd -xpf "$S/etc.tar.zst" -C /; fi
+echo "Sistema restaurado a $1. Reinicia para aplicar todos los cambios."

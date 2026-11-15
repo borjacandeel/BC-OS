@@ -129,6 +129,8 @@ public:
     // Si el panel se cae bloqueado, la sesión lanza swaylock y el panel, al volver, se vuelve a bloquear.
     Q_INVOKABLE static void setLockFlag(bool on);
     Q_INVOKABLE static bool lockFlag();
+    // Instantáneas del sistema (/var/lib/bc/instantaneas, las crea un gancho de pacman): [{id, fecha, paquetes}]
+    Q_INVOKABLE static QVariantList snapshots();
     // Captura con grim de la pantalla (geom vacía) o de una región «x,y wxh» → señal captured(tag, ruta)
     Q_INVOKABLE void capture(const QString &tag, const QString &geom);
     static QVariantList parseWifi(const QString &nmcliTerse);

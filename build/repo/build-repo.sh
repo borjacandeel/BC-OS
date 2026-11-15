@@ -39,6 +39,8 @@ install -d "$E2/usr/bin" "$E2/etc/bc/sway" "$E2/usr/share/applications" "$E2/usr
 install -m755 "$O"/usr/bin/bc-* "$E2/usr/bin/"
 install -m755 "$HERE/repo/bc-actualizar" "$E2/usr/bin/bc-actualizar"
 install -D -m755 "$O/usr/lib/bc/bc-paquetes" "$E2/usr/lib/bc/bc-paquetes"
+install -D -m755 "$O/usr/lib/bc/bc-instantanea" "$E2/usr/lib/bc/bc-instantanea"
+install -D -m644 "$O/usr/share/libalpm/hooks/00-bc-instantanea.hook" "$E2/usr/share/libalpm/hooks/00-bc-instantanea.hook"
 install -D -m644 "$O/usr/share/polkit-1/actions/org.bcos.paquetes.policy" "$E2/usr/share/polkit-1/actions/org.bcos.paquetes.policy"
 install -D -m644 "$O/etc/polkit-1/rules.d/50-bcos-paquetes.rules" "$E2/etc/polkit-1/rules.d/50-bcos-paquetes.rules"
 cp -a "$O/etc/bc/." "$E2/etc/bc/"

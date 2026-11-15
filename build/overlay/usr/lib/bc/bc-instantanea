@@ -1,0 +1,19 @@
+#!/bin/sh
+# Instantánea del sistema antes de cada cambio de paquetes (gancho de pacman): lista exacta de paquetes y versiones
+# y copia de /etc. Con bc-restaurar se vuelve a ese estado usando los paquetes guardados en la caché de pacman.
+# Se guardan las 10 últimas en /var/lib/bc/instantaneas/<AAAAMMDD-HHMMSS>/
+set -eu
+D=/var/lib/bc/instantaneas
+mkdir -p "$D"; chmod 755 "$D"
+n="$(date +%Y%m%d-%H%M%S)"; s="$D/$n"
+# No más de una por minuto (una transacción grande dispara el gancho una vez, pero por si acaso)
+last="$(ls -1 "$D" 2>/dev/null | tail -n1)"
+[ -n "$last" ] && [ "${last%??}" = "${n%??}" ] && exit 0
+mkdir -p "$s"
+pacman -Q > "$s/paquetes.txt"
+tar --zstd -cpf "$s/etc.tar.zst" --exclude=etc/pacman.d/gnupg -C / etc 2>/dev/null || true
+chmod 600 "$s/etc.tar.zst" 2>/dev/null || true
+uname -r > "$s/kernel.txt"
+# Rotación: las 10 más recientes
+ls -1 "$D" | head -n -10 | while read -r v; do rm -rf "${D:?}/$v"; done
+echo "Instantánea $n guardada"

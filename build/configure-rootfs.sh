@@ -51,6 +51,11 @@ install -m644 "$HERE"/overlay/usr/share/applications/bc-*.desktop "$R/usr/share/
 # Repositorio propio de BC OS ([bc], publicado en GitHub Releases por .github/workflows/repo.yml) antes de [core],
 # para que los paquetes de BC tengan prioridad. bc-actualizar actualiza desde ahí (y la Tienda lo usa).
 install -m755 "$HERE/repo/bc-actualizar" "$R/usr/bin/bc-actualizar"
+# Instantáneas antes de cada cambio de paquetes (gancho de pacman) y bc-restaurar; la caché guarda 3 versiones
+install -D -m755 "$HERE/overlay/usr/lib/bc/bc-instantanea" "$R/usr/lib/bc/bc-instantanea"
+install -D -m644 "$HERE/overlay/usr/share/libalpm/hooks/00-bc-instantanea.hook" "$R/usr/share/libalpm/hooks/00-bc-instantanea.hook"
+install -m755 "$HERE/overlay/usr/bin/bc-restaurar" "$R/usr/bin/bc-restaurar"
+sh "systemctl enable paccache.timer 2>/dev/null || true"
 # Tienda sin contraseña para administradores con sesión activa (polkit + ayudante restringido)
 install -D -m755 "$HERE/overlay/usr/lib/bc/bc-paquetes" "$R/usr/lib/bc/bc-paquetes"
 install -D -m644 "$HERE/overlay/usr/share/polkit-1/actions/org.bcos.paquetes.policy" "$R/usr/share/polkit-1/actions/org.bcos.paquetes.policy"
