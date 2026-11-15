@@ -8,157 +8,166 @@
 Sistema operativo Linux ARM64 creado por <b>Borja Candel</b>, en español por defecto.</p>
 
 <p align="center">
-  <img alt="Versión" src="https://img.shields.io/badge/versi%C3%B3n-0.3.x--alpha-2F7BFF">
+  <img alt="Versión" src="https://img.shields.io/badge/versi%C3%B3n-0.6.0--beta%20(en%20desarrollo)-2F7BFF">
   <img alt="Arquitectura" src="https://img.shields.io/badge/arquitectura-ARM64-04111F">
   <img alt="Base" src="https://img.shields.io/badge/base-Arch%20Linux%20ARM-1793D1">
   <img alt="Idioma" src="https://img.shields.io/badge/idioma-espa%C3%B1ol%20(es__ES)-C60B1E">
-  <img alt="Estado" src="https://img.shields.io/badge/estado-alpha%20experimental-FFB340">
+  <img alt="Estado" src="https://img.shields.io/badge/estado-beta%20experimental-FFB340">
 </p>
+
+BC OS es un Linux **ARM64** ligero y en español, basado en **Arch Linux ARM**, con compositor **sway** y un escritorio propio, **BC Shell** (Qt 6 / QML). Desde la serie 0.6 su escritorio por defecto es **«Golden Gate»**: una réplica del aspecto y del comportamiento de macOS 27 Golden Gate, hecha con código y recursos propios o libres (no usa recursos de Apple). Está pensado para probarse en máquinas virtuales ARM64 (VirtualBox en Mac Apple Silicon, QEMU).
 
 <p align="center">
-  <img src="docs/screenshots/bc-os-escritorio.png" alt="BC OS: escritorio (captura de 0.2.0-alpha)" width="880">
-  <br><sub>Captura real de BC OS 0.2.0-alpha en QEMU aarch64 (BC Shell sobre labwc, render por software). Es anterior a sway: desde 0.3.0 el compositor es sway; las capturas de más abajo ya son de la serie 0.3.x.</sub>
+  <img src="docs/escritorio/capturas/1-escritorio.jpg" alt="Escritorio Golden Gate de BC OS: barra de menús transparente, widgets de vidrio a la izquierda, fondo de ondas con el logo BC y Dock de vidrio" width="880">
+  <br><sub>Escritorio Golden Gate: barra de menús, widgets de vidrio, iconos en el escritorio, aviso y Dock. Captura del shell en el anfitrión de desarrollo.</sub>
 </p>
 
-> **Estado honesto:** alpha experimental, versión actual **0.4.x-beta** (0.4.0-beta publicada; 0.4.1-beta con los arreglos de hoy en publicación; 0.3.x fue la serie alpha con sway). Es un escritorio funcional (login, bloqueo, Archivos con Papelera, Monitor, Configuración, Tienda, notificaciones, mosaico/flotante, estilos de escritorio…) **verificado en QEMU aarch64**. **Las versiones 0.1.2 y 0.1.3 arrancaron en VirtualBox ARM64; de la 0.2.0 en adelante aún no se han probado ahí, ni en hardware real.** **No hay ISO todavía** (el instalador `bc-install` va dentro de la imagen). Ver [problemas conocidos](#problemas-conocidos).
+> **Estado honesto:** beta experimental. La **0.6.0-beta** (Golden Gate) se ha construido y **arranca en QEMU aarch64 con login y escritorio correctos**, pero **todavía no está publicada** ni probada en VirtualBox; el creador decide cuándo se publica. Muchas piezas están compiladas y vistas en capturas, pero **pendientes de prueba real**. Ver [estado y pendientes](#estado-honesto-de-golden-gate).
+
+---
+
+## Escritorio Golden Gate
+
+Qué incluye (detalle técnico y decisiones en [`docs/escritorio/ESTADO.md`](docs/escritorio/ESTADO.md)):
+
+- **Barra de menús transparente**: logo BC, app activa en negrita, menús globales (Archivo, Edición, Visualización, Ventana, Ayuda), iconos de estado y reloj.
+- **Widgets de vidrio** a la izquierda: baterías, uso del equipo (o widget de otra app) y recordatorios; arrastrables.
+- **Dock de vidrio**: ampliación, punto de app abierta, rebote, apps **recientes**, **pila** de Descargas, **Papelera** (vacía/llena), minimizadas y ocultación automática.
+- **Liquid Glass** con **deslizador** de intensidad (sin shaders; ver limitaciones).
+- Modo **claro / oscuro** en caliente (shell, apps BC, GTK y sway).
+- **Spotlight**: apps, archivos, cálculos y acciones.
+- **Aplicaciones**: rejilla por páginas con búsqueda.
+- **Mission Control** con escritorios («+», arrastrar ventanas entre escritorios) y **selector de apps**.
+- Minimizar al Dock con **efecto genio**.
+- **Control Center** (Wi-Fi, Bluetooth, red, Concentración, mosaico, aspecto, captura, bloqueo, portapapeles, brillo, sonido, reproducción) y **Centro de notificaciones** (historial y calendario).
+- **Archivos** tipo Finder: barra lateral con Favoritos/Ubicaciones/Etiquetas, vistas de iconos/lista/columnas/galería, Vista rápida, etiquetas, pestañas y búsqueda.
+- **Ajustes del Sistema** nuevos: Aspecto, Escritorio y Dock, Fondo, Notificaciones y los paneles anteriores.
+- **Bloqueo e inicio de sesión** estilo Golden Gate.
+- **Sonidos propios** (aviso, papelera, bloqueo, volumen, captura, error).
+- Además: tema GTK MacTahoe para apps externas, fuente Inter, iconos MacOS-Like, cursor McMojave, terminal Ghostty (Alacritty si su compilación falla) y arranque con barra blanca.
+
+### Capturas
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/escritorio/capturas/1-escritorio.jpg" alt="Escritorio con widgets de vidrio, iconos y Dock"><br><sub><b>Escritorio</b>: widgets de vidrio, iconos del escritorio, aviso y Dock.</sub></td>
+    <td width="50%"><img src="docs/escritorio/capturas/2-control-center.jpg" alt="Control Center abierto arriba a la derecha"><br><sub><b>Control Center</b>: Wi-Fi, Bluetooth, red, Concentración, mosaico, accesos rápidos, pantalla, sonido y reproducción.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/escritorio/capturas/3-aplicaciones.jpg" alt="Rejilla de Aplicaciones con buscador sobre el fondo desenfocado"><br><sub><b>Aplicaciones</b> (F4): rejilla con búsqueda sobre el fondo desenfocado.</sub></td>
+    <td width="50%"><img src="docs/escritorio/capturas/4-ventanas.jpg" alt="Ventanas de Archivos y Ajustes del Sistema con semáforos"><br><sub><b>Ventanas</b>: Archivos tipo Finder y Ajustes del Sistema (Aspecto).</sub></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><img src="docs/escritorio/capturas/5-bloqueo.jpg" alt="Pantalla de bloqueo con fecha, hora grande y campo de contraseña" width="50%"><br><sub><b>Bloqueo</b> (Ctrl+Súper+Q): fecha, hora y contraseña sobre el fondo.</sub></td>
+  </tr>
+</table>
+
+<sub>Capturas del shell renderizado en el anfitrión de desarrollo (por eso aparece el usuario <code>root</code>), no dentro de la máquina virtual.</sub>
+
+### Atajos principales
+
+| Atajo | Acción |
+|---|---|
+| `Ctrl+Espacio` / `Súper+Espacio` | Spotlight |
+| `F4` (o `Súper+A`) | Aplicaciones |
+| `Ctrl+↑` / `F3` | Mission Control |
+| `Ctrl+←` / `Ctrl+→` | Escritorio anterior / siguiente |
+| `Alt+Tab` (o `Súper+Tab`) | Selector de apps (con Mayús, hacia atrás) |
+| `Súper+M` | Minimizar al Dock (`Súper+Mayús+M`: restaurar) |
+| `Ctrl+Súper+Q` | Bloquear pantalla |
+| `Ctrl+Intro` · `Ctrl+B` · `Súper+E` | Terminal · Firefox · Archivos |
+| `Súper+F1` | Lista completa de atajos |
+
+Lista completa: [`build/overlay/etc/bc/atajos.txt`](build/overlay/etc/bc/atajos.txt) (en el sistema, `/etc/bc/atajos.txt`). Personalización en `~/.config/bc/sway-user.conf`.
+
+### Sesiones en el login
+
+| Sesión | Qué es |
+|---|---|
+| **BC OS** | El escritorio **Golden Gate** (por defecto). |
+| **BC clásico** | El escritorio anterior de BC Shell (misma sesión sway con `BC_CLASSIC=1`). Úsala si algo de Golden Gate falla. |
+| **Dotfiles (bspwm)** | Entorno de mosaico X11 (bspwm, sxhkd, polybar, picom, rofi, dunst) basado en `borjacandeel/dotfiles-2026`. |
+
+La sesión por defecto también se puede fijar en **Ajustes ▸ General ▸ «Entorno al iniciar sesión»**.
+
+## Estado honesto de Golden Gate
+
+**Verificado:**
+- 0.6.0-beta arrancada en **QEMU aarch64**: login y escritorio correctos.
+- Componentes compilados y revisados en el anfitrión con capturas (las de arriba). Comprobado en sway real (headless, aarch64) el posicionamiento de semáforos y del genio.
+
+**Pendiente** (en este orden, de [`CLAUDE.md`](CLAUDE.md)):
+- Investigar a fondo macOS 27 Golden Gate en fuentes públicas y anotar medidas y rasgos.
+- Iconos propios con la misma rejilla y forma (squircle, vidrio por capas, claro/oscuro/tintado). Los de Apple no se copian.
+- Apps BC al nivel de las de macOS: Archivos, Ajustes del Sistema (todos los paneles), Monitor de Actividad, Tienda, Terminal, visor de imágenes, Notas, Calculadora, Calendario y Música.
+- Animaciones: abrir/cerrar ventanas BC, hojas, menús, Control Center, Mission Control, Aplicaciones y Spotlight.
+- Transparencias y materiales por componente (barra lateral, barra de herramientas, menús, popovers) en claro y oscuro.
+- Iconos de estado de la barra de menús exactos en forma y tamaño.
+- Verificar en QEMU cada parte con capturas antes de darla por hecha.
+- Probar en **VirtualBox** (Dock, Mission Control y el resto están compilados pero pendientes de prueba real).
+
+**Limitaciones conocidas:**
+- El cristal (Liquid Glass) refleja el **fondo** desenfocado, no las ventanas de detrás: sin GPU no hay desenfoque real del compositor (con swayfx + GPU sí, opcional con `bc.gpu=1`).
+- Los **gestos** del trackpad (3/4 dedos) son **discretos**: se disparan al terminar y no siguen el dedo.
+- Abrir/cerrar ventanas de apps externas no se anima (sway no anima ventanas); sí las apps BC y el genio.
+- Multimonitor parcial: barra y Dock por pantalla; widgets, Mission Control y cristal usan la principal.
+- **Iconos propios en desarrollo**: ahora se usa el tema MacOS-Like (squircle, sin capas de vidrio dinámicas ni modo tintado).
+- Duraciones, curvas y algunas medidas son estimaciones (Apple no las publica); ver «Sin confirmar» en [`ESTADO.md`](docs/escritorio/ESTADO.md).
+- Generales: el bloqueo no usa `ext-session-lock`; sin hardware real probado; contraseña por defecto pública y SSH activo (solo para máquinas virtuales).
 
 ---
 
 ## Descargar y probar
 
-Última imagen: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Cada release incluye `BC-OS-<versión>-ARM64.vdi.zip` y `SHA256SUMS`.
+Imágenes publicadas: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Cada release incluye `BC-OS-<versión>-ARM64.vdi.zip` y `SHA256SUMS`. La 0.6.0-beta (Golden Gate) aún no está publicada.
 
 1. Descomprime el `.zip` → `.vdi`. Comprueba `shasum -a 256`.
 2. VirtualBox (Mac Apple Silicon) → **Nueva**: Linux / Arch Linux (ARM 64-bit), ≥ 2 GB RAM, 2 CPU.
 3. **Sistema → Habilitar EFI**. Disco: usar el `.vdi` existente. Gráficos: VMSVGA.
-4. Arranca: menú de 5 s (animación de arranque por defecto o modo seguro) → **panel de login**. Usuario `bc`, contraseña `bcos` (**solo alpha**).
+4. Opcional: Red → Avanzado → Reenvío de puertos TCP 2222 → 22 para SSH (`ssh -p 2222 bc@127.0.0.1`).
+5. Arranca: menú de 5 s (arranque normal o modo seguro) → **panel de login**. Usuario **`bc`**, contraseña **`bcos`** (**solo alpha/beta de prueba**; cámbiala con `passwd`).
 
-También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI AAVMF); ver [`docs/development/BUILD.md`](docs/development/BUILD.md).
+También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI AAVMF); ver [`docs/development/BUILD.md`](docs/development/BUILD.md). **No hay ISO todavía**: el instalador `sudo bc-install` va dentro de la imagen.
 
 ## Versiones
 
 | Versión | Estado | Qué trae |
 |---|---|---|
-| `0.1.0-alpha` | publicada | Primera imagen ARM64: arranca en QEMU; en VirtualBox falla el `fsck` del root (ver abajo). |
-| `0.1.1-alpha` | publicada | Mitigación del `fsck`; en VirtualBox arrancaba a pantalla negra (labwc sin 3D). |
-| `0.1.2-alpha` | publicada | **Arranca en VirtualBox ARM64** con BC Shell (render por software) y SSH activado. El shell es una maqueta. |
-| `0.1.3-alpha` | publicada | Shell con Dock y Archivos reales, iconos BC, fondo BC, instalador `bc-install` y animación de arranque con el logo. **Arranca en VirtualBox ARM64, también con la animación (confirmado por el creador).** |
-| `0.2.0-alpha` | publicada | **Escritorio funcional**: login (greetd), bloqueo, apagado, Centro de control real, notificaciones, Archivos + Papelera, Monitor, Configuración, Tienda, lanzador, iconos y fondo BC, BC Core y SSH. Verificada en QEMU. |
-| `0.3.0-alpha` | publicada | **sway**: botón mosaico/flotante en la barra (`Súper+Mayús+Espacio`), `Ctrl+Intro` terminal, `Ctrl+B` Firefox, menús globales tipo macOS por app, Dock con ventanas reales. BC Shell dividido en panel + apps. |
-| `0.3.1-alpha` | publicada | Terminal Alacritty (respaldo foot), cursor tipo macOS, fondo sin parpadeos (`swaybg`), transparencias, Dock con minimizadas. |
-| `0.3.2-alpha` | publicada | Animación de minimizar y entrada de arranque **experimental** con swayfx (solo GPU real). Estilos de escritorio (BC/Windows/Minimal), Modos, widgets, Tienda con Flathub y asistente de bienvenida de 3 pasos (en desarrollo dentro de la serie 0.3.x; ver `PENDIENTE.md`). |
-| `0.4.0-beta` | publicada (prerrelease) | Asistente de bienvenida, estilos BC/Windows/Minimal, widgets, Modos, Flathub, fish, antivirus (servicio), animaciones y fondos propios. |
-| `0.4.1-beta` | en publicación | Arreglos: las ventanas de las apps se cierran, sin aviso rojo en sway, **resolución adaptable** (`bc-display`), iconos **Qogir**, paleta *Medianoche refinado*, portapapeles (Súper+V), bloqueo por inactividad, ajustes tipo Zen del kernel estándar. |
-| `0.5.0-beta` | en pruebas | Entorno **Dotfiles (bspwm)** elegible en el login (X11: bspwm, sxhkd, polybar, picom, rofi, dunst) basado en `borjacandeel/dotfiles-2026`. |
-| `0.6.0` → `1.0.0` | planificadas | Ventanas externas más completas, bloqueo seguro (`ext-session-lock`), tema claro, ISO con instalador, beta y primera estable. Son hitos, no promesas. |
+| `0.1.0` – `0.1.3-alpha` | publicadas | Primeras imágenes ARM64. **0.1.2 y 0.1.3 arrancan en VirtualBox ARM64** (render por software); 0.1.3 trae Dock y Archivos reales, iconos y fondo BC, `bc-install` y animación de arranque. |
+| `0.2.0-alpha` | publicada | Escritorio funcional: login (greetd), bloqueo, apagado, Centro de control, notificaciones, Archivos + Papelera, Monitor, Configuración, Tienda, BC Core y SSH. Verificada en QEMU. |
+| `0.3.x-alpha` | publicadas | **sway** (mosaico/flotante), menús globales por app, Dock con ventanas reales, Alacritty, animación de minimizar y swayfx experimental. |
+| `0.4.0-beta` / `0.4.1-beta` | publicadas (prerrelease) | Asistente de bienvenida, estilos, widgets, Modos, Flathub, fish, servicio de antivirus; resolución adaptable (`bc-display`), iconos Qogir, portapapeles (Súper+V). |
+| `0.5.0-beta` | prerrelease, en pruebas | Entorno **Dotfiles (bspwm)** elegible en el login. Verificado en QEMU; sin probar en VirtualBox. |
+| `0.6.0-beta` | **en desarrollo** (no publicada) | Escritorio **Golden Gate** por defecto; «BC clásico» en el login. Arranca en QEMU con login y escritorio correctos. |
+| → `1.0.0` | planificadas | Bloqueo seguro (`ext-session-lock`), ISO con instalador y primera estable. Son hitos, no promesas. |
 
-> Las funciones de estilos, Modos, widgets, Flathub y bienvenida están implementadas en el código y se han probado con `ctest` y en QEMU, pero su inclusión exacta por versión publicada se confirma en las [notas de cada release](https://github.com/borjacandeel/BC-OS/releases).
+Detalle de cada versión en [`build/RELEASE-NOTES.md`](build/RELEASE-NOTES.md) y en las [notas de cada release](https://github.com/borjacandeel/BC-OS/releases). Capturas de versiones anteriores (BC clásico, login antiguo, Tienda, arranque) en [`docs/screenshots/`](docs/screenshots/).
 
-## Capturas
-
-<table>
-  <tr>
-    <td width="50%"><img src="docs/screenshots/bc-os-mosaico.png" alt="Modo mosaico"><br><sub><b>Mosaico</b> (sway): terminal y Firefox en mosaico; el botón de la barra alterna con el modo flotante.</sub></td>
-    <td width="50%"><img src="docs/screenshots/bc-os-lanzador-sway.png" alt="Lanzador"><br><sub><b>Lanzador</b> (Ctrl+Espacio) con menús globales por app en la barra.</sub></td>
-  </tr>
-  <tr>
-    <td width="50%"><img src="docs/screenshots/bc-os-login.png" alt="Panel de login"><br><sub><b>Login</b> (greetd + greeter propio sobre cage): reloj, avatar, contraseña con animación de error y botones de energía.</sub></td>
-    <td width="50%"><img src="docs/screenshots/bc-os-bloqueo.png" alt="Pantalla de bloqueo"><br><sub><b>Bloqueo</b> (Ctrl+Súper+Q): misma estética, verifica con PAM.</sub></td>
-  </tr>
-  <tr>
-    <td><img src="docs/screenshots/bc-os-tienda.png" alt="Tienda"><br><sub><b>Tienda</b> sobre pacman, abierta dentro de la sesión.</sub></td>
-    <td><img src="docs/screenshots/arranque-bc-1-logo-progreso.png" alt="Animación de arranque"><br><sub><b>Arranque</b>: logo BC con barra de progreso (Plymouth).</sub></td>
-  </tr>
-  <tr>
-    <td><img src="docs/screenshots/icon-pack-catalogo.png" alt="Catálogo de iconos"><br><sub><b>Pack de iconos BC</b> (catálogo).</sub></td>
-    <td><img src="docs/design/reference/escritorio-referencia-01.webp" alt="Referencia visual"><br><sub><b>Referencia visual</b> del creador: el objetivo de diseño, no una captura del sistema.</sub></td>
-  </tr>
-</table>
-
-## Problemas conocidos
-
-- **VirtualBox:** `0.1.0` y `0.1.1` fallaban (`fsck`; labwc sin 3D). `0.1.2`/`0.1.3` arrancan con render por software. **Desde `0.2.0` (y toda la serie 0.3.x con sway) no se ha probado en VirtualBox** (sí en QEMU). Sin hardware real probado.
-- **swayfx** (esquinas redondeadas, entrada de arranque «experimental») solo tiene sentido con GPU real; con render por software (llvmpipe) va lento y con fallos de dibujo. No es el modo por defecto.
-- Android (Waydroid), juegos x86 (FEX/box64), antivirus, copias antes de actualizar e idiomas adicionales **no existen todavía**.
-- El **bloqueo** es una superposición, no usa `ext-session-lock-v1`: otra ventana podría recibir teclado. Pendiente.
-- Contraseña por defecto pública (`bc` / `bcos`) y SSH activo: solo para pruebas en máquinas virtuales.
-- Sin tema claro, sin app de Música, sin ISO. Wi-Fi y Bluetooth sin probar con hardware real.
-- Rendimiento no medido con rigor; observado: ~250 MB de RAM usados tras iniciar sesión (QEMU, 2 GB).
-
----
-
-## Qué es BC OS
-
-Un Linux ARM64 **ligero, fluido y en español**, con un escritorio propio (**BC Shell**) de estética minimal inspirada en macOS pero con identidad original (logos en [`assets/branding/`](assets/branding/)). No usa código, marcas ni recursos de Apple.
+## Arquitectura
 
 | Pieza | Elección |
 |---|---|
 | Base | Arch Linux ARM (aarch64), kernel Linux estándar, systemd, pacman |
-| Gráficos | Wayland · compositor **sway** (wlroots; mosaico y flotante) · Mesa; respaldo por software · swayfx experimental (arranque con `bc.gpu=1`, solo GPU real) |
-| Shell | **BC Shell**: Qt 6 / QML, dividido en panel `layer-shell` (`bc-shell --panel`) + apps (`--app files\|monitor\|settings\|store`) |
-| Control | D-Bus `org.bcos.Shell` · `bc-ctl` · `bc-wm-mode` · atajos en `/etc/bc/atajos.txt` |
-| Terminal | `bc-terminal`: Alacritty con respaldo a foot |
+| Gráficos | Wayland · compositor **sway** (mosaico y flotante) · respaldo por software · swayfx opcional con GPU real (`bc.gpu=1`: radios y desenfoque real) |
+| Shell | **BC Shell**: Qt 6 / QML; proceso «panel» con superficies `layer-shell` (barra, Dock, widgets, Spotlight, Mission Control…) + apps BC (`bc-shell --app …`) |
+| Login | greetd + pantalla propia; sesiones BC OS, BC clásico y Dotfiles (bspwm) |
+| Control | D-Bus `org.bcos.Shell` · `bc-ctl` (`spotlight`, `mission`, `switcher`…) · `bc-session` · `bc-appearance` |
+| Aspecto | Tokens únicos en `shell/qml/Theme.qml` · Inter · MacTahoe (GTK) · MacOS-Like (iconos) · McMojave (cursor) |
 | Servicios | **BC Core**: Rust + D-Bus (`bc-daemon`, settings, update, security, hardware, performance) |
 | Sistema | PipeWire · NetworkManager · zram · nftables · arranque UEFI con systemd-boot |
-| Idioma | `es_ES` por defecto, inglés secundario (Qt Linguist) |
 | Imagen | GPT: ESP FAT32 + ext4, construida en CI ARM64 nativo |
 
-Decisiones y motivos: [`ARCHITECTURE.md`](ARCHITECTURE.md) y [`docs/adr/`](docs/adr/).
-
-## Estado por componente
-
-| Componente | Estado |
-|---|---|
-| Imagen ARM64 (UEFI, systemd-boot, animación de arranque) | ✅ QEMU · ✅ VirtualBox (0.1.2/0.1.3) · 🟡 0.2.0 sin probar en VirtualBox |
-| Login (greetd + greeter QML), bloqueo, apagado/reinicio/suspender/cerrar sesión | ✅ verificado en QEMU (incluye respaldo de autologin) |
-| sway: flotante / mosaico (botón en la barra, `Súper+Mayús+Espacio`), atajos, menús globales por app | ✅ verificado en QEMU |
-| BC Shell: barra, Dock, Centro de control, notificaciones, lanzador | ✅ estado real (audio, red, batería, brillo, Bluetooth, No molestar) |
-| Estilos de escritorio (BC / Windows con barra de tareas y menú Inicio / Minimal), Modos (Relajación, Concentración, Noche), widgets | 🟡 implementados; probados con `ctest` y en QEMU |
-| Asistente de bienvenida (3 pasos: estilo, colores y fondo, organización de ventanas) | 🟡 implementado; se reabre desde Configuración |
-| Fondo (`swaybg`), cursor tipo macOS, terminal Alacritty/foot | ✅ verificado en QEMU |
-| swayfx (efectos con GPU real) | 🟡 experimental; lento con llvmpipe; sin probar con GPU real |
-| Archivos (nueva carpeta, renombrar, Papelera) · Monitor · Configuración | ✅ funcionales |
-| Tienda: pacman y Flathub (`flatpak --user`) | ✅ pacman verificado; 🟡 Flathub según disponibilidad de `flatpak`; instalar con pacman usa `sudo` con tu contraseña |
-| BC Core (6 servicios D-Bus de usuario) | ✅ construidos e instalados; arrancan con la sesión |
-| Pack de iconos BC (186) integrado en el shell e instalado como tema | ✅ |
-| Instalador (`bc-install`) | 🟡 probado en QEMU (con y sin LUKS); dentro de la imagen |
-| ISO con instalador | ⛔ pendiente |
-| Bloqueo seguro (`ext-session-lock`), tema claro, Música | ⛔ pendiente |
-| Benchmarks / optimización | 🟡 primeras medidas; sin rigor |
-
-## Paridad de funciones con Quantum Linux (inspiración, no copia)
-
-El creador quiere para BC OS un conjunto de funciones comparable al de [Quantum Linux](https://github.com/QuantumLinux-arch) (QuantumLinux-arch, GPL-3.0-or-later), **usado solo como referencia de ideas**. BC OS **no copia sus logos, fondos, capturas ni CSS**: todo el diseño y el código son propios (decisión en [ADR 0005](docs/adr/0005-estilos-de-escritorio-y-paridad-quantum.md)). Se respetan además las restricciones de BC OS: **solo ARM64** y **sin Steam/Proton nativos** (no existen para ARM64).
-
-| Función | Estado |
-|---|---|
-| Estilo de escritorio elegible (BC / Windows / Minimal) | 🟡 implementado |
-| Modos (Relajación, Concentración, Noche) y widgets | 🟡 implementado |
-| Tienda con Flathub (Flatpak de usuario) | 🟡 implementado; AUR pendiente |
-| Asistente de bienvenida | 🟡 3 pasos (el plan original contempla más) |
-| Antivirus (ClamAV) y «Centro BC» | ⛔ por hacer |
-| Copias antes de actualizar (Btrfs + Snapper o equivalente), GRUB/arranque seguro en el instalador | ⛔ por hacer |
-| Android con Waydroid | ⛔ por hacer, **experimental**, depende del kernel |
-| Juegos x86 con FEX / box64 | ⛔ por hacer, **experimental** |
-| Idiomas es / en / pt-BR, ventana de novedades tras actualizar | ⛔ por hacer |
-
-## Objetivos (a medir, no garantizados)
-
-RAM en reposo ≤ 700 MB · CPU en reposo ≈ ≤ 2 % · 60 FPS (120 donde se pueda) · arranque rápido. Se medirán sobre una VM de referencia documentada antes de afirmar nada.
-
-## Hoja de ruta
-
-`0` Viabilidad ✅ → `1` Base ✅ (arranca) → `2` BC Shell 🟡 → `3` Identidad visual 🟡 → `4` Apps → `5` Integración → `6` Optimización → `7` Instalador → `8` Beta pública. Detalle en [`ROADMAP.md`](ROADMAP.md) y trabajo vivo en [`PENDIENTE.md`](PENDIENTE.md).
+Decisiones y motivos: [`ARCHITECTURE.md`](ARCHITECTURE.md), [`docs/adr/`](docs/adr/) y [`docs/escritorio/ESTADO.md`](docs/escritorio/ESTADO.md).
 
 ## Estructura del repositorio
 
 ```
-assets/branding/    logos e iconos oficiales BC
+assets/             logos BC, fondos y sonidos propios
 build/              pipeline de imagen (build-all, mkimage, rootfs, overlay)
 core/               BC Core (Rust)
 shell/              BC Shell (Qt 6 / QML)
-icons/              pack de iconos (SPEC, fuentes SVG, build, lint, catálogo)
-docs/               diseño, desarrollo, ADRs, capturas
+icons/              pack de iconos BC y temas de terceros
+docs/               escritorio Golden Gate, diseño, desarrollo, ADRs, capturas
 tools/              diagnóstico de host, utilidades
 .github/workflows/  CI en runners ARM64 (ci.yml, image.yml)
 ```
@@ -166,22 +175,26 @@ tools/              diagnóstico de host, utilidades
 ## Construir
 
 ```bash
-sudo build/build-all.sh 0.4.1-beta      # rootfs + shell + core + swayfx + configuración (host ARM64 o x86_64 con qemu-user)
+sudo build/build-all.sh 0.6.0-beta      # rootfs + shell + core + configuración (host ARM64 o x86_64 con qemu-user)
 ```
 
-En GitHub: **Actions → Imagen ARM64 → Run workflow** (opción *publicar* crea un prerelease). Guía completa: [`docs/development/BUILD.md`](docs/development/BUILD.md), pruebas: [`TESTING.md`](docs/development/TESTING.md), ARM64/VirtualBox: [`ARM64.md`](docs/development/ARM64.md).
+En GitHub: **Actions → Imagen ARM64 → Run workflow** (opción *publicar* crea un prerelease). Guía completa: [`docs/development/BUILD.md`](docs/development/BUILD.md), pruebas: [`TESTING.md`](docs/development/TESTING.md), ARM64/VirtualBox: [`ARM64.md`](docs/development/ARM64.md). Trabajo vivo: [`PENDIENTE.md`](PENDIENTE.md).
 
-## Atribuciones
+## Créditos y licencias de terceros
 
-- **Cursor:** tema «macOS» del proyecto [apple_cursor](https://github.com/ful1e5/apple_cursor) de ful1e5 (v2.0.1), licencia **GPL-3.0**, descargado y verificado durante la construcción de la imagen; el aviso se instala con el sistema.
-- **Quantum Linux** (QuantumLinux-arch, GPL-3.0-or-later): referencia de ideas de funciones; no se reutilizan sus recursos gráficos ni textos.
-- **swayfx** (WillPower3309, licencia MIT) y **sway / wlroots**: se compilan o instalan desde su origen; no se modifican.
-- Pack de iconos y logos BC: propios, bajo la licencia del repositorio con marca reservada.
+BC OS **no copia recursos de Apple** (iconos, fondos, sonidos, fuentes ni código): el fondo «Ondas», los sonidos, los logos y el pack de iconos BC son propios, y lo demás procede de proyectos libres:
 
-## Iconos y créditos de terceros
+| Recurso | Autor | Licencia |
+|---|---|---|
+| Iconos **MacOS-Like** (tema por defecto, sobre MacTahoe) | Scrimas | GPL-3.0 |
+| Cursores **McMojave** | vinceliuice | GPL-3.0 |
+| Tema GTK **MacTahoe** (claro/oscuro) | vinceliuice | MIT |
+| Fuente **Inter** (interfaz) | Proyecto Inter | OFL-1.1 |
+| **CaskaydiaCove Nerd Font** (terminal y monoespaciada) | Nerd Fonts | OFL-1.1 |
+| Iconos **Qogir** (respaldo) | vinceliuice | GPL-3.0 |
+| **sway / wlroots**, **swayfx** | sus autores | MIT |
 
-- **Qogir** (vinceliuice, GPL-3.0): iconos de aplicaciones y tipos de archivo (subconjunto en `icons/qogir/`, sin modificar). La interfaz del shell usa el pack BC propio (`icons/`).
-- Cursor tipo macOS: `apple_cursor` de ful1e5 (GPL-3.0). swayfx (MIT), Alacritty, fish, sway y el resto: ver sus licencias en el sistema.
+**Quantum Linux** (GPL-3.0-or-later) sirvió como referencia de ideas para funciones de la serie 0.4; no se reutilizan sus recursos. El resto de paquetes del sistema conserva sus licencias, instaladas con él.
 
 ## Principios
 
