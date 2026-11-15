@@ -23,6 +23,8 @@ class AppSettings : public QObject {
     Q_PROPERTY(QStringList dockApps READ dockApps WRITE setDockApps NOTIFY changed)
     Q_PROPERTY(QString widgetLayout READ widgetLayout WRITE setWidgetLayout NOTIFY changed)
     Q_PROPERTY(bool sounds READ sounds WRITE setSounds NOTIFY changed)
+    Q_PROPERTY(QStringList dockRecent READ dockRecent WRITE setDockRecent NOTIFY changed)
+    Q_PROPERTY(bool dockShowRecent READ dockShowRecent WRITE setDockShowRecent NOTIFY changed)
 public:
     QString appearance() const { return m_appearance; }
     void setAppearance(const QString &a);
@@ -39,6 +41,10 @@ public:
     QString widgetLayout() const { return m_widgetLayout; }
     void setWidgetLayout(const QString &json);
     bool sounds() const { return m_sounds; }
+    QStringList dockRecent() const { return m_dockRecent; }
+    void setDockRecent(const QStringList &l);
+    bool dockShowRecent() const { return m_dockShowRecent; }
+    void setDockShowRecent(bool on);
     void setSounds(bool on);
     explicit AppSettings(QObject *parent = nullptr);
     bool reducedMotion() const { return m_reduced; }
@@ -72,7 +78,8 @@ private:
     double m_glass = 0.35;
     bool m_dockAutohide = false, m_dockMagnify = true, m_sounds = true;
     int m_dockSize = 46;
-    QStringList m_dockApps;
+    QStringList m_dockApps, m_dockRecent;
+    bool m_dockShowRecent = true;
     class QFileSystemWatcher *m_watch = nullptr;
     void watch();
     template <typename T> void store(const char *key, const T &v);

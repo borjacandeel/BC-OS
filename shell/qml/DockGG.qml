@@ -50,11 +50,32 @@ Item {
             const info = Apps.infoFor(w.appId)
             out.push({ key: "app:" + w.appId, kind: "", appId: w.appId, icon: info.iconPath || "", name: info.name || AppMenus.nameFor(w.appId), pinned: false })
         }
-        return out
+        return out.concat(recents)
     }
+    readonly property int recentStart: items.length - recents.length
+    // Apps recientes (como «Mostrar apps sugeridas y recientes en el Dock» de macOS): las 3 últimas no fijadas
+    property var _seenIds: []
+    Connections {
+        target: Sway
+        function onWindowsChanged() {
+            if (!Settings.dockShowRecent) return
+            const pinnedIds = dock.pinnedKinds.map(k => dock.appIdOf(k))
+            let rec = Settings.dockRecent.slice(), changed = false
+            for (const w of Sway.windows) {
+                if (!w.appId || pinnedIds.indexOf(w.appId) >= 0 || w.appId.indexOf("bc-") === 0) continue
+                if (rec[0] !== w.appId) { rec = [w.appId].concat(rec.filter(x => x !== w.appId)).slice(0, 3); changed = true }
+            }
+            if (changed) Settings.dockRecent = rec
+        }
+    }
+    readonly property var recents: !Settings.dockShowRecent ? [] : Settings.dockRecent.filter(id => Sway.appIds.indexOf(id) < 0).map(id => {
+        const info = Apps.infoFor(id)
+        return { key: "app:" + id, kind: "", appId: id, icon: info.iconPath || "", name: info.name || AppMenus.nameFor(id), pinned: false, recent: true }
+    }).filter(r => r.icon !== "")
     readonly property var minimized: Sway.windows.filter(w => w.minimized)
     readonly property int nRight: minimized.length + 2            // minimizadas + Descargas + Papelera
-    readonly property real baseW: 2 * padX + (items.length + nRight) * (bs + gap) - gap + sepW
+    readonly property real sep2: recents.length > 0 ? sepW : 0      // separador de la sección de recientes
+    readonly property real baseW: 2 * padX + (items.length + nRight) * (bs + gap) - gap + sepW + sep2
     readonly property real baseLeft: (width - baseW) / 2
 
     // ---- Ampliación --------------------------------------------------------------------------
@@ -65,11 +86,12 @@ Item {
         const t = Math.abs(hoverX - baseCenter) / range
         return t >= 1 ? bs : bs * (1 + Theme.dockMagnify * Math.cos(t * Math.PI / 2))
     }
-    function baseCenter(i) { return padX + i * (bs + gap) + bs / 2 + (i >= items.length ? sepW : 0) }
+    function sepBefore(i) { return (i >= items.length ? sepW : 0) + (recents.length > 0 && i >= recentStart ? sep2 : 0) }
+    function baseCenter(i) { return padX + i * (bs + gap) + bs / 2 + sepBefore(i) }
     // Anchos reales con ampliación: la placa crece hacia ambos lados manteniendo el centro bajo el puntero
     readonly property var sizes: { const a = []; const n = items.length + nRight; for (let i = 0; i < n; ++i) a.push(sizeAt(baseCenter(i))); return a }
-    readonly property real realW: { let w = 2 * padX + sepW - gap; for (const v of sizes) w += v + gap; return w }
-    function realX(i) { let x = padX; for (let k = 0; k < i; ++k) x += sizes[k] + gap; return x + (i >= items.length ? sepW : 0) }
+    readonly property real realW: { let w = 2 * padX + sepW + sep2 - gap; for (const v of sizes) w += v + gap; return w }
+    function realX(i) { let x = padX; for (let k = 0; k < i; ++k) x += sizes[k] + gap; return x + sepBefore(i) }
 
     // ---- Ocultación automática ---------------------------------------------------------------
     property bool revealed: !Settings.dockAutohide || hot.containsMouse || plateMa.containsMouse || UiState.dockMenuOpen
@@ -105,6 +127,13 @@ Item {
             width: px(Theme.dockSeparatorW); height: dock.bs * 0.8; color: Theme.separator
         }
 
+        // Separador de recientes
+        Rectangle {
+            visible: dock.recents.length > 0
+            x: dock.realX(dock.recentStart) - dock.sep2 + px(Theme.dockSeparatorGap) - dock.gap / 2
+            anchors.verticalCenter: parent.verticalCenter
+            width: px(Theme.dockSeparatorW); height: dock.bs * 0.8; color: Theme.separator
+        }
         // Apps
         Repeater {
             model: dock.items
@@ -113,7 +142,7 @@ Item {
                 required property int index
                 cellIndex: index
                 kind: modelData.kind; icon: modelData.icon; name: modelData.name
-                running: modelData.kind !== "" ? dock.isRunning(modelData.kind) : true
+                running: modelData.kind !== "" ? dock.isRunning(modelData.kind) : Sway.appIds.indexOf(modelData.appId) >= 0
                 onActivated: {
                     if (modelData.kind === "lanzador") { UiState.toggleLaunchpad(); return }
                     if (!running) bounce()

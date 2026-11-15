@@ -200,6 +200,9 @@ AppWindow {
             Row2 { label: qsTr("Ocultar y mostrar el Dock automáticamente"); value: ""
                    Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
                             on: Settings.dockAutohide; onToggled: (v) => Settings.dockAutohide = v } }
+            Row2 { label: qsTr("Mostrar apps recientes en el Dock"); value: ""
+                   Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
+                            on: Settings.dockShowRecent; onToggled: (v) => Settings.dockShowRecent = v } }
             Row2 { label: qsTr("Restablecer las apps del Dock"); value: ""
                    Rectangle { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; width: 110; height: 26; radius: 7; color: Theme.tileFill
                                Text { anchors.centerIn: parent; text: qsTr("Restablecer"); color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 12 }

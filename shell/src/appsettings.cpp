@@ -58,6 +58,8 @@ void AppSettings::setDockMagnify(bool on) { if (on == m_dockMagnify) return; m_d
 void AppSettings::setDockSize(int px) { px = qBound(32, px, 96); if (px == m_dockSize) return; m_dockSize = px; store("dockTamano", px); }
 void AppSettings::setDockApps(const QStringList &l) { if (l == m_dockApps) return; m_dockApps = l; store("dockApps", l); }
 void AppSettings::setWidgetLayout(const QString &j) { if (j == m_widgetLayout) return; m_widgetLayout = j; store("widgetsPosicion", j); }
+void AppSettings::setDockRecent(const QStringList &l) { const QStringList v = l.mid(0, 3); if (v == m_dockRecent) return; m_dockRecent = v; store("dockRecientes", v); }
+void AppSettings::setDockShowRecent(bool on) { if (on == m_dockShowRecent) return; m_dockShowRecent = on; store("dockMostrarRecientes", on); }
 void AppSettings::setSounds(bool on) { if (on == m_sounds) return; m_sounds = on; store("sonidos", on); }
 
 void AppSettings::reload() {
@@ -80,6 +82,8 @@ void AppSettings::reload() {
     m_dockApps = s.value("dockApps").toStringList();
     m_widgetLayout = s.value("widgetsPosicion").toString();
     m_sounds = s.value("sonidos", true).toBool();
+    m_dockRecent = s.value("dockRecientes").toStringList();
+    m_dockShowRecent = s.value("dockMostrarRecientes", true).toBool();
 }
 
 void AppSettings::setReducedMotion(bool on) {
