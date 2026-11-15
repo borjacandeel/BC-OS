@@ -56,7 +56,7 @@ Window {
     // Golden Gate: el selector de entorno va arriba a la derecha, discreto (en macOS ahí están los menús de estado)
     Row {
         visible: Sessions.sessions.length > 1
-        x: Theme.gg ? parent.width - width - 16 : (parent.width - width) / 2
+        x: Theme.gg ? parent.width - width - 56 : (parent.width - width) / 2
         y: Theme.gg ? 14 : panel.y + panel.height * panel.scale + (win.userList.length > 1 ? 62 : 10) * panel.scale
         spacing: 8
         opacity: win.enter
@@ -97,7 +97,29 @@ Window {
         }
     }
 
+    // macOS 27: apagar, reiniciar y suspender en un menú del icono de encendido, arriba a la derecha
+    Rectangle {
+        visible: Theme.gg
+        x: parent.width - width - 14; y: 9; width: 28; height: 28; radius: 14
+        color: pwm.containsMouse ? Qt.rgba(1, 1, 1, 0.22) : "transparent"; opacity: win.enter
+        Icon { anchors.centerIn: parent; name: Icons.shutdown; size: 16; color: Theme.white }
+        MouseArea { id: pwm; anchors.fill: parent; hoverEnabled: true; onClicked: pwMenu.visible = !pwMenu.visible }
+    }
+    Column {
+        id: pwMenu; visible: false
+        x: parent.width - width - 14; y: 42; width: 170
+        Repeater {
+            model: [ { t: qsTr("Suspender"), a: "suspend" }, { t: qsTr("Reiniciar…"), a: "reboot" }, { t: qsTr("Apagar…"), a: "poweroff" } ]
+            Rectangle {
+                required property var modelData
+                width: 170; height: 30; radius: 8; color: mi.containsMouse ? Theme.accent : Qt.rgba(0.12, 0.12, 0.16, 0.86)
+                Text { x: 12; anchors.verticalCenter: parent.verticalCenter; text: modelData.t; color: "white"; font.family: Theme.fontFamily; font.pixelSize: 13 }
+                MouseArea { id: mi; anchors.fill: parent; hoverEnabled: true; onClicked: { pwMenu.visible = false; dialog.open(modelData.a) } }
+            }
+        }
+    }
     Row {
+        visible: !Theme.gg
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: Math.round(36 * Math.min(1, win.height / 800))

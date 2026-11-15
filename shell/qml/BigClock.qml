@@ -27,9 +27,9 @@ Item {
         }
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
-            text: root.now.toLocaleTimeString(root.loc, "HH:mm")
+            text: root.now.toLocaleTimeString(root.loc, Theme.gg ? "H:mm" : "HH:mm")   // macOS 27: «8:52», sin cero
             // Golden Gate: hora enorme y gruesa, blanca translúcida (efecto vidrio sobre el fondo)
-            color: Theme.gg ? Qt.rgba(1, 1, 1, 0.9) : Theme.white
+            color: Theme.gg ? Qt.rgba(1, 1, 1, 0.82) : Theme.white
             font.family: Theme.fontFamily
             font.pixelSize: Theme.gg ? 132 : 112
             font.weight: Theme.gg ? Font.DemiBold : Font.Light
