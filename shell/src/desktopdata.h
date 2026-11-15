@@ -128,3 +128,41 @@ public:
     using QObject::QObject;
     Q_INVOKABLE void play(const QString &name);
 };
+
+// Monitor de Actividad: procesos reales de /proc (CPU % entre muestras, memoria residente, hilos, usuario).
+class Processes : public QObject {
+    Q_OBJECT
+    Q_PROPERTY(QVariantList list READ list NOTIFY changed)   // [{pid, name, cpu, cpuTime, mem, memText, threads, user, mine}]
+    Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)
+    Q_PROPERTY(QString sortKey READ sortKey WRITE setSortKey NOTIFY changed)
+    Q_PROPERTY(QString filter READ filter WRITE setFilter NOTIFY changed)
+    Q_PROPERTY(int threadCount READ threadCount NOTIFY changed)
+    Q_PROPERTY(double userCpu READ userCpu NOTIFY changed)
+    Q_PROPERTY(double systemCpu READ systemCpu NOTIFY changed)
+public:
+    explicit Processes(QObject *parent = nullptr);
+    QVariantList list() const { return m_list; }
+    bool active() const { return m_timer.isActive(); }
+    void setActive(bool on);
+    QString sortKey() const { return m_sort; }
+    void setSortKey(const QString &k) { if (k != m_sort) { m_sort = k; rebuild(); } }
+    QString filter() const { return m_filter; }
+    void setFilter(const QString &f) { if (f != m_filter) { m_filter = f; rebuild(); } }
+    int threadCount() const { return m_threads; }
+    double userCpu() const { return m_userCpu; }
+    double systemCpu() const { return m_sysCpu; }
+    Q_INVOKABLE void refresh();
+    Q_INVOKABLE bool quit(int pid, bool force = false);   // «Salir» / «Forzar salida» (solo procesos propios)
+signals:
+    void changed();
+    void activeChanged();
+private:
+    void rebuild();
+    QTimer m_timer;
+    QHash<int, qulonglong> m_prevTicks;
+    qulonglong m_prevTotal = 0, m_prevUser = 0, m_prevSys = 0;
+    QVariantList m_all, m_list;
+    QString m_sort = "cpu", m_filter;
+    int m_threads = 0;
+    double m_userCpu = 0, m_sysCpu = 0;
+};

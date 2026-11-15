@@ -334,3 +334,95 @@ void QuickTools::capture(const QString &tag, const QString &geom) {
     a << path;
     run("grim", a, [this, tag, path](int code, const QString &) { emit captured(tag, path, code == 0); });
 }
+
+// ---------------------------------------------------------------------------------------------
+#include <csignal>
+#include <pwd.h>
+#include <unistd.h>
+Processes::Processes(QObject *parent) : QObject(parent) {
+    m_timer.setInterval(2000);
+    connect(&m_timer, &QTimer::timeout, this, &Processes::refresh);
+}
+void Processes::setActive(bool on) {
+    if (on == m_timer.isActive()) return;
+    if (on) { refresh(); m_timer.start(); } else m_timer.stop();
+    emit activeChanged();
+}
+static QString userName(uint uid) {
+    static QHash<uint, QString> cache;
+    if (cache.contains(uid)) return cache.value(uid);
+    const passwd *pw = getpwuid(uid);
+    return cache[uid] = pw ? QString::fromLocal8Bit(pw->pw_name) : QString::number(uid);
+}
+void Processes::refresh() {
+    // Totales de CPU (para % de usuario/sistema y para repartir entre procesos)
+    QFile st("/proc/stat");
+    qulonglong total = 0, user = 0, sys = 0;
+    if (st.open(QIODevice::ReadOnly)) {
+        const QList<QByteArray> f = st.readLine().simplified().split(' ');
+        for (int i = 1; i < f.size(); ++i) total += f[i].toULongLong();
+        if (f.size() > 4) { user = f[1].toULongLong() + f[2].toULongLong(); sys = f[3].toULongLong(); }
+    }
+    const qulonglong dTotal = total - m_prevTotal;
+    if (m_prevTotal && dTotal) { m_userCpu = 100.0 * (user - m_prevUser) / dTotal; m_sysCpu = 100.0 * (sys - m_prevSys) / dTotal; }
+    const long hz = sysconf(_SC_CLK_TCK) > 0 ? sysconf(_SC_CLK_TCK) : 100;
+    const long page = sysconf(_SC_PAGESIZE) > 0 ? sysconf(_SC_PAGESIZE) : 4096;
+    const int ncpu = qMax(1, int(sysconf(_SC_NPROCESSORS_ONLN)));
+    const uint me = getuid();
+    QHash<int, qulonglong> ticks;
+    QVariantList all;
+    int threads = 0;
+    const QDir proc("/proc");
+    for (const QString &e : proc.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
+        bool ok = false; const int pid = e.toInt(&ok);
+        if (!ok) continue;
+        QFile f("/proc/" + e + "/stat");
+        if (!f.open(QIODevice::ReadOnly)) continue;
+        const QByteArray s = f.readAll();
+        const int l = s.indexOf('('), r = s.lastIndexOf(')');
+        if (l < 0 || r < 0) continue;
+        const QString comm = QString::fromUtf8(s.mid(l + 1, r - l - 1));
+        const QList<QByteArray> rest = s.mid(r + 2).split(' ');
+        if (rest.size() < 22) continue;
+        if (pid == 2 || rest[1].toInt() == 2) continue;   // hilos del núcleo: macOS tampoco los lista
+        const qulonglong t = rest[11].toULongLong() + rest[12].toULongLong();   // utime + stime
+        const int nth = rest[17].toInt();
+        const qlonglong rss = rest[21].toLongLong() * page;
+        ticks[pid] = t;
+        threads += nth;
+        double cpu = 0;
+        if (m_prevTotal && dTotal && m_prevTicks.contains(pid)) cpu = 100.0 * ncpu * (t - m_prevTicks.value(pid)) / dTotal;
+        const uint uid = QFileInfo("/proc/" + e).ownerId();
+        // Nombre legible: el de la orden si comm está truncado (15 caracteres)
+        QString name = comm;
+        if (name.size() >= 15) { QFile c("/proc/" + e + "/cmdline"); if (c.open(QIODevice::ReadOnly)) { const QString a0 = QString::fromLocal8Bit(c.readAll().split('\0').value(0)); if (!a0.isEmpty()) name = a0.section('/', -1); } }
+        const qulonglong secs = t / hz;
+        all.append(QVariantMap{{"pid", pid}, {"name", name}, {"cpu", qRound(cpu * 10) / 10.0},
+                               {"cpuTime", QString("%1:%2.%3").arg(secs / 60).arg(secs % 60, 2, 10, QChar('0')).arg((t % hz) * 100 / hz, 2, 10, QChar('0'))},
+                               {"mem", rss}, {"memText", QLocale(QLocale::Spanish).formattedDataSize(rss, 1)}, {"threads", nth},
+                               {"user", userName(uid)}, {"mine", uid == me}});
+    }
+    m_prevTicks = ticks; m_prevTotal = total; m_prevUser = user; m_prevSys = sys;
+    m_all = all; m_threads = threads;
+    rebuild();
+}
+void Processes::rebuild() {
+    QVariantList l;
+    for (const QVariant &v : std::as_const(m_all))
+        if (m_filter.isEmpty() || v.toMap().value("name").toString().contains(m_filter, Qt::CaseInsensitive)) l << v;
+    const QString k = m_sort;
+    std::sort(l.begin(), l.end(), [&k](const QVariant &a, const QVariant &b) {
+        const QVariantMap x = a.toMap(), y = b.toMap();
+        if (k == "name") return x.value("name").toString().compare(y.value("name").toString(), Qt::CaseInsensitive) < 0;
+        if (k == "pid") return x.value("pid").toInt() < y.value("pid").toInt();
+        if (k == "mem") return x.value("mem").toLongLong() > y.value("mem").toLongLong();
+        if (k == "threads") return x.value("threads").toInt() > y.value("threads").toInt();
+        return x.value("cpu").toDouble() > y.value("cpu").toDouble();
+    });
+    m_list = l.mid(0, 300);
+    emit changed();
+}
+bool Processes::quit(int pid, bool force) {
+    if (pid <= 1 || QFileInfo("/proc/" + QString::number(pid)).ownerId() != getuid()) return false;
+    return ::kill(pid, force ? SIGKILL : SIGTERM) == 0;
+}

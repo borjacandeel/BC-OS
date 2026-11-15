@@ -100,6 +100,7 @@ int main(int argc, char *argv[]) {
     Batteries batteries;
     Reminders reminders;
     SoundPlayer sounds;
+    Processes processes;
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Settings", &appSettings);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Monitor", &monitor);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Store", &store);
@@ -114,6 +115,7 @@ int main(int argc, char *argv[]) {
     qmlRegisterType<FileBrowser>("BCShell", 1, 0, "FileModel");
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Reminders", &reminders);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Sounds", &sounds);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Processes", &processes);
 
     // Solo del panel
     PamAuth pam;
