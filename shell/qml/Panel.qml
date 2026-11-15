@@ -599,6 +599,7 @@ LayerWindow {
         else if (d === "launchpad") UiState.launcherOpen = true
         else if (d === "menu") UiState.menu = "system"
         else if (d === "light") Settings.appearance = "light"
+        else if (d === "widgets") UiState.widgetGalleryOpen = true
         else if (d === "menu") UiState.openMenu("system", 12)
         else if (d === "power") UiState.openPower("poweroff")
         else if (d === "launcher") UiState.toggleLauncher()
