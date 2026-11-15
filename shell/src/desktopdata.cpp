@@ -532,3 +532,21 @@ bool QuickTools::setKeyboardLayout(const QString &code) {
     QProcess::startDetached("bc-wm-mode", {"init"});
     return true;
 }
+
+static QString dataFile(const QString &name) {
+    static const QRegularExpression ok("^[a-z][a-z-]{0,30}$");
+    return ok.match(name).hasMatch() ? QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/bc/" + name + ".json" : QString();
+}
+QString QuickTools::readData(const QString &name) {
+    QFile f(dataFile(name));
+    return f.open(QIODevice::ReadOnly) ? QString::fromUtf8(f.read(4 * 1024 * 1024)) : QString();
+}
+bool QuickTools::writeData(const QString &name, const QString &json) {
+    const QString p = dataFile(name);
+    if (p.isEmpty() || json.size() > 4 * 1024 * 1024) return false;
+    QDir().mkpath(QFileInfo(p).absolutePath());
+    QSaveFile f(p);
+    if (!f.open(QIODevice::WriteOnly)) return false;
+    f.write(json.toUtf8());
+    return f.commit();
+}

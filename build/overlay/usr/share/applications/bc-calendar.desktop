@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Calendario
+Comment=Tus eventos del mes
+Exec=bc-shell --app calendar
+Icon=bc-calendar
+Categories=Office;Calendar;
+StartupNotify=false

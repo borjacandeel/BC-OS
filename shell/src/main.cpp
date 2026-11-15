@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
     const QString appName = p.value(oApp);
     const bool appMode = !appName.isEmpty();
     if (appMode) {
-        static const QStringList known{"files", "monitor", "settings", "store", "calculator", "notes", "preview"};
+        static const QStringList known{"files", "monitor", "settings", "store", "calculator", "notes", "preview", "reminders", "calendar"};
         if (!known.contains(appName)) { qCritical() << "App desconocida:" << appName; return 2; }
         app.setDesktopFileName("bc-" + appName);  // app_id en sway
         app.setApplicationName("bc-" + appName);

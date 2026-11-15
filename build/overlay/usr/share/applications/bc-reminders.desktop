@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=Recordatorios
+Comment=Tareas y listas
+Exec=bc-shell --app reminders
+Icon=bc-reminders
+Categories=Office;
+StartupNotify=false
