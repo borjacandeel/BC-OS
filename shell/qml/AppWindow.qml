@@ -9,6 +9,8 @@ Window {
     property alias titlebarContent: tbSlot.data
     property int titlebarHeight: Theme.gg ? 52 : 44
     // Posición en pantalla (sway) para que el cristal de las barras laterales recorte el fondo correcto
+    // Sombra de ventana tipo macOS dibujada por la propia app (sway por software no hace sombras; Hyprland sí)
+    readonly property int sh: Theme.gg && !Quick.realBlur && win.visibility !== Window.FullScreen && win.visibility !== Window.Maximized ? 32 : 0
     readonly property real originX: Quick.windowPos.x
     readonly property real originY: Quick.windowPos.y
     Binding { target: Quick; property: "trackWindow"; value: Theme.gg && win.active }
@@ -16,8 +18,8 @@ Window {
     visible: true
     color: "transparent"
     flags: Qt.FramelessWindowHint
-    minimumWidth: 480
-    minimumHeight: 320
+    minimumWidth: 480 + 2 * sh
+    minimumHeight: 320 + 2 * sh
 
     onClosing: (c) => { c.accepted = false; win.closeRequested() }
     onCloseRequested: { if (Theme.reducedMotion) Qt.quit(); else closeAnim.start() }
@@ -60,9 +62,18 @@ Window {
     }
     Shortcut { sequence: "Ctrl+W"; onActivated: win.closeRequested() }
 
+    BorderImage {
+        visible: win.sh > 0
+        anchors.fill: parent
+        source: "qrc:/BCShell/assets/window-shadow.png"
+        border { left: 64; right: 64; top: 64; bottom: 64 }
+        opacity: win.active ? 1 : 0.6
+        Behavior on opacity { NumberAnimation { duration: Theme.d(Theme.durHover) } }
+    }
     Rectangle {
         id: frame
         anchors.fill: parent
+        anchors.margins: win.sh
         radius: Theme.radiusWindow
         color: Theme.gg && !win.active ? Theme.windowBgInactive : Theme.windowFill
         border.width: 1

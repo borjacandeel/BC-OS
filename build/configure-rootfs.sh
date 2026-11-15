@@ -149,7 +149,12 @@ done
 [ -d "$R/usr/share/themes/MacTahoe-Dark" ] && GTKTHEME=MacTahoe-Dark && \
   curl -fsSL "https://raw.githubusercontent.com/vinceliuice/MacTahoe-gtk-theme/$GTKSHA/COPYING" -o "$R/usr/share/themes/MacTahoe-Dark/COPYING" || true
 # Interfaz con Inter (métricas próximas a SF Pro, como el escritorio Golden Gate); monoespaciada: CaskaydiaCove
-printf '[Settings]\ngtk-theme-name=%s\ngtk-icon-theme-name=%s\ngtk-cursor-theme-name=McMojave-cursors\ngtk-cursor-theme-size=24\ngtk-font-name=Inter 10\ngtk-application-prefer-dark-theme=1\n' "$GTKTHEME" "$ICONS" | tee "$R/etc/gtk-3.0/settings.ini" > "$R/etc/gtk-4.0/settings.ini"
+printf '[Settings]\ngtk-theme-name=%s\ngtk-icon-theme-name=%s\ngtk-cursor-theme-name=McMojave-cursors\ngtk-cursor-theme-size=24\ngtk-font-name=Inter 10\ngtk-application-prefer-dark-theme=1\ngtk-decoration-layout=close,minimize,maximize:\n' "$GTKTHEME" "$ICONS" | tee "$R/etc/gtk-3.0/settings.ini" > "$R/etc/gtk-4.0/settings.ini"
+# Botones de ventana a la izquierda como en macOS también en apps GTK4/libadwaita (Ghostty en Hyprland, etc.)
+install -d "$R/etc/dconf/db/local.d" "$R/etc/dconf/profile"
+printf "[org/gnome/desktop/wm/preferences]\nbutton-layout='close,minimize,maximize:'\n\n[org/gnome/desktop/interface]\nfont-name='Inter 10'\nmonospace-font-name='DejaVu Sans Mono 11'\ncolor-scheme='prefer-dark'\n" > "$R/etc/dconf/db/local.d/00-bcos"
+printf 'user-db:user\nsystem-db:local\n' > "$R/etc/dconf/profile/user"
+sh "command -v dconf >/dev/null && dconf update" || true
 
 install -D -m644 /dev/stdin "$R/usr/share/icons/default/index.theme" <<'CUR'
 [Icon Theme]

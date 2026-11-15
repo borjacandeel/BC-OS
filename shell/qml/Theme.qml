@@ -58,7 +58,8 @@ QtObject {
     //  Lo marcado «sin confirmar» es la aproximación más probable sin fuente pública verificable.
     //  Todas las medidas están en píxeles a 1920×1080 y se escalan con `s` (alto de pantalla / 1080).
     // ============================================================================================
-    readonly property real s: Math.max(0.7, Math.min(2.0, UiState.sh / 1080))
+    // Como macOS: tamaños en puntos fijos (la nitidez la da la escala HiDPI de la pantalla); solo se reduce en pantallas bajas
+    readonly property real s: Math.max(0.7, Math.min(1.0, UiState.sh / 800))
     function px(v) { return Math.round(v * s) }
 
     // ---- Aspecto -------------------------------------------------------------------------
