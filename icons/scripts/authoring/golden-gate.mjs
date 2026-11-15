@@ -322,6 +322,24 @@ const out = {};
     `<path d="M496 412H660M496 612H612" ${STROKE(88, OR, '.55')}/>` });
 }
 
+// ===== Música: semicorcheas dobles (dos barras horizontales) delante de un disco de vidrio =====
+{
+  const base = { top: '#FF8FC2', bottom: '#D6336C' };
+  const note = (fill, dy = 0) =>
+    `<rect x="504" y="${300 + dy}" width="56" height="380" rx="28" ${fill}/><rect x="704" y="${300 + dy}" width="56" height="380" rx="28" ${fill}/>` +
+    `<rect x="504" y="${300 + dy}" width="256" height="60" rx="28" ${fill}/><rect x="504" y="${400 + dy}" width="256" height="56" rx="28" ${fill}/>` +
+    `<circle cx="500" cy="${680 + dy}" r="60" ${fill}/><circle cx="700" cy="${680 + dy}" r="60" ${fill}/>`;
+  const disc = `<circle cx="412" cy="520" r="172" ${GLASS()}/><circle cx="412" cy="520" r="32" fill="${W}" fill-opacity=".55"/>`;
+  out['multimedia-audio-player'] = app({ ...base, glyph:
+    disc + `<g opacity=".16">${note('fill="#000000"', 16)}</g>` + note(OBJ) });
+  out['multimedia-audio-player@32'] = app({ ...base, gl: false, glyph:
+    `<circle cx="412" cy="520" r="172" fill="${W}" fill-opacity=".3"/>` + note(`fill="${W}"`) });
+  out['multimedia-audio-player@16'] = app({ ...base, gl: false, glyph:
+    `<rect x="404" y="272" width="88" height="440" rx="44" fill="${W}"/><rect x="680" y="272" width="88" height="440" rx="44" fill="${W}"/>` +
+    `<rect x="404" y="272" width="364" height="104" rx="44" fill="${W}"/>` +
+    `<circle cx="396" cy="704" r="92" fill="${W}"/><circle cx="672" cy="704" r="92" fill="${W}"/>` });
+}
+
 for (const [k, v] of Object.entries(out)) fs.writeFileSync(path.join(APPS, k + '.svg'), v);
 
 // ===== Pila de Descargas (color 48, lugares): hojas en abanico + tarjeta azul con flecha =====

@@ -155,9 +155,9 @@ Familia común de saturación/luminosidad: tono claro arriba (L≈72%), oscuro a
 | rojo | `#FF8F87` | `#E8453C` | Reloj (`preferences-system-time`), Calendario (`x-office-calendar`, copia `bc-calendar`) |
 | naranja | `#FFA66B` | `#EB5B1E` | Recordatorios (`bc-reminders`); `#EB5B1E` es también el color de los operadores de la Calculadora |
 | ámbar | `#FFD27D` | `#F29A1F` | Notas (`accessories-notes`) |
-| violeta | `#B49CFF` | `#6B4FE0` | Música (`multimedia-audio-player`) |
+| violeta | `#B49CFF` | `#6B4FE0` | (libre) |
 | índigo | `#8E9BFF` | `#3A45C4` | Editor (`accessories-text-editor`), Calculadora (`accessories-calculator`) |
-| magenta | `#FF8FC2` | `#D6336C` | Mission Control (`bc-mission-control`) |
+| magenta | `#FF8FC2` | `#D6336C` | Mission Control (`bc-mission-control`), Música (`multimedia-audio-player`, copia `bc-music`) |
 | papel | `#F5F5F7` | `#E4E9F2` | Calendario (`office-calendar`) |
 | plata | `#F5F5F7` | `#C3CCDB` | Papelera (`user-trash`, `user-trash-full`) |
 | niebla | `#E6EBF5` | `#A7B3CC` | Aplicaciones (`view-app-grid`, fondo claro) |
@@ -175,7 +175,7 @@ Sobre "papel", "plata" y "niebla" el glifo usa `#0B1220`, `#1F63D6`, `#E8453C` o
 `dist/png/<tamaño>/<stem>.png`, `dist/icns/<stem>.icns` (tipos `icp4 icp5 icp6 ic07 ic08 ic09 ic10 ic11 ic12 ic13 ic14`, PNG embebido), tema Freedesktop `scalable/apps` + `<N>x<N>/apps`.
 
 ### 7.7 Glifo por capas de vidrio («Golden Gate», v0.2)
-Opcional para cualquier app y obligatorio en las apps del Dock rediseñadas desde la 0.2.0 (`system-file-manager`, `preferences-system`, `utilities-system-monitor`, `gnome-software`, `utilities-terminal`, `view-app-grid`, papeleras, `accessories-calculator`, `accessories-notes`, `multimedia-photo-viewer`, `x-office-calendar`, `bc-reminders`). Mantiene §7.1–7.4: mismo squircle, mismas sombras del cuerpo, una sola luz cenital. El glifo se compone, de abajo arriba, con como mucho estas capas:
+Opcional para cualquier app y obligatorio en las apps del Dock rediseñadas desde la 0.2.0 (`system-file-manager`, `preferences-system`, `utilities-system-monitor`, `gnome-software`, `utilities-terminal`, `view-app-grid`, papeleras, `accessories-calculator`, `accessories-notes`, `multimedia-photo-viewer`, `x-office-calendar`, `bc-reminders`, `multimedia-audio-player`). Mantiene §7.1–7.4: mismo squircle, mismas sombras del cuerpo, una sola luz cenital. El glifo se compone, de abajo arriba, con como mucho estas capas:
 
 1. **Placa de vidrio** (opcional, una): forma secundaria detrás del objeto. `fill="#FFFFFF" fill-opacity=".3"` (.16 sobre fondo "noche", .35 en piezas pequeñas) y borde de vidrio `stroke="#FFFFFF" stroke-opacity=".5" stroke-width="4"` (única excepción al trazo mínimo de §7.3; el lint la reconoce por ancho 4 y opacidad ≤ .6).
 2. **Sombra del objeto**: la silueta del objeto principal desplazada **+16 en Y**, `fill="#000000" fill-opacity=".16"` (.3 sobre "noche"). Un solo path (nunca piezas solapadas, que duplicarían la opacidad).

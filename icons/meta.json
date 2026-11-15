@@ -979,11 +979,13 @@
     "es": "Música",
     "tags": [
       "música",
-      "audio",
-      "reproductor",
       "nota",
+      "semicorcheas",
+      "canciones",
+      "reproductor",
       "music",
-      "player"
+      "player",
+      "audio"
     ],
     "category": "apps"
   },
