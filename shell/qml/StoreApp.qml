@@ -8,6 +8,7 @@ AppWindow {
     height: 640
     titlebarHeight: 52
     title: qsTr("Tienda")
+    titlebarContent: [ Item {} ]   // como App Store: sin título centrado
 
     property int mode: 0            // 0 buscar, 1 instaladas
     property string password: ""    // solo en memoria, mientras la ventana está abierta
