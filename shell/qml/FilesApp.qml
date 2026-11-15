@@ -80,13 +80,20 @@ AppWindow {
     // ---- Barra de herramientas unificada ----------------------------------------------------
     titlebarContent: [
         Row {
-            x: win.sideW + 14; anchors.verticalCenter: parent.verticalCenter; spacing: 2
-            Repeater {
-                model: [ { name: Icons.chevronLeft, on: Files.canBack, act: 0 }, { name: Icons.chevronRight, on: Files.canForward, act: 1 } ]
-                Rectangle {
-                    width: 28; height: 28; radius: 7; color: bm.containsMouse && modelData.on ? Theme.tileFill : "transparent"
-                    Icon { anchors.centerIn: parent; name: modelData.name; size: 16; color: Theme.textPrimary; opacity: modelData.on ? 1 : 0.3 }
-                    MouseArea { id: bm; anchors.fill: parent; hoverEnabled: true; enabled: modelData.on; onClicked: modelData.act === 0 ? Files.back() : Files.forward() }
+            x: win.sideW + 10; anchors.verticalCenter: parent.verticalCenter; spacing: 6
+            // Cápsula ‹ › como en el Finder de macOS 27
+            Rectangle {
+                width: 72; height: 34; radius: 17; color: Theme.dark ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(0, 0, 0, 0.05)
+                border.width: 1; border.color: Theme.dark ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(0, 0, 0, 0.08)
+                Rectangle { anchors.centerIn: parent; width: 1; height: 18; color: Theme.hairline }
+                Repeater {
+                    model: [ { name: Icons.chevronLeft, on: Files.canBack, act: 0 }, { name: Icons.chevronRight, on: Files.canForward, act: 1 } ]
+                    Item {
+                        x: index * 36; width: 36; height: 34
+                        required property var modelData; required property int index
+                        Icon { anchors.centerIn: parent; name: modelData.name; size: 16; color: Theme.textPrimary; opacity: modelData.on ? 1 : 0.3 }
+                        MouseArea { anchors.fill: parent; enabled: modelData.on; onClicked: modelData.act === 0 ? Files.back() : Files.forward() }
+                    }
                 }
             }
             Text { anchors.verticalCenter: parent.verticalCenter; leftPadding: 8; text: win.recents ? qsTr("Recientes") : Files.inTrash ? qsTr("Papelera") : (Files.crumbs.length ? Files.crumbs[Files.crumbs.length - 1].name || qsTr("Inicio") : "")
@@ -96,15 +103,16 @@ AppWindow {
             anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; spacing: 10
             // Selector de vista (control segmentado)
             Rectangle {
-                width: 4 * 30 + 6; height: 28; radius: 8; color: Theme.tileFill
+                width: 4 * 38 + 8; height: 34; radius: 17; color: Theme.dark ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(0, 0, 0, 0.05)
+                border.width: 1; border.color: Theme.dark ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(0, 0, 0, 0.08)
                 Row {
-                    x: 3; anchors.verticalCenter: parent.verticalCenter
+                    x: 4; anchors.verticalCenter: parent.verticalCenter
                     Repeater {
                         model: [ { v: "icons", i: "view-grid-symbolic" }, { v: "list", i: "view-list-symbolic" },
                                  { v: "columns", i: "view-sidebar-symbolic" }, { v: "gallery", i: "image-x-generic" } ]
                         Rectangle {
-                            width: 30; height: 22; radius: 6; color: win.view === modelData.v ? (Theme.dark ? Qt.rgba(1, 1, 1, 0.18) : "white") : "transparent"
-                            Icon { anchors.centerIn: parent; name: modelData.i; size: 14; color: Theme.textPrimary }
+                            width: 38; height: 26; radius: 13; color: win.view === modelData.v ? (Theme.dark ? Qt.rgba(1, 1, 1, 0.18) : Qt.rgba(0, 0, 0, 0.08)) : "transparent"
+                            Icon { anchors.centerIn: parent; name: modelData.i; size: 16; color: Theme.textPrimary }
                             MouseArea { anchors.fill: parent; onClicked: win.view = modelData.v }
                         }
                     }
@@ -246,7 +254,7 @@ AppWindow {
                         width: grid.cellWidth; height: grid.cellHeight
                         Rectangle { anchors.horizontalCenter: parent.horizontalCenter; y: 2; width: 74; height: 66; radius: 7
                                     color: win.current === cell.index ? Theme.tileFill : "transparent" }
-                        FileGlyph { visible: cell.kind !== "imagen" || thumb.status !== Image.Ready; kind: cell.kind; anchors.horizontalCenter: parent.horizontalCenter; y: 6; width: 70; height: 58 }
+                        FileGlyph { visible: cell.kind !== "imagen" || thumb.status !== Image.Ready; kind: cell.kind; path: cell.filePath; anchors.horizontalCenter: parent.horizontalCenter; y: 6; width: 70; height: 58 }
                         // Miniatura de las imágenes (como Finder), con borde blanco fino y sombra
                         Rectangle { visible: thumb.status === Image.Ready; anchors.centerIn: thumb; width: thumb.paintedWidth + 4; height: thumb.paintedHeight + 4; color: "white"; radius: 2
                                     border.width: 1; border.color: Qt.rgba(0, 0, 0, 0.15) }
