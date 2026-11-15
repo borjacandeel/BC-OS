@@ -85,12 +85,13 @@ QtObject {
 
     // ---- Widgets de escritorio (captura) -------------------------------------------------
     readonly property int widgetX: 16              // captura: 16 → 360
-    readonly property int widgetY: 47              // captura: primer widget empieza en y=47
+    readonly property int widgetY: 46              // macOS 27 (512pixels, 2x): primer widget en y=46
     readonly property int widgetW: 344
-    readonly property int widgetGap: 19            // captura: 388→407 y 568→588
-    readonly property int widgetLargeH: 341        // captura: baterías y recordatorios
-    readonly property int widgetMediumH: 161       // captura: widget de app de terceros
-    readonly property int widgetRadius: 24         // captura: esquinas muy redondeadas
+    readonly property int widgetSmall: 164         // macOS 27: widget pequeño 164×164
+    readonly property int widgetGap: 16            // macOS 27: 16 pt entre widgets
+    readonly property int widgetLargeH: 344        // macOS 27: grande 344×344
+    readonly property int widgetMediumH: 164       // macOS 27: mediano 344×164, pequeño 164×164
+    readonly property int widgetRadius: 23         // macOS 27: radio ≈23 pt
     readonly property int widgetPad: 18            // captura: textos a 34 px del borde de la pantalla
     readonly property int batteryRowH: 57          // captura: filas en y 75, 132, 189, 247
     readonly property int batteryIconX: 25         // captura: icono centrado en x=41 (16+25)
@@ -104,13 +105,13 @@ QtObject {
 
     // ---- Dock (captura) ------------------------------------------------------------------
     readonly property int dockIcon: Settings.dockSize   // captura: iconos de ≈46 px; por defecto 48 (ajustable)
-    readonly property int dockPitch: dockIcon + 1       // captura: centros cada 47 px con iconos de 46
-    readonly property int dockPadX: 8                   // captura: placa 195 → primer icono 199
-    readonly property int dockPadY: 6
-    readonly property int dockBottom: 4                 // captura: placa a ≈4 px del borde inferior
-    readonly property int dockRadius: 20                // captura: ≈18–20
+    readonly property int dockPitch: Math.round(dockIcon * 1.18)   // macOS 27: iconos de 49 cada 58 pt (squircle visible de 43)
+    readonly property int dockPadX: 12                  // macOS 27: placa → squircle 15 pt (12 + margen del icono)
+    readonly property int dockPadY: 12                  // macOS 27: placa de 73 pt con iconos de 49
+    readonly property int dockBottom: 6                 // macOS 27: placa a 6 pt del borde inferior
+    readonly property int dockRadius: 22                // macOS 27: placa muy redondeada
     readonly property int dockDot: 4                    // captura: punto pequeño bajo la app abierta
-    readonly property int dockDotY: 2                   // distancia del punto al borde inferior de la placa
+    readonly property int dockDotY: 3                   // macOS 27: punto a 3-4 pt del borde de la placa
     readonly property int dockSeparatorW: 1
     readonly property int dockSeparatorGap: 10
     readonly property real dockMagnify: Settings.dockMagnify ? 0.75 : 0.0   // sin confirmar (ajuste de macOS «Ampliación» a mitad)

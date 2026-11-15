@@ -87,7 +87,7 @@ private:
     QString m_appearance = "dark", m_widgetLayout, m_ccModules;
     double m_glass = 0.35;
     bool m_dockAutohide = false, m_dockMagnify = true, m_sounds = true;
-    int m_dockSize = 46;
+    int m_dockSize = 49;
     QStringList m_dockApps, m_dockRecent, m_hot{"", "", "", "notes"};
     bool m_dockShowRecent = true, m_clock24 = false;
     class QFileSystemWatcher *m_watch = nullptr;

@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Window
 import BCShell
 
 // Dock Golden Gate (captura): placa de vidrio centrada abajo, iconos uniformes, punto bajo las apps abiertas,
@@ -219,7 +220,7 @@ Item {
             AppIcon { visible: cell.kind !== "" && !cell.stack; anchors.fill: parent; kind: cell.kind; size: cell.sz
                       full: cell.trash && trashModel.count > 0 }
             Image { visible: cell.kind === "" && !cell.stack; anchors.fill: parent; smooth: true; fillMode: Image.PreserveAspectFit
-                    sourceSize: Qt.size(dock.maxIcon * 2, dock.maxIcon * 2)
+                    sourceSize: Qt.size(Math.ceil(dock.maxIcon * Screen.devicePixelRatio / 16) * 16, Math.ceil(dock.maxIcon * Screen.devicePixelRatio / 16) * 16); mipmap: true
                     source: cell.icon !== "" ? "file://" + cell.icon : "qrc:/BCShell/apps/system-file-manager.svg" }
             // Pila de documentos: tres hojas apiladas con el archivo más reciente arriba
             Item {

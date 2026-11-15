@@ -29,7 +29,8 @@ Item {
     }
     // Widgets activos (Editar widgets…): orden de la columna. Por defecto, los de la captura de referencia.
     readonly property var heights: ({ baterias: Theme.widgetLargeH, app: Theme.widgetMediumH, recordatorios: Theme.widgetLargeH,
-                                      calendario: Theme.widgetMediumH, reloj: Theme.widgetMediumH })
+                                      calendario: Theme.widgetSmall, reloj: Theme.widgetSmall })
+    readonly property var smalls: ["calendario", "reloj"]
     // Sin baterías (máquina virtual, sobremesa) el widget de baterías no aparece: en su lugar, calendario y reloj
     readonly property bool hayBaterias: Batteries.devices.length > 0
     readonly property var active: (layout._activos || (hayBaterias ? ["baterias", "app", "recordatorios"] : ["calendario", "reloj", "recordatorios"]))
@@ -37,13 +38,19 @@ Item {
     function isOn(id) { return active.indexOf(id) >= 0 }
     // Colocación por defecto: de arriba abajo; si no cabe, columna siguiente (como el escritorio de macOS)
     function defPos(id) {
-        let x = Theme.widgetX, y = Theme.widgetY
+        // Como macOS: los pequeños (164×164) van de dos en dos en una fila; medianos y grandes ocupan el ancho
+        let x = Theme.widgetX, y = Theme.widgetY, rowY = y, half = false
         const maxY = UiState.sh / s - Theme.dockIcon - 40
         for (const k of active) {
-            const h = heights[k] || Theme.widgetMediumH
+            const h = heights[k] || Theme.widgetMediumH, small = smalls.indexOf(k) >= 0
+            if (small && half) {
+                if (k === id) return Qt.point(px(x + Theme.widgetSmall + Theme.widgetGap), px(rowY))
+                half = false; y = rowY + h + Theme.widgetGap; continue
+            }
+            if (half) { half = false; y = rowY + Theme.widgetSmall + Theme.widgetGap }
             if (y + h > maxY && y > Theme.widgetY) { x += Theme.widgetW + Theme.widgetGap; y = Theme.widgetY }
             if (k === id) return Qt.point(px(x), px(y))
-            y += h + Theme.widgetGap
+            if (small) { half = true; rowY = y } else y += h + Theme.widgetGap
         }
         return Qt.point(px(Theme.widgetX), px(Theme.widgetY))
     }
@@ -55,8 +62,9 @@ Item {
         property string wid
         property int order: 0
         property real baseH: Theme.widgetLargeH
+        property real baseW: Theme.widgetW
         default property alias content: inner.data
-        width: root.px(Theme.widgetW); height: root.px(baseH)
+        width: root.px(baseW); height: root.px(baseH)
         visible: root.isOn(wid)
         x: root.layout[wid] ? root.layout[wid][0] * root.s : root.defPos(wid).x
         y: root.layout[wid] ? root.layout[wid][1] * root.s : root.defPos(wid).y
@@ -220,40 +228,44 @@ Item {
         Timer { id: purge; interval: 2500; onTriggered: Reminders.clearDone() }
     }
 
-    // ---- 4. Calendario (pequeño) ----------------------------------------------------------------
+    // ---- 4. Calendario (pequeño, 164×164, calcado del de macOS 27) ------------------------------
     Widget {
         id: calW
-        wid: "calendario"; baseH: Theme.widgetMediumH
+        wid: "calendario"; baseH: Theme.widgetSmall; baseW: Theme.widgetSmall
         property date now: new Date()
         Timer { interval: 60000; running: calW.visible; repeat: true; triggeredOnStart: true; onTriggered: calW.now = new Date() }
         readonly property int first: (new Date(now.getFullYear(), now.getMonth(), 1).getDay() + 6) % 7
         readonly property int days: new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
-        Column {
-            x: root.px(Theme.widgetPad); y: root.px(12); spacing: root.px(2)
-            Label { text: calW.now.toLocaleDateString(Qt.locale(AppConfig.language), "MMMM").toUpperCase(); color: "#FF453A"; font.pixelSize: root.px(11); font.weight: Font.Bold }
-            Grid {
-                columns: 7; rowSpacing: root.px(1)
-                Repeater { model: ["L", "M", "X", "J", "V", "S", "D"]
-                    Label { required property string modelData; width: (calW.width - 2 * root.px(Theme.widgetPad)) / 7; horizontalAlignment: Text.AlignHCenter
-                            text: modelData; color: Theme.labelSecondary; font.pixelSize: root.px(9); font.weight: Font.Bold } }
-                Repeater { model: 7 * 6
-                    Label { required property int index; readonly property int d: index - calW.first + 1
-                            width: (calW.width - 2 * root.px(Theme.widgetPad)) / 7; horizontalAlignment: Text.AlignHCenter; text: d >= 1 && d <= calW.days ? d : ""
-                            font.pixelSize: root.px(10); font.weight: d === calW.now.getDate() ? Font.Bold : Font.Normal
-                            color: d === calW.now.getDate() ? "#FF453A" : Theme.label } }
-            }
+        readonly property real colW: root.px(19.4)
+        Label { x: root.px(17); y: root.px(12); text: calW.now.toLocaleDateString(Qt.locale(AppConfig.language), "MMMM").toUpperCase()
+                color: "#FF3B30"; font.pixelSize: root.px(11); font.weight: Font.Bold; font.letterSpacing: 0.2 }
+        Grid {
+            x: root.px(14); y: root.px(28); columns: 7; rowSpacing: root.px(0)
+            Repeater { model: ["L", "M", "X", "J", "V", "S", "D"]
+                Label { required property string modelData; required property int index; width: calW.colW; height: root.px(17.5); horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter; text: modelData; font.pixelSize: root.px(10.5); font.weight: Font.DemiBold
+                        color: index >= 5 ? Theme.labelSecondary : Theme.label } }
+            Repeater { model: 7 * 6
+                Item { required property int index; readonly property int d: index - calW.first + 1
+                       readonly property bool hoy: d === calW.now.getDate()
+                       width: calW.colW; height: root.px(17.5)
+                       Rectangle { visible: parent.hoy; anchors.centerIn: parent; width: root.px(17); height: width; radius: width / 2; color: "#FF3B30" }
+                       Label { anchors.centerIn: parent; text: parent.d >= 1 && parent.d <= calW.days ? parent.d : ""
+                               font.pixelSize: root.px(11.5); font.weight: Font.DemiBold
+                               color: parent.hoy ? "white" : (index % 7 >= 5 ? Theme.labelSecondary : Theme.label) } } }
         }
     }
-    // ---- 5. Reloj --------------------------------------------------------------------------------
+    // ---- 5. Reloj (pequeño) -------------------------------------------------------------------
     Widget {
         id: clockW
-        wid: "reloj"; baseH: Theme.widgetMediumH
+        wid: "reloj"; baseH: Theme.widgetSmall; baseW: Theme.widgetSmall
         property date now: new Date()
         Timer { interval: 1000; running: clockW.visible; repeat: true; triggeredOnStart: true; onTriggered: clockW.now = new Date() }
-        Label { anchors.horizontalCenter: parent.horizontalCenter; y: root.px(22); text: clockW.now.toLocaleTimeString(Qt.locale(AppConfig.language), "H:mm")
-                font.pixelSize: root.px(64); font.weight: Font.DemiBold }
-        Label { anchors.horizontalCenter: parent.horizontalCenter; y: root.px(108)
-                text: { const s = clockW.now.toLocaleDateString(Qt.locale(AppConfig.language), "dddd, d 'de' MMMM"); return s.charAt(0).toUpperCase() + s.slice(1) }
-                color: Theme.labelSecondary; font.pixelSize: root.px(13) }
+        Label { x: root.px(17); y: root.px(14)
+                text: { const s = clockW.now.toLocaleDateString(Qt.locale(AppConfig.language), "dddd"); return s.charAt(0).toUpperCase() + s.slice(1) }
+                color: "#FF3B30"; font.pixelSize: root.px(13); font.weight: Font.DemiBold }
+        Label { x: root.px(16); y: root.px(30); text: clockW.now.getDate(); font.pixelSize: root.px(40); font.weight: Font.Normal }
+        Label { x: root.px(17); anchors.bottom: parent.bottom; anchors.bottomMargin: root.px(14)
+                text: clockW.now.toLocaleTimeString(Qt.locale(AppConfig.language), "H:mm"); font.pixelSize: root.px(28); font.weight: Font.DemiBold }
     }
 }
