@@ -53,12 +53,8 @@ Instantiator {
         }
         function tileMenu() {
             Sway.focusWindow(modelData.id)
-            UiState.openContextMenu([
-                { label: qsTr("Pantalla completa"), cmd: "sway:fullscreen toggle" }, { sep: true },
-                { label: qsTr("Mover a la mitad izquierda"), cmd: "bc:tile:left" },
-                { label: qsTr("Mover a la mitad derecha"), cmd: "bc:tile:right" },
-                { label: qsTr("Rellenar"), cmd: "bc:tile:fill" }, { label: qsTr("Centrar"), cmd: "bc:tile:center" }
-            ], Qt.point(modelData.x + 2 * (d + gap) + 4, modelData.y + modelData.h))
+            UiState.closePopups()
+            UiState.tilePop = { x: modelData.x + 2 * (d + gap) - 4, y: modelData.y + modelData.h }
         }
     }
 }

@@ -245,6 +245,10 @@ LayerWindow {
         if (how === "left") r = [g, top + g, W / 2 - 1.5 * g, H - 2 * g]
         else if (how === "right") r = [W / 2 + 0.5 * g, top + g, W / 2 - 1.5 * g, H - 2 * g]
         else if (how === "fill") r = [g, top + g, W - 2 * g, H - 2 * g]
+        else if (how === "top") r = [g, top + g, W - 2 * g, H / 2 - 1.5 * g]
+        else if (how === "bottom") r = [g, top + H / 2 + 0.5 * g, W - 2 * g, H / 2 - 1.5 * g]
+        else if (how === "leftq") r = [g, top + g, W / 3 - 1.5 * g, H - 2 * g]
+        else if (how === "rightq") r = [W / 3 + 0.5 * g, top + g, W * 2 / 3 - 1.5 * g, H - 2 * g]
         else r = [W * 0.15, top + H * 0.1, W * 0.7, H * 0.8]
         Sway.command("[con_id=" + id + "] floating enable, resize set " + Math.round(r[2]) + " " + Math.round(r[3]) + ", move absolute position " + Math.round(r[0]) + " " + Math.round(r[1]))
     }
@@ -592,6 +596,52 @@ LayerWindow {
                     }
                 }
                 SlideIn { target: gallery; dy: 30; duration: Theme.durPopover; fade: false }
+                // Popover del botón verde (macOS 27): «Mover y redimensionar», «Rellenar y organizar», pantalla completa
+                Item {
+                    id: tilePop
+                    visible: UiState.tilePop !== null
+                    width: Theme.px(232); height: tpCol.height + Theme.px(16)
+                    x: UiState.tilePop ? Math.min(pop.width - width - 8, UiState.tilePop.x) : 0
+                    y: UiState.tilePop ? UiState.tilePop.y - UiState.topInset + Theme.px(4) : 0
+                    Glass { anchors.fill: parent; radius: Theme.px(14); tintBoost: 0.4 }
+                    MouseArea { anchors.fill: parent }
+                    component TileBtn: Rectangle {
+                        property string how; property var cells: []   // [x, y, w, h] en fracciones del icono
+                        width: Theme.px(40); height: Theme.px(32); radius: Theme.px(8); color: tb.containsMouse ? Theme.fillHover : "transparent"
+                        Rectangle {
+                            anchors.centerIn: parent; width: Theme.px(26); height: Theme.px(20); radius: Theme.px(4); color: "transparent"
+                            border.width: Theme.px(2); border.color: Theme.label
+                            Repeater { model: parent.parent.cells
+                                       Rectangle { required property var modelData; x: Theme.px(3) + modelData[0] * (parent.width - Theme.px(6)); y: Theme.px(3) + modelData[1] * (parent.height - Theme.px(6))
+                                                   width: modelData[2] * (parent.width - Theme.px(6)); height: modelData[3] * (parent.height - Theme.px(6)); radius: Theme.px(1.5); color: Theme.label } }
+                        }
+                        MouseArea { id: tb; anchors.fill: parent; hoverEnabled: true; onClicked: { UiState.closePopups(); UiState.run("bc:tile:" + parent.how) } }
+                    }
+                    Column {
+                        id: tpCol; x: Theme.px(12); y: Theme.px(10); spacing: Theme.px(4)
+                        Text { text: qsTr("Mover y redimensionar"); color: Theme.labelSecondary; font.family: Theme.font; font.pixelSize: Theme.px(11); font.weight: Font.DemiBold }
+                        Row { spacing: Theme.px(12)
+                              TileBtn { how: "left"; cells: [[0, 0, 0.5, 1]] }
+                              TileBtn { how: "right"; cells: [[0.5, 0, 0.5, 1]] }
+                              TileBtn { how: "top"; cells: [[0, 0, 1, 0.5]] }
+                              TileBtn { how: "bottom"; cells: [[0, 0.5, 1, 0.5]] } }
+                        Rectangle { width: Theme.px(208); height: 1; color: Theme.separator }
+                        Text { text: qsTr("Rellenar y organizar"); color: Theme.labelSecondary; font.family: Theme.font; font.pixelSize: Theme.px(11); font.weight: Font.DemiBold }
+                        Row { spacing: Theme.px(12)
+                              TileBtn { how: "fill"; cells: [[0, 0, 1, 1]] }
+                              TileBtn { how: "center"; cells: [[0.2, 0.15, 0.6, 0.7]] }
+                              TileBtn { how: "leftq"; cells: [[0, 0, 0.33, 1]] }
+                              TileBtn { how: "rightq"; cells: [[0.33, 0, 0.67, 1]] } }
+                        Rectangle { width: Theme.px(208); height: 1; color: Theme.separator }
+                        Rectangle {
+                            width: Theme.px(208); height: Theme.px(26); radius: Theme.px(6); color: fsm.containsMouse ? Theme.accent : "transparent"
+                            Text { x: Theme.px(8); anchors.verticalCenter: parent.verticalCenter; text: qsTr("Pantalla completa"); color: fsm.containsMouse ? "white" : Theme.label
+                                   font.family: Theme.font; font.pixelSize: Theme.px(13) }
+                            MouseArea { id: fsm; anchors.fill: parent; hoverEnabled: true; onClicked: { UiState.closePopups(); Sway.toggleFullscreen(Sway.focusedId) } }
+                        }
+                    }
+                }
+                SlideIn { target: tilePop; dy: -4; duration: Theme.durMenuOpen }
                 // Menú contextual (Dock, escritorio, widgets…)
                 MenuPopup {
                     id: ctx
@@ -717,6 +767,7 @@ LayerWindow {
         const d = AppConfig.demo
         if (d === "lock") UiState.locked = true
         else if (d === "center") UiState.centerOpen = true
+        else if (d === "tile") UiState.tilePop = { x: 300, y: 90 }
         else if (d === "center-edit") { UiState.centerOpen = true; if (ccRef) ccRef.editing = true }
         else if (d === "notif") UiState.notifCenterOpen = true
         else if (d === "spotlight") UiState.spotlightOpen = true

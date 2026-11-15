@@ -120,9 +120,9 @@ QtObject {
     // ---- Ventanas ------------------------------------------------------------------------
     readonly property int windowRadius: 20         // Golden Gate: radio único ≈20 pt (Tahoe 26, antes 10) — fuentes secundarias
     readonly property int titlebarH: 52            // barra de herramientas unificada (sin confirmar)
-    readonly property int trafficSize: 12          // sin confirmar (12 pt en macOS desde Big Sur)
-    readonly property int trafficGap: 8
-    readonly property int trafficLeft: 14
+    readonly property int trafficSize: 14          // macOS 27 (captura 2x): botones de 14 pt cada 23.5
+    readonly property int trafficGap: 9
+    readonly property int trafficLeft: 18           // macOS 27: primer botón a 18 pt del borde
     readonly property int sidebarW: 220            // barra lateral de borde a borde (Golden Gate)
     readonly property int menuRadius: 12           // sin confirmar
     readonly property int menuItemH: 24
