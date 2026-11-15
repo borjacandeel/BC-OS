@@ -1,0 +1,66 @@
+name: Ghostty (prueba)
+
+# Prueba aislada de la compilación de Ghostty en Arch Linux ARM (runner ARM64 nativo) con varias variantes,
+# para encontrar por qué Zig aborta con «reached unreachable code» dentro del chroot. No publica nada.
+on:
+  workflow_dispatch:
+    inputs:
+      ghostty_tag:
+        description: "Etiqueta de Ghostty"
+        default: "v1.4.0"
+      zig_ver:
+        description: "Versión de Zig"
+        default: "0.17.0"
+
+permissions:
+  contents: read
+
+jobs:
+  ghostty:
+    name: Ghostty ${{ matrix.variante }}
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - variante: chroot
+            args: "--summary all"
+          - variante: chroot-j1
+            args: "-j1 --summary all --verbose"
+          - variante: v1.2.3-zig0.14.1
+            args: "--summary all"
+            tag: "v1.2.3"
+            zig: "0.14.1"
+    steps:
+      - uses: actions/checkout@v4
+      - name: Herramientas
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends libarchive-tools curl ca-certificates xz-utils zstd git strace
+      - name: Rootfs de Arch Linux ARM
+        run: |
+          set -euo pipefail
+          R="$RUNNER_TEMP/root"; sudo mkdir -p "$R"
+          curl -fSL -o "$RUNNER_TEMP/alarm.tar.gz" http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz
+          sudo bsdtar -xpf "$RUNNER_TEMP/alarm.tar.gz" -C "$R"
+          sudo bash -c "source build/lib/chroot.sh; bc_mount $R; sed -i 's/^CheckSpace/#CheckSpace/' $R/etc/pacman.conf
+            bc_chroot $R bash -c 'pacman-key --init && pacman-key --populate archlinuxarm && pacman -Syu --noconfirm --disable-sandbox'
+            bc_umount $R"
+      - name: Compilar Ghostty
+        env:
+          GHOSTTY_TAG: ${{ matrix.tag || inputs.ghostty_tag }}
+          ZIG_VER: ${{ matrix.zig || inputs.zig_ver }}
+          GHOSTTY_ARGS: ${{ matrix.args }}
+        run: |
+          R="$RUNNER_TEMP/root"
+          sudo -E BC_GHOSTTY_LOG="$RUNNER_TEMP/ghostty.log" bash build/build-ghostty.sh "$R" && echo "RESULTADO: OK" || echo "RESULTADO: FALLO"
+          echo "--- dmesg ---"; sudo dmesg | tail -n 20 || true
+          echo "--- ulimit/cpus ---"; ulimit -a; nproc
+      - name: Registro
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ghostty-${{ matrix.variante }}
+          path: ${{ runner.temp }}/ghostty.log
+          if-no-files-found: ignore

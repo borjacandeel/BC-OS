@@ -29,8 +29,11 @@ curl -fsSL "https://ziglang.org/download/$ZIG_VER/zig-$HOSTARCH-linux-$ZIG_VER.t
 PATH="$W/zig-$HOSTARCH-linux-$ZIG_VER:$PATH" ZIG_GLOBAL_CACHE_DIR="$W/cache" sh "$W/src/nix/build-support/fetch-zig-cache.sh" >/dev/null 2>&1 \
   || PATH="$W/zig-$HOSTARCH-linux-$ZIG_VER:$PATH" ZIG_GLOBAL_CACHE_DIR="$W/cache" bash "$W/src/nix/build-support/fetch-zig-cache.sh"
 
+# GHOSTTY_ARGS: opciones extra para depurar (p. ej. "-j1 --verbose"); BC_GHOSTTY_LOG: guardar la salida completa
 sh "cd /tmp/ghostty-build/src && ZIG_GLOBAL_CACHE_DIR=/tmp/ghostty-build/cache /tmp/ghostty-build/zig-aarch64-linux-$ZIG_VER/zig build \
-  --prefix /usr --system /tmp/ghostty-build/cache/p -Doptimize=ReleaseFast -Dcpu=baseline -Dpie=true -Demit-docs=false"
+  --prefix /usr --system /tmp/ghostty-build/cache/p -Doptimize=ReleaseFast -Dcpu=baseline -Dpie=true -Demit-docs=false ${GHOSTTY_ARGS:-}" \
+  2>&1 | tee "${BC_GHOSTTY_LOG:-/dev/null}" | tail -n 200
+[ "${PIPESTATUS[0]}" = 0 ]
 rm -rf "$W"
 [ -z "${NEW// /}" ] || sh "pacman -Rns --noconfirm $NEW" || true
 sh "command -v ghostty >/dev/null"
