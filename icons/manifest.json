@@ -1163,6 +1163,8 @@
       "tags": [
         "calculadora",
         "números",
+        "teclado",
+        "operaciones",
         "calculator"
       ],
       "sizes": [
@@ -1194,6 +1196,7 @@
         "notas",
         "apuntes",
         "bloc",
+        "espiral",
         "notes",
         "memo"
       ],
@@ -1380,7 +1383,7 @@
     },
     {
       "name": "multimedia-photo-viewer",
-      "label": "Fotos",
+      "label": "Vista previa",
       "category": "apps",
       "context": "Apps",
       "kind": "app",
@@ -1389,12 +1392,14 @@
         "regular": "multimedia-photo-viewer"
       },
       "tags": [
+        "vista previa",
         "fotos",
         "imágenes",
-        "galería",
+        "visor",
+        "lupa",
+        "preview",
         "photos",
-        "pictures",
-        "gallery"
+        "viewer"
       ],
       "sizes": [
         16,

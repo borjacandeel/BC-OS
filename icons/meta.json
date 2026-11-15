@@ -1030,6 +1030,8 @@
     "tags": [
       "calculadora",
       "números",
+      "teclado",
+      "operaciones",
       "calculator"
     ],
     "category": "apps"
@@ -1062,20 +1064,23 @@
       "notas",
       "apuntes",
       "bloc",
+      "espiral",
       "notes",
       "memo"
     ],
     "category": "apps"
   },
   "multimedia-photo-viewer": {
-    "es": "Fotos",
+    "es": "Vista previa",
     "tags": [
+      "vista previa",
       "fotos",
       "imágenes",
-      "galería",
+      "visor",
+      "lupa",
+      "preview",
       "photos",
-      "pictures",
-      "gallery"
+      "viewer"
     ],
     "category": "apps"
   },

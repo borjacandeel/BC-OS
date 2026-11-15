@@ -218,6 +218,69 @@ const out = {};
     `<path d="${body}" fill="#0B1220" fill-opacity=".16"/><path d="${sides}" ${STROKE(88, INK)}/><path d="${frontArc}" ${STROKE(88, INK)}/>` });
 }
 
+// ===== Calculadora: cuerpo de vidrio, pantalla y teclas redondas; operadores naranjas =====
+{
+  const base = { top: '#8E9BFF', bottom: '#3A45C4' };
+  const OP = '#EB5B1E';
+  const xs = [392, 512, 632], ys = [520, 620, 720];
+  const keys = (r, sh) => {
+    let s = '';
+    for (let i = 0; i < 3; i++) for (let j = 0; j < 2; j++) s += `<circle cx="${xs[j]}" cy="${ys[i] + (sh ? 12 : 0)}" r="${r}" ${sh ? SHADOW() : OBJ}/>`;
+    return s;
+  };
+  const ops = (r) => `<circle cx="${xs[2]}" cy="${ys[0]}" r="${r}" fill="${OP}"/><rect x="${xs[2] - r}" y="${ys[1] - r}" width="${2 * r}" height="${ys[2] - ys[1] + 2 * r}" rx="${r}" fill="${OP}"/>`;
+  const opsSh = (r) => `<circle cx="${xs[2]}" cy="${ys[0] + 12}" r="${r}" ${SHADOW()}/><rect x="${xs[2] - r}" y="${ys[1] - r + 12}" width="${2 * r}" height="${ys[2] - ys[1] + 2 * r}" rx="${r}" ${SHADOW()}/>`;
+  const display = '<rect x="340" y="300" width="344" height="128" rx="44" fill="url(#gl)"/>';
+  const digits = `<path d="M556 364H628" ${STROKE(56, '#3A45C4')}/>`;
+  out['accessories-calculator'] = app({ ...base, glyph:
+    `<rect x="292" y="252" width="440" height="540" rx="84" ${GLASS()}/>` + display + digits + keys(44, true) + opsSh(44) + keys(44) + ops(44) });
+  out['accessories-calculator@32'] = app({ ...base, gl: false, glyph:
+    `<rect x="292" y="252" width="440" height="540" rx="84" fill="${W}" fill-opacity=".3"/><rect x="340" y="300" width="344" height="128" rx="44" fill="${W}"/>` +
+    `<path d="M556 364H628" ${STROKE(64, '#3A45C4')}/>` + keys(46).replaceAll('fill="url(#gl)"', `fill="${W}"`) + ops(46) });
+  out['accessories-calculator@16'] = app({ ...base, gl: false, glyph:
+    `<rect x="272" y="232" width="480" height="560" rx="88" fill="${W}" fill-opacity=".35"/><rect x="332" y="292" width="360" height="136" rx="48" fill="${W}"/>` +
+    `<circle cx="412" cy="600" r="72" fill="${W}"/><rect x="540" y="528" width="144" height="216" rx="72" fill="${OP}"/>` });
+}
+
+// ===== Notas: bloc de espiral con franja ámbar y renglones; hoja de vidrio detrás =====
+{
+  const base = { top: '#FFD27D', bottom: '#F29A1F' };
+  const AM = '#F29A1F';
+  const pad = (dy = 0) => `M284 ${364 + dy}A64 64 0 0 1 348 ${300 + dy}H652A64 64 0 0 1 716 ${364 + dy}V${708 + dy}A64 64 0 0 1 652 ${772 + dy}H348A64 64 0 0 1 284 ${708 + dy}Z`;
+  const band = `M284 412V364A64 64 0 0 1 348 300H652A64 64 0 0 1 716 364V412Z`;
+  const rings = (w) => `<path d="M380 268V324M460 268V324M540 268V324M620 268V324" ${STROKE(w)}/>`;
+  const lines = (w) => `<path d="M356 508H644M356 598H644M356 688H540" ${STROKE(w, AM, '.55')}/>`;
+  out['accessories-notes'] = app({ ...base, glyph:
+    `<rect x="340" y="252" width="432" height="472" rx="64" ${GLASS()}/>` +
+    `<path d="${pad(16)}" ${SHADOW()}/><path d="${pad()}" ${OBJ}/><path d="${band}" fill="${AM}"/>` + rings(56) + lines(56) });
+  out['accessories-notes@32'] = app({ ...base, gl: false, glyph:
+    `<rect x="340" y="252" width="432" height="472" rx="64" fill="${W}" fill-opacity=".3"/><path d="${pad()}" fill="${W}"/><path d="${band}" fill="${AM}"/>` + rings(64) + lines(64) });
+  out['accessories-notes@16'] = app({ ...base, gl: false, glyph:
+    `<path d="M252 352A72 72 0 0 1 324 280H700A72 72 0 0 1 772 352V720A72 72 0 0 1 700 792H324A72 72 0 0 1 252 720Z" fill="${W}"/>` +
+    `<path d="M252 432V352A72 72 0 0 1 324 280H700A72 72 0 0 1 772 352V432Z" fill="${AM}"/>` +
+    `<path d="M352 560H672M352 680H560" ${STROKE(80, AM, '.55')}/>` });
+}
+
+// ===== Vista previa: hoja de vidrio, foto con paisaje y lupa de vidrio =====
+{
+  const base = { top: '#67D3FF', bottom: '#1A8CF2' };
+  const photo = (dy = 0) => `M268 ${400 + dy}A48 48 0 0 1 316 ${352 + dy}H580A48 48 0 0 1 628 ${400 + dy}V${604 + dy}A48 48 0 0 1 580 ${652 + dy}H316A48 48 0 0 1 268 ${604 + dy}Z`;
+  const hills = rpoly([[300, 624], [404, 500], [458, 560], [522, 476], [598, 624]], [0, 24, 20, 24, 0]);
+  const sun = '<circle cx="548" cy="418" r="30" fill="#FFB340"/>';
+  const loupe = (w, dy = 0, c = W, op) => `<circle cx="636" cy="${612 + dy}" r="96" fill="none" stroke="${c}"${op ? ` stroke-opacity="${op}"` : ''} stroke-width="${w}"/><path d="M706 ${682 + dy}L756 ${732 + dy}" ${STROKE(w + 8, c, op)}/>`;
+  out['multimedia-photo-viewer'] = app({ ...base, glyph:
+    `<rect x="372" y="252" width="360" height="460" rx="56" ${GLASS()}/>` +
+    `<path d="${photo(16)}" ${SHADOW()}/><path d="${photo()}" ${OBJ}/><path d="${hills}" fill="#1A8CF2"/>` + sun +
+    loupe(56, 16, '#000000', '.16') + `<circle cx="636" cy="612" r="96" fill="${W}" fill-opacity=".3"/>` + loupe(56) });
+  out['multimedia-photo-viewer@32'] = app({ ...base, gl: false, glyph:
+    `<rect x="372" y="252" width="360" height="460" rx="56" fill="${W}" fill-opacity=".3"/><path d="${photo()}" fill="${W}"/><path d="${hills}" fill="#1A8CF2"/>` + sun +
+    `<circle cx="636" cy="612" r="96" fill="${W}" fill-opacity=".3"/>` + loupe(64) });
+  out['multimedia-photo-viewer@16'] = app({ ...base, gl: false, glyph:
+    `<path d="M240 384A56 56 0 0 1 296 328H592A56 56 0 0 1 648 384V616A56 56 0 0 1 592 672H296A56 56 0 0 1 240 616Z" fill="${W}"/>` +
+    `<path d="${rpoly([[280, 640], [420, 480], [600, 640]], [0, 28, 0])}" fill="#1A8CF2"/>` +
+    `<circle cx="640" cy="608" r="104" fill="none" stroke="${W}" stroke-width="88"/><path d="M716 684L772 740" ${STROKE(96)}/>` });
+}
+
 for (const [k, v] of Object.entries(out)) fs.writeFileSync(path.join(APPS, k + '.svg'), v);
 
 // ===== Pila de Descargas (color 48, lugares): hojas en abanico + tarjeta azul con flecha =====
