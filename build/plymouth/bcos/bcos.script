@@ -124,7 +124,7 @@ fun message_cb(text) {
   center_text(msg, text, bar_y + 28, 0.9);
 }
 Plymouth.SetMessageFunction(message_cb);
-Plymouth.SetUpdateStatusFunction(message_cb);
+# Como en macOS, solo logo y barra: los nombres de servicios (estado de systemd) no se muestran
 
 # Contraseña de cifrado (instalación con LUKS)
 fun password_cb(prompt, count) {

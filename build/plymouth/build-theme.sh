@@ -32,7 +32,7 @@ def pill(color, name):
     ImageDraw.Draw(im).rounded_rectangle([0, 0, W * K - 1, H * K - 1], radius=H * K // 2, fill=color)
     im.resize((W, H), Image.LANCZOS).save(f"{out}/{name}")
 pill((255, 255, 255, 38), "bar-track.png")
-pill((47, 123, 255, 255), "bar-fill.png")
+pill((245, 245, 247, 255), "bar-fill.png")   # como macOS: barra blanca sobre pista gris
 # Punto para la entrada de contraseña
 d = Image.new("RGBA", (40, 40), (0, 0, 0, 0))
 ImageDraw.Draw(d).ellipse([10, 10, 29, 29], fill=(245, 245, 247, 255))
