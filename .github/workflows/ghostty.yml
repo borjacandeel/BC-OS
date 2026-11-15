@@ -29,13 +29,7 @@ jobs:
           - variante: strace
             args: "--summary all"
             wrap: "strace -f -qq -s 160 -e trace=%file,%process,%signal,%ipc,prlimit64,getrandom,sched_getaffinity,uname,ioctl,mmap -o /tmp/ghostty-strace.txt"
-          - variante: anfitrion-ubuntu
-            args: "--summary all"
-            host: "1"
-          - variante: v1.2.3-zig0.14.1
-            args: "--summary all"
-            tag: "v1.2.3"
-            zig: "0.14.1"
+
     steps:
       - uses: actions/checkout@v4
       - name: Herramientas

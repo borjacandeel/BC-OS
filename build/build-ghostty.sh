@@ -2,7 +2,8 @@
 # Compila Ghostty (terminal por defecto de BC OS) dentro del rootfs aarch64 y lo instala en /usr.
 # Ghostty no está empaquetado en Arch Linux ARM y pide una Zig más nueva que la del repositorio,
 # así que se usa la Zig oficial de ziglang.org. Las dependencias de Zig se descargan en el ANFITRIÓN
-# (el chroot no tiene los certificados del proxy) y la compilación es sin red (--system).
+# (el chroot no tiene los certificados del proxy). Zig 0.17 guarda los paquetes comprimidos (p/<hash>.tar.gz) y
+# «--system» espera carpetas extraídas (aborta con «reached unreachable code»), así que se usa la caché global tal cual.
 # Pensado para el runner ARM64 nativo de CI; con qemu-user tarda horas. Uso: build-ghostty.sh <rootfs>
 set -euo pipefail
 R="$(realpath "$1")"
@@ -33,7 +34,7 @@ PATH="$W/zig-$HOSTARCH-linux-$ZIG_VER:$PATH" ZIG_GLOBAL_CACHE_DIR="$W/cache" sh 
 # BC_GHOSTTY_WRAP: envoltorio de depuración (p. ej. «strace -f -o /tmp/st.txt»)
 build_sh() { ${BC_GHOSTTY_WRAP:-} chroot "$R" /usr/bin/env -i HOME=/root TERM=xterm PATH=/usr/local/sbin:/usr/local/bin:/usr/bin bash -c "$*"; }
 build_sh "cd /tmp/ghostty-build/src && ZIG_GLOBAL_CACHE_DIR=/tmp/ghostty-build/cache /tmp/ghostty-build/zig-aarch64-linux-$ZIG_VER/zig build \
-  --prefix /usr --system /tmp/ghostty-build/cache/p -Doptimize=ReleaseFast -Dcpu=baseline -Dpie=true -Demit-docs=false ${GHOSTTY_ARGS:-}" \
+  --prefix /usr -Doptimize=ReleaseFast -Dcpu=baseline -Dpie=true -Demit-docs=false ${GHOSTTY_ARGS:-}" \
   2>&1 | tee "${BC_GHOSTTY_LOG:-/dev/null}" | tail -n 200
 [ "${PIPESTATUS[0]}" = 0 ]
 rm -rf "$W"
