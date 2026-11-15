@@ -12,6 +12,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QSaveFile>
+#include <QFileSystemWatcher>
 #include <QStandardPaths>
 #include <QRegularExpression>
 
@@ -96,6 +97,14 @@ void Batteries::refresh() {
 Reminders::Reminders(QObject *parent, const QString &file) : QObject(parent), m_file(file) {
     if (m_file.isEmpty()) m_file = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/bc/recordatorios.json";
     load();
+    // La app Recordatorios y el widget del escritorio son procesos distintos: se recarga al cambiar el archivo
+    QDir().mkpath(QFileInfo(m_file).absolutePath());
+    auto *w = new QFileSystemWatcher(this);
+    w->addPath(QFileInfo(m_file).absolutePath());
+    if (QFileInfo::exists(m_file)) w->addPath(m_file);
+    auto again = [this, w] { if (QFileInfo::exists(m_file) && !w->files().contains(m_file)) w->addPath(m_file); load(); emit changed(); };
+    connect(w, &QFileSystemWatcher::fileChanged, this, again);
+    connect(w, &QFileSystemWatcher::directoryChanged, this, again);
 }
 int Reminders::pending() const {
     int n = 0;

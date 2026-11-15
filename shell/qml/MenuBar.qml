@@ -44,9 +44,18 @@ Item {
         MouseArea { id: ma; anchors.fill: parent; hoverEnabled: true; onClicked: bi.clicked(bi.mapToItem(bar, 0, 0).x) }
     }
 
+    // Anchura que ocuparían todos los iconos de estado (estimación fija: sin depender de su visibilidad)
+    readonly property real rightFull: Math.round((Theme.barIconPx + Theme.barStatusGap) * bar.s) * 6 + clock.implicitWidth + Math.round(110 * bar.s)
+    readonly property bool overflow: leftRow.x + leftRow.implicitWidth + rightFull > width
+    property bool expanded: false
+    onOverflowChanged: if (!overflow) expanded = false
+
     // ---- Izquierda: logo, app activa, menús --------------------------------------------------
     Row {
         id: leftRow
+        opacity: bar.expanded ? 0 : 1
+        visible: opacity > 0
+        Behavior on opacity { NumberAnimation { duration: Theme.d(Theme.durHover * 2) } }
         x: Math.round((Theme.barLogoX - 9) * bar.s)
         height: bar.height
         BarItem {
@@ -95,8 +104,20 @@ Item {
         spacing: 0
         readonly property int cell: Math.round((Theme.barIconPx + Theme.barStatusGap) * bar.s)
 
+        // Golden Gate: si los iconos no caben (pantalla estrecha o menús largos), se ocultan los menos importantes tras
+        // una flecha nativa; al pulsarla se muestran todos sobre la zona de los menús.
+        BarItem {
+            visible: bar.overflow
+            width: rightRow.cell
+            open: bar.expanded
+            onClicked: bar.expanded = !bar.expanded
+            Icon { anchors.centerIn: parent; name: "menubar-overflow-symbolic"; size: Math.round((Theme.barIconPx - 2) * bar.s); color: bar.ink
+                   rotation: bar.expanded ? 180 : 0
+                   Behavior on rotation { NumberAnimation { duration: Theme.d(Theme.durHover * 2) } } }
+        }
         // Mosaico (función propia de BC OS, integrada como un icono de estado más)
         BarItem {
+            visible: !bar.overflow || bar.expanded
             width: rightRow.cell
             open: Sway.tiling
             onClicked: Sway.toggleTiling()
@@ -111,7 +132,7 @@ Item {
         }
         // Fuente de entrada: «ES» en una placa redondeada rellena
         BarItem {
-            visible: Sway.layout !== ""
+            visible: Sway.layout !== "" && (!bar.overflow || bar.expanded)
             width: rightRow.cell
             Rectangle {
                 anchors.centerIn: parent
@@ -149,6 +170,7 @@ Item {
         }
         // Spotlight (lupa), como en la barra de macOS
         BarItem {
+            visible: !bar.overflow || bar.expanded
             width: rightRow.cell
             open: UiState.spotlightOpen
             onClicked: UiState.toggleSpotlight()
