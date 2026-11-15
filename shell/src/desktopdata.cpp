@@ -582,3 +582,31 @@ void QuickTools::pollWindow() {
     connect(p, &QProcess::errorOccurred, p, [p](QProcess::ProcessError e) { if (e == QProcess::FailedToStart) p->deleteLater(); });
     p->start("swaymsg", {"-t", "get_tree", "-r"});
 }
+
+#include <QUrl>
+#include <QXmlStreamReader>
+QVariantList QuickTools::recentFiles(int max) {
+    QFile f(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/recently-used.xbel");
+    QList<QPair<QString, QString>> items;   // (modificado, ruta)
+    if (f.open(QIODevice::ReadOnly)) {
+        QXmlStreamReader x(&f);
+        while (!x.atEnd()) {
+            if (x.readNext() == QXmlStreamReader::StartElement && x.name() == QLatin1String("bookmark")) {
+                const QUrl u(x.attributes().value("href").toString());
+                if (u.isLocalFile()) items.append({x.attributes().value("modified").toString(), u.toLocalFile()});
+            }
+        }
+    }
+    std::sort(items.begin(), items.end(), [](auto &a, auto &b) { return a.first > b.first; });
+    QVariantList out;
+    const QString home = QDir::homePath();
+    QStringList seen;
+    for (const auto &it : items) {
+        if (seen.contains(it.second) || !QFileInfo::exists(it.second)) continue;
+        seen << it.second;
+        const QFileInfo fi(it.second);
+        out.append(QVariantMap{{"path", it.second}, {"name", fi.fileName()}, {"dir", fi.isDir()}, {"parent", QString(fi.absolutePath()).replace(home, "~")}});
+        if (out.size() >= max) break;
+    }
+    return out;
+}

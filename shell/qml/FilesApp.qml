@@ -17,6 +17,9 @@ AppWindow {
     property var tabs: [Files.path]
     property int tab: 0
     property bool searchAll: false
+    property bool recents: false
+    property var recentList: []
+    Connections { target: Files; function onPathChanged() { win.recents = false } }
     readonly property real sideW: sidebar ? 220 : 0
     readonly property var places: [
         { key: "home", name: qsTr("Inicio"), icon: Icons.home },
@@ -85,7 +88,7 @@ AppWindow {
                     MouseArea { id: bm; anchors.fill: parent; hoverEnabled: true; enabled: modelData.on; onClicked: modelData.act === 0 ? Files.back() : Files.forward() }
                 }
             }
-            Text { anchors.verticalCenter: parent.verticalCenter; leftPadding: 8; text: Files.inTrash ? qsTr("Papelera") : (Files.crumbs.length ? Files.crumbs[Files.crumbs.length - 1].name || qsTr("Inicio") : "")
+            Text { anchors.verticalCenter: parent.verticalCenter; leftPadding: 8; text: win.recents ? qsTr("Recientes") : Files.inTrash ? qsTr("Papelera") : (Files.crumbs.length ? Files.crumbs[Files.crumbs.length - 1].name || qsTr("Inicio") : "")
                    color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 15; font.weight: Font.Bold; width: 200; elide: Text.ElideRight }
         },
         Row {
@@ -153,6 +156,8 @@ AppWindow {
             Column {
                 y: win.titlebarHeight + 4; width: parent.width
                 Head { text: qsTr("Favoritos") }
+                Place { icon: "document-open-symbolic"; label: qsTr("Recientes"); on: win.recents
+                        onHit: { win.recents = true; win.recentList = Quick.recentFiles() } }
                 Repeater {
                     model: win.places
                     Place { icon: modelData.icon; label: modelData.name; on: Files.path === Files.placePath(modelData.key) && !Files.inTrash
@@ -226,7 +231,7 @@ AppWindow {
                 // Iconos
                 GridView {
                     id: grid
-                    visible: win.view === "icons" && !win.searchAll
+                    visible: win.view === "icons" && !win.searchAll && !win.recents
                     anchors.fill: parent; anchors.margins: 10
                     cellWidth: Math.max(104, Math.floor(width / Math.max(1, Math.floor(width / 112)))); cellHeight: 112
                     model: Files; boundsBehavior: Flickable.StopAtBounds
@@ -265,7 +270,7 @@ AppWindow {
                 }
                 // Lista
                 Item {
-                    visible: win.view === "list" && !win.searchAll
+                    visible: win.view === "list" && !win.searchAll && !win.recents
                     anchors.fill: parent
                     Row {
                         id: hdr; x: 10; width: parent.width - 20; height: 26
@@ -311,7 +316,7 @@ AppWindow {
                 }
                 // Columnas: carpetas de la ruta (hasta 3) + la actual + vista previa del elemento elegido
                 Row {
-                    visible: win.view === "columns" && !win.searchAll
+                    visible: win.view === "columns" && !win.searchAll && !win.recents
                     anchors.fill: parent
                     readonly property var anc: Files.crumbs.slice(Math.max(0, Files.crumbs.length - 3), Files.crumbs.length - 1)
                     Repeater {
@@ -365,7 +370,7 @@ AppWindow {
                 }
                 // Galería: vista previa grande y tira de miniaturas
                 Item {
-                    visible: win.view === "gallery" && !win.searchAll
+                    visible: win.view === "gallery" && !win.searchAll && !win.recents
                     anchors.fill: parent
                     Preview { anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top; anchors.bottom: strip.top; anchors.margins: 16; info: win.sel; big: true }
                     ListView {
@@ -386,9 +391,9 @@ AppWindow {
                 }
                 // Resultados de búsqueda en toda la carpeta personal
                 ListView {
-                    visible: win.searchAll
+                    visible: win.searchAll || win.recents
                     anchors.fill: parent; anchors.margins: 10; clip: true
-                    model: Quick.fileResults
+                    model: win.recents ? win.recentList : Quick.fileResults
                     delegate: Rectangle {
                         required property var modelData
                         required property int index
@@ -400,7 +405,7 @@ AppWindow {
                     }
                 }
                 Column {
-                    visible: Files.count === 0 && !win.searchAll
+                    visible: Files.count === 0 && !win.searchAll && !win.recents
                     anchors.centerIn: parent; spacing: 6
                     Text { anchors.horizontalCenter: parent.horizontalCenter
                            text: !Files.available ? qsTr("La carpeta no existe o no se puede leer") : (Files.filter !== "" || win.tagFilter !== "" ? qsTr("Sin resultados") : qsTr("Carpeta vacía"))
