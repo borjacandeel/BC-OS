@@ -7,7 +7,7 @@
 #include <QStandardPaths>
 
 namespace {
-void walk(const QJsonObject &n, bool inScratch, QVariantList &out) {
+void walk(const QJsonObject &n, bool inScratch, QVariantList &out, const QString &ws = QString(), const QString &outName = QString()) {
     const QString type = n.value("type").toString();
     const QJsonArray kids = n.value("nodes").toArray(), fkids = n.value("floating_nodes").toArray();
     const bool leaf = kids.isEmpty() && fkids.isEmpty();
@@ -23,12 +23,15 @@ void walk(const QJsonObject &n, bool inScratch, QVariantList &out) {
                                // barra de título dibujada por sway (x, y, ancho, alto): ahí se colocan los botones de la ventana
                                {"decoX", rect.value("x").toInt()}, {"decoY", rect.value("y").toInt() - deco.value("height").toInt()},
                                {"decoW", deco.value("width").toInt()}, {"decoH", deco.value("height").toInt()},
+                               {"workspace", ws}, {"output", outName},
                                {"rectW", rect.value("width").toInt()}, {"rectH", rect.value("height").toInt() + deco.value("height").toInt()}});
         return;
     }
     const bool scratch = inScratch || (type == "workspace" && n.value("name").toString() == "__i3_scratch");
-    for (const QJsonValue &v : kids) walk(v.toObject(), scratch, out);
-    for (const QJsonValue &v : fkids) walk(v.toObject(), scratch, out);
+    const QString w = type == "workspace" ? n.value("name").toString() : ws;
+    const QString o = type == "output" ? n.value("name").toString() : outName;
+    for (const QJsonValue &v : kids) walk(v.toObject(), scratch, out, w, o);
+    for (const QJsonValue &v : fkids) walk(v.toObject(), scratch, out, w, o);
 }
 }  // namespace
 
@@ -52,11 +55,12 @@ SwayControl::SwayControl(QObject *parent) : QObject(parent) {
     m_poll.setInterval(10000);
     connect(&m_poll, &QTimer::timeout, this, &SwayControl::refresh);
     m_poll.start();
+    m_events.setProcessChannelMode(QProcess::SeparateChannels);
     connect(&m_events, &QProcess::readyReadStandardOutput, this, [this] { m_events.readAllStandardOutput(); m_debounce.start(); });
     connect(&m_events, &QProcess::finished, this, [this] {
-        QTimer::singleShot(2000, this, [this] { m_events.start(m_exe, {"-t", "subscribe", "-m", "-r", "[\"window\",\"workspace\"]"}); });
+        QTimer::singleShot(2000, this, [this] { m_events.start(m_exe, {"-t", "subscribe", "-m", "-r", "[\"window\",\"workspace\",\"input\"]"}); });
     });
-    m_events.start(m_exe, {"-t", "subscribe", "-m", "-r", "[\"window\",\"workspace\"]"});
+    m_events.start(m_exe, {"-t", "subscribe", "-m", "-r", "[\"window\",\"workspace\",\"input\"]"});
     QTimer::singleShot(300, this, &SwayControl::refresh);
 }
 
@@ -119,7 +123,52 @@ void SwayControl::refresh() {
     });
     QTimer::singleShot(5000, p, [this, p] { if (p->state() != QProcess::NotRunning) { m_busy = false; p->kill(); } });
     p->start(m_exe, {"-t", "get_tree", "-r"});
+    query("get_workspaces", [this](const QByteArray &j) {
+        const QVariantList ws = parseWorkspaces(j);
+        if (ws != m_workspaces) { m_workspaces = ws; emit workspacesChanged(); }
+    });
+    if (++m_inputTick % 6 == 1) query("get_inputs", [this](const QByteArray &j) {
+        const QString l = parseLayout(j);
+        if (l != m_layout) { m_layout = l; emit layoutChanged(); }
+    });
 }
+
+void SwayControl::query(const QString &type, std::function<void(const QByteArray &)> done) {
+    auto *q = new QProcess(this);
+    connect(q, &QProcess::finished, this, [q, done](int code) { if (code == 0) done(q->readAllStandardOutput()); q->deleteLater(); });
+    connect(q, &QProcess::errorOccurred, q, [q](QProcess::ProcessError e) { if (e == QProcess::FailedToStart) q->deleteLater(); });
+    q->start(m_exe, {"-t", type, "-r"});
+}
+
+QVariantList SwayControl::parseWorkspaces(const QByteArray &json) {
+    QVariantList out;
+    for (const QJsonValue &v : QJsonDocument::fromJson(json).array()) {
+        const QJsonObject o = v.toObject();
+        const QJsonObject r = o.value("rect").toObject();
+        out.append(QVariantMap{{"num", o.value("num").toInt()}, {"name", o.value("name").toString()}, {"focused", o.value("focused").toBool()},
+                               {"visible", o.value("visible").toBool()}, {"output", o.value("output").toString()},
+                               {"x", r.value("x").toInt()}, {"y", r.value("y").toInt()}, {"w", r.value("width").toInt()}, {"h", r.value("height").toInt()}});
+    }
+    return out;
+}
+
+// Fuente de entrada activa en abreviatura de dos letras («ES», «EN»…) como en la barra de macOS
+QString SwayControl::parseLayout(const QByteArray &json) {
+    for (const QJsonValue &v : QJsonDocument::fromJson(json).array()) {
+        const QJsonObject o = v.toObject();
+        if (o.value("type").toString() != "keyboard") continue;
+        const QString name = o.value("xkb_active_layout_name").toString();
+        if (name.isEmpty()) continue;
+        static const QMap<QString, QString> map{{"Spanish", "ES"}, {"English", "EN"}, {"French", "FR"}, {"German", "DE"},
+                                                 {"Portuguese", "PT"}, {"Italian", "IT"}, {"Catalan", "CA"}};
+        for (auto it = map.cbegin(); it != map.cend(); ++it) if (name.startsWith(it.key())) return it.value();
+        return name.left(2).toUpper();
+    }
+    return QString();
+}
+
+void SwayControl::switchWorkspace(const QString &name) { command("workspace \"" + QString(name).remove('"') + "\""); }
+void SwayControl::moveToWorkspace(int id, const QString &name) { command(QString("[con_id=%1] move container to workspace \"%2\"").arg(id).arg(QString(name).remove('"'))); }
 
 void SwayControl::command(const QString &cmd) {
     if (!m_available) return;

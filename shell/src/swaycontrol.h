@@ -4,6 +4,7 @@
 #include <QProcess>
 #include <QTimer>
 #include <QVariantList>
+#include <functional>
 
 // Control de sway por IPC (swaymsg): lista de ventanas, enfocar/minimizar/cerrar y modo mosaico/flotante.
 class SwayControl : public QObject {
@@ -16,6 +17,8 @@ class SwayControl : public QObject {
     Q_PROPERTY(QString focusedTitle READ focusedTitle NOTIFY windowsChanged)
     Q_PROPERTY(bool tiling READ tiling NOTIFY tilingChanged)
     Q_PROPERTY(QVariantList chromeWindows READ chromeWindows NOTIFY chromeChanged)
+    Q_PROPERTY(QVariantList workspaces READ workspaces NOTIFY workspacesChanged)   // escritorios (Mission Control)
+    Q_PROPERTY(QString layout READ layout NOTIFY layoutChanged)                  // fuente de entrada: «ES»
 public:
     explicit SwayControl(QObject *parent = nullptr);
     bool available() const { return m_available; }
@@ -26,6 +29,12 @@ public:
     QString focusedTitle() const { return m_focusedTitle; }
     bool tiling() const { return m_tiling; }
     QVariantList chromeWindows() const { return m_chrome; }
+    QVariantList workspaces() const { return m_workspaces; }
+    QString layout() const { return m_layout; }
+    Q_INVOKABLE void switchWorkspace(const QString &name);
+    Q_INVOKABLE void moveToWorkspace(int id, const QString &name);
+    static QVariantList parseWorkspaces(const QByteArray &json);
+    static QString parseLayout(const QByteArray &json);
 
     Q_INVOKABLE void command(const QString &cmd);
     Q_INVOKABLE void focusWindow(int id);
@@ -46,6 +55,8 @@ signals:
     void windowsChanged();
     void tilingChanged();
     void chromeChanged();
+    void workspacesChanged();
+    void layoutChanged();
 
 private:
     void readMode();
@@ -60,4 +71,8 @@ private:
     QTimer m_debounce, m_poll;
     QFileSystemWatcher m_watch;
     bool m_busy = false;
+    QVariantList m_workspaces;
+    QString m_layout;
+    int m_inputTick = 0;
+    void query(const QString &type, std::function<void(const QByteArray &)> done);
 };

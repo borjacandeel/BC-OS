@@ -12,6 +12,7 @@ LayerWindow {
     width: UiState.sw
     height: UiState.sh
     title: qsTr("BC Shell")
+    keyboard: UiState.classic ? "none" : "ondemand"     // los widgets (recordatorios) aceptan texto
     onWidthChanged: if (width > 0) UiState.sw = width
     onHeightChanged: if (height > 0) UiState.sh = height
 
@@ -37,8 +38,10 @@ LayerWindow {
     }
 
     // Widgets (reloj, calendario, uso): columna derecha del fondo, bajo la barra superior
+    // Golden Gate: widgets de escritorio a la izquierda (captura de referencia)
+    DesktopWidgets { visible: !UiState.classic && UiState.widgets }
     Widgets {
-        visible: UiState.widgets && !UiState.minimal
+        visible: UiState.classic && UiState.widgets && !UiState.minimal
         scale: root.u
         transformOrigin: Item.TopRight
         x: root.width - Math.round(24 * root.u) - width
@@ -57,6 +60,19 @@ LayerWindow {
         if (Sway.focusApp(appId) || (kind === "terminal" && Sway.focusApp("foot"))) return
         const r = Launcher.launch(kind)
         if (r === "failed") Notifications.push("BC OS", name, qsTr("No se pudo abrir la aplicación"), "", 4000)
+    }
+    // Mover y redimensionar (menú Ventana y menú del botón verde): mitades, rellenar y centrar
+    function tile(how) {
+        const id = Sway.focusedId
+        if (id < 0) return
+        const top = UiState.topInset, bottom = Settings.dockAutohide ? 0 : dockWin.exclusive
+        const W = UiState.sw, H = UiState.sh - top - bottom, g = Theme.px(8)
+        let r
+        if (how === "left") r = [g, top + g, W / 2 - 1.5 * g, H - 2 * g]
+        else if (how === "right") r = [W / 2 + 0.5 * g, top + g, W / 2 - 1.5 * g, H - 2 * g]
+        else if (how === "fill") r = [g, top + g, W - 2 * g, H - 2 * g]
+        else r = [W * 0.15, top + H * 0.1, W * 0.7, H * 0.8]
+        Sway.command("[con_id=" + id + "] floating enable, resize set " + Math.round(r[2]) + " " + Math.round(r[3]) + ", move absolute position " + Math.round(r[0]) + " " + Math.round(r[1]))
     }
     function runningKinds() {
         const ids = Sway.windows.map(w => w.appId), out = []
@@ -77,6 +93,12 @@ LayerWindow {
                 Shell.invokeApp(Sway.focusedAppId.replace(/^bc-/, ""), arg)
             } else if (kind === "bc") {
                 if (arg === "tiling") Sway.toggleTiling()
+                else if (arg === "appearance") Settings.appearance = Theme.dark ? "light" : "dark"
+                else if (arg === "trash:open") root.launch("papelera", qsTr("Papelera"))
+                else if (arg === "trash:empty") { if (Files.emptyTrash()) Sounds.play("trash") }
+                else if (arg === "hideOthers") { for (const w of Sway.windows) if (!w.focused && !w.minimized) Sway.minimizeWindow(w.id) }
+                else if (arg === "showAll") { for (const w of Sway.windows) if (w.minimized) Sway.command("[con_id=" + w.id + "] scratchpad show") }
+                else if (arg.indexOf("tile:") === 0) root.tile(arg.substring(5))
                 else if (arg === "about") Notifications.push("BC OS", qsTr("BC OS"), qsTr("Versión alpha · ARM64"), "", 4000)
             }
         }
@@ -134,7 +156,7 @@ LayerWindow {
         layer: "top"; edges: ["top", "left", "right"]; exclusive: UiState.barH; scope: "bc-topbar"
         width: UiState.sw; height: UiState.barH
         shown: !UiState.splashing && !UiState.win && !UiState.locked
-        Loader { id: bar; anchors.fill: parent; source: "TopBar.qml" }
+        Loader { id: bar; anchors.fill: parent; source: UiState.classic ? "TopBar.qml" : "MenuBar.qml" }
     }
 
     // Barra de tareas (estilo Windows)
@@ -153,7 +175,7 @@ LayerWindow {
     LayerWindow {
         layer: "top"; edges: ["bottom"]; margins: [0, 0, Math.round(22 * root.u), 0]; scope: "bc-dock"
         width: Math.round(dockLoader.width * root.u); height: Math.round(dockLoader.height * root.u)
-        shown: !UiState.splashing && !UiState.locked && !UiState.win && !UiState.minimal
+        shown: UiState.classic && !UiState.splashing && !UiState.locked && !UiState.win && !UiState.minimal
         Loader {
             id: dockLoader
             source: "Dock.qml"
@@ -163,6 +185,22 @@ LayerWindow {
                 item.launched.connect((k, n) => root.launch(k, n))
                 item.running = Qt.binding(() => root.runningKinds())
             }
+        }
+    }
+
+    // Dock Golden Gate: superficie a todo lo ancho (para ampliar sin recortes) que solo recibe el puntero en la placa
+    LayerWindow {
+        id: dockWin
+        layer: "top"; edges: ["bottom", "left", "right"]; scope: "bc-dock"
+        exclusive: Settings.dockAutohide ? 0 : Math.round(dockGG.plateH + Theme.px(Theme.dockBottom) + Theme.px(4))
+        width: UiState.sw; height: Math.round(dockGG.plateH + dockGG.maxIcon - dockGG.bs + Theme.px(60))
+        inputRect: dockGG.inputRect
+        shown: !UiState.classic && !UiState.splashing && !UiState.locked && !UiState.win && !UiState.missionOpen
+        DockGG {
+            id: dockGG
+            anchors.fill: parent
+            onLaunch: (k, n) => root.launch(k, n)
+            onLaunchDesktop: (id, n) => { if (!Apps.launch(id)) Notifications.push("BC OS", n, qsTr("No se pudo abrir la aplicación"), "", 4000) }
         }
     }
 
@@ -205,7 +243,7 @@ LayerWindow {
     LayerWindow {
         layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-popups"
         margins: [UiState.topInset, 0, UiState.win ? UiState.taskH : 0, 0]
-        keyboard: UiState.launcherOpen || UiState.clipboardOpen || UiState.startOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
+        keyboard: UiState.launcherOpen || UiState.clipboardOpen || UiState.startOpen || UiState.spotlightOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
         width: UiState.sw; height: UiState.sh
         shown: UiState.popupOpen
         Loader {
@@ -217,17 +255,87 @@ LayerWindow {
                 Keys.onEscapePressed: UiState.closePopups()
                 readonly property real m: Math.round(14 * root.u)
 
-                Rectangle { anchors.fill: parent; color: "#000"; opacity: UiState.dim ? 0.35 : 0
+                Rectangle { anchors.fill: parent; color: "#000"; opacity: UiState.dim && UiState.classic ? 0.35 : 0
                             Behavior on opacity { NumberAnimation { duration: Theme.dur(160) } } }
                 MouseArea { anchors.fill: parent; onClicked: UiState.closePopups() }
 
+                ControlCenterGG {
+                    id: centerGG
+                    visible: !UiState.classic && opacity > 0
+                    x: pop.width - pop.m - width
+                    y: Theme.px(6)
+                    opacity: UiState.centerOpen ? 1 : 0
+                    scale: UiState.centerOpen ? 1 : 0.96
+                    transformOrigin: Item.TopRight
+                    Behavior on opacity { NumberAnimation { duration: Theme.d(Theme.durControlCenter); easing.type: Theme.easeStandard } }
+                    Behavior on scale { NumberAnimation { duration: Theme.d(Theme.durControlCenter); easing.type: Theme.easeSpring } }
+                }
+                NotificationCenter {
+                    id: notifCenter
+                    x: pop.width - width - Theme.px(10) + (UiState.notifCenterOpen ? 0 : width / 3)
+                    y: Theme.px(6)
+                    opacity: UiState.notifCenterOpen ? 1 : 0
+                    visible: opacity > 0
+                    Behavior on x { NumberAnimation { duration: Theme.d(Theme.durNotifyIn); easing.type: Theme.easeEmphasized } }
+                    Behavior on opacity { NumberAnimation { duration: Theme.d(Theme.durNotifyOut) } }
+                }
+                Spotlight {
+                    id: spotlight
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    y: Math.round(pop.height * 0.22)
+                    visible: UiState.spotlightOpen
+                    onDone: UiState.closePopups()
+                    Connections { target: UiState; function onSpotlightOpenChanged() { if (UiState.spotlightOpen) spotlight.reset() } }
+                }
+                SlideIn { target: spotlight; dy: -10; duration: Theme.durSpotlight }
+                // Pila de Descargas (en rejilla, sobre su icono del Dock)
+                Item {
+                    id: stack
+                    visible: UiState.stackOpen
+                    width: Theme.px(360); height: Theme.px(330)
+                    x: Math.min(pop.width - width - Theme.px(10), dockGG.minimizeTarget.x + dockGG.bs - width / 2)
+                    y: pop.height - height - dockGG.plateH - Theme.px(18)
+                    FileModel { id: dl; Component.onCompleted: place("downloads") }
+                    Connections { target: UiState; function onStackOpenChanged() { if (UiState.stackOpen) dl.reload() } }
+                    Glass { anchors.fill: parent; radius: Theme.px(18); tintBoost: 0.35; originY: UiState.topInset }
+                    Text { x: Theme.px(16); y: Theme.px(12); text: qsTr("Descargas"); color: Theme.label; font.family: Theme.font; font.pixelSize: Theme.px(13); font.weight: Font.Bold }
+                    GridView {
+                        x: Theme.px(8); y: Theme.px(38); width: parent.width - Theme.px(16); height: parent.height - Theme.px(80)
+                        cellWidth: width / 4; cellHeight: Theme.px(82); clip: true; model: dl
+                        delegate: Item {
+                            required property string name
+                            required property string filePath
+                            required property string kind
+                            width: GridView.view.cellWidth; height: GridView.view.cellHeight
+                            FileGlyph { anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(4); kind: parent.kind; width: Theme.px(52); height: Theme.px(44) }
+                            Text { anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(54); width: parent.width - Theme.px(6); horizontalAlignment: Text.AlignHCenter
+                                   elide: Text.ElideMiddle; text: parent.name; color: Theme.label; font.family: Theme.font; font.pixelSize: Theme.px(11) }
+                            MouseArea { anchors.fill: parent; onClicked: { UiState.closePopups(); Quick.open(parent.filePath) } }
+                        }
+                    }
+                    Text { anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; anchors.bottomMargin: Theme.px(14)
+                           text: dl.count === 0 ? qsTr("La carpeta está vacía") : qsTr("Abrir en Archivos") + "  ›"; color: Theme.selection
+                           font.family: Theme.font; font.pixelSize: Theme.px(12)
+                           MouseArea { anchors.fill: parent; onClicked: { UiState.closePopups(); Launcher.launch("archivos", Files.placePath("downloads")) } } }
+                }
+                SlideIn { target: stack; dy: 14; duration: Theme.durPopover }
+                // Menú contextual (Dock, escritorio, widgets…)
+                MenuPopup {
+                    id: ctx
+                    visible: UiState.contextItems.length > 0
+                    items: UiState.contextItems
+                    x: Math.max(8, Math.min(pop.width - width - 8, UiState.contextPos.x))
+                    y: Math.max(4, Math.min(pop.height - height - 8, UiState.contextPos.y - UiState.topInset - (UiState.contextPos.y > pop.height * 0.7 ? height : 0)))
+                    onActivated: (cmd) => { UiState.closePopups(); UiState.run(cmd) }
+                }
+                SlideIn { target: ctx; dy: -4; duration: Theme.durMenuOpen }
                 ControlCenter {
                     id: center
                     scale: root.u
                     transformOrigin: Item.TopRight
                     x: pop.width - pop.m - width
                     y: UiState.win ? pop.height - center.height * root.u - pop.m : pop.m + (Notifications.visible ? (80 + 10) * root.u : 0)
-                    opacity: UiState.centerOpen ? 1 : 0
+                    opacity: UiState.centerOpen && UiState.classic ? 1 : 0
                     visible: opacity > 0
                     Behavior on opacity { NumberAnimation { duration: Theme.dur(160); easing.type: Theme.easing } }
                 }
@@ -238,6 +346,7 @@ LayerWindow {
                 MenuPopup {
                     id: menu
                     readonly property var all: UiState.menu === "system" ? AppMenus.systemItems
+                        : UiState.menu === "app" ? AppMenus.appMenu(Sway.focusedAppId)
                         : (UiState.menu.indexOf("m") === 0 ? (AppMenus.menusFor(Sway.focusedAppId)[parseInt(UiState.menu.substring(1))] || {items: []}).items : [])
                     items: all
                     visible: UiState.menu !== "" && items.length > 0
@@ -245,9 +354,20 @@ LayerWindow {
                     y: 4
                     onActivated: (cmd) => { UiState.closePopups(); UiState.run(cmd) }
                 }
+                Launchpad {
+                    id: launchpad
+                    visible: UiState.launcherOpen && !UiState.classic
+                    opacity: visible ? 1 : 0
+                    scale: visible ? 1 : 1.08
+                    Behavior on opacity { NumberAnimation { duration: Theme.d(Theme.durLaunchpad); easing.type: Theme.easeStandard } }
+                    Behavior on scale { NumberAnimation { duration: Theme.d(Theme.durLaunchpad); easing.type: Theme.easeEmphasized } }
+                    onDone: UiState.closePopups()
+                    onLaunch: (id, name) => { UiState.closePopups(); if (!Apps.launch(id)) Notifications.push("BC OS", name, qsTr("No se pudo abrir la aplicación"), "", 4000) }
+                    Connections { target: UiState; function onLauncherOpenChanged() { if (UiState.launcherOpen && !UiState.classic) launchpad.reset() } }
+                }
                 Item {
                     id: launcherWrap
-                    visible: UiState.launcherOpen
+                    visible: UiState.launcherOpen && UiState.classic
                     anchors.fill: parent
                     LauncherPanel {
                         id: launcher
@@ -301,6 +421,7 @@ LayerWindow {
     }
 
     Component.onCompleted: {
+        UiState.classic = AppConfig.classic
         UiState.splashing = AppConfig.splash
         UiState.style = Settings.desktopStyle === "win" ? "win" : "mac"
         UiState.widgets = Settings.widgets

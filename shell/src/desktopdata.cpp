@@ -13,6 +13,7 @@
 #include <QJsonObject>
 #include <QSaveFile>
 #include <QStandardPaths>
+#include <QRegularExpression>
 
 static QString readLine(const QString &path) {
     QFile f(path);
@@ -165,4 +166,159 @@ void WidgetHost::refresh() {
         if (!w.isEmpty()) out.append(w);
     }
     if (out != m_widgets) { m_widgets = out; emit changed(); }
+}
+
+// ---------------------------------------------------------------------------------------------
+#include <QProcess>
+#include <QLocale>
+#include <cmath>
+QuickTools::QuickTools(QObject *parent) : QObject(parent) {
+    m_media = {{"available", false}, {"playing", false}, {"title", ""}, {"artist", ""}};
+    m_mediaTimer.setInterval(3000);
+    connect(&m_mediaTimer, &QTimer::timeout, this, &QuickTools::refreshMedia);
+}
+void QuickTools::run(const QString &prog, const QStringList &args, std::function<void(int, const QString &)> done) {
+    if (QStandardPaths::findExecutable(prog).isEmpty()) { done(-1, QString()); return; }
+    auto *p = new QProcess(this);
+    ++m_busy; emit busyChanged();
+    connect(p, &QProcess::finished, this, [this, p, done](int code) {
+        done(code, QString::fromUtf8(p->readAllStandardOutput())); p->deleteLater(); --m_busy; emit busyChanged();
+    });
+    connect(p, &QProcess::errorOccurred, this, [this, p, done](QProcess::ProcessError e) {
+        if (e != QProcess::FailedToStart) return; done(-1, QString()); p->deleteLater(); --m_busy; emit busyChanged();
+    });
+    QTimer::singleShot(20000, p, [p] { if (p->state() != QProcess::NotRunning) p->kill(); });
+    p->start(prog, args);
+}
+QVariantList QuickTools::parseWifi(const QString &t) {
+    QVariantList out; QStringList seen;
+    for (const QString &line : t.split('\n', Qt::SkipEmptyParts)) {
+        // IN-USE:SIGNAL:SECURITY:SSID (los «:» del SSID vienen escapados como «\:»)
+        QStringList f; QString cur; bool esc = false;
+        for (QChar c : line) { if (esc) { cur += c; esc = false; } else if (c == '\\') esc = true; else if (c == ':') { f << cur; cur.clear(); } else cur += c; }
+        f << cur;
+        if (f.size() < 4 || f[3].isEmpty() || seen.contains(f[3])) continue;
+        seen << f[3];
+        out.append(QVariantMap{{"ssid", f[3]}, {"signal", f[1].toInt()}, {"secure", !f[2].isEmpty() && f[2] != "--"}, {"active", f[0] == "*"}});
+    }
+    return out;
+}
+void QuickTools::scanWifi() {
+    run("nmcli", {"-t", "-f", "IN-USE,SIGNAL,SECURITY,SSID", "dev", "wifi", "list", "--rescan", "auto"}, [this](int code, const QString &o) {
+        const QVariantList n = code == 0 ? parseWifi(o) : QVariantList();
+        if (n != m_networks) { m_networks = n; emit networksChanged(); }
+    });
+}
+void QuickTools::connectWifi(const QString &ssid, const QString &pw) {
+    QStringList a{"dev", "wifi", "connect", ssid};
+    if (!pw.isEmpty()) a << "password" << pw;
+    run("nmcli", a, [this, ssid](int code, const QString &) { emit wifiResult(code == 0, ssid); scanWifi(); });
+}
+QVariantList QuickTools::parseBluetooth(const QString &devs, const QString &conn) {
+    QVariantList out;
+    for (const QString &line : devs.split('\n', Qt::SkipEmptyParts)) {
+        if (!line.startsWith("Device ")) continue;
+        const QString mac = line.section(' ', 1, 1), name = line.section(' ', 2);
+        out.append(QVariantMap{{"mac", mac}, {"name", name}, {"connected", conn.contains(mac)}});
+    }
+    return out;
+}
+void QuickTools::scanBluetooth() {
+    run("bluetoothctl", {"devices"}, [this](int, const QString &all) {
+        run("bluetoothctl", {"devices", "Connected"}, [this, all](int, const QString &c) {
+            const QVariantList l = parseBluetooth(all, c);
+            if (l != m_bt) { m_bt = l; emit btChanged(); }
+        });
+    });
+    run("bluetoothctl", {"--timeout", "6", "scan", "on"}, [this](int, const QString &) {
+        run("bluetoothctl", {"devices"}, [this](int, const QString &all) {
+            run("bluetoothctl", {"devices", "Connected"}, [this, all](int, const QString &c) {
+                const QVariantList l = parseBluetooth(all, c);
+                if (l != m_bt) { m_bt = l; emit btChanged(); }
+            });
+        });
+    });
+}
+void QuickTools::toggleBluetoothDevice(const QString &mac, bool on) {
+    static const QRegularExpression ok("^[0-9A-Fa-f:]{17}$");
+    if (!ok.match(mac).hasMatch()) return;
+    if (on) run("bluetoothctl", {"pair", mac}, [this, mac](int, const QString &) {
+        run("bluetoothctl", {"trust", mac}, [this, mac](int, const QString &) { run("bluetoothctl", {"connect", mac}, [this](int, const QString &) { scanBluetooth(); }); });
+    });
+    else run("bluetoothctl", {"disconnect", mac}, [this](int, const QString &) { scanBluetooth(); });
+}
+void QuickTools::refreshMedia() {
+    run("playerctl", {"metadata", "--format", "{{status}}\t{{title}}\t{{artist}}"}, [this](int code, const QString &o) {
+        QVariantMap m{{"available", false}, {"playing", false}, {"title", ""}, {"artist", ""}};
+        if (code == 0) {
+            const QStringList f = o.trimmed().split('\t');
+            if (f.size() >= 2 && !f[1].isEmpty()) m = {{"available", true}, {"playing", f[0] == "Playing"}, {"title", f[1]}, {"artist", f.value(2)}};
+        }
+        if (m != m_media) { m_media = m; emit mediaChanged(); }
+    });
+}
+void QuickTools::mediaCommand(const QString &cmd) {
+    if (!QStringList{"play-pause", "next", "previous"}.contains(cmd)) return;
+    run("playerctl", {cmd}, [this](int, const QString &) { refreshMedia(); });
+}
+
+void QuickTools::searchFiles(const QString &text) {
+    const QString t = text.trimmed();
+    const int seq = ++m_searchSeq;
+    if (t.size() < 2) { m_files.clear(); emit filesChanged(); return; }
+    QString pat = t; pat.replace('[', "\\[").replace('*', "\\*").replace('?', "\\?");
+    const QString home = QDir::homePath();
+    run("find", {home, "-maxdepth", "5", "-not", "-path", "*/.*", "-iname", "*" + pat + "*"}, [this, seq, home](int, const QString &o) {
+        if (seq != m_searchSeq) return;
+        QVariantList out;
+        for (const QString &p : o.split('\n', Qt::SkipEmptyParts)) {
+            if (p == home) continue;
+            const QFileInfo fi(p);
+            out.append(QVariantMap{{"path", p}, {"name", fi.fileName()}, {"dir", fi.isDir()}, {"parent", QString(fi.absolutePath()).replace(home, "~")}});
+            if (out.size() >= 12) break;
+        }
+        m_files = out; emit filesChanged();
+    });
+}
+
+// Evaluador seguro de expresiones aritméticas (sin JavaScript eval): + - * / % ^ ( ) y coma decimal
+namespace {
+struct Calc {
+    QString s; int i = 0; bool ok = true;
+    QChar peek() { while (i < s.size() && s[i].isSpace()) ++i; return i < s.size() ? s[i] : QChar(); }
+    double expr() { double v = term(); for (;;) { QChar c = peek(); if (c == '+') { ++i; v += term(); } else if (c == '-') { ++i; v -= term(); } else return v; } }
+    double term() { double v = power(); for (;;) { QChar c = peek();
+        if (c == '*' || c == QChar(0xD7)) { ++i; v *= power(); } else if (c == '/' || c == QChar(0xF7)) { ++i; double d = power(); if (d == 0) ok = false; else v /= d; }
+        else if (c == '%') { ++i; double d = power(); if (d == 0) ok = false; else v = std::fmod(v, d); } else return v; } }
+    double power() { double b = unary(); if (peek() == '^') { ++i; return std::pow(b, power()); } return b; }
+    double unary() { if (peek() == '-') { ++i; return -unary(); } if (peek() == '+') { ++i; return unary(); } return atom(); }
+    double atom() {
+        if (peek() == '(') { ++i; double v = expr(); if (peek() == ')') ++i; else ok = false; return v; }
+        const int st = i; while (i < s.size() && (s[i].isDigit() || s[i] == '.' || s[i] == ',')) ++i;
+        if (st == i) { ok = false; return 0; }
+        bool k; double v = s.mid(st, i - st).replace(',', '.').toDouble(&k); if (!k) ok = false; return v;
+    }
+};
+}
+QString QuickTools::calculate(const QString &e) {
+    static const QRegularExpression allowed(R"(^[0-9\s\.,+\-*/%^()×÷]+$)"), hasOp(R"([+\-*/%^×÷])");
+    if (!allowed.match(e).hasMatch() || !hasOp.match(e).hasMatch()) return {};
+    Calc c{e};
+    const double v = c.expr();
+    if (!c.ok || c.peek() != QChar() || std::isnan(v) || std::isinf(v)) return {};
+    return QLocale(QLocale::Spanish, QLocale::Spain).toString(v, 'g', 12);
+}
+void QuickTools::open(const QString &path) { QProcess::startDetached("xdg-open", {path}); }
+
+#include <QSettings>
+void SoundPlayer::play(const QString &name) {
+    static const QRegularExpression ok("^[a-z-]{1,24}$");
+    if (!ok.match(name).hasMatch()) return;
+    if (!QSettings("BC-OS", "bc-shell").value("sonidos", true).toBool()) return;
+    const QString f = "/usr/share/sounds/bc/" + name + ".wav";
+    if (!QFileInfo::exists(f)) return;
+    for (const char *p : {"pw-play", "paplay", "aplay"}) {
+        const QString exe = QStandardPaths::findExecutable(p);
+        if (!exe.isEmpty()) { QProcess::startDetached(exe, QStringList{(QString(p) == "aplay" ? "-q" : "--volume=0.6"), f}); return; }
+    }
 }

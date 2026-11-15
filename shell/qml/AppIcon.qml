@@ -6,6 +6,7 @@ Item {
     id: root
     property string kind: "archivos"
     property real size: 70
+    property bool full: false      // papelera con elementos
     width: size
     height: size
 
@@ -24,7 +25,8 @@ Item {
 
     Image {
         anchors.fill: parent
-        source: "qrc:/BCShell/apps/" + (root.names[root.kind] || "system-file-manager") + ".svg"
+        source: root.kind === "papelera" && root.full ? "qrc:/BCShell/icons/user-trash-full.svg"
+              : "qrc:/BCShell/apps/" + (root.names[root.kind] || "system-file-manager") + ".svg"
         sourceSize: Qt.size(root.size * 2, root.size * 2)
         fillMode: Image.PreserveAspectFit
         smooth: true

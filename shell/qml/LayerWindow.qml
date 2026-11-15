@@ -19,11 +19,20 @@ Window {
     visible: false
 
     readonly property bool fullscreenSurface: edges.length === 4
+    // Posición de la superficie en la pantalla (para recortar el cristal del fondo)
+    readonly property bool _l: edges.indexOf("left") >= 0
+    readonly property bool _r: edges.indexOf("right") >= 0
+    readonly property bool _t: edges.indexOf("top") >= 0
+    readonly property bool _b: edges.indexOf("bottom") >= 0
+    readonly property real originX: _l ? margins[3] : (_r ? UiState.sw - width - margins[1] : (UiState.sw - width) / 2)
+    readonly property real originY: _t ? margins[0] : (_b ? UiState.sh - height - margins[2] : (UiState.sh - height) / 2)
     function apply() {
         Layer.configure(w, { layer: layer, anchors: edges, exclusive: (fullscreenSurface || absolute) ? -1 : exclusive, margins: margins, keyboard: keyboard,
                              scope: scope, width: edges.indexOf("left") >= 0 && edges.indexOf("right") >= 0 ? 0 : width,
                              height: edges.indexOf("top") >= 0 && edges.indexOf("bottom") >= 0 ? 0 : height })
     }
+    property rect inputRect: Qt.rect(0, 0, 0, 0)   // zona que recibe el puntero (vacía = toda)
+    onInputRectChanged: Layer.setInputRect(w, inputRect)
     property bool ready: false
     onKeyboardChanged: if (ready) apply()
     onMarginsChanged: if (ready) apply()

@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Window
 import BCShell
 
 // Material Liquid Glass de BC OS (Golden Gate): fondo desenfocado precalculado (GlassProvider), tinte
@@ -8,8 +9,9 @@ import BCShell
 Item {
     id: g
     property real radius: Theme.widgetRadius
-    property real originX: 0
-    property real originY: 0
+    readonly property var win: Window.window
+    property real originX: win && win.originX !== undefined ? win.originX : 0
+    property real originY: win && win.originY !== undefined ? win.originY : 0
     property real tintBoost: 0          // los menús y paneles emergentes van algo más tintados que los widgets
     property bool shadow: true
     property bool rim: true

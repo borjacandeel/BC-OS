@@ -10,7 +10,9 @@ QtObject {
     property bool splashing: false
     signal command(string kind, string arg)
     readonly property real u: Math.max(0.6, Math.min(1.25, Math.min(sw / 1586, sh / 992)))
-    readonly property int barH: 41
+    property bool classic: false                // sesión «BC clásico» (escritorio anterior); la fija Panel.qml
+    readonly property real gs: Math.max(0.7, Math.min(2.0, sh / 1080))
+    readonly property int barH: classic ? 41 : Math.round(30 * gs)
 
     property string style: "mac"               // "mac" (barra superior + Dock) o "win" (barra de tareas + menú Inicio)
     readonly property bool win: style === "win"
@@ -29,15 +31,33 @@ QtObject {
         { kind: "musica", name: qsTr("Música") }, { kind: "papelera", name: qsTr("Papelera") }
     ]
     property bool centerOpen: false
+    property string centerPanel: ""          // subpanel del Control Center abierto («wifi», «bluetooth», «sound»…)
+    property bool notifCenterOpen: false
+    property bool spotlightOpen: false
+    property bool missionOpen: false
+    property bool switcherOpen: false
+    property bool stackOpen: false
+    property var contextItems: []
+    property point contextPos: Qt.point(0, 0)
+    readonly property bool dockMenuOpen: contextItems.length > 0 || stackOpen
     property bool launcherOpen: false
     property string menu: ""          // "", "system" o "m<índice>" (menús de la barra)
     property real menuX: 12
     property bool locked: false
     property string powerAction: ""
-    readonly property bool popupOpen: !locked && (centerOpen || launcherOpen || startOpen || clipboardOpen || menu !== "" || powerAction !== "")
+    readonly property bool popupOpen: !locked && (centerOpen || launcherOpen || startOpen || clipboardOpen || menu !== "" || powerAction !== ""
+                                                  || notifCenterOpen || spotlightOpen || stackOpen || contextItems.length > 0)
     readonly property bool dim: launcherOpen || powerAction !== ""
 
-    function closePopups() { centerOpen = false; launcherOpen = false; startOpen = false; clipboardOpen = false; menu = ""; powerAction = "" }
+    function closePopups() { centerOpen = false; centerPanel = ""; launcherOpen = false; startOpen = false; clipboardOpen = false; menu = ""; powerAction = ""
+                             notifCenterOpen = false; spotlightOpen = false; stackOpen = false; contextItems = [] }
+    function toggleNotifCenter() { if (locked) return; const o = notifCenterOpen; closePopups(); notifCenterOpen = !o }
+    function openCenterPanel(name) { if (locked) return; closePopups(); centerOpen = true; centerPanel = name }
+    function toggleSpotlight() { if (locked) return; const o = spotlightOpen; closePopups(); spotlightOpen = !o }
+    function toggleLaunchpad() { toggleLauncher() }
+    function toggleStack() { if (locked) return; const o = stackOpen; closePopups(); stackOpen = !o }
+    function toggleMission() { if (locked) return; closePopups(); missionOpen = !missionOpen }
+    function openContextMenu(items, p) { if (locked) return; closePopups(); contextPos = p; contextItems = items }
     function toggleLauncher() {
         if (locked) return
         if (win) { const o = startOpen; closePopups(); startOpen = !o; return }
@@ -58,6 +78,9 @@ QtObject {
             if (arg === "launcher") toggleLauncher()
             else if (arg === "lock") { closePopups(); locked = true }
             else if (arg === "center") toggleCenter()
+            else if (arg === "mission") toggleMission()
+            else if (arg === "spotlight") toggleSpotlight()
+            else if (arg === "clipboard") toggleClipboard()
             else if (arg.indexOf("power:") === 0) openPower(arg.substring(6))
             else command(kind, arg)
         } else command(kind, arg)

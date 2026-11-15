@@ -13,4 +13,7 @@ public:
     // opts: layer ("background"|"bottom"|"top"|"overlay"), anchors (["top","bottom","left","right"]), exclusive (px),
     //       margins ([arriba, derecha, abajo, izquierda]), keyboard ("none"|"ondemand"|"exclusive"), scope, width, height.
     Q_INVOKABLE void configure(QWindow *window, const QVariantMap &opts);
+    // Región que recibe el puntero (el resto de la superficie deja pasar los clics a las ventanas de debajo).
+    // Rectángulo vacío = toda la superficie.
+    Q_INVOKABLE void setInputRect(QWindow *window, const QRect &r) { if (window && supported()) window->setMask(r.isEmpty() ? QRegion() : QRegion(r)); }
 };

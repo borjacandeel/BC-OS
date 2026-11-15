@@ -1,0 +1,93 @@
+import QtQuick
+import BCShell
+
+// Spotlight (Súper+Espacio): barra de vidrio centrada; resultados de apps, cálculos, acciones del sistema y archivos.
+Item {
+    id: sp
+    readonly property real s: Theme.s
+    function px(v) { return Math.round(v * s) }
+    width: px(680)
+    height: px(56) + (results.length ? list.contentHeight + px(12) : 0)
+    property var results: []
+    property int selected: 0
+    signal done()
+
+    readonly property var actions: [
+        { t: qsTr("Bloquear pantalla"), c: "bc:lock", k: ["bloquear", "lock"] },
+        { t: qsTr("Cerrar sesión"), c: "bc:power:logout", k: ["cerrar sesion", "salir", "logout"] },
+        { t: qsTr("Reiniciar"), c: "bc:power:reboot", k: ["reiniciar", "reboot"] },
+        { t: qsTr("Apagar"), c: "bc:power:poweroff", k: ["apagar", "shutdown"] },
+        { t: qsTr("Reposo"), c: "bc:power:suspend", k: ["reposo", "suspender", "dormir"] },
+        { t: qsTr("Modo oscuro / claro"), c: "bc:appearance", k: ["oscuro", "claro", "aspecto", "modo"] },
+        { t: qsTr("Mission Control"), c: "bc:mission", k: ["mission", "escritorios", "ventanas"] },
+        { t: qsTr("Ajustes del Sistema"), c: "sway:exec bc-shell --app settings", k: ["ajustes", "configuracion", "preferencias"] },
+        { t: qsTr("Vaciar papelera"), c: "bc:trash:empty", k: ["papelera", "vaciar"] }
+    ]
+    function norm(x) { return x.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "") }
+    function reset() { field.text = ""; refresh(); field.forceActiveFocus() }
+    function refresh() {
+        const q = field.text.trim(), out = []
+        if (q.length === 0) { results = []; return }
+        const calc = Quick.calculate(q)
+        if (calc !== "") out.push({ kind: "calc", title: calc, sub: q + " =", icon: "accessories-calculator" })
+        for (const a of Apps.search(q).slice(0, 6)) out.push({ kind: "app", title: a.name, sub: qsTr("Aplicación"), iconPath: a.iconPath, id: a.id })
+        const nq = norm(q)
+        for (const a of actions) if (a.k.some(k => k.indexOf(nq) === 0 || nq.indexOf(k) === 0) || norm(a.t).indexOf(nq) >= 0) out.push({ kind: "action", title: a.t, sub: qsTr("Acción del sistema"), cmd: a.c })
+        for (const f of Quick.fileResults) out.push({ kind: "file", title: f.name, sub: f.parent, path: f.path, dir: f.dir })
+        results = out
+        selected = 0
+    }
+    Connections { target: Quick; function onFilesChanged() { if (sp.visible) sp.refresh() } }
+    Timer { id: fileDelay; interval: 220; onTriggered: Quick.searchFiles(field.text) }
+    function run(r) {
+        if (!r) return
+        done()
+        if (r.kind === "app") { if (!Apps.launch(r.id)) Notifications.push("BC OS", r.title, qsTr("No se pudo abrir la aplicación"), "", 4000) }
+        else if (r.kind === "action") UiState.run(r.cmd)
+        else if (r.kind === "file") Quick.open(r.path)
+        else if (r.kind === "calc") Launcher.run("wl-copy", [r.title])
+    }
+
+    Glass { anchors.fill: parent; radius: px(28); tintBoost: 0.4 }
+    Icon { x: px(20); y: (px(56) - height) / 2; name: Icons.search; size: px(22); color: Theme.labelSecondary }
+    TextInput {
+        id: field
+        x: px(54); width: parent.width - px(70); height: px(56)
+        verticalAlignment: TextInput.AlignVCenter
+        color: Theme.label; selectionColor: Theme.selection
+        font.family: Theme.font; font.pixelSize: px(22); font.weight: Font.Light
+        focus: true
+        onTextChanged: { sp.refresh(); fileDelay.restart() }
+        Keys.onEscapePressed: sp.done()
+        Keys.onReturnPressed: sp.run(sp.results[sp.selected])
+        Keys.onDownPressed: sp.selected = Math.min(sp.results.length - 1, sp.selected + 1)
+        Keys.onUpPressed: sp.selected = Math.max(0, sp.selected - 1)
+        Text { visible: field.text.length === 0; anchors.verticalCenter: parent.verticalCenter; text: qsTr("Búsqueda Spotlight"); color: Theme.labelTertiary; font: field.font }
+    }
+    Rectangle { visible: sp.results.length > 0; y: px(56); x: px(14); width: parent.width - px(28); height: 1; color: Theme.separator }
+    ListView {
+        id: list
+        y: px(62); x: px(8); width: parent.width - px(16); height: contentHeight
+        interactive: false
+        model: sp.results.slice(0, 10)
+        delegate: Rectangle {
+            required property var modelData
+            required property int index
+            width: list.width; height: px(40); radius: px(10)
+            color: index === sp.selected ? Theme.selection : "transparent"
+            Image { visible: modelData.kind === "app"; x: px(10); anchors.verticalCenter: parent.verticalCenter; width: px(26); height: width
+                    source: modelData.iconPath ? "file://" + modelData.iconPath : ""; sourceSize: Qt.size(64, 64); smooth: true }
+            Icon { visible: modelData.kind !== "app"; x: px(12); anchors.verticalCenter: parent.verticalCenter; size: px(20)
+                   color: index === sp.selected ? "white" : Theme.label
+                   name: modelData.kind === "file" ? (modelData.dir ? "folder-symbolic" : "document-open-symbolic")
+                       : modelData.kind === "calc" ? "view-grid-symbolic" : "preferences-system-symbolic" }
+            Text { x: px(46); anchors.verticalCenter: parent.verticalCenter; width: parent.width - px(220); elide: Text.ElideRight
+                   text: modelData.title; color: index === sp.selected ? "white" : Theme.label; font.family: Theme.font
+                   font.pixelSize: px(modelData.kind === "calc" ? 18 : 14); font.weight: modelData.kind === "calc" ? Font.DemiBold : Font.Normal }
+            Text { anchors.right: parent.right; anchors.rightMargin: px(12); anchors.verticalCenter: parent.verticalCenter; width: px(170)
+                   horizontalAlignment: Text.AlignRight; elide: Text.ElideLeft
+                   text: modelData.sub; color: index === sp.selected ? Qt.rgba(1, 1, 1, 0.8) : Theme.labelSecondary; font.family: Theme.font; font.pixelSize: px(12) }
+            MouseArea { anchors.fill: parent; hoverEnabled: true; onEntered: sp.selected = index; onClicked: sp.run(modelData) }
+        }
+    }
+}

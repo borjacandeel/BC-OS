@@ -16,6 +16,8 @@ public:
     Q_INVOKABLE QVariantList search(const QString &query) const;
     Q_INVOKABLE bool launch(const QString &id);
     Q_INVOKABLE void reload();
+    // Datos (id, name, icon) de la app de una ventana a partir de su app_id/clase; vacío si no se encuentra.
+    Q_INVOKABLE QVariantMap infoFor(const QString &appId) const;
     // Lectura de un .desktop; devuelve false si debe ocultarse (NoDisplay, Hidden, no es Application...).
     static bool parseDesktop(const QString &text, const QString &lang, Entry &out);
     // Quita códigos de campo (%f %u ...) y separa en programa + argumentos.

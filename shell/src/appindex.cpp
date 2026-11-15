@@ -132,3 +132,15 @@ bool AppIndex::launch(const QString &id) {
     }
     return false;
 }
+
+QVariantMap AppIndex::infoFor(const QString &appId) const {
+    if (appId.isEmpty()) return {};
+    const QString a = appId.toLower();
+    for (const Entry &e : m_entries) {
+        const QString id = e.id.toLower();
+        const QString prog = commandFor(e.exec, false).value(0).section('/', -1).toLower();
+        if (id == a || id.endsWith("." + a) || a.endsWith("." + id) || prog == a)
+            return {{"id", e.id}, {"name", e.name}, {"icon", e.icon}, {"iconPath", resolveIcon(e.icon)}};
+    }
+    return {};
+}

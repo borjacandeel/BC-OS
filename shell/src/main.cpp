@@ -98,6 +98,7 @@ int main(int argc, char *argv[]) {
     WindowControl windowControl;
     Batteries batteries;
     Reminders reminders;
+    SoundPlayer sounds;
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Settings", &appSettings);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Monitor", &monitor);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Store", &store);
@@ -109,7 +110,9 @@ int main(int argc, char *argv[]) {
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Sessions", &sessionList);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "WindowControl", &windowControl);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Batteries", &batteries);
+    qmlRegisterType<FileBrowser>("BCShell", 1, 0, "FileModel");
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Reminders", &reminders);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Sounds", &sounds);
 
     // Solo del panel
     PamAuth pam;
@@ -122,6 +125,7 @@ int main(int argc, char *argv[]) {
     ClipboardHistory clipboard;
     std::unique_ptr<UpdateChecker> updates;
     WidgetHost widgetHost;
+    QuickTools quickTools;
     if (!appMode) { swayPtr = std::make_unique<SwayControl>(); if (!(p.isSet(oShot) || p.isSet(oCheck))) updates = std::make_unique<UpdateChecker>(); }
     // Solo de las apps
     NotificationClient notifClient;
@@ -137,6 +141,7 @@ int main(int argc, char *argv[]) {
         qmlRegisterSingletonInstance("BCShell", 1, 0, "Power", &power);
         qmlRegisterSingletonInstance("BCShell", 1, 0, "Clipboard", &clipboard);
         qmlRegisterSingletonInstance("BCShell", 1, 0, "WidgetHost", &widgetHost);
+        qmlRegisterSingletonInstance("BCShell", 1, 0, "Quick", &quickTools);
         if (updates) QObject::connect(updates.get(), &UpdateChecker::updatesFound, &notifications, [&notifications](int n) {
             notifications.push("BC OS", QObject::tr("Actualizaciones disponibles"), QObject::tr("%1 paquetes pueden actualizarse desde la Tienda").arg(n), "", 8000);
         });
