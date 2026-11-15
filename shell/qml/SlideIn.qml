@@ -16,6 +16,7 @@ Item {
     Translate { id: tr }
     Component.onCompleted: if (target) target.transform = [tr]
 
+    function play() { if (root.target && !Theme.reducedMotion) anim.restart() }
     Connections {
         target: root.target
         function onVisibleChanged() { if (root.target && root.target.visible && !Theme.reducedMotion) anim.restart() }

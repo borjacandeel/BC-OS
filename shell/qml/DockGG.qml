@@ -19,7 +19,7 @@ Item {
     signal launchDesktop(string id, string name)
 
     // ---- Modelo ------------------------------------------------------------------------------
-    readonly property var defaultApps: ["archivos", "lanzador", "navegador", "terminal", "tienda", "ajustes", "monitor", "musica"]
+    readonly property var defaultApps: ["archivos", "lanzador", "navegador", "terminal", "tienda", "ajustes", "monitor"]
     readonly property var pinnedKinds: Settings.dockApps.length > 0 ? Settings.dockApps : defaultApps
     readonly property var kindNames: ({ archivos: qsTr("Archivos"), lanzador: qsTr("Aplicaciones"), navegador: qsTr("Firefox"),
                                         terminal: qsTr("Terminal"), tienda: qsTr("Tienda"), ajustes: qsTr("Ajustes del Sistema"),

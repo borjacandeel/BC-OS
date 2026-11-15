@@ -145,6 +145,7 @@ LayerWindow {
     // Sonidos del sistema (originales de BC OS)
     Connections { target: UiState; function onLockedChanged() { if (UiState.locked && !UiState.classic) Sounds.play("lock") } }
     property bool _notifWas: false
+    property bool _notifWasShown: false
     property bool _soundsReady: false
     Timer { interval: 6000; running: true; onTriggered: root._soundsReady = true }   // sin sonido para los avisos del arranque
     Connections { target: Notifications; function onChanged() { if (Notifications.visible && !root._notifWas && !UiState.classic && root._soundsReady) Sounds.play("notify"); root._notifWas = Notifications.visible } }
@@ -338,7 +339,9 @@ LayerWindow {
             body: Notifications.body
             onDismissed: Notifications.dismiss()
         }
-        SlideIn { target: notifCard; dx: 60; dy: 0; duration: 260 }
+        // La tarjeta vive en su propia superficie (siempre «visible»): la entrada se dispara con cada aviso
+        Connections { target: Notifications; function onChanged() { if (Notifications.visible && !root._notifWasShown) notifSlide.play(); root._notifWasShown = Notifications.visible } }
+        SlideIn { id: notifSlide; target: notifCard; dx: UiState.classic ? 60 : 340; dy: 0; duration: UiState.classic ? 260 : Theme.durNotifyIn }   // Golden Gate: entra desde fuera por la derecha
     }
 
     // Pantalla completa (sin márgenes): bienvenida, bloqueo y pantalla de carga
