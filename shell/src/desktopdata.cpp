@@ -186,7 +186,7 @@ QuickTools::QuickTools(QObject *parent) : QObject(parent) {
     m_media = {{"available", false}, {"playing", false}, {"title", ""}, {"artist", ""}};
     m_mediaTimer.setInterval(3000);
     connect(&m_mediaTimer, &QTimer::timeout, this, &QuickTools::refreshMedia);
-    m_winTimer.setInterval(400);
+    m_winTimer.setInterval(1500);   // además se refresca al soltar la barra de título (AppWindow)
     connect(&m_winTimer, &QTimer::timeout, this, &QuickTools::pollWindow);
 }
 void QuickTools::run(const QString &prog, const QStringList &args, std::function<void(int, const QString &)> done) {

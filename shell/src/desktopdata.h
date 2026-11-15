@@ -96,6 +96,7 @@ public:
     QPoint windowPos() const { return m_winPos; }
     bool trackWindow() const { return m_winTimer.isActive(); }
     void setTrackWindow(bool on);
+    Q_INVOKABLE void refreshWindowPos() { if (m_winTimer.isActive()) { pollWindow(); QTimer::singleShot(300, this, &QuickTools::pollWindow); } }
     bool busy() const { return m_busy > 0; }
     Q_INVOKABLE void scanWifi();
     Q_INVOKABLE void connectWifi(const QString &ssid, const QString &password = QString());

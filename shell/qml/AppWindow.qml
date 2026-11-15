@@ -43,11 +43,12 @@ Window {
         if (Theme.gg && Launcher.run("bc-ctl", ["minimize"])) return
         minAnim.restart()
     }
-    onActiveChanged: if (active && frame.opacity < 0.1) {
+    onActiveChanged: if (active) Quick.refreshWindowPos()
+    Connections { target: win; function onActiveChanged() { if (!win.active || frame.opacity >= 0.1) return
         frame.transformOrigin = Item.Bottom
         frame.scale = 1
         frame.opacity = 1
-    }
+    } }
     SequentialAnimation {
         id: minAnim
         ScriptAction { script: frame.transformOrigin = Item.Bottom }
@@ -86,6 +87,7 @@ Window {
             MouseArea {
                 anchors.fill: parent
                 onPressed: win.startSystemMove()
+                onReleased: Quick.refreshWindowPos()
                 onDoubleClicked: WindowControl.toggleFullscreen()
             }
             Row {
