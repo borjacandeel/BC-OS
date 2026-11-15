@@ -40,13 +40,13 @@ AppWindow {
 
     Rectangle {
         id: bar
-        x: 20; y: 16; width: parent.width - 40; height: 40; radius: 12; color: Qt.rgba(1, 1, 1, 0.1)
+        x: 20; y: 16; width: parent.width - 40; height: 40; radius: 12; color: Theme.tileFill
         Icon { x: 12; anchors.verticalCenter: parent.verticalCenter; name: Icons.search; size: 20; color: Theme.textSecondary }
         TextInput {
             id: field
             anchors.left: parent.left; anchors.right: parent.right; anchors.leftMargin: 42; anchors.rightMargin: 12
             anchors.verticalCenter: parent.verticalCenter
-            color: Theme.white; selectionColor: Theme.accent
+            color: Theme.textPrimary; selectionColor: Theme.accent
             font.family: Theme.fontFamily; font.pixelSize: 16
             onAccepted: { win.mode = 0; Store.search(text) }
             Text { visible: field.text.length === 0; anchors.verticalCenter: parent.verticalCenter
@@ -63,8 +63,8 @@ AppWindow {
                 required property var modelData
                 required property int index
                 width: srcT.implicitWidth + 24; height: 28; radius: 14
-                color: (index === 1) === Store.flathub ? Theme.accent : Qt.rgba(1, 1, 1, 0.1)
-                Text { id: srcT; anchors.centerIn: parent; text: modelData; color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14 }
+                color: (index === 1) === Store.flathub ? Theme.accent : Theme.tileFill
+                Text { id: srcT; anchors.centerIn: parent; text: modelData; color: (index === 1) === Store.flathub ? "white" : Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 14 }
                 MouseArea { anchors.fill: parent; onClicked: { Store.flathub = index === 1; win.reload() } }
             }
         }
@@ -76,16 +76,16 @@ AppWindow {
             model: [qsTr("Resultados"), qsTr("Instaladas")]
             Rectangle {
                 width: 110; height: 30; radius: 9
-                color: index === win.mode ? Theme.accent : Qt.rgba(1, 1, 1, 0.1)
-                Text { anchors.centerIn: parent; text: modelData; color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14 }
+                color: index === win.mode ? Theme.accent : Theme.tileFill
+                Text { anchors.centerIn: parent; text: modelData; color: index === win.mode ? "white" : Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 14 }
                 MouseArea { anchors.fill: parent; onClicked: { win.mode = index; win.reload() } }
             }
         }
     }
     Rectangle {
         anchors.right: parent.right; anchors.rightMargin: 20; y: 66; width: 190; height: 30; radius: 9
-        color: Qt.rgba(1, 1, 1, 0.1); opacity: Store.busy ? 0.5 : 1
-        Text { anchors.centerIn: parent; text: qsTr("Actualizar sistema"); color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14 }
+        color: Theme.tileFill; opacity: Store.busy ? 0.5 : 1
+        Text { anchors.centerIn: parent; text: qsTr("Actualizar sistema"); color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 14 }
         MouseArea { anchors.fill: parent; enabled: !Store.busy; onClicked: win.ask("update", "") }
     }
 
@@ -96,14 +96,14 @@ AppWindow {
         model: Store
         delegate: Rectangle {
             width: list.width; height: 62; radius: 12
-            color: ma.containsMouse ? Qt.rgba(1, 1, 1, 0.06) : "transparent"
+            color: ma.containsMouse ? Theme.tileFill : "transparent"
             Rectangle {
                 x: 10; anchors.verticalCenter: parent.verticalCenter; width: 38; height: 38; radius: 10
                 color: Qt.hsla((model.name.charCodeAt(0) * 53 % 360) / 360, 0.5, 0.42, 1)
                 Text { anchors.centerIn: parent; text: model.name.charAt(0).toUpperCase(); color: Theme.white
                        font.family: Theme.fontFamily; font.pixelSize: 19; font.weight: Font.DemiBold }
             }
-            Text { x: 60; y: 9; text: model.name; color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 16; font.weight: Font.Medium }
+            Text { x: 60; y: 9; text: model.name; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 16; font.weight: Font.Medium }
             Text { x: 60 + 14 + nameW.width; y: 12; text: model.version + (model.repo !== "" ? " · " + model.repo : ""); color: Theme.textSecondary
                    font.family: Theme.fontFamily; font.pixelSize: 13 }
             Text { id: nameW; visible: false; text: model.name; font.family: Theme.fontFamily; font.pixelSize: 16; font.weight: Font.Medium }
@@ -112,9 +112,9 @@ AppWindow {
             Rectangle {
                 anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
                 width: 100; height: 32; radius: 16
-                color: model.installed ? Qt.rgba(1, 1, 1, 0.14) : Theme.accent
+                color: model.installed ? Theme.tileFill : Theme.accent
                 opacity: Store.busy ? 0.5 : 1
-                Text { anchors.centerIn: parent; text: model.installed ? qsTr("Quitar") : qsTr("Instalar"); color: Theme.white
+                Text { anchors.centerIn: parent; text: model.installed ? qsTr("Quitar") : qsTr("Instalar"); color: model.installed ? Theme.textPrimary : "white"
                        font.family: Theme.fontFamily; font.pixelSize: 14; font.weight: Font.DemiBold }
                 MouseArea { anchors.fill: parent; enabled: !Store.busy; onClicked: win.ask(model.installed ? "remove" : "install", model.id) }
             }
@@ -170,17 +170,17 @@ AppWindow {
             width: 380; height: 170; radius: 18; anchors.centerIn: parent
             color: Qt.rgba(0.10, 0.15, 0.30, 0.98); border.width: 1; border.color: Theme.hairline
             MouseArea { anchors.fill: parent }
-            Text { x: 22; y: 18; text: qsTr("Se necesita tu contraseña"); color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 17; font.weight: Font.DemiBold }
+            Text { x: 22; y: 18; text: qsTr("Se necesita tu contraseña"); color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 17; font.weight: Font.DemiBold }
             Text { x: 22; y: 44; width: parent.width - 44; wrapMode: Text.WordWrap
                    text: qsTr("Para instalar o quitar software hace falta permiso de administrador."); color: Theme.textSecondary
                    font.family: Theme.fontFamily; font.pixelSize: 13 }
             Rectangle {
-                x: 22; y: 84; width: parent.width - 44; height: 36; radius: 10; color: Qt.rgba(1, 1, 1, 0.12)
+                x: 22; y: 84; width: parent.width - 44; height: 36; radius: 10; color: Theme.tileFill
                 TextInput {
                     id: pwInput
                     anchors.fill: parent; anchors.margins: 9
                     echoMode: TextInput.Password; passwordCharacter: "•"
-                    color: Theme.white; selectionColor: Theme.accent
+                    color: Theme.textPrimary; selectionColor: Theme.accent
                     font.family: Theme.fontFamily; font.pixelSize: 16
                     onAccepted: { if (text !== "") { win.password = text; pwDialog.open = false; win.run() } }
                     Keys.onEscapePressed: { pwDialog.open = false; win.pending = null }
@@ -188,8 +188,8 @@ AppWindow {
             }
             Row {
                 anchors.right: parent.right; anchors.rightMargin: 22; anchors.bottom: parent.bottom; anchors.bottomMargin: 14; spacing: 10
-                Rectangle { width: 96; height: 32; radius: 10; color: Qt.rgba(1, 1, 1, 0.14)
-                    Text { anchors.centerIn: parent; text: qsTr("Cancelar"); color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14 }
+                Rectangle { width: 96; height: 32; radius: 10; color: Theme.tileFill
+                    Text { anchors.centerIn: parent; text: qsTr("Cancelar"); color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 14 }
                     MouseArea { anchors.fill: parent; onClicked: { pwDialog.open = false; win.pending = null } } }
                 Rectangle { width: 96; height: 32; radius: 10; color: Theme.accent
                     Text { anchors.centerIn: parent; text: qsTr("Aceptar"); color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14; font.weight: Font.DemiBold }

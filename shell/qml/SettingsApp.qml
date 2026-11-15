@@ -28,15 +28,15 @@ AppWindow {
     property string query: ""
 
     component Label: Text {
-        color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 15
+        color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: Theme.gg ? 13 : 15
     }
     component Hint: Text {
-        color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 13; wrapMode: Text.WordWrap
+        color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: Theme.gg ? 12 : 13; wrapMode: Text.WordWrap
     }
     component Row2: Rectangle {
         property string label
         property string value
-        width: parent.width; height: 44; radius: 12; color: Theme.tileFill
+        width: parent.width; height: Theme.gg ? 38 : 44; radius: Theme.gg ? 10 : 12; color: Theme.tileFill
         Label { x: 14; anchors.verticalCenter: parent.verticalCenter; text: parent.label }
         Label { anchors.right: parent.right; anchors.rightMargin: 14; anchors.verticalCenter: parent.verticalCenter
                 text: parent.value; color: Theme.textSecondary }
@@ -45,10 +45,11 @@ AppWindow {
         id: sw
         property bool on: false
         signal toggled(bool v)
-        width: 46; height: 28; radius: 14
-        color: on ? "#34C759" : Qt.rgba(1, 1, 1, 0.22)
+        width: Theme.gg ? 38 : 46; height: Theme.gg ? 22 : 28; radius: height / 2
+        color: on ? (Theme.gg ? Theme.accent : "#34C759") : (Theme.lightUi ? Qt.rgba(0, 0, 0, 0.12) : Qt.rgba(1, 1, 1, 0.22))
         Behavior on color { ColorAnimation { duration: Theme.dur(160) } }
-        Rectangle { y: 2; x: sw.on ? 20 : 2; width: 24; height: 24; radius: 12; color: "white"
+        Rectangle { y: 2; x: sw.on ? sw.width - width - 2 : 2; width: sw.height - 4; height: width; radius: width / 2; color: "white"
+                    border.width: Theme.lightUi ? 0.5 : 0; border.color: Qt.rgba(0, 0, 0, 0.15)
                     Behavior on x { NumberAnimation { duration: Theme.dur(160); easing.type: Theme.easing } } }
         MouseArea { anchors.fill: parent; onClicked: sw.toggled(!sw.on) }
     }
@@ -61,9 +62,9 @@ AppWindow {
             model: parent.options
             Rectangle {
                 width: 112; height: 32; radius: 9
-                color: index === parent.current ? Theme.accent : Qt.rgba(1, 1, 1, 0.1)
+                color: index === parent.current ? Theme.accent : Theme.tileFill
                 opacity: modelData.enabled === false ? 0.45 : 1
-                Text { anchors.centerIn: parent; text: modelData.label; color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14 }
+                Text { anchors.centerIn: parent; text: modelData.label; color: index === parent.parent.current ? "white" : Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: Theme.gg ? 13 : 14 }
                 MouseArea { anchors.fill: parent; enabled: modelData.enabled !== false; onClicked: parent.parent.picked(index) }
             }
         }
@@ -249,7 +250,7 @@ AppWindow {
         // 0 Apariencia
         Column {
             visible: win.page === 0; width: parent.width; spacing: 12
-            Label { text: qsTr("General"); font.pixelSize: 22; font.weight: Font.DemiBold }
+            Label { text: qsTr("General"); font.pixelSize: Theme.gg ? 20 : 22; font.weight: Theme.gg ? Font.Bold : Font.DemiBold }
             Row2 { label: qsTr("Widgets en el escritorio"); value: ""
                    Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
                             on: Settings.widgets; onToggled: (v) => Settings.widgets = v } }
@@ -333,14 +334,14 @@ AppWindow {
         // 1 Sonido
         Column {
             visible: win.page === 1; width: parent.width; spacing: 12
-            Label { text: qsTr("Sonido"); font.pixelSize: 22; font.weight: Font.DemiBold }
+            Label { text: qsTr("Sonido"); font.pixelSize: Theme.gg ? 20 : 22; font.weight: Theme.gg ? Font.Bold : Font.DemiBold }
             Hint { visible: !SystemStatus.audioAvailable; width: parent.width
                    text: qsTr("No se detecta ningún dispositivo de audio (PipeWire).") }
             Rectangle {
                 visible: SystemStatus.audioAvailable
                 width: parent.width; height: 92; radius: 12; color: Theme.tileFill
                 Label { x: 14; y: 10; text: qsTr("Volumen de salida") + "  " + Math.round(SystemStatus.volume * 100) + " %" }
-                Rectangle { id: vt; x: 14; y: 56; width: parent.width - 120; height: 6; radius: 3; color: Qt.rgba(1, 1, 1, 0.16)
+                Rectangle { id: vt; x: 14; y: 56; width: parent.width - 120; height: 6; radius: 3; color: Theme.tileFill
                     Rectangle { width: parent.width * Math.min(1, SystemStatus.muted ? 0 : SystemStatus.volume); height: parent.height; radius: 3; color: Theme.accent }
                     Rectangle { x: parent.width * Math.min(1, SystemStatus.muted ? 0 : SystemStatus.volume) - 10; y: -7; width: 20; height: 20; radius: 10; color: "#E8EAF0" }
                     MouseArea { x: -10; y: -14; width: parent.width + 20; height: 34
@@ -355,7 +356,7 @@ AppWindow {
         // 2 Red
         Column {
             visible: win.page === 2; width: parent.width; spacing: 10
-            Label { text: qsTr("Red"); font.pixelSize: 22; font.weight: Font.DemiBold }
+            Label { text: qsTr("Red"); font.pixelSize: Theme.gg ? 20 : 22; font.weight: Theme.gg ? Font.Bold : Font.DemiBold }
             Row2 { label: qsTr("Estado"); value: SystemStatus.online ? qsTr("Conectado") : qsTr("Sin conexión") }
             Row2 { label: qsTr("Conexión"); value: SystemStatus.connection !== "" ? SystemStatus.connection : "—" }
             Row2 { label: qsTr("Tipo"); value: SystemStatus.wired ? qsTr("Ethernet") : (SystemStatus.hasWifi ? qsTr("Wi-Fi") : "—") }
@@ -372,7 +373,7 @@ AppWindow {
         // 3 Energía
         Column {
             visible: win.page === 3; width: parent.width; spacing: 10
-            Label { text: qsTr("Energía"); font.pixelSize: 22; font.weight: Font.DemiBold }
+            Label { text: qsTr("Energía"); font.pixelSize: Theme.gg ? 20 : 22; font.weight: Theme.gg ? Font.Bold : Font.DemiBold }
             Row2 { label: qsTr("Fuente de alimentación"); value: SystemStatus.hasBattery ? qsTr("Batería") : qsTr("Corriente eléctrica") }
             Row2 { visible: SystemStatus.hasBattery; label: qsTr("Carga"); value: SystemStatus.batteryPercent + " %" }
             Row2 { visible: SystemStatus.hasBattery; label: qsTr("Estado"); value: SystemStatus.batteryCharging ? qsTr("Cargando") : qsTr("Descargando") }
@@ -382,7 +383,7 @@ AppWindow {
         // 4 Usuarios
         Column {
             visible: win.page === 4; width: parent.width; spacing: 10
-            Label { text: qsTr("Usuarios"); font.pixelSize: 22; font.weight: Font.DemiBold }
+            Label { text: qsTr("Usuarios"); font.pixelSize: Theme.gg ? 20 : 22; font.weight: Theme.gg ? Font.Bold : Font.DemiBold }
             Repeater {
                 model: Users.users
                 Rectangle {
@@ -398,7 +399,7 @@ AppWindow {
         // 5 Acerca de
         Column {
             visible: win.page === 5; width: parent.width; spacing: 10
-            Label { text: qsTr("Acerca de BC OS"); font.pixelSize: 22; font.weight: Font.DemiBold }
+            Label { text: qsTr("Acerca de BC OS"); font.pixelSize: Theme.gg ? 20 : 22; font.weight: Theme.gg ? Font.Bold : Font.DemiBold }
             Row2 { label: qsTr("Sistema"); value: Monitor.osName + " (ARM64)" }
             Row2 { label: qsTr("Equipo"); value: Monitor.hostname }
             Row2 { label: qsTr("Kernel"); value: "Linux " + Monitor.kernel }

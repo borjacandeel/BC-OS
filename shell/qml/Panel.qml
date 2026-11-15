@@ -231,10 +231,14 @@ LayerWindow {
     // OSD de volumen y brillo
     LayerWindow {
         id: osdWin
-        layer: "overlay"; edges: ["bottom"]; margins: [0, 0, Math.round(110 * root.u), 0]; scope: "bc-osd"; passthrough: true
-        width: Math.round(260 * root.u); height: Math.round(64 * root.u)
+        // Golden Gate (desde Tahoe): el indicador de volumen/brillo es una píldora de vidrio arriba a la derecha
+        layer: "overlay"; edges: UiState.classic ? ["bottom"] : ["top", "right"]
+        margins: UiState.classic ? [0, 0, Math.round(110 * root.u), 0] : [UiState.barH + Theme.px(6), Theme.px(10), 0, 0]
+        scope: "bc-osd"; passthrough: true
+        width: UiState.classic ? Math.round(260 * root.u) : Theme.px(300); height: UiState.classic ? Math.round(64 * root.u) : Theme.px(56)
         shown: false
-        Osd { id: osd; scale: root.u; transformOrigin: Item.TopLeft; onHidden: osdWin.shown = false }
+        Osd { id: osd; scale: UiState.classic ? root.u : 1; transformOrigin: Item.TopLeft; onHidden: osdWin.shown = false
+              width: UiState.classic ? 260 : osdWin.width; height: UiState.classic ? 64 : osdWin.height }
     }
     Timer { id: welcomeTimer; interval: 3500; onTriggered: if (!UiState.locked) UiState.welcomeOpen = true }
 

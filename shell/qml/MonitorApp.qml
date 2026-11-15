@@ -28,7 +28,7 @@ AppWindow {
         Text { x: 14; y: 62; text: parent.detail; color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 12 }
         Rectangle {
             visible: parent.fraction >= 0
-            x: 14; y: 86; width: parent.width - 28; height: 5; radius: 2.5; color: Qt.rgba(1, 1, 1, 0.12)
+            x: 14; y: 86; width: parent.width - 28; height: 5; radius: 2.5; color: Theme.tileFill
             Rectangle { width: parent.width * Math.max(0, Math.min(1, parent.parent.fraction)); height: parent.height; radius: 2.5; color: parent.parent.barColor
                         Behavior on width { NumberAnimation { duration: Theme.dur(300) } } }
         }

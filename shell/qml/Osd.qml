@@ -17,28 +17,28 @@ Item {
         id: pill
         anchors.fill: parent
         radius: height / 2
-        color: Theme.popupFill
-        border.width: 1; border.color: Theme.hairline
+        color: UiState.classic ? Theme.popupFill : "transparent"
+        border.width: UiState.classic ? 1 : 0; border.color: Theme.hairline
+        Glass { visible: !UiState.classic; anchors.fill: parent; radius: parent.radius; tintBoost: 0.35 }
         opacity: osd.open ? 1 : 0
         scale: osd.open ? 1 : 0.9
-        transformOrigin: Item.Bottom
+        transformOrigin: UiState.classic ? Item.Bottom : Item.TopRight
         Behavior on opacity { NumberAnimation { duration: Theme.dur(140) } }
         Behavior on scale { NumberAnimation { duration: Theme.dur(osd.open ? 320 : 160); easing.type: osd.open ? Easing.OutBack : Easing.InCubic } }
         onOpacityChanged: if (opacity === 0) osd.hidden()
 
         Icon {
             id: ic
-            x: 20; anchors.verticalCenter: parent.verticalCenter; size: 26
+            x: 20; anchors.verticalCenter: parent.verticalCenter; size: UiState.classic ? 26 : 20; color: Theme.label
             name: osd.kind === "volume" ? Icons.volumeIcon(SystemStatus.volume, SystemStatus.muted) : Icons.sun
             Behavior on y { NumberAnimation { duration: 120 } }
         }
         Rectangle {
-            x: 64; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 64 - 24; height: 8; radius: 4
-            color: Qt.rgba(1, 1, 1, 0.14)
+            x: UiState.classic ? 64 : 54; anchors.verticalCenter: parent.verticalCenter; width: parent.width - x - 24; height: UiState.classic ? 8 : 6; radius: height / 2
+            color: Theme.fill
             Rectangle {
-                width: parent.width * Math.max(0, Math.min(1, osd.value)); height: parent.height; radius: 4
-                gradient: Gradient { orientation: Gradient.Horizontal
-                                     GradientStop { position: 0; color: Qt.lighter(Theme.accent, 1.25) } GradientStop { position: 1; color: Theme.accent } }
+                width: parent.width * Math.max(0, Math.min(1, osd.value)); height: parent.height; radius: parent.radius
+                color: UiState.classic ? Theme.accent : Theme.label
                 Behavior on width { NumberAnimation { duration: Theme.dur(140); easing.type: Easing.OutCubic } }
             }
         }

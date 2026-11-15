@@ -50,7 +50,7 @@ Item {
         width: 400; height: 250
         radius: 24
         anchors.centerIn: parent
-        color: Qt.rgba(0.10, 0.15, 0.30, 0.96)
+        color: Theme.gg ? Theme.popupFill : Qt.rgba(0.10, 0.15, 0.30, 0.96)
         border.width: 1
         border.color: Theme.hairline
         scale: root.opacity > 0.5 ? 1 : 0.92
@@ -65,7 +65,7 @@ Item {
             width: 64; height: 64; radius: 32
             anchors.horizontalCenter: parent.horizontalCenter
             y: 26
-            color: Qt.rgba(1, 1, 1, 0.12)
+            color: Theme.fill
             Icon { anchors.centerIn: parent; name: root.current.icon; size: 32 }
         }
         Text {
@@ -77,7 +77,7 @@ Item {
             horizontalAlignment: Text.AlignHCenter
             wrapMode: Text.WordWrap
             text: root.current.title
-            color: Theme.white
+            color: Theme.textPrimary
             font.family: Theme.fontFamily
             font.pixelSize: 19
             font.weight: Font.DemiBold
@@ -99,8 +99,8 @@ Item {
             spacing: 14
             Rectangle {
                 width: 150; height: 40; radius: 12
-                color: cancelArea.containsMouse ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(1, 1, 1, 0.14)
-                Text { anchors.centerIn: parent; text: qsTr("Cancelar"); color: Theme.white
+                color: cancelArea.containsMouse ? Theme.fillHover : Theme.fill
+                Text { anchors.centerIn: parent; text: qsTr("Cancelar"); color: Theme.textPrimary
                        font.family: Theme.fontFamily; font.pixelSize: 16 }
                 MouseArea { id: cancelArea; anchors.fill: parent; hoverEnabled: true
                             onClicked: { root.close(); root.cancelled() } }
