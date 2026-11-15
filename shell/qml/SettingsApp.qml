@@ -4,10 +4,40 @@ import BCShell
 // Configuración: Apariencia, Sonido, Red, Energía, Usuarios y Acerca de (datos reales).
 AppWindow {
     id: win
-    width: 860
-    height: 580
+    width: 740 + 2 * sh
+    height: 690 + 2 * sh
     title: qsTr("Ajustes del Sistema")
     property int page: AppConfig.classic ? 0 : 6
+    // Historial para los botones atrás/adelante de la barra de herramientas (como en macOS 27)
+    property var back: []
+    property var fwd: []
+    property bool nav: false
+    onPageChanged: { if (!nav) { back = back.concat([prevPage]).slice(-20); fwd = [] } prevPage = page }
+    property int prevPage: page
+    function goBack() { if (!back.length) return; nav = true; fwd = [page].concat(fwd); const p = back[back.length - 1]; back = back.slice(0, -1); page = p; nav = false }
+    function goFwd() { if (!fwd.length) return; nav = true; back = back.concat([page]); const p = fwd[0]; fwd = fwd.slice(1); page = p; nav = false }
+    readonly property string pageName: { const f = pages.find(x => x.idx === page); if (f) return f.name
+        return ({ 1: qsTr("Sonido"), 2: qsTr("Red"), 3: qsTr("Batería y energía"), 4: qsTr("Usuarios"), 5: qsTr("Acerca de"), 0: qsTr("General") })[page] || "" }
+    // Barra de herramientas: cápsula ‹ › y título de la sección, a la derecha de la barra lateral
+    titlebarContent: [
+        Item {
+            visible: Theme.gg
+            x: 252; anchors.verticalCenter: parent ? parent.verticalCenter : undefined; width: 400; height: 34
+            Rectangle {
+                id: navCap; width: 72; height: 34; radius: 17; color: Theme.dark ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(0, 0, 0, 0.05)
+                border.width: 1; border.color: Theme.dark ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(0, 0, 0, 0.08)
+                Text { x: 12; anchors.verticalCenter: parent.verticalCenter; text: "‹"; font.pixelSize: 24; font.weight: Font.Light
+                       color: win.back.length ? Theme.textPrimary : Theme.textSecondary; opacity: win.back.length ? 1 : 0.4
+                       MouseArea { anchors.fill: parent; anchors.margins: -8; onClicked: win.goBack() } }
+                Rectangle { anchors.centerIn: parent; width: 1; height: 18; color: Theme.hairline }
+                Text { x: 46; anchors.verticalCenter: parent.verticalCenter; text: "›"; font.pixelSize: 24; font.weight: Font.Light
+                       color: Theme.textPrimary; opacity: win.fwd.length ? 1 : 0.35
+                       MouseArea { anchors.fill: parent; anchors.margins: -8; onClicked: win.goFwd() } }
+            }
+            Text { x: 86; anchors.verticalCenter: parent.verticalCenter; text: win.pageName; color: Theme.textPrimary
+                   font.family: Theme.fontFamily; font.pixelSize: 15; font.weight: Font.Bold }
+        }
+    ]
     Component.onCompleted: {
         Monitor.active = Qt.binding(() => win.visible && win.page === 5)
         const o = AppConfig.openArg
@@ -150,7 +180,7 @@ AppWindow {
         Column {
             id: pageCol6
             visible: win.page === 6; width: parent.width; spacing: 14
-            Label { text: qsTr("Aspecto"); font.pixelSize: 20; font.weight: Font.Bold }
+            Label { visible: !Theme.gg; text: qsTr("Aspecto"); font.pixelSize: 20; font.weight: Font.Bold }
             Row {
                 spacing: 18
                 Repeater {
@@ -213,7 +243,7 @@ AppWindow {
         Column {
             id: pageCol7
             visible: win.page === 7; width: parent.width; spacing: 12
-            Label { text: qsTr("Escritorio y Dock"); font.pixelSize: 20; font.weight: Font.Bold }
+            Label { visible: !Theme.gg; text: qsTr("Escritorio y Dock"); font.pixelSize: 20; font.weight: Font.Bold }
             Item {
                 width: parent.width; height: 44
                 Label { anchors.verticalCenter: parent.verticalCenter; text: qsTr("Tamaño") }
@@ -279,7 +309,7 @@ AppWindow {
         // 8 Fondo de pantalla
         Column {
             visible: win.page === 8; width: parent.width; spacing: 12
-            Label { text: qsTr("Fondo de pantalla"); font.pixelSize: 20; font.weight: Font.Bold }
+            Label { visible: !Theme.gg; text: qsTr("Fondo de pantalla"); font.pixelSize: 20; font.weight: Font.Bold }
             Grid {
                 columns: 4; spacing: 12
                 Repeater {
@@ -301,7 +331,7 @@ AppWindow {
         Column {
             visible: win.page === 10; width: parent.width; spacing: 12
             onVisibleChanged: if (visible) Quick.scanWifi()
-            Label { text: qsTr("Wi-Fi"); font.pixelSize: 20; font.weight: Font.Bold }
+            Label { visible: !Theme.gg; text: qsTr("Wi-Fi"); font.pixelSize: 20; font.weight: Font.Bold }
             Row2 { label: qsTr("Wi-Fi"); value: ""
                    Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
                             on: SystemStatus.wifiEnabled; onToggled: (v) => { SystemStatus.setWifi(v); if (v) Quick.scanWifi() } } }
@@ -343,7 +373,7 @@ AppWindow {
         Column {
             visible: win.page === 11; width: parent.width; spacing: 12
             onVisibleChanged: if (visible && SystemStatus.bluetoothOn) Quick.scanBluetooth()
-            Label { text: qsTr("Bluetooth"); font.pixelSize: 20; font.weight: Font.Bold }
+            Label { visible: !Theme.gg; text: qsTr("Bluetooth"); font.pixelSize: 20; font.weight: Font.Bold }
             Row2 { label: qsTr("Bluetooth"); value: ""
                    Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
                             on: SystemStatus.bluetoothOn; onToggled: (v) => { SystemStatus.setBluetooth(v); if (v) Quick.scanBluetooth() } } }
@@ -377,7 +407,7 @@ AppWindow {
         Column {
             visible: win.page === 12; width: parent.width; spacing: 12
             onVisibleChanged: if (visible) Quick.listDisplayModes()
-            Label { text: qsTr("Pantallas"); font.pixelSize: 20; font.weight: Font.Bold }
+            Label { visible: !Theme.gg; text: qsTr("Pantallas"); font.pixelSize: 20; font.weight: Font.Bold }
             Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter; width: 260; height: 150; radius: 8; color: "#1C1C1E"; border.width: 3; border.color: "#3A3A3C"
                 Image { anchors.fill: parent; anchors.margins: 3; source: "qrc:/BCShell/assets/wallpaper-default.png"; fillMode: Image.PreserveAspectCrop; sourceSize.width: 520 }
@@ -402,7 +432,7 @@ AppWindow {
         Column {
             visible: win.page === 13; width: parent.width; spacing: 12
             property string current: Quick.keyboardLayout()
-            Label { text: qsTr("Teclado"); font.pixelSize: 20; font.weight: Font.Bold }
+            Label { visible: !Theme.gg; text: qsTr("Teclado"); font.pixelSize: 20; font.weight: Font.Bold }
             Label { text: qsTr("Fuentes de entrada"); font.weight: Font.DemiBold }
             Rectangle {
                 width: parent.width; height: kl.height + 8; radius: 10; color: Theme.tileFill
@@ -430,7 +460,7 @@ AppWindow {
         // 14 Fecha y hora
         Column {
             visible: win.page === 14; width: parent.width; spacing: 12
-            Label { text: qsTr("Fecha y hora"); font.pixelSize: 20; font.weight: Font.Bold }
+            Label { visible: !Theme.gg; text: qsTr("Fecha y hora"); font.pixelSize: 20; font.weight: Font.Bold }
             Row2 { label: qsTr("Formato de 24 horas"); value: ""
                    Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
                             on: Settings.clock24; onToggled: (v) => Settings.clock24 = v } }
@@ -441,7 +471,7 @@ AppWindow {
         // 9 Notificaciones
         Column {
             visible: win.page === 9; width: parent.width; spacing: 12
-            Label { text: qsTr("Notificaciones"); font.pixelSize: 20; font.weight: Font.Bold }
+            Label { visible: !Theme.gg; text: qsTr("Notificaciones"); font.pixelSize: 20; font.weight: Font.Bold }
             Row2 { label: qsTr("No molestar"); value: ""
                    Switch { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
                             on: Settings.mode === "focus"; onToggled: (v) => Settings.mode = v ? "focus" : "" } }
