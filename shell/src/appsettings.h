@@ -26,6 +26,8 @@ class AppSettings : public QObject {
     Q_PROPERTY(QStringList dockRecent READ dockRecent WRITE setDockRecent NOTIFY changed)
     Q_PROPERTY(bool dockShowRecent READ dockShowRecent WRITE setDockShowRecent NOTIFY changed)
     Q_PROPERTY(bool clock24 READ clock24 WRITE setClock24 NOTIFY changed)
+    // Esquinas activas: [arriba-izq, arriba-der, abajo-izq, abajo-der] → "", mission, desktop, launchpad, notes, lock, notifications
+    Q_PROPERTY(QStringList hotCorners READ hotCorners WRITE setHotCorners NOTIFY changed)
 public:
     QString appearance() const { return m_appearance; }
     void setAppearance(const QString &a);
@@ -46,6 +48,8 @@ public:
     void setDockRecent(const QStringList &l);
     bool dockShowRecent() const { return m_dockShowRecent; }
     bool clock24() const { return m_clock24; }
+    QStringList hotCorners() const { return m_hot; }
+    void setHotCorners(const QStringList &l) { if (l == m_hot || l.size() != 4) return; m_hot = l; store("esquinas", l); }
     void setClock24(bool on) { if (on == m_clock24) return; m_clock24 = on; store("reloj24", on); }
     void setDockShowRecent(bool on);
     void setSounds(bool on);
@@ -81,7 +85,7 @@ private:
     double m_glass = 0.35;
     bool m_dockAutohide = false, m_dockMagnify = true, m_sounds = true;
     int m_dockSize = 46;
-    QStringList m_dockApps, m_dockRecent;
+    QStringList m_dockApps, m_dockRecent, m_hot{"", "", "", "notes"};
     bool m_dockShowRecent = true, m_clock24 = false;
     class QFileSystemWatcher *m_watch = nullptr;
     void watch();

@@ -106,6 +106,29 @@ LayerWindow {
         }
     }
 
+    // ---- Esquinas activas (como en macOS): llevar el puntero a una esquina lanza su acción -------------
+    function hotCorner(a) {
+        if (a === "mission") UiState.toggleMission()
+        else if (a === "desktop") Shell.Action("desktop")
+        else if (a === "launchpad") UiState.toggleLaunchpad()
+        else if (a === "notifications") UiState.toggleNotifCenter()
+        else if (a === "lock") UiState.run("bc:lock")
+        else if (a === "notes") Launcher.launch("notas")
+    }
+    Instantiator {
+        model: UiState.classic ? 0 : 4
+        delegate: LayerWindow {
+            required property int index
+            readonly property string action: Settings.hotCorners[index] || ""
+            layer: "overlay"; scope: "bc-hotcorner"
+            edges: [index < 2 ? "top" : "bottom", index % 2 === 0 ? "left" : "right"]
+            width: 2; height: 2
+            shown: action !== "" && !UiState.locked && !UiState.splashing
+            MouseArea { anchors.fill: parent; hoverEnabled: true; onEntered: hcDelay.restart(); onExited: hcDelay.stop() }
+            Timer { id: hcDelay; interval: 120; onTriggered: root.hotCorner(parent.action) }
+        }
+    }
+
     // ---- Mission Control y selector de aplicaciones --------------------------------------------
     LayerWindow {
         layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-mission"

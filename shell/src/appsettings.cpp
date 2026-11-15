@@ -85,6 +85,8 @@ void AppSettings::reload() {
     m_dockRecent = s.value("dockRecientes").toStringList();
     m_dockShowRecent = s.value("dockMostrarRecientes", true).toBool();
     m_clock24 = s.value("reloj24", false).toBool();
+    m_hot = s.value("esquinas", QStringList{"", "", "", "notes"}).toStringList();
+    if (m_hot.size() != 4) m_hot = QStringList{"", "", "", "notes"};
 }
 
 void AppSettings::setReducedMotion(bool on) {

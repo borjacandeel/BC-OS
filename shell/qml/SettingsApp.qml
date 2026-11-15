@@ -246,6 +246,29 @@ AppWindow {
                                Text { anchors.centerIn: parent; text: qsTr("Colocar"); color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 12 }
                                MouseArea { anchors.fill: parent; onClicked: Settings.widgetLayout = "{}" } } }
             Hint { width: parent.width; text: qsTr("Otras apps pueden añadir su widget dejando un archivo JSON en ~/.local/share/bc/widgets/.") }
+            Label { text: qsTr("Esquinas activas"); font.weight: Font.DemiBold }
+            Grid {
+                columns: 2; spacing: 10; width: parent.width
+                Repeater {
+                    model: [qsTr("Arriba a la izquierda"), qsTr("Arriba a la derecha"), qsTr("Abajo a la izquierda"), qsTr("Abajo a la derecha")]
+                    Rectangle {
+                        required property string modelData
+                        required property int index
+                        readonly property var opts: [ { v: "", t: "—" }, { v: "mission", t: qsTr("Mission Control") }, { v: "desktop", t: qsTr("Escritorio") },
+                                                      { v: "launchpad", t: qsTr("Aplicaciones") }, { v: "notifications", t: qsTr("Notificaciones") },
+                                                      { v: "notes", t: qsTr("Nota rápida") }, { v: "lock", t: qsTr("Bloquear pantalla") } ]
+                        readonly property int cur: Math.max(0, opts.findIndex(o => o.v === (Settings.hotCorners[index] || "")))
+                        width: (parent.width - 10) / 2; height: 38; radius: 10; color: Theme.tileFill
+                        Hint { x: 12; anchors.verticalCenter: parent.verticalCenter; text: modelData }
+                        Rectangle {
+                            anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter
+                            width: hcT.implicitWidth + 26; height: 24; radius: 6; color: Theme.fill
+                            Text { id: hcT; anchors.centerIn: parent; text: parent.parent.opts[parent.parent.cur].t + "  ⌄"; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 12 }
+                            MouseArea { anchors.fill: parent; onClicked: { const l = Settings.hotCorners.slice(); const o = parent.parent.opts; l[index] = o[(parent.parent.cur + 1) % o.length].v; Settings.hotCorners = l } }
+                        }
+                    }
+                }
+            }
             Label { text: qsTr("Mission Control"); font.weight: Font.DemiBold }
             Hint { width: parent.width; text: qsTr("Ctrl+↑ o F3, o desliza tres dedos hacia arriba. Ctrl+←/→ cambia de escritorio.") }
         }
