@@ -152,8 +152,8 @@ Familia común de saturación/luminosidad: tono claro arriba (L≈72%), oscuro a
 | grafito | `#B4BDCC` | `#5E6A80` | Configuración (`preferences-system`), Lanzador (`bc-launcher`) |
 | verde | `#6BE591` | `#1FA84F` | Monitor de actividad (`utilities-system-monitor`) |
 | noche | `#3A4660` | `#0B1220` | Terminal (`utilities-terminal`) |
-| rojo | `#FF8F87` | `#E8453C` | Reloj (`preferences-system-time`) |
-| naranja | `#FFA66B` | `#EB5B1E` | (libre; `#EB5B1E` es el color de las teclas de operador de la Calculadora) |
+| rojo | `#FF8F87` | `#E8453C` | Reloj (`preferences-system-time`), Calendario (`x-office-calendar`, copia `bc-calendar`) |
+| naranja | `#FFA66B` | `#EB5B1E` | Recordatorios (`bc-reminders`); `#EB5B1E` es también el color de los operadores de la Calculadora |
 | ámbar | `#FFD27D` | `#F29A1F` | Notas (`accessories-notes`) |
 | violeta | `#B49CFF` | `#6B4FE0` | Música (`multimedia-audio-player`) |
 | índigo | `#8E9BFF` | `#3A45C4` | Editor (`accessories-text-editor`), Calculadora (`accessories-calculator`) |
@@ -175,13 +175,13 @@ Sobre "papel", "plata" y "niebla" el glifo usa `#0B1220`, `#1F63D6`, `#E8453C` o
 `dist/png/<tamaño>/<stem>.png`, `dist/icns/<stem>.icns` (tipos `icp4 icp5 icp6 ic07 ic08 ic09 ic10 ic11 ic12 ic13 ic14`, PNG embebido), tema Freedesktop `scalable/apps` + `<N>x<N>/apps`.
 
 ### 7.7 Glifo por capas de vidrio («Golden Gate», v0.2)
-Opcional para cualquier app y obligatorio en las apps del Dock rediseñadas desde la 0.2.0 (`system-file-manager`, `preferences-system`, `utilities-system-monitor`, `gnome-software`, `utilities-terminal`, `view-app-grid`, papeleras, `accessories-calculator`, `accessories-notes`, `multimedia-photo-viewer`). Mantiene §7.1–7.4: mismo squircle, mismas sombras del cuerpo, una sola luz cenital. El glifo se compone, de abajo arriba, con como mucho estas capas:
+Opcional para cualquier app y obligatorio en las apps del Dock rediseñadas desde la 0.2.0 (`system-file-manager`, `preferences-system`, `utilities-system-monitor`, `gnome-software`, `utilities-terminal`, `view-app-grid`, papeleras, `accessories-calculator`, `accessories-notes`, `multimedia-photo-viewer`, `x-office-calendar`, `bc-reminders`). Mantiene §7.1–7.4: mismo squircle, mismas sombras del cuerpo, una sola luz cenital. El glifo se compone, de abajo arriba, con como mucho estas capas:
 
 1. **Placa de vidrio** (opcional, una): forma secundaria detrás del objeto. `fill="#FFFFFF" fill-opacity=".3"` (.16 sobre fondo "noche", .35 en piezas pequeñas) y borde de vidrio `stroke="#FFFFFF" stroke-opacity=".5" stroke-width="4"` (única excepción al trazo mínimo de §7.3; el lint la reconoce por ancho 4 y opacidad ≤ .6).
 2. **Sombra del objeto**: la silueta del objeto principal desplazada **+16 en Y**, `fill="#000000" fill-opacity=".16"` (.3 sobre "noche"). Un solo path (nunca piezas solapadas, que duplicarían la opacidad).
 3. **Objeto principal**: blanco con el degradado `gl` (vertical `userSpaceOnUse` de y=252 `#FFFFFF` a y=772 `#E4E9F2`), que da volumen con la misma luz cenital. No es un segundo highlight.
 4. **Detalle recortado** (opcional): sobre el objeto blanco, en el color inferior del propio fondo (p.ej. `#1B6FF0`, `#16A085`), como si fuera un hueco. Trazo ≥ 56 o relleno con esquinas ≥ 24. Huecos reales con `fill-rule="evenodd"` (engranajes).
-5. **Acentos de color**: solo piezas pequeñas (≤ 5 % del glifo) con colores semánticos de §6 (p.ej. los tres puntos de ventana de Terminal). Excepciones: `accessories-calculator`, cuyas teclas de operador (columna derecha, círculo + píldora de «=») van en `#EB5B1E`; y `view-app-grid`, cuya metáfora son 9 teselas de color (152×152, rx 44, separación 32) con un degradado propio `tl` (`objectBoundingBox`, blanco .32 → 0 a .55) que hace de vidrio de cada tesela.
+5. **Acentos de color**: solo piezas pequeñas (≤ 5 % del glifo) con colores semánticos de §6 (p.ej. los tres puntos de ventana de Terminal). Excepciones: `bc-reminders`, con tres anillos de lista en `#2F7BFF`, `#30D158` y `#FF5F57` (el primero relleno = hecho); `accessories-calculator`, cuyas teclas de operador (columna derecha, círculo + píldora de «=») van en `#EB5B1E`; y `view-app-grid`, cuya metáfora son 9 teselas de color (152×152, rx 44, separación 32) con un degradado propio `tl` (`objectBoundingBox`, blanco .32 → 0 a .55) que hace de vidrio de cada tesela.
 
 `@32` conserva las capas 1, 3 y 4 sin borde de vidrio ni sombra del objeto (trazos 64); `@16` deja solo el objeto principal (trazo ≥ 80, sin degradados de glifo ni detalles). Autoría reproducible: `node scripts/authoring/golden-gate.mjs` (coordenadas del glifo escritas a mano; squircle de `geom.mjs`).
 

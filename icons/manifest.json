@@ -72,7 +72,7 @@
       "label": "Apps del sistema",
       "context": "Apps",
       "lote": "B",
-      "count": 19
+      "count": 21
     },
     {
       "id": "places",
@@ -1315,6 +1315,40 @@
       "file": "dist/svg/bc-mission-control.svg"
     },
     {
+      "name": "bc-reminders",
+      "label": "Recordatorios",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "bc-reminders"
+      },
+      "tags": [
+        "recordatorios",
+        "tareas",
+        "lista",
+        "pendientes",
+        "reminders",
+        "to-do",
+        "tasks"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/bc-reminders.svg"
+    },
+    {
       "name": "gnome-software",
       "label": "Tienda",
       "category": "apps",
@@ -1774,6 +1808,39 @@
         32
       ],
       "file": "dist/svg/web-browser.svg"
+    },
+    {
+      "name": "x-office-calendar",
+      "label": "Calendario",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "x-office-calendar"
+      },
+      "tags": [
+        "calendario",
+        "fecha",
+        "día",
+        "agenda",
+        "calendar",
+        "date"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/x-office-calendar.svg"
     },
     {
       "name": "audio-headphones",

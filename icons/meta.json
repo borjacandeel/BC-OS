@@ -1638,5 +1638,30 @@
       "now playing"
     ],
     "category": "status"
+  },
+  "x-office-calendar": {
+    "es": "Calendario",
+    "tags": [
+      "calendario",
+      "fecha",
+      "día",
+      "agenda",
+      "calendar",
+      "date"
+    ],
+    "category": "apps"
+  },
+  "bc-reminders": {
+    "es": "Recordatorios",
+    "tags": [
+      "recordatorios",
+      "tareas",
+      "lista",
+      "pendientes",
+      "reminders",
+      "to-do",
+      "tasks"
+    ],
+    "category": "apps"
   }
 }

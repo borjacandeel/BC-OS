@@ -281,6 +281,47 @@ const out = {};
     `<circle cx="640" cy="608" r="104" fill="none" stroke="${W}" stroke-width="88"/><path d="M716 684L772 740" ${STROKE(96)}/>` });
 }
 
+// ===== Calendario (x-office-calendar): página con cabecera roja y día «17»; página de vidrio detrás =====
+{
+  const base = { top: '#FF8F87', bottom: '#E8453C' };
+  const RED = '#E8453C';
+  const page = (dy = 0) => `M272 ${364 + dy}A64 64 0 0 1 336 ${300 + dy}H648A64 64 0 0 1 712 ${364 + dy}V${708 + dy}A64 64 0 0 1 648 ${772 + dy}H336A64 64 0 0 1 272 ${708 + dy}Z`;
+  const head = 'M272 428V364A64 64 0 0 1 336 300H648A64 64 0 0 1 712 364V428Z';
+  const day = (w) => `<path d="M392 528L436 492V700M500 492H604L536 700" ${STROKE(w, RED)}/>`;
+  out['x-office-calendar'] = app({ ...base, glyph:
+    `<rect x="320" y="252" width="440" height="472" rx="64" ${GLASS()}/>` +
+    `<path d="${page(16)}" ${SHADOW()}/><path d="${page()}" ${OBJ}/><path d="${head}" fill="${RED}"/>` +
+    `<path d="M440 364H544" ${STROKE(56, W, '.8')}/>` + day(64) });
+  out['x-office-calendar@32'] = app({ ...base, gl: false, glyph:
+    `<rect x="320" y="252" width="440" height="472" rx="64" fill="${W}" fill-opacity=".3"/><path d="${page()}" fill="${W}"/><path d="${head}" fill="${RED}"/>` + day(72) });
+  out['x-office-calendar@16'] = app({ ...base, gl: false, glyph:
+    `<path d="M252 344A72 72 0 0 1 324 272H700A72 72 0 0 1 772 344V720A72 72 0 0 1 700 792H324A72 72 0 0 1 252 720Z" fill="${W}"/>` +
+    `<path d="M252 432V344A72 72 0 0 1 324 272H700A72 72 0 0 1 772 344V432Z" fill="${RED}"/>` +
+    `<path d="M424 556L472 524V712M552 524H632L572 712" ${STROKE(88, RED)}/>` });
+}
+
+// ===== Recordatorios (bc-reminders): tarjeta con anillos de color (el primero hecho) y renglones =====
+{
+  const base = { top: '#FFA66B', bottom: '#EB5B1E' };
+  const OR = '#EB5B1E';
+  const card = (dy = 0) => `M272 ${356 + dy}A64 64 0 0 1 336 ${292 + dy}H688A64 64 0 0 1 752 ${356 + dy}V${668 + dy}A64 64 0 0 1 688 ${732 + dy}H336A64 64 0 0 1 272 ${668 + dy}Z`;
+  const ys = [392, 512, 632], cols = ['#2F7BFF', '#30D158', '#FF5F57'];
+  const ALLOW = '<!-- lint-allow: stroke anillos de lista a 28: con 56 el hueco desaparece y parecen puntos -->';
+  const rows = (w, rw) => `<circle cx="368" cy="${ys[0]}" r="50" fill="${cols[0]}"/>` +
+    `<circle cx="368" cy="${ys[1]}" r="${50 - rw / 2}" fill="none" stroke="${cols[1]}" stroke-width="${rw}"/>` +
+    `<circle cx="368" cy="${ys[2]}" r="${50 - rw / 2}" fill="none" stroke="${cols[2]}" stroke-width="${rw}"/>` +
+    `<path d="M464 ${ys[0]}H656M464 ${ys[1]}H624M464 ${ys[2]}H576" ${STROKE(w, OR, '.55')}/>`;
+  out['bc-reminders'] = app({ ...base, glyph: ALLOW +
+    `<rect x="332" y="236" width="440" height="416" rx="64" ${GLASS()}/>` +
+    `<path d="${card(16)}" ${SHADOW()}/><path d="${card()}" ${OBJ}/>` + rows(56, 28) });
+  out['bc-reminders@32'] = app({ ...base, gl: false, glyph: ALLOW +
+    `<rect x="332" y="236" width="440" height="416" rx="64" fill="${W}" fill-opacity=".3"/><path d="${card()}" fill="${W}"/>` + rows(64, 32) });
+  out['bc-reminders@16'] = app({ ...base, gl: false, glyph:
+    `<path d="M252 344A72 72 0 0 1 324 272H700A72 72 0 0 1 772 344V680A72 72 0 0 1 700 752H324A72 72 0 0 1 252 680Z" fill="${W}"/>` +
+    `<circle cx="372" cy="412" r="64" fill="${cols[0]}"/><circle cx="372" cy="612" r="64" fill="${cols[2]}"/>` +
+    `<path d="M496 412H660M496 612H612" ${STROKE(88, OR, '.55')}/>` });
+}
+
 for (const [k, v] of Object.entries(out)) fs.writeFileSync(path.join(APPS, k + '.svg'), v);
 
 // ===== Pila de Descargas (color 48, lugares): hojas en abanico + tarjeta azul con flecha =====
