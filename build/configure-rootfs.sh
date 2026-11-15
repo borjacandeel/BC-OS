@@ -51,7 +51,7 @@ install -m644 "$HERE"/overlay/usr/share/applications/bc-*.desktop "$R/usr/share/
 # Iconos propios de las apps de BC (estilo Golden Gate, icons/src/app) como bc-<app> en hicolor
 HI="$R/usr/share/icons/hicolor/scalable/apps"; mkdir -p "$HI"
 for pair in bc-files:system-file-manager bc-settings:preferences-system bc-monitor:utilities-system-monitor bc-store:gnome-software \
-            bc-terminal:utilities-terminal bc-calculator:accessories-calculator bc-notes:accessories-notes bc-preview:multimedia-photo-viewer \
+            bc-terminal:com.mitchellh.ghostty bc-calculator:accessories-calculator bc-notes:accessories-notes bc-preview:multimedia-photo-viewer \
             bc-calendar:bc-calendar bc-reminders:bc-reminders bc-music:multimedia-audio-player; do
   src="$HERE/../shell/assets/apps/${pair#*:}.svg"; [ -f "$src" ] || src="$HERE/../shell/assets/icons/${pair#*:}.svg"
   [ -f "$src" ] && install -m644 "$src" "$HI/${pair%%:*}.svg"

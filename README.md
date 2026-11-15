@@ -8,7 +8,7 @@
 Sistema operativo Linux ARM64 creado por <b>Borja Candel</b>, en español por defecto.</p>
 
 <p align="center">
-  <img alt="Versión" src="https://img.shields.io/badge/versi%C3%B3n-0.6.0--beta%20(en%20desarrollo)-2F7BFF">
+  <img alt="Versión" src="https://img.shields.io/badge/versi%C3%B3n-0.7.0--beta%20(prerelease)-2F7BFF">
   <img alt="Arquitectura" src="https://img.shields.io/badge/arquitectura-ARM64-04111F">
   <img alt="Base" src="https://img.shields.io/badge/base-Arch%20Linux%20ARM-1793D1">
   <img alt="Idioma" src="https://img.shields.io/badge/idioma-espa%C3%B1ol%20(es__ES)-C60B1E">
@@ -22,7 +22,7 @@ BC OS es un Linux **ARM64** ligero y en español, basado en **Arch Linux ARM**, 
   <br><sub>Escritorio Golden Gate: barra de menús, widgets de vidrio, iconos en el escritorio, aviso y Dock. Captura del shell en el anfitrión de desarrollo.</sub>
 </p>
 
-> **Estado honesto:** beta experimental. La **0.6.0-beta** (Golden Gate) se ha construido y **arranca en QEMU aarch64 con login y escritorio correctos**, pero **todavía no está publicada** ni probada en VirtualBox; el creador decide cuándo se publica. Muchas piezas están compiladas y vistas en capturas, pero **pendientes de prueba real**. Ver [estado y pendientes](#estado-honesto-de-golden-gate).
+> **Estado honesto:** beta experimental. La **0.7.0-beta** (Golden Gate) se publica como prerelease para probar en VirtualBox; la 0.6.0-beta arrancó en QEMU aarch64 con login y escritorio correctos. Muchas piezas están compiladas y vistas en capturas, pero **pendientes de prueba real**. Ver [estado y pendientes](#estado-honesto-de-golden-gate).
 
 ---
 
@@ -59,6 +59,25 @@ Qué incluye (detalle técnico y decisiones en [`docs/escritorio/ESTADO.md`](doc
   </tr>
   <tr>
     <td colspan="2" align="center"><img src="docs/escritorio/capturas/5-bloqueo.jpg" alt="Pantalla de bloqueo con fecha, hora grande y campo de contraseña" width="50%"><br><sub><b>Bloqueo</b> (Ctrl+Súper+Q): fecha, hora y contraseña sobre el fondo.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/escritorio/capturas/6-monitor.jpg" alt="Monitor de Actividad"><br><sub><b>Monitor de Actividad</b>: procesos reales, CPU y memoria.</sub></td>
+    <td width="50%"><img src="docs/escritorio/capturas/7-tienda.jpg" alt="Tienda"><br><sub><b>Tienda</b>: instalar apps con estilo App Store.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/escritorio/capturas/8-apps-nuevas.jpg" alt="Calculadora, Notas y Vista previa"><br><sub><b>Calculadora, Notas y Vista previa</b>: apps BC nuevas.</sub></td>
+    <td width="50%"><img src="docs/escritorio/capturas/9-ajustes-dock.jpg" alt="Ajustes ▸ Escritorio y Dock"><br><sub><b>Ajustes ▸ Escritorio y Dock</b>: tamaño, ampliación, esquinas activas.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/escritorio/capturas/10-calendario-recordatorios.jpg" alt="Calendario y Recordatorios"><br><sub><b>Calendario y Recordatorios</b>: vista de mes y listas.</sub></td>
+    <td width="50%"><img src="docs/escritorio/capturas/11-vibrancy.jpg" alt="Vibrancy"><br><sub><b>Vibrancy</b>: barras laterales de vidrio.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/escritorio/capturas/12-widgets.jpg" alt="Widgets"><br><sub><b>Widgets</b>: galería editable, calendario y reloj.</sub></td>
+    <td width="50%"><img src="docs/escritorio/capturas/13-musica.jpg" alt="Música"><br><sub><b>Música</b>: biblioteca local con mpv.</sub></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><img src="docs/escritorio/capturas/14-spotlight.jpg" alt="Spotlight" width="50%"><br><sub><b>Spotlight</b>: resultados por secciones.</sub></td>
   </tr>
 </table>
 
@@ -119,7 +138,7 @@ La sesión por defecto también se puede fijar en **Ajustes ▸ General ▸ «En
 
 ## Descargar y probar
 
-Imágenes publicadas: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Cada release incluye `BC-OS-<versión>-ARM64.vdi.zip` y `SHA256SUMS`. La 0.6.0-beta (Golden Gate) aún no está publicada.
+Imágenes publicadas: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Cada release incluye `BC-OS-<versión>-ARM64.vdi.zip` y `SHA256SUMS`. Última: 0.7.0-beta (Golden Gate).
 
 1. Descomprime el `.zip` → `.vdi`. Comprueba `shasum -a 256`.
 2. VirtualBox (Mac Apple Silicon) → **Nueva**: Linux / Arch Linux (ARM 64-bit), ≥ 2 GB RAM, 2 CPU.
@@ -138,7 +157,8 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 | `0.3.x-alpha` | publicadas | **sway** (mosaico/flotante), menús globales por app, Dock con ventanas reales, Alacritty, animación de minimizar y swayfx experimental. |
 | `0.4.0-beta` / `0.4.1-beta` | publicadas (prerrelease) | Asistente de bienvenida, estilos, widgets, Modos, Flathub, fish, servicio de antivirus; resolución adaptable (`bc-display`), iconos Qogir, portapapeles (Súper+V). |
 | `0.5.0-beta` | prerrelease, en pruebas | Entorno **Dotfiles (bspwm)** elegible en el login. Verificado en QEMU; sin probar en VirtualBox. |
-| `0.6.0-beta` | **en desarrollo** (no publicada) | Escritorio **Golden Gate** por defecto; «BC clásico» en el login. Arranca en QEMU con login y escritorio correctos. |
+| `0.7.0-beta` | prerelease | Apps nuevas (Monitor, Tienda, Calculadora, Notas, Vista previa, Calendario, Recordatorios, Música), vibrancy, widgets editables, animaciones de cerrar/minimizar. |
+| `0.6.0-beta` | prerelease | Escritorio **Golden Gate** por defecto; «BC clásico» en el login. Arranca en QEMU con login y escritorio correctos. |
 | → `1.0.0` | planificadas | Bloqueo seguro (`ext-session-lock`), ISO con instalador y primera estable. Son hitos, no promesas. |
 
 Detalle de cada versión en [`build/RELEASE-NOTES.md`](build/RELEASE-NOTES.md) y en las [notas de cada release](https://github.com/borjacandeel/BC-OS/releases). Capturas de versiones anteriores (BC clásico, login antiguo, Tienda, arranque) en [`docs/screenshots/`](docs/screenshots/).

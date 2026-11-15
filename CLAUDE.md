@@ -20,15 +20,14 @@ claro/oscuro, Liquid Glass sin shaders + deslizador, sonidos, tema GTK MacTahoe,
 
 Pendiente (en este orden):
 - [x] Investigar a fondo macOS 27 Golden Gate (hecho 2026-11-15: apple.com/es/os/macos; flecha de iconos ocultos en la barra, menús casi sin iconos, app Siri, «Consultar a Siri» en Spotlight, deslizar para actualizar) (apple.com/es/os/macos y fuentes públicas) y anotar medidas/rasgos en ESTADO.md.
-- [~] Iconos (en curso, icon-designer autorizado 2026-11-15; hechos: apps BC, papelera, pila, symbolic de barra; faltan Calculadora/Notas/Vista previa y variantes oscura/tintada): el creador pide «iguales que los de Golden Gate». NO se copian los de Apple (son obras protegidas):
-      se diseñan propios con la misma rejilla/forma/capas (squircle, vidrio por capas, claro/oscuro/tintado) vía `icon-designer`
-      (regla 6) — requiere permiso explícito para ese subagente (regla 7).
+- [x] Iconos: el creador prefiere los MacOS-Like anteriores (2026-11-15) → restaurados; no rehacer salvo que lo pida. Nunca copiar los de Apple.
 - [~] Apps BC al nivel de las de macOS. Hechas: Monitor de Actividad, Tienda (App Store), Calculadora, Notas, Vista previa.
       Hechas también: Calendario, Recordatorios, Ajustes (Wi-Fi, Bluetooth, Pantallas, Teclado, Fecha y hora), widgets editables, vibrancy.
-      Faltan: Música, pulir Archivos (Recientes), Control Center editable.
-- [ ] Animaciones: abrir/cerrar ventanas BC, hojas, menús, Control Center, Mission Control, Launchpad/Aplicaciones, Spotlight.
+      Hecha Música. Faltan: pulir Archivos (Recientes), Control Center editable.
+- [~] Animaciones (hecho: cerrar externas encoger+desvanecer, genio minimizar/restaurar): abrir/cerrar ventanas BC, hojas, menús, Control Center, Mission Control, Launchpad/Aplicaciones, Spotlight.
 - [ ] Transparencias y materiales por componente (barra lateral, barra de herramientas, menús, popovers) en claro y oscuro.
 - [ ] Barra de menús: iconos de estado propios exactos en forma/tamaño (Wi-Fi, batería, Control Center, Concentración, Spotlight).
 - [ ] Ghostty: compilación desactivada (BC_GHOSTTY=1 para probar). En CI Zig 0.17 da «panic: reached unreachable code» dentro del chroot; Terminal = Alacritty mientras tanto.
 - [ ] Verificar en QEMU cada parte con capturas antes de dar nada por hecho.
-- [x] README actualizado con capturas (subagente, 2026-11-15).
+- [x] README actualizado con capturas 1–14 (2026-11-15).
+- [~] 0.7.0-beta (prerelease) en CI para probar en VirtualBox.

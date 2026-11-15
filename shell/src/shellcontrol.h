@@ -24,7 +24,7 @@ public slots:
     void SetOption(const QString &key, const QString &value);   // valida clave y valor antes de emitir
     // Golden Gate: spotlight, mission, switcher, switcher-back, launchpad, notifications, minimize, appearance
     void Action(const QString &name) {
-        static const QStringList ok{"spotlight", "mission", "switcher", "switcher-back", "launchpad", "notifications", "minimize", "appearance", "desktop"};
+        static const QStringList ok{"spotlight", "mission", "switcher", "switcher-back", "launchpad", "notifications", "minimize", "close", "appearance", "desktop"};
         if (ok.contains(name)) emit actionRequested(name);
     }
 signals:

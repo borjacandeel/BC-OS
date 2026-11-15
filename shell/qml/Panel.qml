@@ -71,6 +71,15 @@ LayerWindow {
         geniePending = { id: w.id, rect: Qt.rect(w.decoX, w.decoY, w.rectW, w.rectH), back: false }
         Quick.capture("genie-" + w.id, w.decoX + "," + w.decoY + " " + w.rectW + "x" + w.rectH)
     }
+    // Cerrar con la animación de macOS: la ventana se encoge un poco y se desvanece (captura con grim)
+    property var closePending: null
+    function closeAnimated(id) {
+        if (id === undefined || id < 0 || isNaN(id)) id = Sway.focusedId
+        const w = Sway.windows.find(x => x.id === id)
+        if (!w || UiState.classic || Theme.reduced || w.rectW <= 0 || w.minimized) { if (w) Sway.closeWindow(w.id); return }
+        closePending = { id: w.id, rect: Qt.rect(w.decoX, w.decoY, w.rectW, w.rectH) }
+        Quick.capture("close-" + w.id, w.decoX + "," + w.decoY + " " + w.rectW + "x" + w.rectH)
+    }
     function restoreGenie(id) {
         const shot = genieShots[id]
         if (!shot || UiState.classic || Theme.reduced) { Sway.command("[con_id=" + id + "] scratchpad show"); return }
@@ -81,6 +90,16 @@ LayerWindow {
     Connections {
         target: Quick
         function onCaptured(tag, path, ok) {
+            if (tag.indexOf("close-") === 0 && root.closePending) {
+                const cp = root.closePending; root.closePending = null
+                Sway.closeWindow(cp.id)
+                if (!ok) return
+                genieWin.shown = true
+                closeShot.source = ""; closeShot.source = "file://" + path
+                closeShot.x = cp.rect.x; closeShot.y = cp.rect.y; closeShot.width = cp.rect.width; closeShot.height = cp.rect.height
+                closeAnim.restart()
+                return
+            }
             if (tag.indexOf("genie-") !== 0 || !root.geniePending) return
             const g = root.geniePending
             Sway.minimizeWindow(g.id)
@@ -95,6 +114,16 @@ LayerWindow {
         layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-genie"; passthrough: true
         width: UiState.sw; height: UiState.sh
         shown: false
+        Image {
+            id: closeShot; visible: closeAnim.running; smooth: true; cache: false
+            transformOrigin: Item.Center
+        }
+        ParallelAnimation {
+            id: closeAnim
+            NumberAnimation { target: closeShot; property: "scale"; from: 1; to: 0.92; duration: Theme.d(Theme.durWindowClose); easing.type: Easing.InCubic }
+            NumberAnimation { target: closeShot; property: "opacity"; from: 1; to: 0; duration: Theme.d(Theme.durWindowClose); easing.type: Easing.InQuad }
+            onFinished: if (!genie.source) genieWin.shown = false
+        }
         Genie {
             id: genie
             onFinished: {
@@ -155,6 +184,7 @@ LayerWindow {
             else if (name === "launchpad") UiState.toggleLaunchpad()
             else if (name === "notifications") UiState.toggleNotifCenter()
             else if (name === "minimize") root.minimizeGenie(Sway.focusedId)
+            else if (name === "close") root.closeAnimated(Sway.focusedId)
             else if (name === "appearance") Settings.appearance = Theme.dark ? "light" : "dark"
             else if (name === "desktop") {
                 const vis = Sway.windows.filter(w => !w.minimized)
@@ -211,6 +241,7 @@ LayerWindow {
                 else if (arg === "showAll") { for (const w of Sway.windows) if (w.minimized) Sway.command("[con_id=" + w.id + "] scratchpad show") }
                 else if (arg.indexOf("tile:") === 0) root.tile(arg.substring(5))
                 else if (arg.indexOf("minimize:") === 0) root.minimizeGenie(parseInt(arg.substring(9)))
+                else if (arg.indexOf("close:") === 0) root.closeAnimated(parseInt(arg.substring(6)))
                 else if (arg.indexOf("restore:") === 0) root.restoreGenie(parseInt(arg.substring(8)))
                 else if (arg === "about") { if (UiState.classic) Notifications.push("BC OS", qsTr("BC OS"), qsTr("Versión alpha · ARM64"), "", 4000)
                                             else Launcher.run("bc-shell", ["--app", "settings", "--open", "about"]) }

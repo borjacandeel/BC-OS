@@ -42,7 +42,7 @@ Instantiator {
                         pressAndHoldInterval: 400
                         onClicked: (m) => {
                             if (m.button === Qt.RightButton && modelData.a === 2) { chrome.tileMenu(); return }
-                            if (modelData.a === 0) Sway.closeWindow(chrome.modelData.id)
+                            if (modelData.a === 0) UiState.run("bc:close:" + chrome.modelData.id)
                             else if (modelData.a === 1) UiState.run("bc:minimize:" + chrome.modelData.id)
                             else Sway.toggleFullscreen(chrome.modelData.id)
                         }

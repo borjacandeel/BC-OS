@@ -54,8 +54,9 @@ bindsym $mod+Shift+e exec bc-ctl power logout
 bindsym $mod+F1 exec mousepad /etc/bc/atajos.txt
 
 # --- Ventanas ---
-bindsym $mod+q kill
-bindsym Ctrl+q kill
+# Cerrar con la animación de macOS (el panel captura, cierra y desvanece)
+bindsym $mod+q exec bc-ctl close
+bindsym Ctrl+q exec bc-ctl close
 bindsym $mod+f fullscreen toggle
 bindsym $mod+m exec bc-ctl minimize
 bindsym $mod+Shift+m scratchpad show

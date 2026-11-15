@@ -78,7 +78,7 @@ disponible en el login como **«BC clásico»**.
 - Fuentes: apple.com/es/os/macos (Liquid Glass «de cristalino a completamente tintado», barras de herramientas unificadas,
   barras laterales de borde a borde, iconos de menú rediseñados, app Siri) y prensa (menús casi sin iconos, flecha nativa
   para iconos ocultos de la barra, barras laterales con iconos en color, radio de ventana único).
-- Iconos propios estilo Golden Gate (icon-designer): 15 apps + symbolic de barra; ver `capturas/iconos-golden-gate.png`.
+- Iconos: el creador prefiere los MacOS-Like anteriores; se restauraron (los de icon-designer quedan en el historial de git).
 - Apps nuevas o rehechas: Monitor de Actividad (procesos reales), Tienda (App Store), Calculadora, Notas, Vista previa,
   Calendario, Recordatorios, Música (mpv), Ajustes (Wi-Fi, Bluetooth, Pantallas, Teclado, Fecha y hora, cuenta).
 - Vibrancy: barras laterales de vidrio en todas las apps (la app sigue su posición con sway).
@@ -95,7 +95,7 @@ disponible en el login como **«BC clásico»**.
 
 ## Limitaciones técnicas
 - El cristal muestra el **fondo** desenfocado, no las ventanas de detrás (solo el compositor puede: swayfx + GPU).
-- Abrir/cerrar ventanas de apps externas no se anima (sway no anima ventanas); sí las apps BC y el genio al minimizar.
+- Cerrar ventanas externas se anima con una captura grim que se encoge y se desvanece (semáforo, Súper/Ctrl+Q); abrirlas no se anima.
 - Gestos discretos (ver 9). Selector de apps: se confirma al soltar Alt si la tecla llega, o tras 1,1 s.
 - Iconos de app: tema MacOS-Like (GPL-3.0), squircle, sin capas de vidrio dinámicas ni modo tintado.
 
