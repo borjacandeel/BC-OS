@@ -19,14 +19,14 @@ Aplicaciones, Mission Control, selector de apps, genio, Archivos tipo Finder, Aj
 claro/oscuro, Liquid Glass sin shaders + deslizador, sonidos, tema GTK MacTahoe, Inter, arranque con barra blanca.
 
 Pendiente (en este orden):
-- [ ] Investigar a fondo macOS 27 Golden Gate (apple.com/es/os/macos y fuentes públicas) y anotar medidas/rasgos en ESTADO.md.
-- [ ] Iconos: el creador pide «iguales que los de Golden Gate». NO se copian los de Apple (son obras protegidas):
+- [x] Investigar a fondo macOS 27 Golden Gate (hecho 2026-11-15: apple.com/es/os/macos; flecha de iconos ocultos en la barra, menús casi sin iconos, app Siri, «Consultar a Siri» en Spotlight, deslizar para actualizar) (apple.com/es/os/macos y fuentes públicas) y anotar medidas/rasgos en ESTADO.md.
+- [~] Iconos (en curso, icon-designer autorizado 2026-11-15; hechos: apps BC, papelera, pila, symbolic de barra; faltan Calculadora/Notas/Vista previa y variantes oscura/tintada): el creador pide «iguales que los de Golden Gate». NO se copian los de Apple (son obras protegidas):
       se diseñan propios con la misma rejilla/forma/capas (squircle, vidrio por capas, claro/oscuro/tintado) vía `icon-designer`
       (regla 6) — requiere permiso explícito para ese subagente (regla 7).
-- [ ] Apps BC al nivel de las de macOS: Archivos (Finder), Ajustes del Sistema (todos los paneles), Monitor de Actividad,
-      Tienda (App Store), Terminal, Vista previa/visor de imágenes, Notas, Calculadora, Calendario, Música.
+- [~] Apps BC al nivel de las de macOS. Hechas: Monitor de Actividad, Tienda (App Store), Calculadora, Notas, Vista previa.
+      Faltan: Ajustes del Sistema (todos los paneles), Calendario, Música, Recordatorios (app), pulir Archivos.
 - [ ] Animaciones: abrir/cerrar ventanas BC, hojas, menús, Control Center, Mission Control, Launchpad/Aplicaciones, Spotlight.
 - [ ] Transparencias y materiales por componente (barra lateral, barra de herramientas, menús, popovers) en claro y oscuro.
 - [ ] Barra de menús: iconos de estado propios exactos en forma/tamaño (Wi-Fi, batería, Control Center, Concentración, Spotlight).
 - [ ] Verificar en QEMU cada parte con capturas antes de dar nada por hecho.
-- [ ] README actualizado con capturas (subagente pedido por el creador, 2026-11-15).
+- [x] README actualizado con capturas (subagente, 2026-11-15).

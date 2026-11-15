@@ -20,7 +20,10 @@ Item {
         tienda: "gnome-software",
         navegador: "firefox",
         musica: "multimedia-audio-player",
-        papelera: "user-trash"
+        papelera: "user-trash",
+        notas: "../icons/accessories-notes",
+        calculadora: "../icons/accessories-calculator",
+        vista: "../icons/multimedia-photo-viewer"
     })
 
     Image {

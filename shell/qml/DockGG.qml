@@ -19,11 +19,12 @@ Item {
     signal launchDesktop(string id, string name)
 
     // ---- Modelo ------------------------------------------------------------------------------
-    readonly property var defaultApps: ["archivos", "lanzador", "navegador", "terminal", "tienda", "ajustes", "monitor"]
+    readonly property var defaultApps: ["archivos", "lanzador", "navegador", "notas", "calculadora", "vista", "terminal", "monitor", "tienda", "ajustes"]
     readonly property var pinnedKinds: Settings.dockApps.length > 0 ? Settings.dockApps : defaultApps
     readonly property var kindNames: ({ archivos: qsTr("Archivos"), lanzador: qsTr("Aplicaciones"), navegador: qsTr("Firefox"),
                                         terminal: qsTr("Terminal"), tienda: qsTr("Tienda"), ajustes: qsTr("Ajustes del Sistema"),
-                                        monitor: qsTr("Monitor de Actividad"), musica: qsTr("Música") })
+                                        monitor: qsTr("Monitor de Actividad"), musica: qsTr("Música"), notas: qsTr("Notas"),
+                                        calculadora: qsTr("Calculadora"), vista: qsTr("Vista previa") })
     function appIdOf(kind) {
         if (kind.indexOf("app:") === 0) return kind.substring(4)
         if (kind === "terminal") return "com.mitchellh.ghostty"
@@ -162,7 +163,7 @@ Item {
                 required property int index
                 cellIndex: dock.items.length + index
                 readonly property var info: Apps.infoFor(modelData.appId)
-                kind: modelData.appId.indexOf("bc-") === 0 ? ({ "bc-files": "archivos", "bc-settings": "ajustes", "bc-monitor": "monitor", "bc-store": "tienda" })[modelData.appId] || "" : ""
+                kind: modelData.appId.indexOf("bc-") === 0 ? ({ "bc-files": "archivos", "bc-settings": "ajustes", "bc-monitor": "monitor", "bc-store": "tienda", "bc-notes": "notas", "bc-calculator": "calculadora", "bc-preview": "vista" })[modelData.appId] || "" : ""
                 icon: info.iconPath || ""; name: modelData.title; minimizedWindow: true
                 onActivated: UiState.run("bc:restore:" + modelData.id)
             }
