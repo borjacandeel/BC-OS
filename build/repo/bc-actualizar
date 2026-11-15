@@ -1,0 +1,15 @@
+#!/bin/sh
+# Actualiza BC OS desde su repositorio propio ([bc], GitHub Releases) y Arch Linux ARM.
+# La primera vez adopta los archivos de BC que puso la imagen (--overwrite solo en rutas de BC).
+set -e
+set -f   # los patrones de --overwrite no se expanden en el shell
+[ "$(id -u)" = 0 ] || exec sudo "$0" "$@"
+grep -q '^\[bc\]' /etc/pacman.conf || { echo "Falta el repositorio [bc] en /etc/pacman.conf" >&2; exit 1; }
+OV="--overwrite /usr/bin/bc-* --overwrite /usr/share/bc/* --overwrite /usr/share/applications/bc-* --overwrite /etc/bc/*"
+OV="$OV --overwrite /usr/share/icons/hicolor/scalable/apps/bc-* --overwrite /usr/share/sounds/bc/* --overwrite /usr/lib/systemd/user/bc-*"
+OV="$OV --overwrite /etc/systemd/user/default.target.wants/bc-*"
+pacman -Sy --noconfirm
+if pacman -Qq bc-os >/dev/null 2>&1; then pacman -Su --noconfirm $OV "$@"
+else pacman -S --noconfirm --needed $OV bc-os "$@" && pacman -Su --noconfirm "$@"; fi
+gtk-update-icon-cache -q -f /usr/share/icons/hicolor 2>/dev/null || true
+echo "BC OS actualizado."

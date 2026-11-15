@@ -48,6 +48,12 @@ install -D -m644 "$HERE/overlay/etc/bc/alacritty.toml" "$R/etc/bc/alacritty.toml
 install -D -m644 "$HERE/overlay/etc/bc/ghostty.conf" "$R/etc/bc/ghostty.conf"
 # Apps de BC en el lanzador, Spotlight y el Dock (Archivos, Ajustes del Sistema, Monitor de Actividad, Tienda, Terminal)
 install -m644 "$HERE"/overlay/usr/share/applications/bc-*.desktop "$R/usr/share/applications/"
+# Repositorio propio de BC OS ([bc], publicado en GitHub Releases por .github/workflows/repo.yml) antes de [core],
+# para que los paquetes de BC tengan prioridad. bc-actualizar actualiza desde ahí (y la Tienda lo usa).
+install -m755 "$HERE/repo/bc-actualizar" "$R/usr/bin/bc-actualizar"
+if ! grep -q '^\[bc\]' "$R/etc/pacman.conf"; then
+  sed -i '0,/^\[core\]/s//# Repositorio propio de BC OS (GitHub). Firmado cuando el creador añada la clave (ver build\/repo\/LEEME.md)\n[bc]\nSigLevel = Optional TrustAll\nServer = https:\/\/github.com\/borjacandeel\/BC-OS\/releases\/download\/repo\n\n[core]/' "$R/etc/pacman.conf"
+fi
 # Iconos propios de las apps de BC (estilo Golden Gate, icons/src/app) como bc-<app> en hicolor
 HI="$R/usr/share/icons/hicolor/scalable/apps"; mkdir -p "$HI"
 for pair in bc-files:system-file-manager bc-settings:preferences-system bc-monitor:utilities-system-monitor bc-store:gnome-software \

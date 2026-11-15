@@ -1,3 +1,4 @@
+#include <QFileInfo>
 #include "packagestore.h"
 #include <QRegularExpression>
 #include <QStandardPaths>
@@ -234,7 +235,8 @@ void PackageStore::runPrivileged(const QStringList &pacmanArgs, const QString &p
         if (e != QProcess::FailedToStart) return;
         setBusy(false); emit finished(false, action); p->deleteLater();
     });
-    p->start(sudo, sudoArgs(pacmanArgs));
+    // «@bc-actualizar»: actualización completa desde el repositorio propio [bc] (adopta los archivos de BC de la imagen)
+    p->start(sudo, pacmanArgs.value(0) == "@bc-actualizar" ? QStringList{"-S", "-p", "", "--", "/usr/bin/bc-actualizar"} : sudoArgs(pacmanArgs));
     p->write(password.toUtf8() + "\n");
     p->closeWriteChannel();   // sin esto, con contraseña errónea sudo se queda esperando más datos
 }
@@ -249,5 +251,6 @@ void PackageStore::remove(const QString &name, const QString &password) {
 }
 void PackageStore::updateAll(const QString &password) {
     if (m_flathub) { runFlatpakWrite({"update", "--user", "-y", "--noninteractive"}, "update"); return; }
-    runPrivileged({"-Syu", "--noconfirm"}, password, "update");
+    if (QFileInfo::exists("/usr/bin/bc-actualizar")) runPrivileged({"@bc-actualizar"}, password, "update");
+    else runPrivileged({"-Syu", "--noconfirm"}, password, "update");
 }
