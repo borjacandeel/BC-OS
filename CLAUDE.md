@@ -24,9 +24,11 @@ Pendiente (en este orden):
       se diseñan propios con la misma rejilla/forma/capas (squircle, vidrio por capas, claro/oscuro/tintado) vía `icon-designer`
       (regla 6) — requiere permiso explícito para ese subagente (regla 7).
 - [~] Apps BC al nivel de las de macOS. Hechas: Monitor de Actividad, Tienda (App Store), Calculadora, Notas, Vista previa.
-      Faltan: Ajustes del Sistema (todos los paneles), Calendario, Música, Recordatorios (app), pulir Archivos.
+      Hechas también: Calendario, Recordatorios, Ajustes (Wi-Fi, Bluetooth, Pantallas, Teclado, Fecha y hora), widgets editables, vibrancy.
+      Faltan: Música, pulir Archivos (Recientes), Control Center editable.
 - [ ] Animaciones: abrir/cerrar ventanas BC, hojas, menús, Control Center, Mission Control, Launchpad/Aplicaciones, Spotlight.
 - [ ] Transparencias y materiales por componente (barra lateral, barra de herramientas, menús, popovers) en claro y oscuro.
 - [ ] Barra de menús: iconos de estado propios exactos en forma/tamaño (Wi-Fi, batería, Control Center, Concentración, Spotlight).
+- [ ] Ghostty: compilación desactivada (BC_GHOSTTY=1 para probar). En CI Zig 0.17 da «panic: reached unreachable code» dentro del chroot; Terminal = Alacritty mientras tanto.
 - [ ] Verificar en QEMU cada parte con capturas antes de dar nada por hecho.
 - [x] README actualizado con capturas (subagente, 2026-11-15).
