@@ -1,7 +1,7 @@
 ## BC OS @VERSION@ — beta (prerrelease), para probar en máquinas virtuales
 
 Imágenes de disco arrancables (UEFI) para **ARM64** (Mac con Apple Silicon) y **x86_64** (PC Intel/AMD).
-**Aún no hay ISO**: el instalador (`sudo bc-install`) viene dentro de la imagen.
+También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 
 ### Probar en VirtualBox
 1. Descomprime `BC-OS-@VERSION@-ARM64.vdi.zip` (Mac Apple Silicon) o `BC-OS-@VERSION@-x86_64.vdi.zip` (PC).
@@ -10,6 +10,12 @@ Imágenes de disco arrancables (UEFI) para **ARM64** (Mac con Apple Silicon) y *
 3. Disco: usar el `.vdi`. SSH opcional: Red → Avanzado → Reenvío de puertos TCP 2222 → 22 (`ssh -p 2222 bc@127.0.0.1`).
 4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
+
+### Novedades de 0.9.0
+- **Hyprland** por defecto si hay aceleración 3D: animaciones fluidas tipo macOS (muelle al abrir, cierre que encoge,
+  Spaces deslizantes), esquinas continuas, sombras y **desenfoque real**. Sin 3D, sway por software automáticamente.
+  En Mac: **UTM** con pantalla `virtio-gpu-gl-pci` para tener 3D (VirtualBox ARM no lo tiene).
+- Arreglado el **bucle de login** en VirtualBox. Alacritty con marco de ventana.
 
 ### Novedades de 0.8.0
 - **Imagen x86_64** además de ARM64 (en x86_64 incluye las Guest Additions de VirtualBox).
