@@ -8,7 +8,9 @@ Item {
     anchors.fill: parent
     readonly property real s: Theme.s
     function px(v) { return Math.round(v * s) }
-    property var apps: []
+    property var all: []
+    property string cat: ""
+    readonly property var apps: cat === "" ? all : all.filter(a => a.category === cat)
     readonly property int cols: 7
     readonly property int rows: 5
     readonly property int perPage: cols * rows
@@ -16,7 +18,7 @@ Item {
     property int page: 0
     signal launch(string id, string name)
     signal done()
-    function reset() { field.text = ""; apps = Apps.search(""); page = 0; field.forceActiveFocus() }
+    function reset() { field.text = ""; cat = ""; all = Apps.search(""); page = 0; field.forceActiveFocus() }
 
     // Fondo: el escritorio desenfocado y oscurecido
     Glass { anchors.fill: parent; radius: 0; shadow: false; rim: false; tintBoost: 0.25 }
@@ -26,13 +28,13 @@ Item {
     Item {
         id: search
         anchors.horizontalCenter: parent.horizontalCenter; y: px(48)
-        width: px(240); height: px(30)
-        Rectangle { anchors.fill: parent; radius: height / 2; color: Qt.rgba(1, 1, 1, 0.14); border.width: 1; border.color: Qt.rgba(1, 1, 1, 0.18) }
+        width: px(420); height: px(36)
+        Glass { anchors.fill: parent; radius: height / 2; tintBoost: 0.3; shadow: false }
         Icon { x: px(10); anchors.verticalCenter: parent.verticalCenter; name: Icons.search; size: px(14); color: Qt.rgba(1, 1, 1, 0.7) }
         TextInput {
             id: field; x: px(30); width: parent.width - px(40); anchors.verticalCenter: parent.verticalCenter
             color: "white"; font.family: Theme.font; font.pixelSize: px(13); focus: true
-            onTextChanged: { lp.apps = Apps.search(text); lp.page = 0 }
+            onTextChanged: { lp.all = Apps.search(text); lp.page = 0 }
             Keys.onEscapePressed: lp.done()
             Keys.onReturnPressed: if (lp.apps.length) lp.launch(lp.apps[0].id, lp.apps[0].name)
             Keys.onRightPressed: lp.page = Math.min(lp.pages - 1, lp.page + 1)
@@ -45,10 +47,29 @@ Item {
     property real zoom: 1
     onVisibleChanged: if (visible) { zoom = 1.08; zoomIn.restart() }
     NumberAnimation { id: zoomIn; target: lp; property: "zoom"; to: 1; duration: Theme.d(Theme.durLaunchpad); easing.type: Theme.easeEmphasized }
+    // Categorías (vista Aplicaciones de Tahoe/Golden Gate)
+    Row {
+        id: chips
+        anchors.horizontalCenter: parent.horizontalCenter; y: px(98); spacing: px(8)
+        Repeater {
+            model: [ { k: "", t: qsTr("Todas") }, { k: "productividad", t: qsTr("Productividad") }, { k: "creatividad", t: qsTr("Creatividad") },
+                     { k: "internet", t: qsTr("Internet") }, { k: "utilidades", t: qsTr("Utilidades") }, { k: "desarrollo", t: qsTr("Desarrollo") },
+                     { k: "juegos", t: qsTr("Juegos") }, { k: "sistema", t: qsTr("Sistema") } ]
+            Rectangle {
+                required property var modelData
+                visible: modelData.k === "" || lp.all.some(a => a.category === modelData.k)
+                width: ct.implicitWidth + px(24); height: px(28); radius: height / 2
+                color: lp.cat === modelData.k ? Qt.rgba(1, 1, 1, 0.92) : Qt.rgba(1, 1, 1, cm.containsMouse ? 0.22 : 0.12)
+                Text { id: ct; anchors.centerIn: parent; text: modelData.t; color: lp.cat === modelData.k ? "#1D1D1F" : "white"
+                       font.family: Theme.font; font.pixelSize: px(12); font.weight: Font.DemiBold }
+                MouseArea { id: cm; anchors.fill: parent; hoverEnabled: true; onClicked: { lp.cat = modelData.k; lp.page = 0 } }
+            }
+        }
+    }
     Item {
         id: viewport
         scale: lp.zoom
-        x: px(160); y: px(130); width: parent.width - px(320); height: parent.height - px(260)
+        x: px(160); y: px(150); width: parent.width - px(320); height: parent.height - px(280)
         clip: true
         Row {
             id: strip

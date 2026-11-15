@@ -7,7 +7,7 @@ class AppIndex : public QObject {
     Q_OBJECT
     Q_PROPERTY(int count READ count NOTIFY changed)
 public:
-    struct Entry { QString id, name, exec, icon, comment; bool terminal = false; };
+    struct Entry { QString id, name, exec, icon, comment, category; bool terminal = false; };
     explicit AppIndex(const QStringList &dirs = QStringList(), const QString &lang = QString(), QObject *parent = nullptr);
     int count() const { return m_entries.size(); }
     static bool isHiddenId(const QString &id);
@@ -22,6 +22,8 @@ public:
     static bool parseDesktop(const QString &text, const QString &lang, Entry &out);
     // Quita códigos de campo (%f %u ...) y separa en programa + argumentos.
     static QStringList commandFor(const QString &exec, bool terminal);
+    // Categoría de la vista Aplicaciones a partir de Categories= (Productividad, Creatividad, Utilidades, Juegos, Sistema, Internet)
+    static QString categoryFor(const QString &categories);
 signals:
     void changed();
 

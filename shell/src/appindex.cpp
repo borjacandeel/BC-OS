@@ -37,6 +37,7 @@ bool AppIndex::parseDesktop(const QString &text, const QString &lang, Entry &out
         else if (k == "NoDisplay") noDisplay = v == "true";
         else if (k == "Hidden") hidden = v == "true";
         else if (k == "Terminal") out.terminal = v == "true";
+        else if (k == "Categories") out.category = categoryFor(v);
     }
     if (!isApp || noDisplay || hidden || exec.isEmpty()) return false;
     out.name = localized.isEmpty() ? name : localized;
@@ -118,7 +119,7 @@ QVariantList AppIndex::search(const QString &query) const {
     std::stable_sort(hits.begin(), hits.end(), [](const Scored &a, const Scored &b) { return a.score > b.score; });
     for (const Scored &h : hits)
         out.append(QVariantMap{{"id", h.e->id}, {"name", h.e->name}, {"icon", h.e->icon}, {"comment", h.e->comment},
-                               {"iconPath", resolveIcon(h.e->icon)}});
+                               {"iconPath", resolveIcon(h.e->icon)}, {"category", h.e->category}});
     return out;
 }
 
@@ -145,4 +146,16 @@ QVariantMap AppIndex::infoFor(const QString &appId) const {
             return {{"id", e.id}, {"name", e.name}, {"icon", e.icon}, {"iconPath", resolveIcon(e.icon)}};
     }
     return {};
+}
+
+QString AppIndex::categoryFor(const QString &cats) {
+    const QStringList c = cats.split(';', Qt::SkipEmptyParts);
+    auto has = [&](std::initializer_list<const char *> l) { for (const char *x : l) if (c.contains(QLatin1String(x))) return true; return false; };
+    if (has({"Game"})) return "juegos";
+    if (has({"Graphics", "AudioVideo", "Audio", "Video", "Photography"})) return "creatividad";
+    if (has({"Office", "Calendar", "TextEditor", "WordProcessor", "Spreadsheet"})) return "productividad";
+    if (has({"Network", "WebBrowser", "Email", "Chat"})) return "internet";
+    if (has({"Development", "IDE"})) return "desarrollo";
+    if (has({"Settings", "System", "Monitor", "PackageManager", "TerminalEmulator", "FileManager"})) return "sistema";
+    return "utilidades";
 }
