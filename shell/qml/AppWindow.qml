@@ -82,7 +82,8 @@ Window {
             width: parent.width
             height: win.titlebarHeight
             color: Theme.gg ? "transparent" : Qt.rgba(1, 1, 1, 0.04)
-            Rectangle { anchors.bottom: parent.bottom; width: parent.width; height: 1; color: Theme.hairline }
+            // Golden Gate: sin línea bajo la barra de herramientas; el contenido se funde bajo ella («scroll edge effect»)
+            Rectangle { visible: !Theme.gg; anchors.bottom: parent.bottom; width: parent.width; height: 1; color: Theme.hairline }
             MouseArea { id: tlHover; x: 0; width: 90; height: parent.height; hoverEnabled: true; acceptedButtons: Qt.NoButton; z: 2 }
             MouseArea {
                 anchors.fill: parent
@@ -120,6 +121,14 @@ Window {
             Item { id: tbSlot; anchors.fill: parent }
         }
 
+        Rectangle {
+            visible: Theme.gg
+            z: 1; y: titlebar.height; width: parent.width; height: 14
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: Qt.rgba(frame.color.r, frame.color.g, frame.color.b, 0.85) }
+                GradientStop { position: 1.0; color: Qt.rgba(frame.color.r, frame.color.g, frame.color.b, 0) }
+            }
+        }
         Item {
             id: contentArea
             anchors.top: titlebar.bottom
