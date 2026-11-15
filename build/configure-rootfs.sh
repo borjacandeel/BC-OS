@@ -49,6 +49,8 @@ install -D -m644 "$HERE/overlay/etc/bc/ghostty.conf" "$R/etc/bc/ghostty.conf"
 install -D -m644 "$HERE/overlay/etc/xdg/foot/foot.ini" "$R/etc/xdg/foot/foot.ini"
 install -D -m644 "$HERE/../shell/assets/wallpaper-default.png" "$R/usr/share/bc/wallpaper-default.png"
 mkdir -p "$R/usr/share/bc/wallpapers"; install -m644 "$HERE"/../assets/wallpapers/*.jpg "$R/usr/share/bc/wallpapers/"
+# Sonidos originales de la interfaz (Golden Gate)
+mkdir -p "$R/usr/share/sounds/bc"; install -m644 "$HERE"/../assets/sounds/*.wav "$R/usr/share/sounds/bc/"
 install -D -m644 "$HERE/overlay/etc/bc/sway/config" "$R/etc/bc/sway/config"
 install -m644 "$HERE/overlay/etc/bc/sway/keyboard.conf" "$R/etc/bc/sway/keyboard.conf"
 install -m644 "$HERE/overlay/etc/bc/atajos.txt" "$R/etc/bc/atajos.txt"

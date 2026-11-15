@@ -9,6 +9,7 @@ case "${1:-pantalla}" in
   ventana) G="$(swaymsg -t get_tree | jq -r '.. | select(.focused?==true) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')"; grim -g "$G" "$F" ;;
   *)       grim "$F" ;;
 esac || exit 1
+[ -f /usr/share/sounds/bc/screenshot.wav ] && { pw-play /usr/share/sounds/bc/screenshot.wav >/dev/null 2>&1 || paplay /usr/share/sounds/bc/screenshot.wav >/dev/null 2>&1; } &
 command -v wl-copy >/dev/null 2>&1 && wl-copy < "$F"
 command -v notify-send >/dev/null 2>&1 && notify-send -a "BC OS" "Captura guardada" "$F" -i camera-photo
 echo "$F"

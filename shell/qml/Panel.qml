@@ -142,6 +142,13 @@ LayerWindow {
         }
     }
 
+    // Sonidos del sistema (originales de BC OS)
+    Connections { target: UiState; function onLockedChanged() { if (UiState.locked && !UiState.classic) Sounds.play("lock") } }
+    property bool _notifWas: false
+    property bool _soundsReady: false
+    Timer { interval: 6000; running: true; onTriggered: root._soundsReady = true }   // sin sonido para los avisos del arranque
+    Connections { target: Notifications; function onChanged() { if (Notifications.visible && !root._notifWas && !UiState.classic && root._soundsReady) Sounds.play("notify"); root._notifWas = Notifications.visible } }
+
     // Mover y redimensionar (menú Ventana y menú del botón verde): mitades, rellenar y centrar
     function tile(how) {
         const id = Sway.focusedId
@@ -198,7 +205,7 @@ LayerWindow {
             }
         }
         function onStyleChanged(st) { UiState.closePopups(); UiState.style = st === "win" ? "win" : "mac" }
-        function onOsdRequested(kind) { SystemStatus.refresh(); osdDelay.kind = kind; osdDelay.restart() }
+        function onOsdRequested(kind) { SystemStatus.refresh(); osdDelay.kind = kind; osdDelay.restart(); if (kind === "volume") Sounds.play("volume") }
         function onWelcomeRequested() { UiState.closePopups(); UiState.welcomeOpen = true }
         function onLauncherToggled() { UiState.toggleLauncher() }
         function onClipboardToggled() { UiState.toggleClipboard() }
