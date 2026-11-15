@@ -71,6 +71,37 @@ LayerWindow {
         geniePending = { id: w.id, rect: Qt.rect(w.decoX, w.decoY, w.rectW, w.rectH), back: false }
         Quick.capture("genie-" + w.id, w.decoX + "," + w.decoY + " " + w.rectW + "x" + w.rectH)
     }
+    // Abrir ventanas externas: aparecen con un fundido rápido (sway no escala ventanas; la opacidad sí)
+    property var seenWins: null
+    property var fading: ({})
+    Connections {
+        target: Sway
+        function onWindowsChanged() {
+            const now = {}
+            for (const w of Sway.windows) now[w.id] = true
+            if (root.seenWins !== null && !UiState.classic && !Theme.reduced)
+                for (const w of Sway.windows)
+                    if (!root.seenWins[w.id] && !(w.appId || "").startsWith("bc-")) root.fadeIn(w.id)
+            root.seenWins = now
+        }
+    }
+    function fadeIn(id) {
+        fading[id] = 0.35
+        Sway.command("[con_id=" + id + "] opacity 0.35")
+        fadeTick.start()
+    }
+    Timer {
+        id: fadeTick; interval: 30; repeat: true
+        onTriggered: {
+            let any = false
+            for (const k of Object.keys(root.fading)) {
+                const v = Math.min(1, root.fading[k] + 0.13)
+                Sway.command("[con_id=" + k + "] opacity " + v.toFixed(2))
+                if (v >= 1) delete root.fading[k]; else { root.fading[k] = v; any = true }
+            }
+            if (!any) stop()
+        }
+    }
     // Cerrar con la animación de macOS: la ventana se encoge un poco y se desvanece (captura con grim)
     property var closePending: null
     function closeAnimated(id) {
@@ -323,6 +354,13 @@ LayerWindow {
                 width: modelData.width; height: UiState.barH
                 shown: !UiState.splashing && !UiState.locked
                 MenuBar { anchors.fill: parent }
+            }
+            property LayerWindow mission2: LayerWindow {
+                screen: modelData
+                layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-mission"
+                width: modelData.width; height: modelData.height
+                shown: !UiState.classic && (UiState.missionOpen || mc2.t > 0)
+                MissionControl { id: mc2; outName: modelData.name; origin: Qt.point(modelData.virtualX, modelData.virtualY) }
             }
             property LayerWindow dock2: LayerWindow {
                 id: d2

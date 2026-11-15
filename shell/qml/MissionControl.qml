@@ -15,20 +15,24 @@ Item {
     property string shot: ""
     property var wins: []
     signal closed()
+    // Multipantalla: cada pantalla adicional tiene su propio Mission Control con sus escritorios y ventanas
+    property string outName: ""                 // vacío = pantalla principal (escritorio enfocado)
+    property point origin: Qt.point(0, 0)       // posición de la pantalla en el escritorio global
+    readonly property string tag: "mission" + (outName ? "-" + outName : "")
 
-    readonly property var spaces: Sway.workspaces.filter(w => w.name !== "__i3_scratch")
-    readonly property var current: spaces.find(w => w.focused) || null
+    readonly property var spaces: Sway.workspaces.filter(w => w.name !== "__i3_scratch" && (outName === "" || w.output === outName))
+    readonly property var current: (outName === "" ? spaces.find(w => w.focused) : spaces.find(w => w.visible)) || null
 
     onOpenChanged: {
         if (open) {
             wins = Sway.windows.filter(w => !w.minimized && current && w.workspace === current.name && w.rectW > 0)
             shot = ""
-            Quick.capture("mission", "")
+            Quick.capture(tag, outName === "" ? "" : origin.x + "," + origin.y + " " + Math.round(width) + "x" + Math.round(height))
             t = 0
             inAnim.restart()
         } else if (t > 0) outAnim.restart()
     }
-    Connections { target: Quick; function onCaptured(tag, path, ok) { if (tag === "mission" && ok) { mc.shot = ""; mc.shot = "file://" + path } } }
+    Connections { target: Quick; function onCaptured(tag, path, ok) { if (tag === mc.tag && ok) { mc.shot = ""; mc.shot = "file://" + path } } }
     NumberAnimation { id: inAnim; target: mc; property: "t"; to: 1; duration: Theme.d(Theme.durMissionControl); easing.type: Theme.easeEmphasized }
     NumberAnimation { id: outAnim; target: mc; property: "t"; to: 0; duration: Theme.d(Theme.durMissionControl * 0.8); easing.type: Theme.easeInOut; onFinished: mc.closed() }
 
@@ -101,7 +105,7 @@ Item {
             required property var modelData
             required property int index
             readonly property int winId: modelData.id
-            readonly property rect a: Qt.rect(modelData.decoX, modelData.decoY, modelData.rectW, modelData.rectH)
+            readonly property rect a: Qt.rect(modelData.decoX - mc.origin.x, modelData.decoY - mc.origin.y, modelData.rectW, modelData.rectH)
             readonly property rect b: mc.slot(index, modelData)
             x: a.x + (b.x - a.x) * mc.t; y: a.y + (b.y - a.y) * mc.t
             width: a.width + (b.width - a.width) * mc.t; height: a.height + (b.height - a.height) * mc.t
