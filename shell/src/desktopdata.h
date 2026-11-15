@@ -98,6 +98,7 @@ public:
     Q_INVOKABLE void searchFiles(const QString &text);
     Q_INVOKABLE static QString calculate(const QString &expr);   // «2+2*3» → «8»; vacío si no es una operación
     Q_INVOKABLE void open(const QString &path);              // xdg-open
+    Q_INVOKABLE static QString iconPath(const QString &name); // ruta del icono del tema (vacía si no existe)
     // Captura con grim de la pantalla (geom vacía) o de una región «x,y wxh» → señal captured(tag, ruta)
     Q_INVOKABLE void capture(const QString &tag, const QString &geom);
     static QVariantList parseWifi(const QString &nmcliTerse);

@@ -426,3 +426,9 @@ bool Processes::quit(int pid, bool force) {
     if (pid <= 1 || QFileInfo("/proc/" + QString::number(pid)).ownerId() != getuid()) return false;
     return ::kill(pid, force ? SIGKILL : SIGTERM) == 0;
 }
+
+#include "appindex.h"
+QString QuickTools::iconPath(const QString &name) {
+    static const QRegularExpression ok("^[A-Za-z0-9._-]{1,80}$");
+    return ok.match(name).hasMatch() ? AppIndex::resolveIcon(name) : QString();
+}
