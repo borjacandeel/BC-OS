@@ -477,8 +477,9 @@ AppWindow {
                 Rectangle { width: parent.width; height: 1; color: Theme.hairline }
                 Row {
                     x: 10; anchors.verticalCenter: parent.verticalCenter; spacing: 4
+                    Text { visible: win.recents; text: qsTr("Recientes"); color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 11; anchors.verticalCenter: parent.verticalCenter }
                     Repeater {
-                        model: Files.crumbs
+                        model: win.recents ? [] : Files.crumbs
                         Row {
                             required property var modelData
                             required property int index
