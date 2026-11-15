@@ -19,7 +19,7 @@ bc_chroot "$R" bash -c "pacman -Sy --needed --noconfirm --disable-sandbox mkinit
 bc_chroot "$R" bash -c "rm -rf /var/cache/pacman/pkg/*"
 cat > "$R/etc/mkinitcpio-live.conf" <<C
 MODULES=(virtio_blk virtio_pci virtio_scsi virtio_gpu nvme ahci xhci_pci usb_storage uas sr_mod isofs squashfs overlay loop vfat ext4)
-HOOKS=(base udev modconf kms memdisk archiso archiso_loop_mnt block filesystems keyboard)
+HOOKS=(base udev modconf kms archiso archiso_loop_mnt block filesystems keyboard)
 COMPRESSION=zstd
 C
 bc_chroot "$R" bash -c "mkinitcpio -c /etc/mkinitcpio-live.conf -k /boot/$KIMG -g /boot/initramfs-live.img"
