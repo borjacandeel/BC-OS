@@ -235,10 +235,17 @@ AppWindow {
                         required property string name
                         required property string kind
                         required property var tags
+                        required property string filePath
                         width: grid.cellWidth; height: grid.cellHeight
                         Rectangle { anchors.horizontalCenter: parent.horizontalCenter; y: 2; width: 74; height: 66; radius: 7
                                     color: win.current === cell.index ? Theme.tileFill : "transparent" }
-                        FileGlyph { kind: cell.kind; anchors.horizontalCenter: parent.horizontalCenter; y: 6; width: 70; height: 58 }
+                        FileGlyph { visible: cell.kind !== "imagen" || thumb.status !== Image.Ready; kind: cell.kind; anchors.horizontalCenter: parent.horizontalCenter; y: 6; width: 70; height: 58 }
+                        // Miniatura de las imágenes (como Finder), con borde blanco fino y sombra
+                        Rectangle { visible: thumb.status === Image.Ready; anchors.centerIn: thumb; width: thumb.paintedWidth + 4; height: thumb.paintedHeight + 4; color: "white"; radius: 2
+                                    border.width: 1; border.color: Qt.rgba(0, 0, 0, 0.15) }
+                        Image { id: thumb; visible: status === Image.Ready; anchors.horizontalCenter: parent.horizontalCenter; y: 8; width: 66; height: 56
+                                fillMode: Image.PreserveAspectFit; asynchronous: true; sourceSize: Qt.size(132, 112)
+                                source: cell.kind === "imagen" ? "file://" + cell.filePath : "" }
                         Rectangle {
                             anchors.horizontalCenter: parent.horizontalCenter; y: 72
                             width: Math.min(parent.width - 8, nm.implicitWidth + (cell.tags.length ? 16 : 8)); height: nm.height + 2; radius: 4
