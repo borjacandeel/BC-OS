@@ -8,7 +8,12 @@ AppWindow {
     height: 580
     title: qsTr("Ajustes del Sistema")
     property int page: AppConfig.classic ? 0 : 6
-    Component.onCompleted: Monitor.active = Qt.binding(() => win.visible && win.page === 5)
+    Component.onCompleted: {
+        Monitor.active = Qt.binding(() => win.visible && win.page === 5)
+        const o = AppConfig.openArg
+        const map = { about: 5, red: 2, sonido: 1, energia: 3, usuarios: 4, aspecto: 6, dock: 7, fondo: 8, notificaciones: 9, general: 0 }
+        if (map[o] !== undefined) win.page = map[o]
+    }
 
     // Golden Gate: barra lateral de borde a borde con iconos en color (cuadrado redondeado + glifo blanco)
     readonly property var pages: [
@@ -17,8 +22,8 @@ AppWindow {
         { idx: 9, name: qsTr("Notificaciones"), icon: "notification-symbolic", c: "#FF453A" },
         { idx: 3, name: qsTr("Batería y energía"), icon: "preferences-system-power-symbolic", c: "#30D158" },
         { sep: true },
-        { idx: 6, name: qsTr("Aspecto"), icon: "weather-clear-night-fill-symbolic", c: "#1C1C1E" },
-        { idx: 7, name: qsTr("Escritorio y Dock"), icon: "view-app-grid-symbolic", c: "#1C1C1E" },
+        { idx: 6, name: qsTr("Aspecto"), icon: "weather-clear-night-fill-symbolic", c: "#48484A" },
+        { idx: 7, name: qsTr("Escritorio y Dock"), icon: "view-app-grid-symbolic", c: "#48484A" },
         { idx: 8, name: qsTr("Fondo de pantalla"), icon: "image-x-generic", c: "#32ADE6" },
         { idx: 0, name: qsTr("General"), icon: "preferences-system-symbolic", c: "#8E8E93" },
         { sep: true },
@@ -403,6 +408,14 @@ AppWindow {
         Column {
             visible: win.page === 5; width: parent.width; spacing: 10
             Label { text: qsTr("Acerca de BC OS"); font.pixelSize: Theme.gg ? 20 : 22; font.weight: Theme.gg ? Font.Bold : Font.DemiBold }
+            // Como «Acerca de este Mac»: logo grande, nombre y versión del sistema
+            Item {
+                visible: Theme.gg; width: parent.width; height: 150
+                Rectangle { anchors.horizontalCenter: parent.horizontalCenter; y: 4; width: 96; height: 96; radius: 22
+                            gradient: Gradient { GradientStop { position: 0; color: "#2B2F6E" } GradientStop { position: 1; color: "#0B1033" } }
+                            Brand { anchors.centerIn: parent; logoHeight: 26 } }
+                Label { anchors.horizontalCenter: parent.horizontalCenter; y: 110; text: Monitor.osName; font.pixelSize: 22; font.weight: Font.Bold }
+            }
             Row2 { label: qsTr("Sistema"); value: Monitor.osName + " (ARM64)" }
             Row2 { label: qsTr("Equipo"); value: Monitor.hostname }
             Row2 { label: qsTr("Kernel"); value: "Linux " + Monitor.kernel }

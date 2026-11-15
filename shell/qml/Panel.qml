@@ -190,7 +190,8 @@ LayerWindow {
                 else if (arg.indexOf("tile:") === 0) root.tile(arg.substring(5))
                 else if (arg.indexOf("minimize:") === 0) root.minimizeGenie(parseInt(arg.substring(9)))
                 else if (arg.indexOf("restore:") === 0) root.restoreGenie(parseInt(arg.substring(8)))
-                else if (arg === "about") Notifications.push("BC OS", qsTr("BC OS"), qsTr("Versión alpha · ARM64"), "", 4000)
+                else if (arg === "about") { if (UiState.classic) Notifications.push("BC OS", qsTr("BC OS"), qsTr("Versión alpha · ARM64"), "", 4000)
+                                            else Launcher.run("bc-shell", ["--app", "settings", "--open", "about"]) }
             }
         }
     }
