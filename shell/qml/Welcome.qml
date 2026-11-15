@@ -74,13 +74,18 @@ Item {
         property string kind: "mac"     // mac | win | minimal | float | tile
         anchors.fill: parent; radius: 10
         gradient: Gradient { GradientStop { position: 0; color: "#1B2740" } GradientStop { position: 1; color: "#0A1020" } }
-        Rectangle { visible: kind === "mac" || kind === "minimal" || kind === "float" || kind === "tile"; width: parent.width; height: 8; color: Qt.rgba(1, 1, 1, 0.18) }
+        clip: true
+        // Golden Gate: fondo Ondas real, barra transparente y columna de widgets de vidrio
+        Image { visible: Theme.gg && kind === "mac"; anchors.fill: parent; source: "qrc:/BCShell/assets/wallpaper-default.png"; fillMode: Image.PreserveAspectCrop; sourceSize.width: 400 }
+        Column { visible: Theme.gg && kind === "mac"; x: 5; y: 12; spacing: 3
+                 Repeater { model: [36, 18, 36]; Rectangle { required property int modelData; width: 38; height: modelData; radius: 5; color: Qt.rgba(0.04, 0.05, 0.13, 0.6); border.width: 1; border.color: Qt.rgba(1, 1, 1, 0.18) } } }
+        Rectangle { visible: (kind === "mac" && !Theme.gg) || kind === "minimal" || kind === "float" || kind === "tile"; width: parent.width; height: 8; color: Qt.rgba(1, 1, 1, 0.18) }
         Rectangle { visible: kind === "win"; anchors.bottom: parent.bottom; width: parent.width; height: 10; color: Qt.rgba(1, 1, 1, 0.2)
                     Row { anchors.centerIn: parent; spacing: 4; Repeater { model: 5; Rectangle { width: 6; height: 6; radius: 2; color: Qt.rgba(1, 1, 1, 0.6) } } } }
         Rectangle { visible: kind === "mac"; anchors.bottom: parent.bottom; anchors.bottomMargin: 6; anchors.horizontalCenter: parent.horizontalCenter
                     width: 70; height: 14; radius: 7; color: Qt.rgba(1, 1, 1, 0.22)
                     Row { anchors.centerIn: parent; spacing: 4; Repeater { model: 5; Rectangle { width: 7; height: 7; radius: 2.5; color: Qt.rgba(1, 1, 1, 0.7) } } } }
-        Rectangle { visible: kind === "mac" || kind === "win" || kind === "minimal"; x: parent.width * 0.22; y: 22; width: parent.width * 0.5; height: 62; radius: 6; color: Qt.rgba(0.03, 0.05, 0.10, 0.95)
+        Rectangle { visible: (kind === "mac" && !Theme.gg) || kind === "win" || kind === "minimal"; x: parent.width * 0.22; y: 22; width: parent.width * 0.5; height: 62; radius: 6; color: Qt.rgba(0.03, 0.05, 0.10, 0.95)
                     Rectangle { x: 5; y: 5; width: 22; height: 3; radius: 1.5; color: Qt.rgba(1, 1, 1, 0.35) } }
         Rectangle { visible: kind === "float"; x: parent.width * 0.2; y: 22; width: parent.width * 0.5; height: 70; radius: 6; color: Qt.rgba(0.03, 0.05, 0.10, 0.95) }
         Rectangle { visible: kind === "float"; x: parent.width * 0.42; y: 48; width: parent.width * 0.4; height: 60; radius: 6; color: Qt.rgba(0.10, 0.15, 0.25, 0.95) }
