@@ -28,7 +28,7 @@ bash "$HERE/build-core.sh" "$R"
 bash "$HERE/build-swayfx.sh" "$R"
 # Programas y juegos x86_64 en ARM64 (box64); si falla la compilación, la imagen sigue sin él
 [ "$ARCH" = aarch64 ] && { bash "$HERE/build-box64.sh" "$R" || echo "AVISO: no se pudo compilar box64"; }
-[ "${BC_GHOSTTY:-0}" = 0 ] || bash "$HERE/build-ghostty.sh" "$R" || echo "AVISO: no se pudo compilar Ghostty; la terminal será Alacritty"
+[ "${BC_GHOSTTY:-1}" = 0 ] || bash "$HERE/build-ghostty.sh" "$R" || echo "AVISO: no se pudo compilar Ghostty; la terminal será Alacritty"
 sed -i "s/^PRETTY_NAME=.*/PRETTY_NAME=\"BC OS $VER\"/; s/^VERSION=.*/VERSION=\"$VER\"/; s/^VERSION_ID=.*/VERSION_ID=\"$VER\"/" "$HERE/overlay/etc/os-release"
 bash "$HERE/configure-rootfs.sh" "$R"
 

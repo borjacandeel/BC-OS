@@ -30,7 +30,7 @@ Pendiente (en este orden):
 - [x] Multimonitor: barra, Dock, cristal y Mission Control por pantalla (widgets en la principal, como macOS).
 - [x] Primer arranque: «Máquina virtual» o «Equipo físico» (detectado); físico + GPU → swayfx con desenfoque real.
 - [x] Repositorio propio `[bc]` en GitHub Releases (`repo.yml`, `build/repo/`), `bc-actualizar`; la Tienda actualiza con él.
-- [ ] Ghostty: compilación desactivada (workflow `ghostty.yml` para depurar con strace) (BC_GHOSTTY=1 para probar). En CI Zig 0.17 da «panic: reached unreachable code» dentro del chroot; Terminal = Alacritty mientras tanto.
+- [x] Ghostty: compila (Zig descarga dentro del chroot, sin --system); activado por defecto (BC_GHOSTTY=0 lo desactiva) (BC_GHOSTTY=1 para probar). En CI Zig 0.17 da «panic: reached unreachable code» dentro del chroot; Terminal = Alacritty mientras tanto.
 - [ ] Verificar en QEMU cada parte con capturas antes de dar nada por hecho.
 - [x] README actualizado con capturas 1–14 (2026-11-15).
 - [~] 0.7.0-beta (prerelease) en CI para probar en VirtualBox.
