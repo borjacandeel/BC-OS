@@ -72,4 +72,10 @@ Instalador de BC OS (ARM64). Sin opciones arranca el asistente interactivo.
   --lang es_ES|en           Idioma del instalador
   --log FICHERO             Registro (/var/log/bc-install.log)
   --dry-run                 Muestra lo que haría sin tocar nada
-  -h, --help                Esta ayuda"
+  -h, --help                Esta ayuda
+  --bootloader systemd-boot|grub   gestor de arranque / boot manager
+  --secure-boot                    arranque seguro con sbctl / Secure Boot with sbctl"
+S_BOOTLOADER_ASK="Gestor de arranque"
+S_BL_SDBOOT="systemd-boot (recomendado, rápido)"
+S_BL_GRUB="GRUB (compatible con más firmwares)"
+S_SECUREBOOT_ASK="¿Activar el arranque seguro (Secure Boot)?\n\nSe crean claves propias con sbctl y se firman el cargador y el kernel. Para inscribirlas, el firmware debe estar en modo configuración (Setup Mode)."

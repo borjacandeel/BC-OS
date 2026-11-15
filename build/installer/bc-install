@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# bc-install — instalador de BC OS (ARM64). Asistente interactivo (whiptail/dialog) o --auto.
+# bc-install — instalador de BC OS (ARM64 y x86_64). Asistente interactivo (whiptail/dialog) o --auto.
 # Textos de usuario en lang/*.sh. Las contraseñas nunca se pasan por argumentos ni se registran.
 set -Eeuo pipefail
 
@@ -12,6 +12,7 @@ BOOT_COMMON="rw fsck.mode=skip preempt=full nowatchdog transparent_hugepage=madv
 BOOT_SPLASH="splash plymouth.ignore-serial-consoles"
 BOOT_SAFE="plymouth.enable=0"
 BOOT_CONSOLE="console=tty0 console=ttyAMA0"
+BOOTLOADER=systemd-boot SECURE_BOOT=0
 INITRD_MODULES="virtio_blk virtio_pci virtio_scsi virtio_gpu nvme ahci xhci_pci vfat nls_cp437 nls_iso8859_1 ext4"
 PLYMOUTH_THEME=bcos
 
@@ -46,6 +47,8 @@ while (($#)); do
     --user) USER_NAME="${2:?}"; shift ;;
     --password-file) PW_FILE="${2:?}"; shift ;;
     --encrypt) ENCRYPT=1 ;;
+    --bootloader) BOOTLOADER="${2:?}"; shift; [[ "$BOOTLOADER" == systemd-boot || "$BOOTLOADER" == grub ]] || die "--bootloader: systemd-boot | grub" ;;
+    --secure-boot) SECURE_BOOT=1 ;;
     --luks-passphrase-file) LUKS_FILE="${2:?}"; shift ;;
     --hostname) HOST_NAME="${2:?}"; shift ;;
     --keymap) KEYMAP="${2:?}"; shift ;;
@@ -61,6 +64,13 @@ while (($#)); do
   shift
 done
 SOURCE="${SOURCE%/}"; [[ -n "$SOURCE" ]] || SOURCE=/
+# Arquitectura del sistema que se instala (la del origen): kernel, cargador EFI y consola serie
+if [[ -e "$SOURCE/boot/vmlinuz-linux" && ! -e "$SOURCE/boot/Image" ]]; then
+  ARCH=x86_64 KIMG=vmlinuz-linux EFI_ARCH=x64 EFI_NAME=BOOTX64.EFI GRUB_TARGET=x86_64-efi
+  BOOT_CONSOLE="console=tty0 console=ttyS0"
+else
+  ARCH=aarch64 KIMG=Image EFI_ARCH=aa64 EFI_NAME=BOOTAA64.EFI GRUB_TARGET=arm64-efi
+fi
 
 # ---------- Utilidades ----------
 need() { command -v "$1" >/dev/null 2>&1 || die "$(fmt "$S_NEED_TOOL" "$1")"; }
@@ -151,7 +161,7 @@ validate_params() {
   [[ -f "$SOURCE/usr/share/zoneinfo/$TZONE" ]] || die "$(fmt "$S_TZ_BAD" "$TZONE")"
   [[ "$KEYMAP" =~ ^[A-Za-z0-9_.-]+$ ]] || die "$(fmt "$S_USER_BAD" "$KEYMAP")"
   local f
-  for f in boot/Image usr/lib/systemd/boot/efi/systemd-bootaa64.efi; do
+  for f in "boot/$KIMG" "usr/lib/systemd/boot/efi/systemd-boot$EFI_ARCH.efi"; do
     [[ -e "$SOURCE/$f" ]] || die "$(fmt "$S_NO_SRC" "$SOURCE" "$f")"
   done
 }
@@ -169,6 +179,8 @@ wizard() {
     ENCRYPT=1
     LUKS_PW="$(ask_password "$S_PASS_LUKS" "$S_PASS_LUKS2")" || { say "$S_CANCELLED"; exit 1; }
   fi
+  BOOTLOADER="$(ui_menu "$S_BOOTLOADER_ASK" systemd-boot "$S_BL_SDBOOT" grub "$S_BL_GRUB")" || { say "$S_CANCELLED"; exit 1; }
+  if [[ -d /sys/firmware/efi/efivars ]] && ui_yesno "$S_SECUREBOOT_ASK"; then SECURE_BOOT=1; fi
   while :; do
     HOST_NAME="$(ui_input "$S_HOSTNAME" "$HOST_NAME")" || { say "$S_CANCELLED"; exit 1; }
     [[ "$HOST_NAME" =~ ^[A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?$ ]] && break
@@ -206,7 +218,8 @@ load_auto_secrets() {
 
 # ---------- Chroot (ARM64 nativo o qemu-user) ----------
 ensure_arm() {
-  [[ "$(uname -m)" == aarch64 ]] && return 0
+  [[ "$(uname -m)" == "$ARCH" ]] && return 0
+  [[ "$ARCH" == aarch64 ]] || die "Para instalar x86_64 hace falta un equipo x86_64"
   if [[ -r /proc/sys/fs/binfmt_misc/qemu-aarch64 ]]; then return 0; fi
   if [[ -f "$HERE/../lib/chroot.sh" ]]; then
     # shellcheck disable=SC1091
@@ -318,7 +331,7 @@ do_copy() {
   fi
   mkdir -p "$TARGET"/{proc,sys,dev,run,tmp,boot,mnt,media}; chmod 1777 "$TARGET/tmp"
   : >"$TARGET/etc/machine-id"
-  cp "$SOURCE/boot/Image" "$TARGET/boot/Image"
+  cp "$SOURCE/boot/$KIMG" "$TARGET/boot/$KIMG"
 }
 
 xkb_layout() {
@@ -395,13 +408,13 @@ do_initramfs() {
 }
 
 boot_entry() { # boot_entry <título> <raíz/cifrado> <parámetros propios>
-  printf 'title   %s\nlinux   /Image\ninitrd  /initramfs-linux.img\noptions %s %s %s %s lang=%s\n' \
-    "$1" "$2" "$BOOT_COMMON" "$3" "$BOOT_CONSOLE" "${LOCALE%%.*}"
+  printf 'title   %s\nlinux   /%s\ninitrd  /initramfs-linux.img\noptions %s %s %s %s lang=%s\n' \
+    "$1" "$KIMG" "$2" "$BOOT_COMMON" "$3" "$BOOT_CONSOLE" "${LOCALE%%.*}"
 }
 
 do_boot() {
   progress "$P_BOOT" 5
-  local efi="$TARGET/usr/lib/systemd/boot/efi/systemd-bootaa64.efi"
+  local efi="$TARGET/usr/lib/systemd/boot/efi/systemd-boot$EFI_ARCH.efi"
   local root_uuid esp_uuid luks_uuid="" cmdline
   if ((DRY)); then root_uuid="<UUID-RAIZ>"; esp_uuid="<UUID-ESP>"; luks_uuid="<UUID-LUKS>"; else
     root_uuid="$(blkid -s UUID -o value "$ROOT_DEV")"; esp_uuid="$(blkid -s UUID -o value "$ESP_DEV")"
@@ -416,13 +429,53 @@ do_boot() {
     cmdline="root=UUID=${root_uuid}"
   fi
   run mkdir -p "$TARGET/boot/EFI/BOOT" "$TARGET/boot/EFI/systemd" "$TARGET/boot/loader/entries"
-  run cp "$efi" "$TARGET/boot/EFI/BOOT/BOOTAA64.EFI"
-  run cp "$efi" "$TARGET/boot/EFI/systemd/systemd-bootaa64.efi"
+  run cp "$efi" "$TARGET/boot/EFI/BOOT/$EFI_NAME"
+  run cp "$efi" "$TARGET/boot/EFI/systemd/systemd-boot$EFI_ARCH.efi"
   # Dos entradas como la imagen oficial: normal (animación Plymouth) y modo seguro (sin animación).
   # «editor no»: a diferencia de la imagen de pruebas, el sistema instalado no deja editar la línea del kernel.
   printf 'default bcos.conf\ntimeout %s\nconsole-mode max\neditor no\n' "$BOOT_TIMEOUT" | put "$TARGET/boot/loader/loader.conf"
   boot_entry "$S_BOOT_TITLE" "$cmdline" "$BOOT_SPLASH" | put "$TARGET/boot/loader/entries/bcos.conf"
   boot_entry "$S_BOOT_TITLE_SAFE" "$cmdline" "$BOOT_SAFE" | put "$TARGET/boot/loader/entries/bcos-seguro.conf"
+  # Entrada en la NVRAM del firmware (si se puede; el respaldo EFI/BOOT/ ya arranca solo)
+  if ((DRY == 0)) && command -v efibootmgr >/dev/null 2>&1 && [[ -d /sys/firmware/efi ]]; then
+    local disk_base part_n; disk_base="$DISK"; part_n=1
+    efibootmgr -q -c -d "$disk_base" -p "$part_n" -L "BC OS" -l "\\EFI\\systemd\\systemd-boot$EFI_ARCH.efi" >>"$LOG" 2>&1 || true
+  fi
+  [[ "$BOOTLOADER" == grub ]] && do_grub
+  ((SECURE_BOOT)) && do_secure_boot
+  return 0
+}
+
+# GRUB (opcional, --bootloader grub): mismo par de entradas, menú con el nombre de BC OS
+do_grub() {
+  progress "GRUB" 2
+  local cmdline_n cmdline_s
+  cmdline_n="$(sed -n 's/^options //p' "$TARGET/boot/loader/entries/bcos.conf" 2>/dev/null || echo "$BOOT_COMMON")"
+  cmdline_s="$(sed -n 's/^options //p' "$TARGET/boot/loader/entries/bcos-seguro.conf" 2>/dev/null || echo "$BOOT_COMMON")"
+  crun bash -c "command -v grub-install >/dev/null" || { say "Aviso: GRUB no está instalado; se usa systemd-boot"; return 0; }
+  crun grub-install --target="$GRUB_TARGET" --efi-directory=/boot --bootloader-id="BC OS" --removable
+  {
+    printf 'set timeout=%s\nset default=0\nset menu_color_normal=light-gray/black\nset menu_color_highlight=white/blue\n' "$BOOT_TIMEOUT"
+    printf 'menuentry "%s" {\n  linux /%s %s\n  initrd /initramfs-linux.img\n}\n' "$S_BOOT_TITLE" "$KIMG" "$cmdline_n"
+    printf 'menuentry "%s" {\n  linux /%s %s\n  initrd /initramfs-linux.img\n}\n' "$S_BOOT_TITLE_SAFE" "$KIMG" "$cmdline_s"
+  } | put "$TARGET/boot/grub/grub.cfg"
+}
+
+# Arranque seguro (--secure-boot) con sbctl: claves propias, inscritas si el firmware está en modo configuración,
+# y firma de cargador y kernel (sbctl deja un gancho de pacman que vuelve a firmar en cada actualización)
+do_secure_boot() {
+  progress "Secure Boot" 2
+  crun bash -c "command -v sbctl >/dev/null" || { say "Aviso: sbctl no está instalado; sin arranque seguro"; return 0; }
+  crun sbctl create-keys || true
+  if crun bash -c "sbctl status 2>/dev/null | grep -qi 'setup mode:.*enabled'"; then
+    crun sbctl enroll-keys -m || say "Aviso: no se pudieron inscribir las claves en el firmware"
+  else
+    say "Aviso: el firmware no está en modo configuración (Setup Mode): firma hecha, inscribe las claves luego con «sbctl enroll-keys -m»"
+  fi
+  local f
+  for f in "/boot/EFI/BOOT/$EFI_NAME" "/boot/EFI/systemd/systemd-boot$EFI_ARCH.efi" "/boot/$KIMG"; do
+    crun sbctl sign -s "$f" || true
+  done
 }
 
 # ---------- Principal ----------

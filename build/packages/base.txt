@@ -91,3 +91,6 @@ xsecurelock
 xss-lock
 gnome-themes-extra
 swaylock
+grub
+efibootmgr
+sbctl

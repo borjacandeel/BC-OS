@@ -72,4 +72,10 @@ BC OS installer (ARM64). Without options it starts the interactive wizard.
   --lang es_ES|en           Installer language
   --log FILE                Log file (/var/log/bc-install.log)
   --dry-run                 Show what would be done without touching anything
-  -h, --help                This help"
+  -h, --help                This help
+  --bootloader systemd-boot|grub   gestor de arranque / boot manager
+  --secure-boot                    arranque seguro con sbctl / Secure Boot with sbctl"
+S_BOOTLOADER_ASK="Boot manager"
+S_BL_SDBOOT="systemd-boot (recommended, fast)"
+S_BL_GRUB="GRUB (works with more firmwares)"
+S_SECUREBOOT_ASK="Enable Secure Boot?\n\nOwn keys are created with sbctl and the boot loader and kernel are signed. To enroll them, the firmware must be in Setup Mode."
