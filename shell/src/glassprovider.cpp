@@ -57,7 +57,11 @@ QImage GlassProvider::requestImage(const QString &id, QSize *size, const QSize &
     QPainter pa(&out);
     pa.setRenderHint(QPainter::Antialiasing);
     QPainterPath clip;
-    clip.addRoundedRect(QRectF(0, 0, w, h), r, r);
+    if (p.value(8) == "L") {
+        // Solo las esquinas izquierdas redondeadas (barras laterales pegadas al borde izquierdo de la ventana)
+        clip.addRoundedRect(QRectF(0, 0, w + r, h), r, r);
+        clip = clip.intersected([&] { QPainterPath q; q.addRect(0, 0, w, h); return q; }());
+    } else clip.addRoundedRect(QRectF(0, 0, w, h), r, r);
     pa.setClipPath(clip);
     pa.drawImage(QPoint(0, 0), blur, QRect(x, y, w, h));
     pa.end();

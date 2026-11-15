@@ -79,7 +79,8 @@ AppWindow {
     Rectangle {
         id: side
         y: -win.titlebarHeight; width: 220; height: parent.height + win.titlebarHeight
-        color: Theme.gg ? (win.active ? Theme.sidebarBgActive : Theme.sidebarBg) : Theme.sidebarFill
+        color: Theme.gg ? "transparent" : Theme.sidebarFill
+        SidebarGlass { anchors.fill: parent; active: win.active; z: -1 }
         Rectangle { anchors.right: parent.right; width: 1; height: parent.height; color: Theme.hairline }
         Column {
             y: win.titlebarHeight + 6; x: 10; width: parent.width - 20; spacing: 2

@@ -179,12 +179,15 @@ void WidgetHost::refresh() {
 
 // ---------------------------------------------------------------------------------------------
 #include <QProcess>
+#include <QCoreApplication>
 #include <QLocale>
 #include <cmath>
 QuickTools::QuickTools(QObject *parent) : QObject(parent) {
     m_media = {{"available", false}, {"playing", false}, {"title", ""}, {"artist", ""}};
     m_mediaTimer.setInterval(3000);
     connect(&m_mediaTimer, &QTimer::timeout, this, &QuickTools::refreshMedia);
+    m_winTimer.setInterval(400);
+    connect(&m_winTimer, &QTimer::timeout, this, &QuickTools::pollWindow);
 }
 void QuickTools::run(const QString &prog, const QStringList &args, std::function<void(int, const QString &)> done) {
     if (QStandardPaths::findExecutable(prog).isEmpty()) { done(-1, QString()); return; }
@@ -549,4 +552,33 @@ bool QuickTools::writeData(const QString &name, const QString &json) {
     if (!f.open(QIODevice::WriteOnly)) return false;
     f.write(json.toUtf8());
     return f.commit();
+}
+
+void QuickTools::setTrackWindow(bool on) {
+    if (on == m_winTimer.isActive() || qEnvironmentVariable("SWAYSOCK").isEmpty()) return;
+    if (on) { pollWindow(); m_winTimer.start(); } else m_winTimer.stop();
+    emit windowPosChanged();
+}
+void QuickTools::pollWindow() {
+    const qint64 me = QCoreApplication::applicationPid();
+    auto *p = new QProcess(this);
+    connect(p, &QProcess::finished, this, [this, p, me](int code) {
+        if (code == 0) {
+            std::function<bool(const QJsonObject &)> walk = [&](const QJsonObject &n) -> bool {
+                if (n.value("pid").toInteger() == me) {
+                    const QJsonObject r = n.value("rect").toObject();
+                    const QPoint pt(r.value("x").toInt(), r.value("y").toInt());
+                    if (pt != m_winPos) { m_winPos = pt; emit windowPosChanged(); }
+                    return true;
+                }
+                for (const QJsonValue &k : n.value("nodes").toArray()) if (walk(k.toObject())) return true;
+                for (const QJsonValue &k : n.value("floating_nodes").toArray()) if (walk(k.toObject())) return true;
+                return false;
+            };
+            walk(QJsonDocument::fromJson(p->readAllStandardOutput()).object());
+        }
+        p->deleteLater();
+    });
+    connect(p, &QProcess::errorOccurred, p, [p](QProcess::ProcessError e) { if (e == QProcess::FailedToStart) p->deleteLater(); });
+    p->start("swaymsg", {"-t", "get_tree", "-r"});
 }

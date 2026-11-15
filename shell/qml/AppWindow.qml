@@ -8,6 +8,10 @@ Window {
     default property alias content: contentArea.data
     property alias titlebarContent: tbSlot.data
     property int titlebarHeight: Theme.gg ? 52 : 44
+    // Posición en pantalla (sway) para que el cristal de las barras laterales recorte el fondo correcto
+    readonly property real originX: Quick.windowPos.x
+    readonly property real originY: Quick.windowPos.y
+    Binding { target: Quick; property: "trackWindow"; value: Theme.gg && win.active }
     signal closeRequested()
     visible: true
     color: "transparent"

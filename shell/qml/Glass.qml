@@ -16,6 +16,7 @@ Item {
     property bool shadow: true
     property bool rim: true
     property color tintColor: Theme.glassTintColor
+    property bool leftOnly: false        // redondear solo las esquinas izquierdas (barras laterales)
 
     // Posición global para recortar el fondo desenfocado correcto
     property point gp: Qt.point(0, 0)
@@ -43,7 +44,7 @@ Item {
         anchors.fill: parent
         cache: false; asynchronous: false; smooth: false
         source: g.width > 2 && g.height > 2
-            ? "image://glass/" + [g.gp.x, g.gp.y, Math.round(g.width), Math.round(g.height), Math.round(g.radius), Math.round(UiState.sw), Math.round(UiState.sh), g.version].join("_")
+            ? "image://glass/" + [g.gp.x, g.gp.y, Math.round(g.width), Math.round(g.height), Math.round(g.radius), Math.round(UiState.sw), Math.round(UiState.sh), g.version].join("_") + (g.leftOnly ? "_L" : "")
             : ""
     }
     // Tinte (deslizador ultratransparente ↔ tintado)

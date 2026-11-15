@@ -3,6 +3,7 @@
 #include <QTimer>
 #include <QVariantList>
 #include <QVariantMap>
+#include <QPoint>
 #include <functional>
 
 // Datos reales para los widgets del escritorio (Golden Gate).
@@ -79,6 +80,9 @@ class QuickTools : public QObject {
     Q_PROPERTY(bool busy READ busy NOTIFY busyChanged)
     Q_PROPERTY(QVariantList fileResults READ fileResults NOTIFY filesChanged)
     Q_PROPERTY(QStringList displayModes READ displayModes NOTIFY displayModesChanged)
+    // Posición de la ventana de esta app en la pantalla (para el cristal de las barras laterales); se sigue con sway
+    Q_PROPERTY(QPoint windowPos READ windowPos NOTIFY windowPosChanged)
+    Q_PROPERTY(bool trackWindow READ trackWindow WRITE setTrackWindow NOTIFY windowPosChanged)
     Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)   // sondeo de reproducción solo con el panel visible
 public:
     bool active() const { return m_mediaTimer.isActive(); }
@@ -89,6 +93,9 @@ public:
     QVariantMap media() const { return m_media; }
     QVariantList fileResults() const { return m_files; }
     QStringList displayModes() const { return m_modes; }
+    QPoint windowPos() const { return m_winPos; }
+    bool trackWindow() const { return m_winTimer.isActive(); }
+    void setTrackWindow(bool on);
     bool busy() const { return m_busy > 0; }
     Q_INVOKABLE void scanWifi();
     Q_INVOKABLE void connectWifi(const QString &ssid, const QString &password = QString());
@@ -122,11 +129,15 @@ signals:
     void wifiResult(bool ok, const QString &ssid);
     void filesChanged();
     void displayModesChanged();
+    void windowPosChanged();
     void captured(const QString &tag, const QString &path, bool ok);
 private:
     void run(const QString &prog, const QStringList &args, std::function<void(int, const QString &)> done);
     QVariantList m_networks, m_bt, m_files;
     QStringList m_modes;
+    QPoint m_winPos;
+    QTimer m_winTimer;
+    void pollWindow();
     int m_searchSeq = 0;
     QVariantMap m_media;
     int m_busy = 0;

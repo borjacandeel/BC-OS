@@ -85,7 +85,8 @@ AppWindow {
     Rectangle {
         id: side
         width: 230; height: parent.height
-        color: Theme.gg ? (win.active ? Theme.sidebarBgActive : Theme.sidebarBg) : Qt.rgba(0.03, 0.06, 0.16, 0.45)
+        color: Theme.gg ? "transparent" : Qt.rgba(0.03, 0.06, 0.16, 0.45)
+        SidebarGlass { anchors.fill: parent; active: win.active; z: -1 }
         Rectangle { anchors.right: parent.right; width: 1; height: parent.height; color: Theme.hairline }
         // Búsqueda
         Rectangle {
