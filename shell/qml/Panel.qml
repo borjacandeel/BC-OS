@@ -444,6 +444,45 @@ LayerWindow {
                            MouseArea { anchors.fill: parent; onClicked: { UiState.closePopups(); Launcher.launch("archivos", Files.placePath("downloads")) } } }
                 }
                 SlideIn { target: stack; dy: 14; duration: Theme.durPopover }
+                // Galería de widgets («Editar widgets…» de macOS): añadir y quitar widgets del escritorio
+                Item {
+                    id: gallery
+                    visible: UiState.widgetGalleryOpen
+                    width: Math.min(pop.width - Theme.px(40), Theme.px(900)); height: Theme.px(230)
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    y: pop.height - height - Theme.px(90)
+                    readonly property var lay: { try { return JSON.parse(Settings.widgetLayout || "{}") } catch (e) { return {} } }
+                    readonly property var act: lay._activos || ["baterias", "app", "recordatorios"]
+                    Glass { anchors.fill: parent; radius: Theme.px(24); tintBoost: 0.35; originY: UiState.topInset }
+                    MouseArea { anchors.fill: parent }
+                    Text { x: Theme.px(24); y: Theme.px(16); text: qsTr("Widgets"); color: Theme.label; font.family: Theme.font; font.pixelSize: Theme.px(18); font.weight: Font.Bold }
+                    Rectangle { anchors.right: parent.right; anchors.rightMargin: Theme.px(18); y: Theme.px(14); width: Theme.px(64); height: Theme.px(26); radius: height / 2; color: Theme.selection
+                                Text { anchors.centerIn: parent; text: qsTr("Listo"); color: "white"; font.family: Theme.font; font.pixelSize: Theme.px(12); font.weight: Font.Bold }
+                                MouseArea { anchors.fill: parent; onClicked: UiState.closePopups() } }
+                    Row {
+                        x: Theme.px(24); y: Theme.px(56); spacing: Theme.px(14)
+                        Repeater {
+                            model: [ { k: "baterias", t: qsTr("Baterías"), i: "battery-level-80-symbolic" }, { k: "app", t: qsTr("Uso del equipo"), i: "power-profile-performance-symbolic" },
+                                     { k: "recordatorios", t: qsTr("Recordatorios"), i: "view-list-symbolic" }, { k: "calendario", t: qsTr("Calendario"), i: "office-calendar" },
+                                     { k: "reloj", t: qsTr("Reloj"), i: "preferences-system-time" } ]
+                            Item {
+                                required property var modelData
+                                readonly property bool on: gallery.act.indexOf(modelData.k) >= 0
+                                width: (gallery.width - Theme.px(48) - 4 * Theme.px(14)) / 5; height: Theme.px(150)
+                                Rectangle { anchors.fill: parent; radius: Theme.px(18); color: Theme.fill; border.width: parent.on ? 2 : 1; border.color: parent.on ? Theme.selection : Theme.separator }
+                                Icon { anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(30); name: modelData.i; size: Theme.px(40); color: Theme.label }
+                                Text { anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(88); text: modelData.t; color: Theme.label; font.family: Theme.font; font.pixelSize: Theme.px(13); font.weight: Font.DemiBold }
+                                Rectangle {
+                                    anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(114); width: Theme.px(26); height: width; radius: width / 2
+                                    color: parent.on ? Theme.fill : Theme.selection
+                                    Text { anchors.centerIn: parent; text: parent.parent.on ? "−" : "+"; color: parent.parent.on ? Theme.label : "white"; font.pixelSize: Theme.px(17); font.weight: Font.Bold }
+                                }
+                                MouseArea { anchors.fill: parent; onClicked: { if (!Settings.widgets) Settings.widgets = true; UiState.command("bc", (parent.on ? "widgetOff:" : "widgetOn:") + modelData.k) } }
+                            }
+                        }
+                    }
+                }
+                SlideIn { target: gallery; dy: 30; duration: Theme.durPopover }
                 // Menú contextual (Dock, escritorio, widgets…)
                 MenuPopup {
                     id: ctx

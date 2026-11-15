@@ -53,6 +53,7 @@ Item {
             if (m.button === Qt.RightButton) UiState.openContextMenu([
                 { label: qsTr("Nueva carpeta"), cmd: "bc:desktopNewFolder" }, { sep: true },
                 { label: qsTr("Ordenar por nombre"), cmd: "bc:desktopSort" },
+                { label: qsTr("Editar widgets…"), cmd: "bc:widgetGallery" },
                 { label: qsTr("Volver a colocar los widgets"), cmd: "bc:widgetsReset" }, { sep: true },
                 { label: qsTr("Cambiar fondo de pantalla…"), cmd: "sway:exec bc-shell --app settings" },
                 { label: Settings.widgets ? qsTr("Ocultar widgets") : qsTr("Mostrar widgets"), cmd: "bc:toggleWidgets" }

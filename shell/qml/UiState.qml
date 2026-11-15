@@ -37,6 +37,7 @@ QtObject {
     property bool missionOpen: false
     property bool switcherOpen: false
     property bool stackOpen: false
+    property bool widgetGalleryOpen: false
     property var contextItems: []
     property point contextPos: Qt.point(0, 0)
     readonly property bool dockMenuOpen: contextItems.length > 0 || stackOpen
@@ -46,11 +47,11 @@ QtObject {
     property bool locked: false
     property string powerAction: ""
     readonly property bool popupOpen: !locked && (centerOpen || launcherOpen || startOpen || clipboardOpen || menu !== "" || powerAction !== ""
-                                                  || notifCenterOpen || spotlightOpen || stackOpen || contextItems.length > 0)
+                                                  || notifCenterOpen || spotlightOpen || stackOpen || widgetGalleryOpen || contextItems.length > 0)
     readonly property bool dim: launcherOpen || powerAction !== ""
 
     function closePopups() { centerOpen = false; centerPanel = ""; launcherOpen = false; startOpen = false; clipboardOpen = false; menu = ""; powerAction = ""
-                             notifCenterOpen = false; spotlightOpen = false; stackOpen = false; contextItems = [] }
+                             notifCenterOpen = false; spotlightOpen = false; stackOpen = false; widgetGalleryOpen = false; contextItems = [] }
     function toggleNotifCenter() { if (locked) return; const o = notifCenterOpen; closePopups(); notifCenterOpen = !o }
     function openCenterPanel(name) { if (locked) return; closePopups(); centerOpen = true; centerPanel = name }
     function toggleSpotlight() { if (locked) return; const o = spotlightOpen; closePopups(); spotlightOpen = !o }
@@ -81,6 +82,7 @@ QtObject {
             else if (arg === "mission") toggleMission()
             else if (arg === "spotlight") toggleSpotlight()
             else if (arg === "clipboard") toggleClipboard()
+            else if (arg === "widgetGallery") { closePopups(); widgetGalleryOpen = true }
             else if (arg.indexOf("power:") === 0) openPower(arg.substring(6))
             else command(kind, arg)
         } else command(kind, arg)

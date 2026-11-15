@@ -20,13 +20,31 @@ Item {
         const l = Object.assign({}, layout); l[id] = [Math.round(x / s), Math.round(y / s)]
         Settings.widgetLayout = JSON.stringify(l)
     }
-    function resetLayout() { Settings.widgetLayout = "{}" }
-    function defY(i) {
-        const hs = [Theme.widgetLargeH, Theme.widgetMediumH, Theme.widgetLargeH]
-        let y = Theme.widgetY
-        for (let k = 0; k < i; ++k) y += hs[k] + Theme.widgetGap
-        return px(y)
+    function resetLayout() { const l = {}; if (layout._activos) l._activos = layout._activos; Settings.widgetLayout = JSON.stringify(l) }
+    function setOn(id, on) {
+        const l = Object.assign({}, layout); let a = active.slice()
+        if (on && a.indexOf(id) < 0) a.push(id)
+        if (!on) { a = a.filter(x => x !== id); delete l[id] }
+        l._activos = a; Settings.widgetLayout = JSON.stringify(l)
     }
+    // Widgets activos (Editar widgets…): orden de la columna. Por defecto, los de la captura de referencia.
+    readonly property var heights: ({ baterias: Theme.widgetLargeH, app: Theme.widgetMediumH, recordatorios: Theme.widgetLargeH,
+                                      calendario: Theme.widgetMediumH, reloj: Theme.widgetMediumH })
+    readonly property var active: layout._activos || ["baterias", "app", "recordatorios"]
+    function isOn(id) { return active.indexOf(id) >= 0 }
+    // Colocación por defecto: de arriba abajo; si no cabe, columna siguiente (como el escritorio de macOS)
+    function defPos(id) {
+        let x = Theme.widgetX, y = Theme.widgetY
+        const maxY = UiState.sh / s - Theme.dockIcon - 40
+        for (const k of active) {
+            const h = heights[k] || Theme.widgetMediumH
+            if (y + h > maxY && y > Theme.widgetY) { x += Theme.widgetW + Theme.widgetGap; y = Theme.widgetY }
+            if (k === id) return Qt.point(px(x), px(y))
+            y += h + Theme.widgetGap
+        }
+        return Qt.point(px(Theme.widgetX), px(Theme.widgetY))
+    }
+    function defY(i) { return defPos(active[i] || "").y }
 
     // ---- Contenedor arrastrable --------------------------------------------------------------
     component Widget: Item {
@@ -36,8 +54,9 @@ Item {
         property real baseH: Theme.widgetLargeH
         default property alias content: inner.data
         width: root.px(Theme.widgetW); height: root.px(baseH)
-        x: root.layout[wid] ? root.layout[wid][0] * root.s : root.px(Theme.widgetX)
-        y: root.layout[wid] ? root.layout[wid][1] * root.s : root.defY(order)
+        visible: root.isOn(wid)
+        x: root.layout[wid] ? root.layout[wid][0] * root.s : root.defPos(wid).x
+        y: root.layout[wid] ? root.layout[wid][1] * root.s : root.defPos(wid).y
         Glass { anchors.fill: parent; radius: root.px(Theme.widgetRadius); tintBoost: 0.18 }
         Item { id: inner; anchors.fill: parent }
         // Arrastrar desde cualquier zona sin controles (como en macOS: se coge el widget entero)
@@ -47,16 +66,21 @@ Item {
             drag.target: w; drag.threshold: 6
             drag.minimumX: 0; drag.maximumX: UiState.sw - w.width
             drag.minimumY: UiState.topInset; drag.maximumY: UiState.sh - w.height
-            onReleased: if (drag.active || w.x !== (root.layout[w.wid] ? root.layout[w.wid][0] * root.s : root.px(Theme.widgetX))) root.savePos(w.wid, w.x, w.y)
+            onReleased: if (drag.active || w.x !== (root.layout[w.wid] ? root.layout[w.wid][0] * root.s : root.defPos(w.wid).x)) root.savePos(w.wid, w.x, w.y)
             onClicked: (m) => { if (m.button === Qt.RightButton) UiState.openContextMenu([
+                { label: qsTr("Editar widgets…"), cmd: "bc:widgetGallery" },
+                { label: qsTr("Eliminar widget"), cmd: "bc:widgetOff:" + w.wid }, { sep: true },
                 { label: qsTr("Volver a colocar los widgets"), cmd: "bc:widgetsReset" },
-                { label: qsTr("Ocultar widgets"), cmd: "bc:toggleWidgets" }, { sep: true },
-                { label: qsTr("Ajustes de widgets…"), cmd: "sway:exec bc-shell --app settings" } ], w.mapToItem(null, m.x, m.y)) }
+                { label: qsTr("Ocultar widgets"), cmd: "bc:toggleWidgets" } ], w.mapToItem(null, m.x, m.y)) }
         }
         Behavior on x { enabled: !Theme.reduced; NumberAnimation { duration: Theme.d(Theme.durPopover); easing.type: Theme.easeStandard } }
         Behavior on y { enabled: !Theme.reduced; NumberAnimation { duration: Theme.d(Theme.durPopover); easing.type: Theme.easeStandard } }
     }
-    Connections { target: UiState; function onCommand(kind, arg) { if (kind === "bc" && arg === "widgetsReset") root.resetLayout() } }
+    Connections { target: UiState; function onCommand(kind, arg) {
+        if (kind !== "bc") return
+        if (arg === "widgetsReset") root.resetLayout()
+        else if (arg.indexOf("widgetOff:") === 0) root.setOn(arg.substring(10), false)
+        else if (arg.indexOf("widgetOn:") === 0) root.setOn(arg.substring(9), true) } }
 
     component Label: Text {
         color: Theme.label; font.family: Theme.font; font.pixelSize: root.px(Theme.widgetBodyPx)
@@ -191,5 +215,42 @@ Item {
         }
         // Como en macOS, los completados desaparecen al poco
         Timer { id: purge; interval: 2500; onTriggered: Reminders.clearDone() }
+    }
+
+    // ---- 4. Calendario (pequeño) ----------------------------------------------------------------
+    Widget {
+        id: calW
+        wid: "calendario"; baseH: Theme.widgetMediumH
+        property date now: new Date()
+        Timer { interval: 60000; running: calW.visible; repeat: true; triggeredOnStart: true; onTriggered: calW.now = new Date() }
+        readonly property int first: (new Date(now.getFullYear(), now.getMonth(), 1).getDay() + 6) % 7
+        readonly property int days: new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate()
+        Column {
+            x: root.px(Theme.widgetPad); y: root.px(12); spacing: root.px(2)
+            Label { text: calW.now.toLocaleDateString(Qt.locale(AppConfig.language), "MMMM").toUpperCase(); color: "#FF453A"; font.pixelSize: root.px(11); font.weight: Font.Bold }
+            Grid {
+                columns: 7; rowSpacing: root.px(1)
+                Repeater { model: ["L", "M", "X", "J", "V", "S", "D"]
+                    Label { required property string modelData; width: (calW.width - 2 * root.px(Theme.widgetPad)) / 7; horizontalAlignment: Text.AlignHCenter
+                            text: modelData; color: Theme.labelSecondary; font.pixelSize: root.px(9); font.weight: Font.Bold } }
+                Repeater { model: 7 * 6
+                    Label { required property int index; readonly property int d: index - calW.first + 1
+                            width: (calW.width - 2 * root.px(Theme.widgetPad)) / 7; horizontalAlignment: Text.AlignHCenter; text: d >= 1 && d <= calW.days ? d : ""
+                            font.pixelSize: root.px(10); font.weight: d === calW.now.getDate() ? Font.Bold : Font.Normal
+                            color: d === calW.now.getDate() ? "#FF453A" : Theme.label } }
+            }
+        }
+    }
+    // ---- 5. Reloj --------------------------------------------------------------------------------
+    Widget {
+        id: clockW
+        wid: "reloj"; baseH: Theme.widgetMediumH
+        property date now: new Date()
+        Timer { interval: 1000; running: clockW.visible; repeat: true; triggeredOnStart: true; onTriggered: clockW.now = new Date() }
+        Label { anchors.horizontalCenter: parent.horizontalCenter; y: root.px(22); text: clockW.now.toLocaleTimeString(Qt.locale(AppConfig.language), "H:mm")
+                font.pixelSize: root.px(64); font.weight: Font.DemiBold }
+        Label { anchors.horizontalCenter: parent.horizontalCenter; y: root.px(108)
+                text: { const s = clockW.now.toLocaleDateString(Qt.locale(AppConfig.language), "dddd, d 'de' MMMM"); return s.charAt(0).toUpperCase() + s.slice(1) }
+                color: Theme.labelSecondary; font.pixelSize: root.px(13) }
     }
 }
