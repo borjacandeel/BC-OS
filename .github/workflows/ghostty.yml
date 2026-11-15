@@ -26,9 +26,9 @@ jobs:
         include:
           - variante: chroot
             args: "--summary all"
-          - variante: strace
+          - variante: sin-predescarga
             args: "--summary all"
-            wrap: "strace -f -qq -s 160 -e trace=%file,%process,%signal,%ipc,prlimit64,getrandom,sched_getaffinity,uname,ioctl,mmap -o /tmp/ghostty-strace.txt"
+            noprefetch: "1"
 
     steps:
       - uses: actions/checkout@v4
@@ -45,6 +45,10 @@ jobs:
           sudo bash -c "source build/lib/chroot.sh; bc_mount $R; sed -i 's/^CheckSpace/#CheckSpace/' $R/etc/pacman.conf
             bc_chroot $R bash -c 'pacman-key --init && pacman-key --populate archlinuxarm && pacman -Syu --noconfirm --disable-sandbox'
             bc_umount $R"
+      - name: ¿Ghostty empaquetado en Arch Linux ARM?
+        run: |
+          R="$RUNNER_TEMP/root"
+          sudo bash -c "source build/lib/chroot.sh; bc_mount $R; bc_chroot $R pacman -Ss '^ghostty' || echo 'NO EMPAQUETADO'; bc_umount $R"
       - name: Compilar Ghostty
         if: matrix.host != '1'
         env:
@@ -52,6 +56,7 @@ jobs:
           ZIG_VER: ${{ matrix.zig || inputs.zig_ver }}
           GHOSTTY_ARGS: ${{ matrix.args }}
           BC_GHOSTTY_WRAP: ${{ matrix.wrap }}
+          BC_GHOSTTY_NOPREFETCH: ${{ matrix.noprefetch || '0' }}
         run: |
           R="$RUNNER_TEMP/root"
           sudo -E BC_GHOSTTY_LOG="$RUNNER_TEMP/ghostty.log" bash build/build-ghostty.sh "$R" && echo "RESULTADO: OK" || echo "RESULTADO: FALLO"

@@ -27,8 +27,11 @@ git clone -q --depth 1 --branch "$GHOSTTY_TAG" https://github.com/ghostty-org/gh
 # Zig del anfitrión (para descargar dependencias) y Zig aarch64 (para compilar dentro del chroot)
 curl -fsSL "https://ziglang.org/download/$ZIG_VER/zig-$HOSTARCH-linux-$ZIG_VER.tar.xz" | tar -xJ -C "$W"
 [ "$HOSTARCH" = aarch64 ] || curl -fsSL "https://ziglang.org/download/$ZIG_VER/zig-aarch64-linux-$ZIG_VER.tar.xz" | tar -xJ -C "$W"
+# BC_GHOSTTY_NOPREFETCH=1: no descargar en el anfitrión; Zig descarga dentro del chroot (necesita red y certificados)
+if [ "${BC_GHOSTTY_NOPREFETCH:-0}" = 0 ]; then
 PATH="$W/zig-$HOSTARCH-linux-$ZIG_VER:$PATH" ZIG_GLOBAL_CACHE_DIR="$W/cache" sh "$W/src/nix/build-support/fetch-zig-cache.sh" >/dev/null 2>&1 \
   || PATH="$W/zig-$HOSTARCH-linux-$ZIG_VER:$PATH" ZIG_GLOBAL_CACHE_DIR="$W/cache" bash "$W/src/nix/build-support/fetch-zig-cache.sh"
+fi
 
 # GHOSTTY_ARGS: opciones extra para depurar (p. ej. "-j1 --verbose"); BC_GHOSTTY_LOG: guardar la salida completa
 # BC_GHOSTTY_WRAP: envoltorio de depuración (p. ej. «strace -f -o /tmp/st.txt»)
