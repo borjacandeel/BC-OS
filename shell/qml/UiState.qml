@@ -6,7 +6,7 @@ QtObject {
     id: ui
     // Pantalla principal (barra completa, widgets): la digital más grande (HDMI/DP/eDP antes que VGA/DVI analógicos);
     // a igualdad, la primera que anuncia el compositor
-    readonly property var scr: _principal(Qt.application.screens)
+    readonly property var scr: Qt.application ? _principal(Qt.application.screens) : null
     function _principal(l) {
         let best = null, bs = -1
         for (let i = 0; i < l.length; ++i) {
@@ -18,7 +18,7 @@ QtObject {
     }
     // El resto de pantallas (barra de menús y Dock propios en cada una)
     readonly property var otherScreens: {
-        const l = Qt.application.screens, r = []
+        const l = Qt.application ? Qt.application.screens : [], r = []
         for (let i = 0; i < l.length; ++i) if (l[i] !== scr) r.push(l[i])
         return r
     }

@@ -24,7 +24,6 @@ Item {
     property point gp: Qt.point(0, 0)
     function sync() { const p = g.mapToItem(null, 0, 0); gp = Qt.point(Math.round(p.x + originX), Math.round(p.y + originY)) }
     onXChanged: sync(); onYChanged: sync(); onWidthChanged: sync(); onHeightChanged: sync()
-    onOriginXChanged: sync(); onOriginYChanged: sync()
     Component.onCompleted: sync()
     // Los padres pueden moverse o escalarse (animaciones de entrada): se vuelve a calcular al aparecer y al asentarse
     onVisibleChanged: if (visible) { sync(); settle.restart() }
@@ -41,9 +40,26 @@ Item {
         visible: g.shadow; anchors.fill: parent; anchors.margins: -6; anchors.topMargin: 2; anchors.bottomMargin: -14
         radius: g.radius + 8; color: Theme.shadow; opacity: 0.12
     }
+    // En movimiento (arrastrar la ventana) se desliza el fondo desenfocado entero bajo el cristal: va a la
+    // frecuencia del monitor sin recalcular nada. Al detenerse vuelve el recorte con lente y esquinas.
+    property bool moving: false
+    property bool usedFull: false
+    function _moved() { sync(); if (win && win.titlebarHeight !== undefined && blur.status === Image.Ready && blur.source != "") { usedFull = true; moving = true; still.restart() } }
+    onOriginXChanged: _moved()
+    onOriginYChanged: _moved()
+    Timer { id: still; interval: 160; onTriggered: g.moving = false }
+    Item {
+        anchors.fill: parent; clip: true
+        visible: g.moving && !Quick.realBlur
+        Image {
+            x: -g.gp.x; y: -g.gp.y
+            cache: true; asynchronous: false; smooth: false
+            source: g.usedFull ? "image://glass/" + [0, 0, 1, 1, 0, Math.round(g.scrW), Math.round(g.scrH), g.version, "F"].join("_") : ""
+        }
+    }
     Image {
         id: blur
-        visible: !Quick.realBlur
+        visible: !Quick.realBlur && !g.moving
         anchors.fill: parent
         cache: false; asynchronous: false; smooth: false
         // Durante animaciones de tamaño (Dock, paneles) no se recorta el fondo en cada fotograma: como mucho cada 70 ms

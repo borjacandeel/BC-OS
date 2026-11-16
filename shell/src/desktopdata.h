@@ -103,6 +103,8 @@ public:
     bool trackWindow() const { return m_winTimer.isActive(); }
     void setTrackWindow(bool on);
     Q_INVOKABLE void refreshWindowPos() { if (m_winTimer.isActive()) { pollWindow(); QTimer::singleShot(300, this, &QuickTools::pollWindow); } }
+    // Arrastre de la ventana: sigue su posición a ~60 Hz (socket IPC de sway) hasta que se queda quieta
+    Q_INVOKABLE void followWindowMove();
     bool busy() const { return m_busy > 0; }
     Q_INVOKABLE void scanWifi();
     Q_INVOKABLE void connectWifi(const QString &ssid, const QString &password = QString());
@@ -163,6 +165,12 @@ private:
     QStringList m_modes;
     QPoint m_winPos;
     QTimer m_winTimer;
+    QTimer m_fastTimer;
+    int m_still = 0;
+    class QLocalSocket *m_ipc = nullptr;
+    QByteArray m_ipcBuf;
+    bool m_ipcBusy = false;
+    void handleTree(const QByteArray &json);
     void pollWindow();
     int m_searchSeq = 0;
     QVariantMap m_media;

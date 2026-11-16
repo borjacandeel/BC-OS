@@ -181,6 +181,8 @@ void WidgetHost::refresh() {
 
 // ---------------------------------------------------------------------------------------------
 #include <QProcess>
+#include <QLocalSocket>
+#include <cstring>
 #include <QCoreApplication>
 #include <QLocale>
 #include <cmath>
@@ -190,6 +192,13 @@ QuickTools::QuickTools(QObject *parent) : QObject(parent) {
     connect(&m_mediaTimer, &QTimer::timeout, this, &QuickTools::refreshMedia);
     m_winTimer.setInterval(1500);   // además se refresca al soltar la barra de título (AppWindow)
     connect(&m_winTimer, &QTimer::timeout, this, &QuickTools::pollWindow);
+    m_fastTimer.setInterval(16);
+    connect(&m_fastTimer, &QTimer::timeout, this, [this] {
+        const QPoint before = m_winPos;
+        pollWindow();
+        // Parada: ~1,5 s sin moverse (la ventana se soltó o el puntero está quieto)
+        if (m_winPos == before) { if (++m_still > 90) m_fastTimer.stop(); } else m_still = 0;
+    });
 }
 void QuickTools::run(const QString &prog, const QStringList &args, std::function<void(int, const QString &)> done) {
     if (QStandardPaths::findExecutable(prog).isEmpty()) { done(-1, QString()); return; }
@@ -567,28 +576,57 @@ void QuickTools::setTrackWindow(bool on) {
     if (on) { pollWindow(); m_winTimer.start(); } else m_winTimer.stop();
     emit windowPosChanged();
 }
+void QuickTools::followWindowMove() {
+    if (qEnvironmentVariable("SWAYSOCK").isEmpty()) return;
+    m_still = 0;
+    m_fastTimer.start();
+}
+// Socket IPC de sway abierto de forma permanente: pedir el árbol cuesta ~1 ms (lanzar swaymsg, decenas)
 void QuickTools::pollWindow() {
+    const QString path = qEnvironmentVariable("SWAYSOCK");
+    if (path.isEmpty()) return;
+    if (!m_ipc) {
+        m_ipc = new QLocalSocket(this);
+        connect(m_ipc, &QLocalSocket::readyRead, this, [this] {
+            m_ipcBuf += m_ipc->readAll();
+            while (m_ipcBuf.size() >= 14) {
+                quint32 len; memcpy(&len, m_ipcBuf.constData() + 6, 4);
+                if (m_ipcBuf.size() < 14 + int(len)) break;
+                const QByteArray body = m_ipcBuf.mid(14, len);
+                m_ipcBuf.remove(0, 14 + len);
+                m_ipcBusy = false;
+                handleTree(body);
+            }
+        });
+        connect(m_ipc, &QLocalSocket::disconnected, this, [this] { m_ipcBusy = false; m_ipcBuf.clear(); });
+    }
+    if (m_ipc->state() != QLocalSocket::ConnectedState) {
+        m_ipcBusy = false; m_ipcBuf.clear();
+        m_ipc->connectToServer(path);
+        if (!m_ipc->waitForConnected(100)) return;
+    }
+    if (m_ipcBusy) return;   // la respuesta anterior aún no ha llegado
+    QByteArray msg("i3-ipc");
+    const quint32 len = 0, type = 4;   // GET_TREE
+    msg.append(reinterpret_cast<const char *>(&len), 4).append(reinterpret_cast<const char *>(&type), 4);
+    m_ipcBusy = true;
+    m_ipc->write(msg);
+    m_ipc->flush();
+}
+void QuickTools::handleTree(const QByteArray &json) {
     const qint64 me = QCoreApplication::applicationPid();
-    auto *p = new QProcess(this);
-    connect(p, &QProcess::finished, this, [this, p, me](int code) {
-        if (code == 0) {
-            std::function<bool(const QJsonObject &)> walk = [&](const QJsonObject &n) -> bool {
-                if (n.value("pid").toInteger() == me) {
-                    const QJsonObject r = n.value("rect").toObject();
-                    const QPoint pt(r.value("x").toInt(), r.value("y").toInt());
-                    if (pt != m_winPos) { m_winPos = pt; emit windowPosChanged(); }
-                    return true;
-                }
-                for (const QJsonValue &k : n.value("nodes").toArray()) if (walk(k.toObject())) return true;
-                for (const QJsonValue &k : n.value("floating_nodes").toArray()) if (walk(k.toObject())) return true;
-                return false;
-            };
-            walk(QJsonDocument::fromJson(p->readAllStandardOutput()).object());
+    std::function<bool(const QJsonObject &)> walk = [&](const QJsonObject &n) -> bool {
+        if (n.value("pid").toInteger() == me) {
+            const QJsonObject r = n.value("rect").toObject();
+            const QPoint pt(r.value("x").toInt(), r.value("y").toInt());
+            if (pt != m_winPos) { m_winPos = pt; emit windowPosChanged(); }
+            return true;
         }
-        p->deleteLater();
-    });
-    connect(p, &QProcess::errorOccurred, p, [p](QProcess::ProcessError e) { if (e == QProcess::FailedToStart) p->deleteLater(); });
-    p->start("swaymsg", {"-t", "get_tree", "-r"});
+        for (const QJsonValue &k : n.value("nodes").toArray()) if (walk(k.toObject())) return true;
+        for (const QJsonValue &k : n.value("floating_nodes").toArray()) if (walk(k.toObject())) return true;
+        return false;
+    };
+    walk(QJsonDocument::fromJson(json).object());
 }
 
 #include <QUrl>

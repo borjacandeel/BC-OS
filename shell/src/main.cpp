@@ -246,7 +246,9 @@ int main(int argc, char *argv[]) {
             auto *t = new QElapsedTimer; t->start();
             // Se evalúa en el contexto del panel (tiene importado BCShell y su UiState)
             // «aviso»: un aviso de prueba que entra, dura 500 ms y sale (para ver las dos animaciones)
+            // «mover»: seguir la ventana como al arrastrarla (con un sway simulado que la desplaza)
             const QString js = prop == "aviso" ? QStringLiteral("Notifications.push(\"BC OS\", \"Aviso de prueba\", \"Entra, espera y sale\", \"\", 500)")
+                             : prop == "mover" ? QStringLiteral("Quick.followWindowMove()")
                                                : "UiState." + prop + " = true";
             QQmlExpression ex(QQmlEngine::contextForObject(win), win, js);
             ex.evaluate();

@@ -53,6 +53,8 @@ QImage GlassProvider::requestImage(const QString &id, QSize *size, const QSize &
         }
         blur = m_blur.value(key);
     }
+    // «full»: el fondo desenfocado entero; Glass lo desplaza mientras la ventana se mueve (sin recortar en cada fotograma)
+    if (p.value(8) == "F") { if (size) *size = blur.size(); return blur; }
     QImage out(w, h, QImage::Format_ARGB32_Premultiplied);
     out.fill(Qt::transparent);
     QPainter pa(&out);

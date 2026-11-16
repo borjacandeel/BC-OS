@@ -117,7 +117,7 @@ Window {
             MouseArea { id: tlHover; x: 0; width: 90; height: parent.height; hoverEnabled: true; acceptedButtons: Qt.NoButton; z: 2 }
             MouseArea {
                 anchors.fill: parent
-                onPressed: win.startSystemMove()
+                onPressed: { win.startSystemMove(); Quick.followWindowMove() }
                 onReleased: Quick.refreshWindowPos()
                 onDoubleClicked: WindowControl.toggleFullscreen()
             }
