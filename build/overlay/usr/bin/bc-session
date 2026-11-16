@@ -57,7 +57,7 @@ if grep -qw "bc.gpu=0" /proc/cmdline || [ "$PREF" = sway ]; then COMP=sway
 elif command -v Hyprland >/dev/null 2>&1 && { grep -qw "bc.gpu=1" /proc/cmdline || [ "$PREF" = hyprland ] || { [ "$EQUIPO" = fisico ] && acelerado; }; }; then COMP=hyprland
 fi
 { date; echo "equipo: $EQUIPO  compositor: $COMP  renderD: $(ls /dev/dri 2>&1 | tr '\n' ' ')"
-  command -v eglinfo >/dev/null && timeout 5 eglinfo -B 2>/dev/null | grep -i -m2 'renderer\|vendor'; } > "$LOG" 2>&1
+  command -v eglinfo >/dev/null && timeout 5 eglinfo -B 2>/dev/null | grep -i -m3 'renderer'; } > "$LOG" 2>&1
 
 # Aspecto claro/oscuro recordado (GTK)
 [ -x /usr/bin/bc-appearance ] && bc-appearance "$(cat "$CFG/appearance" 2>/dev/null || echo dark)" >> "$LOG" 2>&1
@@ -76,7 +76,8 @@ sway_software() {
   GPU=0; gpu_real && GPU=1
   if [ -x /opt/swayfx/bin/sway ] && ! grep -qw "bc.fx=0" /proc/cmdline && { [ "$ESQ" = si ] || { [ $GPU = 1 ] && [ "$ESQ" != no ]; }; }; then
     export BC_FX=ligero
-    if [ $GPU = 1 ]; then unset WLR_RENDERER WLR_RENDERER_ALLOW_SOFTWARE; else export WLR_RENDERER=gles2 WLR_RENDERER_ALLOW_SOFTWARE=1; fi
+    # Con GPU, BC Shell y las apps Qt también dibujan con OpenGL (la CPU queda libre: sin «your system is too slow»)
+    if [ $GPU = 1 ]; then unset WLR_RENDERER WLR_RENDERER_ALLOW_SOFTWARE QT_QUICK_BACKEND; else export WLR_RENDERER=gles2 WLR_RENDERER_ALLOW_SOFTWARE=1; fi
     bc-wm-mode init >> "$LOG" 2>&1
     t1=$(date +%s)
     /opt/swayfx/bin/sway -c "${XDG_RUNTIME_DIR:-/tmp}/bc-sway.conf" >> "$LOG" 2>&1
@@ -84,6 +85,7 @@ sway_software() {
     [ $r -eq 0 ] || [ $(( $(date +%s) - t1 )) -ge 15 ] && return $r
     echo "swayfx falló al arrancar ($r): sway con pixman" >> "$LOG"
   fi
+  export QT_QUICK_BACKEND=software
   export WLR_RENDERER=pixman
   unset BC_FX WLR_RENDERER_ALLOW_SOFTWARE
   bc-wm-mode init >> "$LOG" 2>&1

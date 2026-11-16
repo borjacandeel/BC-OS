@@ -26,6 +26,10 @@ Window {
     readonly property bool _b: edges.indexOf("bottom") >= 0
     // Tamaño de SU pantalla (multimonitor: cada superficie recorta el fondo de la pantalla en la que está)
     screen: UiState.scr
+    // Qt, al crear la ventana, vuelve a elegir pantalla según su posición (la de 0,0 es la primera): se coloca
+    // dentro de SU pantalla para que la superficie layer-shell salga en el monitor correcto
+    x: screen ? screen.virtualX : 0
+    y: screen ? screen.virtualY : 0
     readonly property bool _other: screen && Qt.application.screens.length > 1 && screen !== UiState.scr
     readonly property real scrW: _other ? screen.width : UiState.sw
     readonly property real scrH: _other ? screen.height : UiState.sh
