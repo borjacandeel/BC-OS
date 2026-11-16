@@ -6,6 +6,7 @@ import BCShell
 // Teclado físico: dígitos, + - * / , Intro (=), Supr/Esc (C), % y Retroceso.
 AppWindow {
     id: win
+    edgeFade: false
     width: 250
     height: 440
     minimumWidth: 250
@@ -52,7 +53,8 @@ AppWindow {
         else operator(k)
     }
 
-    Rectangle { anchors.fill: parent; color: Theme.dark ? "#2A2A2C" : "#E6E6E8" }
+    // Fondo de toda la ventana (también bajo la barra de título) con las esquinas de la ventana
+    Rectangle { anchors.fill: parent; anchors.topMargin: -win.titlebarHeight; radius: Theme.radiusWindow; color: Theme.dark ? "#2A2A2C" : "#E6E6E8" }
     Text {
         id: screen
         anchors.right: parent.right; anchors.rightMargin: 18; y: 18

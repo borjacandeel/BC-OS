@@ -98,7 +98,9 @@ AppWindow {
         x: win.showSidebar ? side.width : 0; width: parent.width - x; height: parent.height
         contentWidth: Math.max(width, frame.width); contentHeight: Math.max(height, frame.height); clip: true
         boundsBehavior: Flickable.StopAtBounds
-        Rectangle { anchors.fill: parent; color: Theme.dark ? "#1C1C1E" : "#ECECEE"; z: -1 }
+        // Fondo con la esquina inferior derecha de la ventana (las demás quedan fuera del recorte del Flickable)
+        Rectangle { x: -Theme.radiusWindow; y: -Theme.radiusWindow; width: view.width + Theme.radiusWindow; height: view.height + Theme.radiusWindow
+                    radius: Theme.radiusWindow; color: Theme.dark ? "#1C1C1E" : "#ECECEE"; z: -1 }
         Item {
             id: frame
             readonly property real fit: Math.min(view.width / Math.max(1, img.implicitWidth), view.height / Math.max(1, img.implicitHeight), 1)

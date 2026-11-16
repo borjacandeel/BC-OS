@@ -129,7 +129,11 @@ AppWindow {
     // ---- Panel inferior (resumen de la pestaña) ------------------------------------------------
     Rectangle {
         id: bottomPanel
-        anchors.bottom: parent.bottom; width: parent.width; height: 132; color: Theme.gg ? Theme.sidebarBg : Theme.tileFill
+        anchors.bottom: parent.bottom; width: parent.width; height: 132; color: "transparent"
+        // Fondo con las esquinas inferiores de la ventana (un rectángulo redondeado recortado por arriba)
+        Item { anchors.fill: parent; clip: true; z: -1
+            Rectangle { y: -Theme.radiusWindow; width: parent.width; height: parent.height + Theme.radiusWindow; radius: Theme.radiusWindow
+                        color: Theme.gg ? Theme.sidebarBg : Theme.tileFill } }
         Rectangle { width: parent.width; height: 1; color: Theme.hairline }
         component Stat: Row {
             property string k
@@ -207,7 +211,7 @@ AppWindow {
         anchors.fill: parent; z: 60; visible: opacity > 0; opacity: open ? 1 : 0
         Behavior on opacity { NumberAnimation { duration: Theme.d(Theme.durSheet * 0.6) } }
         readonly property var proc: Processes.list.find(p => p.pid === win.selPid) || null
-        Rectangle { anchors.fill: parent; color: Theme.scrim; opacity: 0.35 }
+        Rectangle { anchors.fill: parent; anchors.topMargin: -win.titlebarHeight; radius: Theme.radiusWindow; color: Theme.scrim; opacity: 0.35 }
         MouseArea { anchors.fill: parent; onClicked: quitSheet.open = false }
         Rectangle {
             width: 420; height: 150; radius: 16; anchors.horizontalCenter: parent.horizontalCenter

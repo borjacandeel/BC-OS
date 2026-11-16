@@ -7,6 +7,9 @@
 #include <QPainter>
 #include <QSettings>
 #include <QTimer>
+#include <QElapsedTimer>
+#include <QQmlExpression>
+#include <QRegularExpression>
 #include <QTranslator>
 #include <QtQml/qqml.h>
 #include "appconfig.h"
@@ -191,42 +194,75 @@ int main(int argc, char *argv[]) {
         } else { qCritical() << "--size inválido"; return 2; }
     }
 
+    // Captura compuesta de todas las superficies (ver comentario dentro)
+    auto grabComposite = [&]() -> QImage {
+        QImage img = win->grabWindow();
+        // Captura compuesta: sin layer-shell (pruebas) cada superficie del panel es una ventana aparte;
+        // se pintan encima en orden de capa y en su posición en pantalla (originX/originY de LayerWindow).
+        if (!img.isNull() && !LayerHelper().supported()) {
+            QPainter pa(&img);
+            const QStringList order{"background", "bottom", "top", "overlay"};
+            for (const QString &layerName : order) {
+                for (QWindow *w : QGuiApplication::topLevelWindows()) {
+                    auto *qw = qobject_cast<QQuickWindow *>(w);
+                    if (!qw || qw == win || !qw->isVisible() || qw->property("layer").toString() != layerName) continue;
+                    // La plataforma de pruebas devuelve RGB sin alfa: se renderiza sobre negro y sobre blanco
+                    // y se recupera el alfa de la diferencia (matting), para componer igual que el compositor.
+                    const QColor old = qw->color();
+                    qw->setColor(Qt::black);
+                    const QImage onBlack = qw->grabWindow().convertToFormat(QImage::Format_RGB32);
+                    qw->setColor(Qt::white);
+                    const QImage onWhite = qw->grabWindow().convertToFormat(QImage::Format_RGB32);
+                    qw->setColor(old);
+                    QImage part(onBlack.size(), QImage::Format_ARGB32);
+                    for (int y = 0; y < part.height(); ++y) {
+                        const QRgb *b = reinterpret_cast<const QRgb *>(onBlack.constScanLine(y));
+                        const QRgb *wl = reinterpret_cast<const QRgb *>(onWhite.constScanLine(y));
+                        QRgb *o = reinterpret_cast<QRgb *>(part.scanLine(y));
+                        for (int x = 0; x < part.width(); ++x) {
+                            const int a = 255 - qBound(0, ((qRed(wl[x]) - qRed(b[x])) + (qGreen(wl[x]) - qGreen(b[x])) + (qBlue(wl[x]) - qBlue(b[x]))) / 3, 255);
+                            o[x] = a == 0 ? 0 : qRgba(qMin(255, qRed(b[x]) * 255 / a), qMin(255, qGreen(b[x]) * 255 / a), qMin(255, qBlue(b[x]) * 255 / a), a);
+                        }
+                    }
+                    pa.drawImage(QPointF(qw->property("originX").toReal(), qw->property("originY").toReal()), part);
+                }
+            }
+        }
+        return img;
+    };
+
+    // Ráfaga para revisar animaciones a ritmo real: BC_BURST=<propiedad de UiState>:<fotogramas>. Pone la propiedad
+    // a true y guarda fotogramas compuestos seguidos con el tiempo transcurrido en el nombre (captura-<ms>.png).
+    const QString burst = qEnvironmentVariable("BC_BURST");
+    if (p.isSet(oShot) && !burst.isEmpty()) {
+        QTimer::singleShot(qEnvironmentVariableIntValue("BC_SHOT_DELAY") > 0 ? qEnvironmentVariableIntValue("BC_SHOT_DELAY") : 1500, &app, [&, burst] {
+            const QString prop = burst.section(':', 0, 0);
+            static const QRegularExpression okProp("^[A-Za-z]+$");
+            if (!okProp.match(prop).hasMatch()) { qCritical() << "BC_BURST inválido"; app.exit(7); return; }
+            const int n = qBound(1, burst.section(':', 1, 1).toInt(), 60);
+            auto *t = new QElapsedTimer; t->start();
+            // Se evalúa en el contexto del panel (tiene importado BCShell y su UiState)
+            QQmlExpression ex(QQmlEngine::contextForObject(win), win, "UiState." + prop + " = true");
+            ex.evaluate();
+            if (ex.hasError()) { qCritical() << ex.error().toString(); app.exit(7); return; }
+            auto *count = new int(0);
+            auto *tick = new QTimer(&app); tick->setInterval(1);
+            QObject::connect(tick, &QTimer::timeout, &app, [&, t, count, n, tick] {
+                const qint64 ms = t->elapsed();
+                QImage img = grabComposite();
+                const QString base = p.value(oShot); const QString out = base.left(base.lastIndexOf('.')) + QString("-%1.png").arg(ms, 4, 10, QChar('0'));
+                img.save(out);
+                if (++*count >= n) { tick->stop(); app.exit(0); }
+            });
+            tick->start();
+        });
+        return app.exec();
+    }
     if (p.isSet(oShot) || p.isSet(oCheck)) {
         QTimer::singleShot(qEnvironmentVariableIntValue("BC_SHOT_DELAY") > 0 ? qEnvironmentVariableIntValue("BC_SHOT_DELAY") : 1500, &app, [&] {
             int rc = 0;
             if (p.isSet(oShot)) {
-                QImage img = win->grabWindow();
-                // Captura compuesta: sin layer-shell (pruebas) cada superficie del panel es una ventana aparte;
-                // se pintan encima en orden de capa y en su posición en pantalla (originX/originY de LayerWindow).
-                if (!img.isNull() && !LayerHelper().supported()) {
-                    QPainter pa(&img);
-                    const QStringList order{"background", "bottom", "top", "overlay"};
-                    for (const QString &layerName : order) {
-                        for (QWindow *w : QGuiApplication::topLevelWindows()) {
-                            auto *qw = qobject_cast<QQuickWindow *>(w);
-                            if (!qw || qw == win || !qw->isVisible() || qw->property("layer").toString() != layerName) continue;
-                            // La plataforma de pruebas devuelve RGB sin alfa: se renderiza sobre negro y sobre blanco
-                            // y se recupera el alfa de la diferencia (matting), para componer igual que el compositor.
-                            const QColor old = qw->color();
-                            qw->setColor(Qt::black);
-                            const QImage onBlack = qw->grabWindow().convertToFormat(QImage::Format_RGB32);
-                            qw->setColor(Qt::white);
-                            const QImage onWhite = qw->grabWindow().convertToFormat(QImage::Format_RGB32);
-                            qw->setColor(old);
-                            QImage part(onBlack.size(), QImage::Format_ARGB32);
-                            for (int y = 0; y < part.height(); ++y) {
-                                const QRgb *b = reinterpret_cast<const QRgb *>(onBlack.constScanLine(y));
-                                const QRgb *wl = reinterpret_cast<const QRgb *>(onWhite.constScanLine(y));
-                                QRgb *o = reinterpret_cast<QRgb *>(part.scanLine(y));
-                                for (int x = 0; x < part.width(); ++x) {
-                                    const int a = 255 - qBound(0, ((qRed(wl[x]) - qRed(b[x])) + (qGreen(wl[x]) - qGreen(b[x])) + (qBlue(wl[x]) - qBlue(b[x]))) / 3, 255);
-                                    o[x] = a == 0 ? 0 : qRgba(qMin(255, qRed(b[x]) * 255 / a), qMin(255, qGreen(b[x]) * 255 / a), qMin(255, qBlue(b[x]) * 255 / a), a);
-                                }
-                            }
-                            pa.drawImage(QPointF(qw->property("originX").toReal(), qw->property("originY").toReal()), part);
-                        }
-                    }
-                }
+                QImage img = grabComposite();
                 if (img.isNull() || !img.save(p.value(oShot))) {
                     qCritical() << "Fallo al guardar captura";
                     rc = 3;

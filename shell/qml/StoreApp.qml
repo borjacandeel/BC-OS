@@ -274,7 +274,7 @@ AppWindow {
         visible: opacity > 0
         opacity: open ? 1 : 0
         Behavior on opacity { NumberAnimation { duration: Theme.dur(140) } }
-        Rectangle { anchors.fill: parent; color: Theme.scrim }
+        Rectangle { anchors.fill: parent; anchors.topMargin: -win.titlebarHeight; radius: Theme.radiusWindow; color: Theme.scrim }
         MouseArea { anchors.fill: parent; onClicked: { pwDialog.open = false; win.pending = null } }
         Rectangle {
             width: 380; height: 170; radius: 18; anchors.centerIn: parent

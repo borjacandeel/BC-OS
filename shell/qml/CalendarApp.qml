@@ -125,7 +125,7 @@ AppWindow {
         property bool open: false
         anchors.fill: parent; z: 60; visible: opacity > 0; opacity: open ? 1 : 0
         Behavior on opacity { NumberAnimation { duration: Theme.d(Theme.durSheet * 0.6) } }
-        Rectangle { anchors.fill: parent; color: Theme.scrim; opacity: 0.35 }
+        Rectangle { anchors.fill: parent; anchors.topMargin: -win.titlebarHeight; radius: Theme.radiusWindow; color: Theme.scrim; opacity: 0.35 }
         MouseArea { anchors.fill: parent; onClicked: sheet.open = false }
         Rectangle {
             width: 360; height: 170; radius: 16; anchors.horizontalCenter: parent.horizontalCenter

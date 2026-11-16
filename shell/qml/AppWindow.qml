@@ -10,6 +10,8 @@ Window {
     property int titlebarHeight: Theme.gg ? 52 : 44
     // Ancho de la barra lateral de borde a borde: el fundido bajo la barra de herramientas empieza a su derecha
     property real sidebarWidth: 0
+    // Fundido bajo la barra de herramientas (desactivar en apps con un fondo continuo, como la Calculadora)
+    property bool edgeFade: true
     // Posición en pantalla (sway) para que el cristal de las barras laterales recorte el fondo correcto
     // Sombra de ventana tipo macOS dibujada por la propia app (sway por software no hace sombras; Hyprland sí)
     readonly property int sh: Theme.gg && !Quick.realBlur && win.visibility !== Window.FullScreen && win.visibility !== Window.Maximized ? 32 : 0
@@ -135,7 +137,7 @@ Window {
         }
 
         Rectangle {
-            visible: Theme.gg
+            visible: Theme.gg && win.edgeFade
             z: 1; x: win.sidebarWidth; y: titlebar.height; width: parent.width - x; height: 14
             gradient: Gradient {
                 GradientStop { position: 0.0; color: Qt.rgba(frame.color.r, frame.color.g, frame.color.b, 0.85) }

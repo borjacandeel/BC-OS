@@ -675,7 +675,7 @@ AppWindow {
             visible: opacity > 0
             opacity: open ? 1 : 0
             Behavior on opacity { NumberAnimation { duration: Theme.d(Theme.durSheet * 0.6) } }
-            Rectangle { anchors.fill: parent; color: Theme.scrim; opacity: 0.4 }
+            Rectangle { anchors.fill: parent; anchors.topMargin: -win.titlebarHeight; radius: Theme.radiusWindow; color: Theme.scrim; opacity: 0.4 }
             MouseArea { anchors.fill: parent; onClicked: { nameDialog.open = false; fx.forceActiveFocus() } }
             Rectangle {
                 width: 380; height: 150; radius: 16; anchors.horizontalCenter: parent.horizontalCenter
