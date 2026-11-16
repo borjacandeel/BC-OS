@@ -118,6 +118,46 @@ Colección propia «Ondas» con el logo BC en el centro, en tonos oscuros, claro
   </tr>
 </table>
 
+Colección «Formas» (20 fondos 4K de formas minimalistas al estilo macOS, con el logo BC en distintos sitios; generados con
+`assets/wallpapers/generar-formas.py`):
+
+<table>
+  <tr>
+    <td width="33%"><img src="docs/escritorio/fondos/dunas.jpg" alt="Fondo Dunas"><br><sub><b>Dunas</b> · claro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/dunas-noche.jpg" alt="Fondo Dunas de noche"><br><sub><b>Dunas de noche</b> · oscuro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/esferas.jpg" alt="Fondo Esferas"><br><sub><b>Esferas</b> · oscuro</sub></td>
+  </tr>
+  <tr>
+    <td width="33%"><img src="docs/escritorio/fondos/esferas-luz.jpg" alt="Fondo Esferas"><br><sub><b>Esferas</b> · claro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/anillos.jpg" alt="Fondo Anillos"><br><sub><b>Anillos</b> · oscuro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/cristal.jpg" alt="Fondo Cristal líquido"><br><sub><b>Cristal líquido</b> · oscuro</sub></td>
+  </tr>
+  <tr>
+    <td width="33%"><img src="docs/escritorio/fondos/seda.jpg" alt="Fondo Seda"><br><sub><b>Seda</b> · claro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/pliegues.jpg" alt="Fondo Pliegues"><br><sub><b>Pliegues</b> · claro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/bruma.jpg" alt="Fondo Bruma"><br><sub><b>Bruma</b> · claro</sub></td>
+  </tr>
+  <tr>
+    <td width="33%"><img src="docs/escritorio/fondos/nebulosa.jpg" alt="Fondo Nebulosa"><br><sub><b>Nebulosa</b> · oscuro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/horizonte.jpg" alt="Fondo Horizonte"><br><sub><b>Horizonte</b> · claro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/colinas.jpg" alt="Fondo Colinas"><br><sub><b>Colinas</b> · claro</sub></td>
+  </tr>
+  <tr>
+    <td width="33%"><img src="docs/escritorio/fondos/arcos.jpg" alt="Fondo Arcos"><br><sub><b>Arcos</b> · oscuro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/cuarzo.jpg" alt="Fondo Cuarzo"><br><sub><b>Cuarzo</b> · oscuro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/orbita.jpg" alt="Fondo Órbita"><br><sub><b>Órbita</b> · oscuro</sub></td>
+  </tr>
+  <tr>
+    <td width="33%"><img src="docs/escritorio/fondos/topografia.jpg" alt="Fondo Topografía"><br><sub><b>Topografía</b> · oscuro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/petalos.jpg" alt="Fondo Pétalos"><br><sub><b>Pétalos</b> · oscuro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/burbujas.jpg" alt="Fondo Burbujas"><br><sub><b>Burbujas</b> · oscuro</sub></td>
+  </tr>
+  <tr>
+    <td width="33%"><img src="docs/escritorio/fondos/cinta.jpg" alt="Fondo Cinta"><br><sub><b>Cinta</b> · claro</sub></td>
+    <td width="33%"><img src="docs/escritorio/fondos/eclipse.jpg" alt="Fondo Eclipse"><br><sub><b>Eclipse</b> · oscuro</sub></td>
+  </tr>
+</table>
+
 ### Atajos principales
 
 | Atajo | Acción |

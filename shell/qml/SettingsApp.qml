@@ -236,7 +236,8 @@ AppWindow {
 
     Flickable {
         x: 254; y: 18; width: parent.width - 254 - 24; height: parent.height - 18 - 12
-        contentHeight: Math.max(height, pageCol6.visible ? pageCol6.height : (pageCol7.visible ? pageCol7.height : height))
+        // Alto de la página visible (todas las páginas son hijas directas): así cualquier página larga se desplaza
+        contentHeight: { let h = height; const ch = contentItem.children; for (let i = 0; i < ch.length; i++) if (ch[i].visible) h = Math.max(h, ch[i].y + ch[i].height + 16); return h }
         clip: true
 
         // 6 Aspecto (Golden Gate)
@@ -419,14 +420,17 @@ AppWindow {
             visible: win.page === 8; width: parent.width; spacing: 12
             Label { visible: !Theme.gg; text: qsTr("Fondo de pantalla"); font.pixelSize: 20; font.weight: Font.Bold }
             Grid {
-                columns: 4; spacing: 12
+                id: wallGrid
+                columns: Math.max(3, Math.floor((parent.width + 12) / 162)); spacing: 12
+                readonly property real cellW: (parent.width - (columns - 1) * spacing) / columns
                 Repeater {
                     model: ["ondas.jpg", "aurora.jpg", "atardecer.jpg", "rubi.jpg", "bosque.jpg", "carbon.jpg", "noche.jpg", "medianoche.jpg",
-                            "amanecer.jpg", "lavanda.jpg", "menta.jpg", "niebla.jpg", "oceano.jpg", "montanas.jpg", "grafito.jpg", "plata.jpg"]
+                            "amanecer.jpg", "lavanda.jpg", "menta.jpg", "niebla.jpg", "oceano.jpg", "montanas.jpg", "grafito.jpg", "plata.jpg",
+                            "dunas.jpg", "dunas-noche.jpg", "esferas.jpg", "esferas-luz.jpg", "anillos.jpg", "cristal.jpg", "seda.jpg", "pliegues.jpg", "bruma.jpg", "nebulosa.jpg", "horizonte.jpg", "colinas.jpg", "arcos.jpg", "cuarzo.jpg", "orbita.jpg", "topografia.jpg", "petalos.jpg", "burbujas.jpg", "cinta.jpg", "eclipse.jpg"]
                     Rectangle {
                         required property string modelData
                         readonly property string path: "/usr/share/bc/wallpapers/" + modelData
-                        width: 150; height: 84; radius: 10; clip: true; color: Theme.tileFill
+                        width: wallGrid.cellW; height: Math.round(width * 9 / 16); radius: 10; clip: true; color: Theme.tileFill
                         border.width: (Settings.wallpaper === path || (Settings.wallpaper === "" && modelData === "ondas.jpg")) ? 3 : 0; border.color: Theme.accent
                         Image { anchors.fill: parent; anchors.margins: parent.border.width; source: win.page === 8 ? "file://" + parent.path : ""; sourceSize: Qt.size(340, 192); fillMode: Image.PreserveAspectCrop; asynchronous: true }
                         MouseArea { anchors.fill: parent; onClicked: Settings.wallpaper = (modelData === "ondas.jpg" ? "" : parent.path) }

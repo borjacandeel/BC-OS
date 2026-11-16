@@ -192,7 +192,7 @@ int main(int argc, char *argv[]) {
     }
 
     if (p.isSet(oShot) || p.isSet(oCheck)) {
-        QTimer::singleShot(1500, &app, [&] {
+        QTimer::singleShot(qEnvironmentVariableIntValue("BC_SHOT_DELAY") > 0 ? qEnvironmentVariableIntValue("BC_SHOT_DELAY") : 1500, &app, [&] {
             int rc = 0;
             if (p.isSet(oShot)) {
                 QImage img = win->grabWindow();
