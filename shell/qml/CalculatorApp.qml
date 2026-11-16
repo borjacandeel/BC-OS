@@ -62,8 +62,9 @@ AppWindow {
     }
     Grid {
         id: keys
-        x: 10; y: 98; columns: 4; spacing: 8
-        readonly property real k: (win.width - 20 - 3 * 8) / 4
+        // Teclas redondas que caben a lo ancho y a lo alto (ventana redimensionada o maximizada), centradas
+        x: Math.round((parent.width - 4 * k - 3 * 8) / 2); y: 98; columns: 4; spacing: 8
+        readonly property real k: Math.floor(Math.min((parent.width - 20 - 3 * 8) / 4, (parent.height - 98 - 10 - 4 * 8) / 5))
         Repeater {
             model: [ { t: win.fresh && win.op === "" || win.display === "0" ? "AC" : "C", k: "AC", s: 1 }, { t: "±", k: "±", s: 1 }, { t: "%", k: "%", s: 1 }, { t: "÷", k: "÷", s: 2 },
                      { t: "7", k: "7" }, { t: "8", k: "8" }, { t: "9", k: "9" }, { t: "×", k: "×", s: 2 },
@@ -74,7 +75,7 @@ AppWindow {
     }
     // Última fila: «0» ancho (dos columnas), coma e igual
     Row {
-        x: 10; y: keys.y + 4 * (keys.k + 8); spacing: 8
+        x: keys.x; y: keys.y + 4 * (keys.k + 8); spacing: 8
         Key { m: ({ t: "0", k: "0" }); width: keys.k * 2 + 8; wide: true }
         Key { m: ({ t: ",", k: "," }) }
         Key { m: ({ t: "=", k: "=", s: 2 }) }
@@ -90,7 +91,7 @@ AppWindow {
                      : modelData.s === 1 ? (km.pressed ? "#8E8E93" : (Theme.dark ? "#5C5C60" : "#C7C7CC"))
                      : (km.pressed ? "#8E8E93" : (Theme.dark ? "#3A3A3C" : "#F5F5F7"))
                 Behavior on color { ColorAnimation { duration: Theme.d(120) } }
-                Text { x: key.wide ? keys.k / 2 - width / 2 : (key.width - width) / 2; anchors.verticalCenter: parent.verticalCenter; text: modelData.t; font.family: Theme.fontFamily; font.pixelSize: modelData.s === 2 ? 26 : 22
+                Text { x: key.wide ? keys.k / 2 - width / 2 : (key.width - width) / 2; anchors.verticalCenter: parent.verticalCenter; text: modelData.t; font.family: Theme.fontFamily; font.pixelSize: Math.round(keys.k * (modelData.s === 2 ? 0.46 : 0.39))
                        color: parent.activeOp ? "#FF9F0A" : (modelData.s === 2 ? "white" : Theme.textPrimary); font.weight: Font.Medium }
                 MouseArea { id: km; anchors.fill: parent; onClicked: win.press(modelData.k) }
     }

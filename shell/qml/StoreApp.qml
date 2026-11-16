@@ -115,7 +115,10 @@ AppWindow {
             Text { leftPadding: 8; topPadding: 10; bottomPadding: 4; text: qsTr("Categorías"); color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 11; font.weight: Font.Bold }
             Repeater {
                 model: win.categories
-                SideItem { required property var modelData; sec: "cat:" + modelData.k; icon: "view-grid-symbolic"; label: modelData.t }
+                SideItem { required property var modelData; sec: "cat:" + modelData.k; label: modelData.t
+                           // Un símbolo por categoría, como en la App Store de macOS
+                           icon: ({ office: "document-edit-symbolic", graphics: "camera-photo-symbolic", dev: "input-keyboard-symbolic",
+                                    games: "input-mouse-symbolic", audio: "audio-headphones-symbolic", utils: "preferences-system-symbolic" })[modelData.k] || "view-grid-symbolic" }
             }
             Item { width: 1; height: 10 }
             SideItem { sec: "installed"; icon: "folder-download-symbolic"; label: qsTr("Instaladas") }
