@@ -19,6 +19,7 @@ Window {
     readonly property real originY: Quick.windowPos.y
     Binding { target: Quick; property: "trackWindow"; value: Theme.gg && win.active }
     signal closeRequested()
+    property bool canClose: true
     visible: true
     color: "transparent"
     flags: Qt.FramelessWindowHint
@@ -26,7 +27,7 @@ Window {
     minimumHeight: 320 + 2 * sh
 
     onClosing: (c) => { c.accepted = false; win.closeRequested() }
-    onCloseRequested: { if (Theme.reducedMotion) Qt.quit(); else closeAnim.start() }
+    onCloseRequested: { if (!canClose) { Sounds.play("error"); return } if (Theme.reducedMotion) Qt.quit(); else closeAnim.start() }
     ParallelAnimation {
         id: closeAnim
         NumberAnimation { target: frame; property: "scale"; to: Theme.gg ? 0.92 : 0.94; duration: Theme.gg ? Theme.durWindowClose : 140; easing.type: Easing.InCubic }

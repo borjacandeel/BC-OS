@@ -1,0 +1,7 @@
+// Solo en la ISO live de BC OS: el usuario de la sesión (grupo wheel, local y activo) puede lanzar el instalador
+// gráfico sin escribir contraseña, como el instalador de macOS. No se instala en el sistema instalado.
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.bcos.instalar" && subject.local && subject.active && subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+    }
+});

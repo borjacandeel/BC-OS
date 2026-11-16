@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Instalar BC OS
+Name[en]=Install BC OS
+Comment=Instala BC OS en el disco de este equipo
+Comment[en]=Install BC OS on this computer's disk
+Exec=bc-shell --app installer
+Icon=system-software-install
+Categories=System;
+Terminal=false

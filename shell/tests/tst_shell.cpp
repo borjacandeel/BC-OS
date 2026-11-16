@@ -16,6 +16,7 @@
 #include "../src/systemstatus.h"
 #include "../src/userlist.h"
 #include "../src/swaycontrol.h"
+#include "../src/installer.h"
 
 class TstShell : public QObject {
     Q_OBJECT
@@ -182,6 +183,61 @@ private slots:
         QCOMPARE(m.value("name").toString(), QString("mpv"));
         QCOMPARE(m.value("size").toString(), QString("5.00 MiB"));
         QCOMPARE(PackageStore::sudoArgs({"-S", "x"}), QStringList({"-S", "-p", "", "--", "pacman", "-S", "x"}));
+    }
+    void installer() {
+        // lsblk: solo discos de escritura; marca el disco montado (arranque) y los pequeños
+        const QByteArray js = R"({"blockdevices":[
+          {"name":"sda","path":"/dev/sda","size":64424509440,"model":"VBOX HARDDISK","type":"disk","rm":false,"ro":false,"tran":"sata","mountpoints":[null]},
+          {"name":"sdb","path":"/dev/sdb","size":8000000000,"model":"USB","type":"disk","rm":true,"ro":false,"tran":"usb","mountpoints":[null],
+           "children":[{"name":"sdb1","path":"/dev/sdb1","type":"part","mountpoints":["/run/archiso/bootmnt"]}]},
+          {"name":"sr0","path":"/dev/sr0","size":1000,"model":"CD","type":"rom","rm":true,"ro":true,"mountpoints":[null]},
+          {"name":"loop0","path":"/dev/loop0","size":1000,"type":"loop","rm":false,"ro":false,"mountpoints":["/x"]}]})";
+        const QVariantList d = Installer::parseLsblk(js);
+        QCOMPARE(d.size(), 2);
+        QCOMPARE(d[0].toMap().value("path").toString(), QString("/dev/sda"));
+        QVERIFY(!d[0].toMap().value("inUse").toBool());
+        QVERIFY(!d[0].toMap().value("tooSmall").toBool());
+        QVERIFY(d[1].toMap().value("inUse").toBool());
+        QVERIFY(d[1].toMap().value("tooSmall").toBool());
+        // Validación: nada que pueda colarse como opción o ruta
+        QVariantMap ok{{"disk", "/dev/sda"}, {"user", "ana"}, {"password", "secreto"}, {"hostname", "bcos"}, {"keymap", "es"}, {"timezone", "Europe/Madrid"}};
+        QVERIFY(Installer::validate(ok).isEmpty());
+        auto bad = [&](const char *k, const QVariant &v) { QVariantMap m = ok; m[k] = v; return !Installer::validate(m).isEmpty(); };
+        QVERIFY(bad("disk", "/dev/sda; rm -rf /"));
+        QVERIFY(bad("disk", "--auto"));
+        QVERIFY(bad("user", "root"));
+        QVERIFY(bad("user", "-x"));
+        QVERIFY(bad("password", "abc"));
+        QVERIFY(bad("password", "a\nb\nc\nd"));
+        QVERIFY(bad("hostname", "-bc"));
+        QVERIFY(bad("timezone", "../../etc/passwd"));
+        { QVariantMap m = ok; m["timezone"] = "America/Argentina/Buenos_Aires"; QVERIFY(Installer::validate(m).isEmpty()); }
+        // Progreso: pasos «[NN%]» y copia «@copia NN» dentro de su 30 %
+        Installer in(nullptr, "/bin/true");
+        in.feedLine("[8%] Particionando el disco (GPT)...");
+        QCOMPARE(in.progress(), 8);
+        in.feedLine("[50%] Copiando el sistema (puede tardar unos minutos)...");
+        QCOMPARE(in.progress(), 20);
+        in.feedLine("@copia 50");
+        QCOMPARE(in.progress(), 35);
+        in.feedLine("ERROR: disco ocupado");
+        QCOMPARE(in.error(), QString("disco ocupado"));
+        // De extremo a extremo con un bc-install simulado: progreso leído y fichero de contraseña borrado al acabar
+        QTemporaryDir tmp; QVERIFY(tmp.isValid());
+        const QString fake = tmp.filePath("fake-install");
+        { QFile f(fake); QVERIFY(f.open(QIODevice::WriteOnly));
+          f.write("#!/bin/sh\nwhile [ $# -gt 0 ]; do [ \"$1\" = --password-file ] && pw=\"$2\"; shift; done\ntest -f \"$pw\" || exit 9\n"
+                  "echo '[8%] Particionando' >&2; echo '[50%] Copiando el sistema' >&2; echo '@copia 100' >&2; echo '[100%] Fin' >&2; exit 0\n"); }
+        QFile::setPermissions(fake, QFile::ReadOwner | QFile::WriteOwner | QFile::ExeOwner);
+        qputenv("BC_INSTALL_TEST", "1"); qputenv("BC_INSTALL_RUNNER", "-"); qputenv("XDG_RUNTIME_DIR", tmp.path().toUtf8());
+        Installer e2e(nullptr, fake);
+        QSignalSpy spy(&e2e, &Installer::stateChanged);
+        QCOMPARE(e2e.start(ok), QString());
+        QTRY_VERIFY_WITH_TIMEOUT(e2e.finished() || !e2e.error().isEmpty(), 5000);
+        QVERIFY2(e2e.finished(), qPrintable(e2e.error()));
+        QCOMPARE(e2e.progress(), 100);
+        QCOMPARE(QDir(tmp.path()).entryList({"bc-install-*"}, QDir::Files).size(), 0);
+        qunsetenv("BC_INSTALL_TEST"); qunsetenv("BC_INSTALL_RUNNER");
     }
     void hyprland() {
         const QByteArray j = R"([{"address":"0x5a1b2c3d","mapped":true,"at":[100,80],"size":[800,600],"workspace":{"id":1,"name":"1"},

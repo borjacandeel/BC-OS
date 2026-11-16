@@ -770,11 +770,14 @@ LayerWindow {
         }
     }
 
+    Timer { id: liveInstall; interval: 2500; onTriggered: Launcher.run("bc-shell", ["--app", "installer"]) }
     Component.onCompleted: {
         UiState.classic = AppConfig.classic
         UiState.splashing = AppConfig.splash
         // El panel se reinició con la pantalla bloqueada (fallo): sigue bloqueada
         if (AppConfig.demo === "" && Quick.lockFlag()) UiState.locked = true
+        // Sistema live (ISO): como el instalador de macOS, «Instalar BC OS» se abre solo al entrar
+        if (AppConfig.demo === "" && Installer.live && !UiState.locked) liveInstall.start()
         UiState.style = Settings.desktopStyle === "win" ? "win" : "mac"
         UiState.widgets = Settings.widgets
         UiState.mode = Settings.mode

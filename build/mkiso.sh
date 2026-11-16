@@ -26,6 +26,8 @@ bc_chroot "$R" bash -c "mkinitcpio -c /etc/mkinitcpio-live.conf -k /boot/$KIMG -
 cp "$R/boot/initramfs-live.img" "$T/initramfs-live.img"; rm -f "$R/boot/initramfs-live.img" "$R/etc/mkinitcpio-live.conf"
 bc_umount "$R"
 
+# Solo en live: app «Instalar BC OS» y permiso polkit para lanzarla (ver overlay-live/LEEME.md)
+cp -a "$HERE/overlay-live/usr" "$HERE/overlay-live/etc" "$R/"
 # En live no hay particiones propias: fstab vacío (la imagen de disco ya se generó antes con el suyo)
 printf '# BC OS live: la raíz la monta archiso\n' > "$R/etc/fstab"
 # 2) raíz en squashfs (zstd), en la ruta que espera archiso: /arch/<arch>/airootfs.sfs

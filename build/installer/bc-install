@@ -58,6 +58,7 @@ while (($#)); do
     --lang) UI_LANG="${2:?}"; load_lang "$UI_LANG"; shift ;;
     --log) LOG="${2:?}"; shift ;;
     --dry-run) DRY=1 ;;
+    --gui) BC_INSTALL_GUI=1 ;;   # progreso de la copia para la app «Instalar BC OS» (pkexec no deja pasar variables)
     -h|--help) printf '%b\n' "$S_USAGE"; exit 0 ;;
     *) die "opción desconocida / unknown option: $1" ;;
   esac
@@ -319,13 +320,19 @@ do_copy() {
   local ex=(--exclude='/boot/*' --exclude='/proc/*' --exclude='/sys/*' --exclude='/dev/*' --exclude='/run/*'
     --exclude='/tmp/*' --exclude='/mnt/*' --exclude='/media/*' --exclude='/lost+found'
     --exclude='/var/cache/pacman/pkg/*' --exclude='/var/log/journal/*' --exclude='/etc/machine-id'
-    --exclude='/var/log/bc-install.log' --exclude='/root/.bash_history')
+    --exclude='/var/log/bc-install.log' --exclude='/root/.bash_history'
+    --exclude='/usr/share/applications/bc-installer.desktop' --exclude='/etc/polkit-1/rules.d/50-bcos-instalar.rules'
+    --exclude='/usr/share/polkit-1/actions/org.bcos.instalar.policy')
   if ((DRY)); then echo "+ rsync -aHAXx --numeric-ids ${ex[*]} $SOURCE/ $TARGET/"; return 0; fi
   log "+ rsync $SOURCE/ → $TARGET/"
   if [[ -n "$TUI" ]] && ((AUTO == 0)); then
     rsync -aHAXx --numeric-ids --info=progress2 "${ex[@]}" "$SOURCE"/ "$TARGET"/ 2>>"$LOG" \
       | stdbuf -oL tr '\r' '\n' | awk '/%/ {gsub("%","",$2); print $2; fflush()}' \
       | "$TUI" --title "$S_TITLE" --gauge "$P_COPY" 8 70 0
+  elif [[ -n "${BC_INSTALL_GUI:-}" ]]; then
+    # Instalador gráfico: porcentaje real de la copia como «@copia NN» (lo lee la app Instalar BC OS)
+    rsync -aHAXx --numeric-ids --info=progress2 "${ex[@]}" "$SOURCE"/ "$TARGET"/ 2>>"$LOG" \
+      | stdbuf -oL tr '\r' '\n' | awk '/%/ {gsub("%","",$2); if ($2 != last) { print "@copia " $2; last = $2; fflush() }}' >&2
   else
     rsync -aHAXx --numeric-ids "${ex[@]}" "$SOURCE"/ "$TARGET"/ >>"$LOG" 2>&1
   fi

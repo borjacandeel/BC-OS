@@ -8,6 +8,7 @@
 #include <QSettings>
 #include <QTimer>
 #include <QElapsedTimer>
+#include "installer.h"
 #include <QQmlExpression>
 #include <QRegularExpression>
 #include <QTranslator>
@@ -86,7 +87,7 @@ int main(int argc, char *argv[]) {
     const QString appName = p.value(oApp);
     const bool appMode = !appName.isEmpty();
     if (appMode) {
-        static const QStringList known{"files", "monitor", "settings", "store", "calculator", "notes", "preview", "reminders", "calendar", "music"};
+        static const QStringList known{"files", "monitor", "settings", "store", "calculator", "notes", "preview", "reminders", "calendar", "music", "installer"};
         if (!known.contains(appName)) { qCritical() << "App desconocida:" << appName; return 2; }
         app.setDesktopFileName("bc-" + appName);  // app_id en sway
         app.setApplicationName("bc-" + appName);
@@ -130,6 +131,8 @@ int main(int argc, char *argv[]) {
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Processes", &processes);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Notes", &notesStore);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Music", &music);
+    Installer installer;
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Installer", &installer);
 
     // Solo del panel
     PamAuth pam;
