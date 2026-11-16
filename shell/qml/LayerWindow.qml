@@ -25,7 +25,8 @@ Window {
     readonly property bool _t: edges.indexOf("top") >= 0
     readonly property bool _b: edges.indexOf("bottom") >= 0
     // Tamaño de SU pantalla (multimonitor: cada superficie recorta el fondo de la pantalla en la que está)
-    readonly property bool _other: screen && Qt.application.screens.length > 1 && screen !== Qt.application.screens[0]
+    screen: UiState.scr
+    readonly property bool _other: screen && Qt.application.screens.length > 1 && screen !== UiState.scr
     readonly property real scrW: _other ? screen.width : UiState.sw
     readonly property real scrH: _other ? screen.height : UiState.sh
     readonly property real originX: _l ? margins[3] : (_r ? scrW - width - margins[1] : (scrW - width) / 2)

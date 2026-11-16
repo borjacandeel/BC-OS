@@ -353,10 +353,10 @@ LayerWindow {
 
     // Pantallas adicionales (conexión en caliente): barra de menús y Dock propios en cada monitor
     Instantiator {
-        model: UiState.classic || UiState.win ? 0 : Math.max(0, Qt.application.screens.length - 1)
+        model: UiState.classic || UiState.win ? 0 : UiState.otherScreens.length
         delegate: QtObject {
             required property int index
-            readonly property var modelData: Qt.application.screens[index + 1]
+            readonly property var modelData: UiState.otherScreens[index]
             property LayerWindow bar2: LayerWindow {
                 screen: modelData
                 layer: "top"; edges: ["top", "left", "right"]; exclusive: UiState.barH; scope: "bc-topbar"

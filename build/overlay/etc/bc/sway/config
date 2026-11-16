@@ -19,7 +19,9 @@ client.focused_inactive #36363B #1F1F23 #7D7D83 #1F1F23 #36363B
 client.unfocused        #36363B #1F1F23 #7D7D83 #1F1F23 #36363B
 client.urgent           #FF5F57 #1B2740 #E8ECF5 #FF5F57 #FF5F57
 font pango:Inter Semi-Bold 10
-focus_follows_mouse yes
+# Como macOS: el foco solo cambia al hacer clic (pasar el puntero no activa ventanas)
+focus_follows_mouse no
+mouse_warping none
 popup_during_fullscreen smart
 xwayland enable
 # El fondo (swaybg) lo añade bc-wm-mode al generar la configuración: el elegido en Configuración o el predeterminado

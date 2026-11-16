@@ -29,7 +29,17 @@ case "$cmd" in
       [ -n "$esc" ] || { [ "$w" -ge 2400 ] && esc=2 || esc=1; }
       case "$esc" in *[!0-9.]*) esc=1 ;; esac
       swaymsg "output $n scale $esc" >/dev/null
-    done ;;
+    done
+    # Varias pantallas: la principal (digital más grande: HDMI/DP/eDP antes que VGA/DVI) a la izquierda en 0,0 y con el
+    # foco (ahí se abren las ventanas); el resto a su derecha. ~/.config/bc/pantalla-principal fija otra por nombre.
+    pri="$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/bc/pantalla-principal" 2>/dev/null)"
+    outs | jq -r --arg p "$pri" '[.[] | select(.active)] | sort_by(
+        (if .name == $p then 0 else 1 end),
+        (if (.name | test("^(VGA|DVI-A)"; "i")) then 1 else 0 end),
+        -(.rect.width * .rect.height)) | .[] | "\(.name) \(.rect.width)"' |
+    { x=0; first=; while read -r n w; do
+        swaymsg "output $n position $x 0" >/dev/null; x=$((x + w)); [ -n "$first" ] || first=$n
+      done; [ "$x" -gt 0 ] && [ -n "$first" ] && swaymsg "focus output $first" >/dev/null; } ;;
   watch)
     bc-display auto
     udevadm monitor --udev --subsystem-match=drm 2>/dev/null | while read -r _; do

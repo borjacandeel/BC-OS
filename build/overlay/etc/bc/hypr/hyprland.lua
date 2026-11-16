@@ -17,7 +17,7 @@ hl.env("XDG_CURRENT_DESKTOP", "BC")
 hl.config({
     input = {
         kb_layout = teclado,
-        follow_mouse = 1,
+        follow_mouse = 2,             -- como macOS: foco al hacer clic; la rueda va a la ventana bajo el puntero
         touchpad = { natural_scroll = true, tap_to_click = true, disable_while_typing = true },
     },
 })

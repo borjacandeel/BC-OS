@@ -4,7 +4,24 @@ import QtQuick
 // Estado compartido del panel (las superficies layer-shell son ventanas distintas del mismo proceso).
 QtObject {
     id: ui
-    readonly property var scr: Qt.application.screens.length > 0 ? Qt.application.screens[0] : null
+    // Pantalla principal (barra completa, widgets): la digital más grande (HDMI/DP/eDP antes que VGA/DVI analógicos);
+    // a igualdad, la primera que anuncia el compositor
+    readonly property var scr: _principal(Qt.application.screens)
+    function _principal(l) {
+        let best = null, bs = -1
+        for (let i = 0; i < l.length; ++i) {
+            const s = l[i], n = (s.name || "").toUpperCase()
+            const score = (/^(VGA|DVI-A)/.test(n) ? 0 : 1e9) + s.width * s.height
+            if (score > bs) { bs = score; best = s }
+        }
+        return best
+    }
+    // El resto de pantallas (barra de menús y Dock propios en cada una)
+    readonly property var otherScreens: {
+        const l = Qt.application.screens, r = []
+        for (let i = 0; i < l.length; ++i) if (l[i] !== scr) r.push(l[i])
+        return r
+    }
     property real sw: scr ? scr.width : 1280
     property real sh: scr ? scr.height : 800
     property bool splashing: false
