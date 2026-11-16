@@ -42,7 +42,12 @@ int main(int argc, char *argv[]) {
     QQuickWindow::setTextRenderType(QQuickWindow::NativeTextRendering);
     // IconCache lee los SVG de los recursos (qrc:) con XMLHttpRequest para teñirlos.
     qputenv("QML_XHR_ALLOW_FILE_READ", "1");
+    // El tema de plataforma GTK es para las apps Qt de terceros; BC Shell dibuja su propio aspecto.
+    // Se quita solo para este proceso y se devuelve al entorno para que lo hereden las apps que abre.
+    const QByteArray platformTheme = qgetenv("QT_QPA_PLATFORMTHEME");
+    qunsetenv("QT_QPA_PLATFORMTHEME");
     QGuiApplication app(argc, argv);
+    if (!platformTheme.isEmpty()) qputenv("QT_QPA_PLATFORMTHEME", platformTheme);
     app.setApplicationName("bc-shell");
     app.setOrganizationName("BC-OS");
 

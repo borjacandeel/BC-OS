@@ -9,6 +9,8 @@ if [ "$1" = "--classic" ]; then export BC_CLASSIC=1; shift; fi
 CFG="${XDG_CONFIG_HOME:-$HOME/.config}/bc"
 LOG="$HOME/bc-session.log"
 export XCURSOR_THEME=McMojave-cursors XCURSOR_SIZE=24
+# Apps Qt de terceros: iconos (MacOS-Like), diálogos y paleta desde GTK, como el resto del sistema (BC Shell no lo usa)
+[ -f /usr/lib/qt6/plugins/platformthemes/libqgtk3.so ] && export QT_QPA_PLATFORMTHEME=gtk3
 export LANG="${LANG:-es_ES.UTF-8}" XDG_CURRENT_DESKTOP=BC XDG_SESSION_TYPE=wayland QT_QPA_PLATFORM=wayland
 
 es_vm() {
