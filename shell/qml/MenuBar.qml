@@ -115,9 +115,10 @@ Item {
                    rotation: bar.expanded ? 180 : 0
                    Behavior on rotation { NumberAnimation { duration: Theme.d(Theme.durHover * 2) } } }
         }
-        // Mosaico (función propia de BC OS, integrada como un icono de estado más)
+        // Mosaico (función propia de BC OS, integrada como un icono de estado más). En Golden Gate solo se ve
+        // mientras está activo, como la luna de Concentración; se activa desde el Centro de control.
         BarItem {
-            visible: !bar.overflow || bar.expanded
+            visible: (!bar.overflow || bar.expanded) && (!Theme.gg || Sway.tiling)
             width: rightRow.cell
             open: Sway.tiling
             onClicked: Sway.toggleTiling()
