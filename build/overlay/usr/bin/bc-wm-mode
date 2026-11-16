@@ -23,9 +23,12 @@ OUT="${XDG_RUNTIME_DIR:?sin XDG_RUNTIME_DIR}/bc-sway.conf"
 { cat /etc/bc/sway/config; [ -f /etc/bc/sway/keyboard.conf ] && cat /etc/bc/sway/keyboard.conf
   # Distribución de teclado elegida en Ajustes del Sistema ▸ Teclado (solo letras: es, us, gb, fr, de, it, pt, latam)
   kl=$(cat "$D/keyboard-layout" 2>/dev/null); case "$kl" in es|us|gb|fr|de|it|pt|latam) printf 'input type:keyboard xkb_layout %s\n' "$kl" ;; esac
-  [ -n "$BC_FX" ] && [ -f /etc/bc/sway/efectos.conf ] && cat /etc/bc/sway/efectos.conf
+  # Sin 3D (llvmpipe) solo esquinas redondeadas: sin sombras ni desenfoque, que costarían demasiada CPU
+  if [ "$BC_FX" = ligero ] && [ -f /etc/bc/sway/efectos.conf ]; then
+    grep -vE '^(layer_effects|shadow|blur)' /etc/bc/sway/efectos.conf; printf 'shadows disable\nblur disable\n'
+  elif [ -n "$BC_FX" ] && [ -f /etc/bc/sway/efectos.conf ]; then cat /etc/bc/sway/efectos.conf; fi
   # Equipo físico con GPU: desenfoque real detrás de las ventanas (Liquid Glass de verdad)
-  [ -n "$BC_FX" ] && [ "${BC_EQUIPO:-}" = fisico ] && printf 'blur enable\nblur_passes 3\nblur_radius 6\n'
+  [ -n "$BC_FX" ] && [ "$BC_FX" != ligero ] && [ "${BC_EQUIPO:-}" = fisico ] && printf 'blur enable\nblur_passes 3\nblur_radius 6\n'
   WP=/usr/share/bc/wallpapers/ondas.jpg
   [ -f "$D/wallpaper" ] && w=$(head -n1 "$D/wallpaper") && [ -f "$w" ] && WP=$w
   case $WP in *\"*|*\\*|*\$*|*\;*|*,*|*\'*|*\`*) WP=/usr/share/bc/wallpapers/ondas.jpg ;; esac

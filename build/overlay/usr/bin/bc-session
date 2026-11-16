@@ -2,7 +2,9 @@
 # Sesión gráfica de BC OS.
 #  · Con aceleración 3D (GPU real, VirtualBox x86 con «Aceleración 3D», QEMU con virgl): Hyprland, con animaciones
 #    fluidas tipo macOS, desenfoque real y sombras. Si Hyprland falla al arrancar, sway por software.
-#  · Sin aceleración (p. ej. VirtualBox en Mac ARM): sway por software, ligero y estable.
+#  · Sin aceleración (p. ej. VirtualBox en Mac ARM): swayfx con OpenGL ES por software (llvmpipe) solo para las
+#    esquinas redondeadas de todas las ventanas; si no arranca, sway con pixman. bc.fx=0 o «no» en
+#    ~/.config/bc/esquinas lo desactiva (probado en QEMU con virtio-gpu 2D).
 #  bc.gpu=0 en el kernel (o «sway» en ~/.config/bc/compositor) fuerza sway; bc.gpu=1 o «hyprland», Hyprland.
 # «BC clásico»: el escritorio anterior a Golden Gate, elegible en el login.
 if [ "$1" = "--classic" ]; then export BC_CLASSIC=1; shift; fi
@@ -43,8 +45,20 @@ fi
 [ -x /usr/bin/bc-appearance ] && bc-appearance "$(cat "$CFG/appearance" 2>/dev/null || echo dark)" >> "$LOG" 2>&1
 
 sway_software() {
-  export WLR_RENDERER=pixman WLR_NO_HARDWARE_CURSORS=1 QT_QUICK_BACKEND=software
-  unset BC_FX
+  export WLR_NO_HARDWARE_CURSORS=1 QT_QUICK_BACKEND=software
+  # Sin 3D también hay esquinas redondeadas: swayfx con OpenGL ES por software (llvmpipe), solo esquinas
+  # (sin sombras ni desenfoque). Si no arranca o muere enseguida, sway clásico con pixman, que siempre funciona.
+  if [ -x /opt/swayfx/bin/sway ] && ! grep -qw "bc.fx=0" /proc/cmdline && [ "$(cat "$CFG/esquinas" 2>/dev/null)" != no ]; then
+    export WLR_RENDERER=gles2 WLR_RENDERER_ALLOW_SOFTWARE=1 BC_FX=ligero
+    bc-wm-mode init >> "$LOG" 2>&1
+    t1=$(date +%s)
+    /opt/swayfx/bin/sway -c "${XDG_RUNTIME_DIR:-/tmp}/bc-sway.conf" >> "$LOG" 2>&1
+    r=$?
+    [ $r -eq 0 ] || [ $(( $(date +%s) - t1 )) -ge 15 ] && return $r
+    echo "swayfx por software falló al arrancar ($r): sway con pixman" >> "$LOG"
+  fi
+  export WLR_RENDERER=pixman
+  unset BC_FX WLR_RENDERER_ALLOW_SOFTWARE
   bc-wm-mode init >> "$LOG" 2>&1
   sway -c "${XDG_RUNTIME_DIR:-/tmp}/bc-sway.conf" >> "$LOG" 2>&1
 }
