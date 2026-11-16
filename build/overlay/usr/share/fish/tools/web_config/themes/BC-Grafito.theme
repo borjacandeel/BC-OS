@@ -1,0 +1,19 @@
+# name: 'BC Grafito'
+# preferred_background: 1e1e1e
+
+fish_color_command E5E5E7 --bold
+fish_color_param C7C7CC
+fish_color_quote 98989D
+fish_color_error FF453A
+fish_color_comment 6E6E73
+fish_color_operator AEAEB2
+fish_color_autosuggestion 636366
+fish_color_selection --background=3A3A3C
+fish_color_end 6E6E73
+fish_color_redirection AEAEB2
+fish_color_escape AEAEB2
+fish_color_valid_path --underline
+fish_color_search_match --background=3A3A3C
+fish_pager_color_prefix E5E5E7 --bold
+fish_pager_color_completion C7C7CC
+fish_pager_color_description 6E6E73

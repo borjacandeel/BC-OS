@@ -3,7 +3,7 @@
 -- Atajos iguales que en la sesión sway: lista completa en /etc/bc/atajos.txt
 
 ---------------- Pantalla y entrada ----------------
-hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
+hl.monitor({ output = "", mode = "highrr", position = "auto", scale = "auto" })   -- la frecuencia más alta del monitor
 
 local function leer(ruta) local f = io.open(ruta, "r"); if not f then return nil end; local s = f:read("*l"); f:close(); return s end
 local home = os.getenv("HOME") or "/root"

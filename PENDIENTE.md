@@ -11,16 +11,16 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 
 ## En curso
 - [ ] 2026-11-16 noche — probado 0.9.6 en VirtualBox ARM por el creador. HACER YA:
-  - [ ] Clave GPG del repo [bc] (actualizaciones firmadas): guiar al creador, secreto BC_REPO_GPG_KEY, clave pública en la imagen, SigLevel Required.
-  - [ ] Bienvenida: selección de fondos y temas se ve mal (carrusel cortado, tarjetas); rehacer como macOS.
-  - [ ] Bienvenida lo primero al arrancar (antes que nada) para personalizar el SO.
-  - [ ] Minimizar (genio) va a tirones: hacerlo fluido como macOS.
-  - [ ] Dock: al salir el ratón vuelve al tamaño normal de golpe (o se queda ampliado): transición suave.
-  - [ ] Dock: menú de clic derecho sale lejos del puntero: colocarlo junto al icono.
-  - [ ] Modo claro: Ajustes (barra lateral con iconos grises, sin color), revisar todo.
-  - [ ] Widgets desaparecen al cambiar tema o fondo.
-  - [ ] Animaciones a la frecuencia del monitor (60/100/120/144 Hz).
-  - [ ] Temas bonitos para fish.
+  - [x] Clave GPG del repo [bc] (actualizaciones firmadas): guiar al creador, secreto BC_REPO_GPG_KEY, clave pública en la imagen, SigLevel Required.
+  - [x] Bienvenida: selección de fondos y temas se ve mal (carrusel cortado, tarjetas); rehacer como macOS.
+  - [x] Bienvenida lo primero al arrancar (antes que nada) para personalizar el SO.
+  - [x] Minimizar (genio) va a tirones: hacerlo fluido como macOS.
+  - [x] Dock: al salir el ratón vuelve al tamaño normal de golpe (o se queda ampliado): transición suave.
+  - [x] Dock: menú de clic derecho sale lejos del puntero: colocarlo junto al icono.
+  - [x] Modo claro: Ajustes (barra lateral con iconos grises, sin color), revisar todo.
+  - [x] Widgets desaparecen al cambiar tema o fondo.
+  - [x] Animaciones a la frecuencia del monitor (60/100/120/144 Hz).
+  - [x] Temas bonitos para fish.
 - [x] 2026-11-16 tarde (creador: «va súper lag, no está optimizado», «no deja cambiar modo claro en mil cosas»): 0.9.4-beta (rendimiento: sway pixman en VMs aunque haya 3D virtual, esquinas por software opcionales, animaciones sin escalado por software) y **0.9.5-beta** (modo claro en Bienvenida, Control Center, Centro de notificaciones, «Automático» real, Terminal claro/oscuro) PUBLICADAS. Falta: prueba del creador.
 - [~] 2026-11-16 (creador): animaciones (avisos, abrir, minimizar, cerrar, expandir), esquinas en todo, imagen nueva, README entero y **instalador tipo macOS**. HECHO: avisos con salida animada y deslizar para descartar, expandir/restaurar animado, esquinas de Calculadora/Monitor/Vista previa/hojas, app «Instalar BC OS» (InstallerApp.qml + src/installer.*; bc-install --auto --gui vía pkexec; overlay-live solo en la ISO), README con capturas nuevas. 0.9.3-beta PUBLICADA (ARM64 y x86_64, VDI e ISO). Falta: prueba del creador y probar la ISO con el instalador en QEMU/VirtualBox.
 - [x] 2026-11-16 (creador, /goal): esquinas, pulido, bugs, animaciones Liquid Glass y 20 fondos 4K. HECHO: bug de la esquina de la barra lateral (Glass leftOnly recortado; fundido de la barra de herramientas solo sobre el contenido, `AppWindow.sidebarWidth`), Spotlight con alto máximo y desplazamiento, widget de Recordatorios mediano, emergentes que brotan con escala y muelle (SlideIn), Calculadora adaptable, Tienda con símbolo por categoría, Ajustes ▸ Fondo con rejilla adaptable y desplazamiento en todas las páginas, 20 fondos «Formas» 4K (`assets/wallpapers/generar-formas.py`) en Ajustes, Bienvenida y README. Límite conocido: ventanas de terceros sin esquinas redondeadas con sway por software (solo Hyprland con 3D las redondea).

@@ -11,6 +11,17 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
 
+### Novedades de 0.9.7
+- **Actualizaciones firmadas**: el repositorio [bc] se firma con la clave de BC OS y el sistema solo acepta paquetes
+  firmados; las novedades llegan solas (aviso + Tienda ▸ Actualizaciones o `sudo bc-actualizar`), sin volver a descargar la imagen.
+- **ISO x86_64 arranca en BIOS** (PCs antiguos) además de UEFI; el instalador pone GRUB para BIOS si hace falta.
+  NVIDIA con nouveau: sway ligero (más estable).
+- Dock: la ampliación entra y sale suave (ya no se queda ampliada) y el menú del clic derecho sale encima del icono.
+- Minimizar fluido sin GPU (efecto «Escala»); widgets que ya no desaparecen al cambiar fondo o aspecto.
+- Bienvenida rehecha (aspecto, fondos y acento como macOS) y sale nada más entrar.
+- Animaciones a la frecuencia más alta del monitor (60, 100, 120, 144 Hz…).
+- Temas de fish: `bc-tema Aurora` (Medianoche, Aurora, Atardecer, Lavanda, Grafito, Papel) y rama de git en el prompt.
+
 ### Novedades de 0.9.6
 - **ISO x86_64 también para PCs antiguos con BIOS** (además de UEFI), en CD o USB (balenaEtcher); el instalador pone GRUB
   para BIOS si el equipo no tiene UEFI.

@@ -1,0 +1,19 @@
+# name: 'BC Lavanda'
+# preferred_background: 1e1e1e
+
+fish_color_command BF5AF2 --bold
+fish_color_param F3EEFF
+fish_color_quote 64D2FF
+fish_color_error FF453A
+fish_color_comment 9A8FB5
+fish_color_operator FF9F0A
+fish_color_autosuggestion 7C6F99
+fish_color_selection --background=6D28D9
+fish_color_end 9A8FB5
+fish_color_redirection FF9F0A
+fish_color_escape FF9F0A
+fish_color_valid_path --underline
+fish_color_search_match --background=6D28D9
+fish_pager_color_prefix BF5AF2 --bold
+fish_pager_color_completion F3EEFF
+fish_pager_color_description 9A8FB5

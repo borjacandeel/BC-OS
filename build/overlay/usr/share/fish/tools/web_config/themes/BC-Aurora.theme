@@ -1,0 +1,19 @@
+# name: 'BC Aurora'
+# preferred_background: 1e1e1e
+
+fish_color_command 30D5C8 --bold
+fish_color_param E6F7F5
+fish_color_quote A3E635
+fish_color_error FB7185
+fish_color_comment 7A9A96
+fish_color_operator FBBF24
+fish_color_autosuggestion 5B7A76
+fish_color_selection --background=0F766E
+fish_color_end 7A9A96
+fish_color_redirection FBBF24
+fish_color_escape FBBF24
+fish_color_valid_path --underline
+fish_color_search_match --background=0F766E
+fish_pager_color_prefix 30D5C8 --bold
+fish_pager_color_completion E6F7F5
+fish_pager_color_description 7A9A96

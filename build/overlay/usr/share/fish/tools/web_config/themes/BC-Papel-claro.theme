@@ -1,0 +1,19 @@
+# name: 'BC Papel (claro)'
+# preferred_background: ffffff
+
+fish_color_command 0451D6 --bold
+fish_color_param 1D1D1F
+fish_color_quote 00A600
+fish_color_error C91B00
+fish_color_comment 8E8E93
+fish_color_operator B25000
+fish_color_autosuggestion A1A1A6
+fish_color_selection --background=B4D7FF
+fish_color_end 8E8E93
+fish_color_redirection B25000
+fish_color_escape B25000
+fish_color_valid_path --underline
+fish_color_search_match --background=B4D7FF
+fish_pager_color_prefix 0451D6 --bold
+fish_pager_color_completion 1D1D1F
+fish_pager_color_description 8E8E93

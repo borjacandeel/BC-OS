@@ -2,25 +2,27 @@
 # Saludo: functions/fish_greeting.fish (último inicio de sesión, como en macOS)
 set -g fish_autosuggestion_enabled 1
 
-# Colores base de BC OS (azul medianoche, plata y acento #2F7BF5)
-set -g fish_color_command 2F7BF5 --bold
-set -g fish_color_param E8ECF5
-set -g fish_color_quote 34C759
-set -g fish_color_error FF5F57
-set -g fish_color_comment 8E9BB2
-set -g fish_color_operator FF9F0A
-set -g fish_color_escape FF9F0A
-set -g fish_color_end 8E9BB2
-set -g fish_color_redirection FF9F0A
-set -g fish_color_autosuggestion 6B7894
-set -g fish_color_valid_path --underline
-set -g fish_color_selection --background=2D63D8
-set -g fish_color_search_match --background=2D63D8
-set -g fish_pager_color_prefix 2F7BF5 --bold
-set -g fish_pager_color_completion E8ECF5
-set -g fish_pager_color_description 8E9BB2
-set -g fish_pager_color_selected_background --background=2D63D8
-set -g fish_pager_color_progress 8E9BB2
+# Colores de BC OS (si eliges otro tema con «bc-tema», se respeta el tuyo)
+if not set -q __bc_tema
+    set -g fish_color_command 2F7BF5 --bold
+    set -g fish_color_param E8ECF5
+    set -g fish_color_quote 34C759
+    set -g fish_color_error FF5F57
+    set -g fish_color_comment 8E9BB2
+    set -g fish_color_operator FF9F0A
+    set -g fish_color_escape FF9F0A
+    set -g fish_color_end 8E9BB2
+    set -g fish_color_redirection FF9F0A
+    set -g fish_color_autosuggestion 6B7894
+    set -g fish_color_valid_path --underline
+    set -g fish_color_selection --background=2D63D8
+    set -g fish_color_search_match --background=2D63D8
+    set -g fish_pager_color_prefix 2F7BF5 --bold
+    set -g fish_pager_color_completion E8ECF5
+    set -g fish_pager_color_description 8E9BB2
+    set -g fish_pager_color_selected_background --background=2D63D8
+    set -g fish_pager_color_progress 8E9BB2
+end
 
 # Abreviaturas (se expanden al pulsar espacio, así se ve qué se ejecuta)
 if status is-interactive

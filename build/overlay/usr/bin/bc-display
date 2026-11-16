@@ -12,10 +12,14 @@ case "$cmd" in
     case "$2" in [0-9]*x[0-9]*) ;; *) echo "uso: bc-display set 1920x1080" >&2; exit 2 ;; esac
     outs | jq -r '.[] | select(.active) | .name' | while read -r n; do swaymsg "output $n mode $2" >/dev/null; done ;;
   auto)
-    outs | jq -r '.[] | select(.active) | "\(.name) \(.modes[0].width) \(.modes[0].height) \(.modes[0].refresh) \(.current_mode.width) \(.current_mode.height)"' |
-    while read -r n w h r cw ch; do
+    # Resolución nativa (la del primer modo) a la frecuencia MÁS ALTA que admita el monitor (60, 100, 120, 144 Hz…):
+    # el compositor y las animaciones de BC van a esa frecuencia
+    outs | jq -r '.[] | select(.active) | . as $o | ($o.modes[0]) as $m0
+      | ([$o.modes[] | select(.width == $m0.width and .height == $m0.height) | .refresh] | max) as $r
+      | "\($o.name) \($m0.width) \($m0.height) \($r) \($o.current_mode.width) \($o.current_mode.height) \($o.current_mode.refresh)"' |
+    while read -r n w h r cw ch cr; do
       [ -n "$w" ] && [ "$w" != "null" ] || continue
-      if [ "$w" != "$cw" ] || [ "$h" != "$ch" ]; then
+      if [ "$w" != "$cw" ] || [ "$h" != "$ch" ] || [ "$r" != "$cr" ]; then
         hz=$(awk -v r="$r" 'BEGIN { printf "%.3f", r/1000 }')
         swaymsg "output $n mode ${w}x${h}@${hz}Hz" >/dev/null
       fi

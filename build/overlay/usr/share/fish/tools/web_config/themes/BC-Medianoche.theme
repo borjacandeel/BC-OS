@@ -1,0 +1,19 @@
+# name: 'BC Medianoche'
+# preferred_background: 1e1e1e
+
+fish_color_command 2F7BF5 --bold
+fish_color_param E8ECF5
+fish_color_quote 34C759
+fish_color_error FF5F57
+fish_color_comment 8E9BB2
+fish_color_operator FF9F0A
+fish_color_autosuggestion 6B7894
+fish_color_selection --background=2D63D8
+fish_color_end 8E9BB2
+fish_color_redirection FF9F0A
+fish_color_escape FF9F0A
+fish_color_valid_path --underline
+fish_color_search_match --background=2D63D8
+fish_pager_color_prefix 2F7BF5 --bold
+fish_pager_color_completion E8ECF5
+fish_pager_color_description 8E9BB2

@@ -38,7 +38,8 @@ echo "es_ES" > "$S/.config/user-dirs.locale"
 install -m644 "$HERE/overlay/etc/skel/.bashrc" "$S/.bashrc"
 mkdir -p "$S/.config/fish"; install -m644 "$HERE/overlay/etc/skel/.config/fish/config.fish" "$S/.config/fish/config.fish"
 install -D -m644 "$HERE/overlay/etc/fish/conf.d/bcos.fish" "$R/etc/fish/conf.d/bcos.fish"
-for fn in fish_prompt fish_greeting fish_title; do install -D -m644 "$HERE/overlay/etc/fish/functions/$fn.fish" "$R/etc/fish/functions/$fn.fish"; done
+mkdir -p "$R/usr/share/fish/tools/web_config/themes"; install -m644 "$HERE"/overlay/usr/share/fish/tools/web_config/themes/BC-*.theme "$R/usr/share/fish/tools/web_config/themes/"
+for fn in fish_prompt fish_greeting fish_title bc-tema; do install -D -m644 "$HERE/overlay/etc/fish/functions/$fn.fish" "$R/etc/fish/functions/$fn.fish"; done
 sed -i '/# BC OS: iniciar la sesión gráfica/,$d' "$S/.bash_profile"
 cat "$HERE/overlay/etc/skel/.bash_profile" >> "$S/.bash_profile"
 install -m755 "$HERE/overlay/usr/bin/bc-session" "$HERE/overlay/usr/bin/bc-wm-mode" "$HERE/overlay/usr/bin/bc-ctl" "$HERE/overlay/usr/bin/bc-terminal" "$HERE/overlay/usr/bin/bc-screenshot" "$HERE/overlay/usr/bin/bc-display" "$HERE/overlay/usr/bin/bc-appearance" "$R/usr/bin/"
