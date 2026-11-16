@@ -5,6 +5,7 @@ import BCShell
 // fecha y fragmento, y editor a la derecha. Guarda solo, al escribir, en ~/.local/share/bc/notas.
 AppWindow {
     id: win
+    sidebarWidth: 220
     width: 980
     height: 620
     titlebarHeight: 52

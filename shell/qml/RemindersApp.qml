@@ -6,6 +6,7 @@ import BCShell
 // Comparte los datos con el widget del escritorio (~/.local/share/bc/recordatorios.json).
 AppWindow {
     id: win
+    sidebarWidth: 240
     width: 860
     height: 580
     titlebarHeight: 52

@@ -4,6 +4,7 @@ import BCShell
 // Configuración: Apariencia, Sonido, Red, Energía, Usuarios y Acerca de (datos reales).
 AppWindow {
     id: win
+    sidebarWidth: 230
     width: 740 + 2 * sh
     height: 690 + 2 * sh
     title: qsTr("Ajustes del Sistema")

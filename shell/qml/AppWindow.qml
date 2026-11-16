@@ -8,6 +8,8 @@ Window {
     default property alias content: contentArea.data
     property alias titlebarContent: tbSlot.data
     property int titlebarHeight: Theme.gg ? 52 : 44
+    // Ancho de la barra lateral de borde a borde: el fundido bajo la barra de herramientas empieza a su derecha
+    property real sidebarWidth: 0
     // Posición en pantalla (sway) para que el cristal de las barras laterales recorte el fondo correcto
     // Sombra de ventana tipo macOS dibujada por la propia app (sway por software no hace sombras; Hyprland sí)
     readonly property int sh: Theme.gg && !Quick.realBlur && win.visibility !== Window.FullScreen && win.visibility !== Window.Maximized ? 32 : 0
@@ -134,7 +136,7 @@ Window {
 
         Rectangle {
             visible: Theme.gg
-            z: 1; y: titlebar.height; width: parent.width; height: 14
+            z: 1; x: win.sidebarWidth; y: titlebar.height; width: parent.width - x; height: 14
             gradient: Gradient {
                 GradientStop { position: 0.0; color: Qt.rgba(frame.color.r, frame.color.g, frame.color.b, 0.85) }
                 GradientStop { position: 1.0; color: Qt.rgba(frame.color.r, frame.color.g, frame.color.b, 0) }

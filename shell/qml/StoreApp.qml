@@ -4,6 +4,7 @@ import BCShell
 // BC Tienda: buscar, instalar y quitar software con pacman.
 AppWindow {
     id: win
+    sidebarWidth: 220
     width: 980
     height: 640
     titlebarHeight: 52

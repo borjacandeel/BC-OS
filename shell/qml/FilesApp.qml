@@ -6,6 +6,7 @@ import BCShell
 // (en la carpeta o en toda la carpeta personal), etiquetas de color y Vista rápida (Espacio).
 AppWindow {
     id: win
+    sidebarWidth: sideW
     width: 1060
     height: 600
     titlebarHeight: 52

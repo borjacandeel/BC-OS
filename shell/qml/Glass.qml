@@ -58,16 +58,20 @@ Item {
     }
     // Tinte (deslizador ultratransparente ↔ tintado)
     // Con desenfoque real (Hyprland) el tinte es algo más ligero para que se vea lo de detrás, como Liquid Glass
-    Rectangle { anchors.fill: parent; radius: g.radius; color: g.tintColor
+    // Barras laterales (leftOnly): esquinas derechas rectas recortando un rectángulo más ancho
+    Item {
+        anchors.fill: parent; clip: g.leftOnly
+    Rectangle { width: parent.width + (g.leftOnly ? g.radius : 0); height: parent.height; radius: g.radius; color: g.tintColor
                 opacity: Math.min(0.97, (Quick.realBlur ? 0.75 : 1) * (Theme.glassOpacity + g.tintBoost)) }
     // Reflejo superior: refracción uniforme de Golden Gate
     Rectangle {
-        anchors.fill: parent; radius: g.radius
+        width: parent.width + (g.leftOnly ? g.radius : 0); height: parent.height; radius: g.radius
         gradient: Gradient {
             GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, Theme.glassSpecular) }
             GradientStop { position: 0.35; color: Qt.rgba(1, 1, 1, 0) }
             GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, Theme.glassSpecular * 0.35) }
         }
+    }
     }
     // Borde fino luminoso: más claro arriba (luz) que abajo
     Rectangle {

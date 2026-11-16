@@ -6,6 +6,7 @@ import BCShell
 // Reproduce ~/Música con mpv.
 AppWindow {
     id: win
+    sidebarWidth: 210
     width: 1040
     height: 660
     titlebarHeight: 52

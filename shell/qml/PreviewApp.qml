@@ -5,6 +5,7 @@ import BCShell
 // zoom (ajustar / tamaño real / + / −), girar, flechas para pasar de imagen, y la información del archivo.
 AppWindow {
     id: win
+    sidebarWidth: showSidebar ? 180 : 0
     width: 980
     height: 680
     titlebarHeight: 52
