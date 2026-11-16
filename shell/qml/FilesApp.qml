@@ -309,7 +309,7 @@ AppWindow {
                             Row {
                                 anchors.verticalCenter: parent.verticalCenter
                                 Item { width: hdr.width * 0.44; height: 24
-                                       FileGlyph { x: 6; anchors.verticalCenter: parent.verticalCenter; kind: lr.kind; width: 18; height: 16 }
+                                       FileGlyph { x: 6; anchors.verticalCenter: parent.verticalCenter; kind: lr.kind; path: lr.name; width: 18; height: 16 }
                                        Text { x: 30; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 50; text: lr.name; elide: Text.ElideMiddle; color: lr.ink; font.family: Theme.fontFamily; font.pixelSize: 12 }
                                        Row { anchors.right: parent.right; anchors.rightMargin: 4; anchors.verticalCenter: parent.verticalCenter; spacing: -3
                                              Repeater { model: lr.tags; Rectangle { required property string modelData; width: 8; height: 8; radius: 4; color: win.tagColors[modelData] || "gray" } } } }
@@ -346,7 +346,7 @@ AppWindow {
                                     required property bool isDir
                                     readonly property bool onPath: (Files.path + "/").indexOf(filePath + "/") === 0
                                     width: ListView.view.width; height: 22; radius: 5; color: onPath ? Theme.tileFill : "transparent"
-                                    FileGlyph { x: 4; anchors.verticalCenter: parent.verticalCenter; kind: parent.kind; width: 16; height: 14 }
+                                    FileGlyph { x: 4; anchors.verticalCenter: parent.verticalCenter; kind: parent.kind; path: parent.filePath; width: 16; height: 14 }
                                     Text { x: 26; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 44; text: parent.name; elide: Text.ElideMiddle; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 12 }
                                     Text { visible: parent.isDir; anchors.right: parent.right; anchors.rightMargin: 6; anchors.verticalCenter: parent.verticalCenter; text: "›"; color: Theme.textSecondary; font.pixelSize: 14 }
                                     MouseArea { anchors.fill: parent; onClicked: parent.isDir ? Files.open(parent.filePath) : Quick.open(parent.filePath) }
@@ -365,7 +365,7 @@ AppWindow {
                                 required property string kind
                                 required property bool isDir
                                 width: ListView.view.width; height: 22; radius: 5; color: win.current === index ? Theme.accent : "transparent"
-                                FileGlyph { x: 4; anchors.verticalCenter: parent.verticalCenter; kind: parent.kind; width: 16; height: 14 }
+                                FileGlyph { x: 4; anchors.verticalCenter: parent.verticalCenter; kind: parent.kind; path: parent.name; width: 16; height: 14 }
                                 Text { x: 26; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 44; text: parent.name; elide: Text.ElideMiddle; color: win.current === parent.index ? "white" : Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 12 }
                                 Text { visible: parent.isDir; anchors.right: parent.right; anchors.rightMargin: 6; anchors.verticalCenter: parent.verticalCenter; text: "›"; color: Theme.textSecondary; font.pixelSize: 14 }
                                 MouseArea { anchors.fill: parent; onClicked: { win.current = parent.index; fx.forceActiveFocus() } onDoubleClicked: Files.activate(parent.index) }
@@ -393,7 +393,7 @@ AppWindow {
                             width: 72; height: 72; radius: 8; color: win.current === index ? Theme.accent : Theme.tileFill
                             Image { anchors.fill: parent; anchors.margins: 4; visible: parent.kind === "imagen"; source: visible ? "file://" + parent.filePath : ""
                                     sourceSize: Qt.size(128, 128); fillMode: Image.PreserveAspectCrop; asynchronous: true }
-                            FileGlyph { anchors.centerIn: parent; visible: parent.kind !== "imagen"; kind: parent.kind; width: 48; height: 40 }
+                            FileGlyph { anchors.centerIn: parent; visible: parent.kind !== "imagen"; kind: parent.kind; path: parent.filePath; width: 48; height: 40 }
                             MouseArea { anchors.fill: parent; onClicked: { win.current = parent.index; fx.forceActiveFocus() } onDoubleClicked: Files.activate(parent.index) }
                         }
                     }
@@ -430,7 +430,7 @@ AppWindow {
                                             width: 104; height: 108; radius: 8
                                             color: rma.containsMouse ? Theme.tileFill : "transparent"
                                             readonly property bool audio: /\.(mp3|ogg|oga|opus|flac|wav|m4a|aac)$/i.test(modelData.name)
-                                            FileGlyph { visible: parent.modelData.kind !== "imagen" && !parent.audio; anchors.horizontalCenter: parent.horizontalCenter; y: 2; width: 60; height: 60; scale: 0.8; kind: parent.modelData.kind || "texto" }
+                                            FileGlyph { visible: parent.modelData.kind !== "imagen" && !parent.audio; anchors.horizontalCenter: parent.horizontalCenter; y: 2; width: 60; height: 60; scale: 0.8; kind: parent.modelData.kind || "texto"; path: parent.modelData.name || "" }
                                             Image { visible: parent.audio; anchors.horizontalCenter: parent.horizontalCenter; y: 6; width: 54; height: 54; sourceSize: Qt.size(108, 108)
                                                     source: visible ? "qrc:/BCShell/apps/multimedia-audio-player.svg" : "" }
                                             // Imágenes: miniatura real con borde blanco, como en Finder

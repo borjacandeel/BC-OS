@@ -38,7 +38,7 @@ echo "es_ES" > "$S/.config/user-dirs.locale"
 install -m644 "$HERE/overlay/etc/skel/.bashrc" "$S/.bashrc"
 mkdir -p "$S/.config/fish"; install -m644 "$HERE/overlay/etc/skel/.config/fish/config.fish" "$S/.config/fish/config.fish"
 install -D -m644 "$HERE/overlay/etc/fish/conf.d/bcos.fish" "$R/etc/fish/conf.d/bcos.fish"
-install -D -m644 "$HERE/overlay/etc/fish/functions/fish_prompt.fish" "$R/etc/fish/functions/fish_prompt.fish"
+for fn in fish_prompt fish_greeting fish_title; do install -D -m644 "$HERE/overlay/etc/fish/functions/$fn.fish" "$R/etc/fish/functions/$fn.fish"; done
 sed -i '/# BC OS: iniciar la sesión gráfica/,$d' "$S/.bash_profile"
 cat "$HERE/overlay/etc/skel/.bash_profile" >> "$S/.bash_profile"
 install -m755 "$HERE/overlay/usr/bin/bc-session" "$HERE/overlay/usr/bin/bc-wm-mode" "$HERE/overlay/usr/bin/bc-ctl" "$HERE/overlay/usr/bin/bc-terminal" "$HERE/overlay/usr/bin/bc-screenshot" "$HERE/overlay/usr/bin/bc-display" "$HERE/overlay/usr/bin/bc-appearance" "$R/usr/bin/"
@@ -68,7 +68,7 @@ fi
 # Iconos propios de las apps de BC (estilo Golden Gate, icons/src/app) como bc-<app> en hicolor
 HI="$R/usr/share/icons/hicolor/scalable/apps"; mkdir -p "$HI"
 for pair in bc-files:system-file-manager bc-settings:preferences-system bc-monitor:utilities-system-monitor bc-store:gnome-software \
-            bc-terminal:com.mitchellh.ghostty bc-calculator:accessories-calculator bc-notes:accessories-notes bc-preview:multimedia-photo-viewer \
+            bc-terminal:utilities-terminal bc-calculator:accessories-calculator bc-notes:accessories-notes bc-preview:multimedia-photo-viewer \
             bc-calendar:bc-calendar bc-reminders:bc-reminders bc-music:multimedia-audio-player; do
   src="$HERE/../shell/assets/apps/${pair#*:}.svg"; [ -f "$src" ] || src="$HERE/../shell/assets/icons/${pair#*:}.svg"
   [ -f "$src" ] && install -m644 "$src" "$HI/${pair%%:*}.svg"

@@ -442,7 +442,13 @@ bool Processes::quit(int pid, bool force) {
 #include "appindex.h"
 QString QuickTools::iconPath(const QString &name) {
     static const QRegularExpression ok("^[A-Za-z0-9._-]{1,80}$");
-    return ok.match(name).hasMatch() ? AppIndex::resolveIcon(name) : QString();
+    if (!ok.match(name).hasMatch()) return {};
+    // Apps primero; luego lugares, tipos de archivo y dispositivos del tema tipo macOS (carpetas azules, documentos…)
+    const QString a = AppIndex::resolveIcon(name);
+    if (!a.isEmpty()) return a;
+    static const QString base = qEnvironmentVariable("BC_ICON_THEME_DIR", "/usr/share/icons/MacOS-Like-Dark");
+    return AppIndex::resolveIcon(name, {base + "/places/scalable", base + "/mimes/scalable", base + "/devices/scalable",
+                                        "/usr/share/icons/Qogir/scalable/places", "/usr/share/icons/Qogir/scalable/mimetypes"});
 }
 
 // ---------------------------------------------------------------------------------------------

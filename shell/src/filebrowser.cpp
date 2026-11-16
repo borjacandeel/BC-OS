@@ -235,7 +235,7 @@ QString FileBrowser::placePath(const QString &n) const {
     if (n == "home") return QDir::homePath();
     SL::StandardLocation loc = n == "desktop" ? SL::DesktopLocation
         : n == "documents" ? SL::DocumentsLocation : n == "downloads" ? SL::DownloadLocation
-        : n == "pictures" ? SL::PicturesLocation : n == "music" ? SL::MusicLocation : SL::HomeLocation;
+        : n == "pictures" ? SL::PicturesLocation : n == "music" ? SL::MusicLocation : n == "videos" ? SL::MoviesLocation : SL::HomeLocation;
     return SL::writableLocation(loc);
 }
 

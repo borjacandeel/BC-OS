@@ -77,7 +77,7 @@ Item {
             width: desk.cellW; height: desk.cellH
             Rectangle { anchors.horizontalCenter: parent.horizontalCenter; y: px(2); width: px(68); height: px(62); radius: px(6)
                         color: desk.isSel(ic.name) ? Qt.rgba(1, 1, 1, 0.16) : "transparent"; border.width: desk.isSel(ic.name) ? 1 : 0; border.color: Qt.rgba(1, 1, 1, 0.3) }
-            FileGlyph { visible: ic.kind !== "imagen" || dthumb.status !== Image.Ready; anchors.horizontalCenter: parent.horizontalCenter; y: px(6); kind: ic.kind; width: px(64); height: px(54) }
+            FileGlyph { visible: ic.kind !== "imagen" || dthumb.status !== Image.Ready; anchors.horizontalCenter: parent.horizontalCenter; y: px(6); kind: ic.kind; path: ic.filePath; width: px(64); height: px(54) }
             Rectangle { visible: dthumb.status === Image.Ready; anchors.centerIn: dthumb; width: dthumb.paintedWidth + px(4); height: dthumb.paintedHeight + px(4); color: "white"; radius: px(2) }
             Image { id: dthumb; visible: status === Image.Ready; anchors.horizontalCenter: parent.horizontalCenter; y: px(8); width: px(60); height: px(52)
                     fillMode: Image.PreserveAspectFit; asynchronous: true; sourceSize: Qt.size(120, 104); source: ic.kind === "imagen" ? "file://" + ic.filePath : "" }

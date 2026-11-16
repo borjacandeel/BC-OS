@@ -1,5 +1,5 @@
 # BC OS: fish con sugerencias automáticas, colores de la marca y atajos inteligentes
-set -g fish_greeting
+# Saludo: functions/fish_greeting.fish (último inicio de sesión, como en macOS)
 set -g fish_autosuggestion_enabled 1
 
 # Colores base de BC OS (azul medianoche, plata y acento #2F7BF5)

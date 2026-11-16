@@ -17,7 +17,7 @@ Item {
         archivos: "system-file-manager",
         ajustes: "preferences-system",
         monitor: "utilities-system-monitor",
-        terminal: "com.mitchellh.ghostty",
+        terminal: "utilities-terminal",
         tienda: "gnome-software",
         navegador: "firefox",
         musica: "multimedia-audio-player",

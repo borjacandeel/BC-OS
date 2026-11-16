@@ -543,7 +543,7 @@ LayerWindow {
                             required property string filePath
                             required property string kind
                             width: GridView.view.cellWidth; height: GridView.view.cellHeight
-                            FileGlyph { anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(4); kind: parent.kind; width: Theme.px(52); height: Theme.px(44) }
+                            FileGlyph { anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(4); kind: parent.kind; path: parent.filePath; width: Theme.px(52); height: Theme.px(44) }
                             Text { anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(54); width: parent.width - Theme.px(6); horizontalAlignment: Text.AlignHCenter
                                    elide: Text.ElideMiddle; text: parent.name; color: Theme.label; font.family: Theme.font; font.pixelSize: Theme.px(11) }
                             MouseArea { anchors.fill: parent; onClicked: { UiState.closePopups(); Quick.open(parent.filePath) } }

@@ -134,3 +134,8 @@ disponible en el login como **«BC clásico»**.
 ## Volver a la sesión anterior
 En la pantalla de inicio de sesión, elegir **«BC clásico»** (misma sesión sway con `BC_CLASSIC=1`).
 También se puede fijar en Ajustes ▸ General ▸ «Entorno al iniciar sesión».
+
+## 2026-11-16 — Iconos tipo macOS en todo el sistema
+- Fuente única: tema MacOS-Like-Dark (Scrimas, GPL-3.0, sobre MacTahoe). Apps BC, Dock, Aplicaciones, Spotlight, notificaciones, Archivos (carpetas especiales y tipos de archivo) y escritorio.
+- `QuickTools::iconPath`: apps → places → mimes → devices (variable `BC_ICON_THEME_DIR` para pruebas). `FileGlyph` elige el icono por extensión.
+- Terminal: 80×24, título «usuario — proceso — columnas×filas» (`fish_title`), saludo «Último inicio de sesión: … en pts/N» (`fish_greeting`).

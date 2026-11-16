@@ -25,12 +25,31 @@ Item {
         for (const k in m) if (Files.placePath(k) === path) { const p = Quick.iconPath(m[k]); if (p !== "") return "file://" + p }
         return ""
     }
+    // Documentos: icono del tipo de archivo del tema (PNG, PDF, ZIP, audio, vídeo, HTML…), como en el Finder
+    readonly property string mimeIcon: {
+        if (kind === "carpeta" || path === "") return ""
+        const e = path.substring(path.lastIndexOf(".") + 1).toLowerCase()
+        const m = { png: "image-png", jpg: "image-jpeg", jpeg: "image-jpeg", gif: "image-gif", webp: "image-webp", svg: "image-svg+xml",
+                    bmp: "image-bmp", heic: "image-heif", pdf: "application-pdf", txt: "text-plain", md: "text-markdown",
+                    zip: "application-zip", gz: "application-x-compressed-tar", xz: "application-x-xz-compressed-tar", tar: "application-x-tar",
+                    "7z": "application-x-7z-compressed", rar: "application-x-rar", mp3: "audio-mpeg", flac: "audio-x-flac", ogg: "audio-x-vorbis+ogg",
+                    wav: "audio-x-wav", m4a: "audio-mp4", mp4: "video-mp4", mkv: "video-x-matroska", webm: "video-webm", mov: "video-quicktime",
+                    html: "text-html", htm: "text-html", css: "text-css", js: "application-javascript", json: "application-json",
+                    py: "text-x-python", sh: "application-x-shellscript", c: "text-x-csrc", cpp: "text-x-c++src", h: "text-x-chdr",
+                    qml: "text-x-qml", xml: "application-xml", iso: "application-x-cd-image", img: "application-x-raw-disk-image",
+                    deb: "application-x-deb", appimage: "application-x-iso9660-appimage", odt: "application-vnd.oasis.opendocument.text",
+                    docx: "application-vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    xlsx: "application-vnd.openxmlformats-officedocument.spreadsheetml.sheet", ttf: "font-x-generic", otf: "font-x-generic" }
+        const generic = { imagen: "image-x-generic", codigo: "text-x-script", texto: "text-x-generic", pdf: "application-pdf" }
+        for (const n of [m[e], generic[kind]]) { if (!n) continue; const p = Quick.iconPath(n); if (p !== "") return "file://" + p }
+        return ""
+    }
     readonly property real dpr: Screen.devicePixelRatio > 0 ? Screen.devicePixelRatio : 1
 
     Image {
         anchors.centerIn: parent
         width: Math.min(root.width, root.height * 1.0); height: width
-        source: root.special !== "" ? root.special : "qrc:/BCShell/apps/" + (root.names[root.kind] || "text-x-generic") + ".svg"
+        source: root.special !== "" ? root.special : root.mimeIcon !== "" ? root.mimeIcon : "qrc:/BCShell/apps/" + (root.names[root.kind] || "text-x-generic") + ".svg"
         sourceSize: Qt.size(Math.ceil(width * root.dpr / 16) * 16, Math.ceil(width * root.dpr / 16) * 16)
         fillMode: Image.PreserveAspectFit
         smooth: true
