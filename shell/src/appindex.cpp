@@ -9,6 +9,9 @@
 #include <algorithm>
 
 AppIndex::AppIndex(const QStringList &dirs, const QString &lang, QObject *parent) : QObject(parent), m_dirs(dirs), m_lang(lang) {
+    // BC_APPS_DIRS (separadas por «:») sustituye a las carpetas estándar: capturas y pruebas reproducibles
+    if (m_dirs.isEmpty() && !qEnvironmentVariable("BC_APPS_DIRS").isEmpty())
+        m_dirs = qEnvironmentVariable("BC_APPS_DIRS").split(':', Qt::SkipEmptyParts);
     if (m_dirs.isEmpty()) {
         m_dirs << "/usr/share/applications" << "/usr/local/share/applications"
                << QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/applications";
