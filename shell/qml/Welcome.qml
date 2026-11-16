@@ -203,35 +203,71 @@ Item {
             scale: root.step === 2 ? 1 : 0.97
             Behavior on scale { NumberAnimation { duration: Theme.dur(260); easing.type: Easing.OutCubic } }
             anchors.horizontalCenter: parent.horizontalCenter; spacing: 22
-            Row { anchors.horizontalCenter: parent.horizontalCenter; spacing: 8
-                  Chip { text: qsTr("Oscuro"); sel: Settings.appearance === "dark"; onClicked: Settings.appearance = "dark" }
-                  Chip { text: qsTr("Claro"); sel: Settings.appearance === "light"; onClicked: Settings.appearance = "light" }
-                  Chip { text: qsTr("Automático"); sel: Settings.appearance === "auto"; onClicked: Settings.appearance = "auto" } }
+            // Aspecto: tres miniaturas como en Ajustes ▸ Aspecto de macOS
             Row {
-                anchors.horizontalCenter: parent.horizontalCenter; spacing: 12
+                anchors.horizontalCenter: parent.horizontalCenter; spacing: 28
                 Repeater {
-                    model: root.wallpapers
-                    delegate: Rectangle {
+                    model: [ { v: "light", t: qsTr("Claro") }, { v: "dark", t: qsTr("Oscuro") }, { v: "auto", t: qsTr("Automático") } ]
+                    Column {
                         required property var modelData
-                        readonly property bool sel: Settings.wallpaper === root.wallDir + modelData.f || (Settings.wallpaper === "" && modelData.f === "ondas.jpg")
-                        width: 150; height: 100; radius: 12; color: "#0A1020"; clip: true
-                        border.width: sel ? 3 : 1; border.color: sel ? Theme.accent : Theme.hairline
-                        Image { anchors.fill: parent; anchors.margins: 3; source: root.step === 2 && visible ? "file://" + root.wallDir + modelData.f : ""; fillMode: Image.PreserveAspectCrop; asynchronous: true; sourceSize.width: 300 }
-                        Text { anchors.bottom: parent.bottom; anchors.horizontalCenter: parent.horizontalCenter; anchors.bottomMargin: 5; text: modelData.n
-                               color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 12; style: Text.Outline; styleColor: "#000000" }
-                        MouseArea { anchors.fill: parent; onClicked: root.pickWallpaper(modelData.f) }
+                        readonly property bool sel: Settings.appearance === modelData.v
+                        spacing: 8
+                        Rectangle {
+                            width: 112; height: 72; radius: 12; color: "transparent"
+                            border.width: parent.sel ? 3 : 0; border.color: Theme.accent
+                            Rectangle {
+                                anchors.fill: parent; anchors.margins: parent.parent.sel ? 5 : 0; radius: 8; clip: true
+                                gradient: Gradient {
+                                    GradientStop { position: 0; color: modelData.v === "dark" ? "#27305A" : "#CFE3FA" }
+                                    GradientStop { position: 1; color: modelData.v === "dark" ? "#141A30" : "#8DB6E6" } }
+                                Rectangle { x: 8; y: 8; width: parent.width * 0.62; height: parent.height - 16; radius: 5; color: modelData.v === "dark" ? "#2C2C31" : "#FFFFFF"
+                                    Row { x: 5; y: 5; spacing: 3; Repeater { model: [Theme.close, Theme.minimize, Theme.zoom]
+                                          Rectangle { required property color modelData; width: 5; height: 5; radius: 2.5; color: modelData } } } }
+                                Item { visible: modelData.v === "auto"; x: parent.width / 2; width: parent.width / 2; height: parent.height; clip: true
+                                       Rectangle { x: -parent.x; width: parent.parent.width; height: parent.height
+                                                   gradient: Gradient { GradientStop { position: 0; color: "#27305A" } GradientStop { position: 1; color: "#141A30" } } }
+                                       Rectangle { x: 8 - parent.x; y: 8; width: parent.parent.width * 0.62; height: parent.parent.height - 16; radius: 5; color: "#2C2C31" } }
+                            }
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Settings.appearance = modelData.v }
+                        }
+                        Text { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.t; color: parent.sel ? root.ink : Theme.textSecondary
+                               font.family: Theme.fontFamily; font.pixelSize: 13; font.weight: parent.sel ? Font.DemiBold : Font.Normal }
                     }
                 }
             }
+            // Fondos: rejilla de miniaturas con el nombre debajo (sin cortes a los lados)
+            Grid {
+                anchors.horizontalCenter: parent.horizontalCenter; columns: 6; columnSpacing: 14; rowSpacing: 10
+                Repeater {
+                    model: root.wallpapers
+                    delegate: Column {
+                        required property var modelData
+                        readonly property bool sel: Settings.wallpaper === root.wallDir + modelData.f || (Settings.wallpaper === "" && modelData.f === "ondas.jpg")
+                        spacing: 5
+                        Rectangle {
+                            width: 132; height: 80; radius: 10; color: "transparent"
+                            border.width: parent.sel ? 3 : 0; border.color: Theme.accent
+                            Rectangle { anchors.fill: parent; anchors.margins: parent.parent.sel ? 4 : 0; radius: parent.parent.sel ? 7 : 10; clip: true; color: "#0A1020"
+                                Image { anchors.fill: parent; source: root.step === 2 ? "file://" + root.wallDir + modelData.f : ""; fillMode: Image.PreserveAspectCrop
+                                        asynchronous: true; sourceSize.width: 280; smooth: true } }
+                            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.pickWallpaper(modelData.f) }
+                        }
+                        Text { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.n; color: parent.sel ? root.ink : Theme.textSecondary
+                               font.family: Theme.fontFamily; font.pixelSize: 12; font.weight: parent.sel ? Font.DemiBold : Font.Normal }
+                    }
+                }
+            }
+            // Color de acento: círculos con anillo en el elegido (como macOS)
             Row { anchors.horizontalCenter: parent.horizontalCenter; spacing: 12
-                  Text { anchors.verticalCenter: parent.verticalCenter; text: qsTr("Color de acento"); color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 14 }
+                  Text { anchors.verticalCenter: parent.verticalCenter; text: qsTr("Color de acento"); color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 14; rightPadding: 6 }
                   Repeater {
                       model: root.accents
                       delegate: Rectangle {
                           required property string modelData
-                          width: 30; height: 30; radius: 15; color: modelData
-                          border.width: AppConfig.accent.toLowerCase() === modelData.toLowerCase() ? 3 : 0; border.color: Theme.white
-                          MouseArea { anchors.fill: parent; onClicked: root.pickAccent(modelData) }
+                          readonly property bool sel: AppConfig.accent.toLowerCase() === modelData.toLowerCase()
+                          width: 28; height: 28; radius: 14; color: "transparent"; border.width: sel ? 2 : 0; border.color: modelData
+                          Rectangle { anchors.centerIn: parent; width: parent.sel ? 20 : 26; height: width; radius: width / 2; color: modelData }
+                          MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: root.pickAccent(modelData) }
                       }
                   } }
         }

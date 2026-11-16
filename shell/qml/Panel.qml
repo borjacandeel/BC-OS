@@ -6,7 +6,9 @@ import BCShell
 // cada uno como superficie wlr-layer-shell (el compositor es sway; las apps son procesos aparte).
 LayerWindow {
     id: root
-    layer: "background"
+    // Capa «bottom» (encima del fondo de sway, debajo de las ventanas): al cambiar de fondo o de aspecto sway lanza
+    // un swaybg nuevo en «background» que, si el escritorio estuviera ahí, taparía los widgets
+    layer: "bottom"
     edges: ["top", "bottom", "left", "right"]
     scope: "bc-desktop"
     width: UiState.sw
@@ -336,7 +338,7 @@ LayerWindow {
     Timer { id: demoQ; interval: 300; onTriggered: spotlightRef.setText("a") }
     property var spotlightRef: null
     property var ccRef: null
-    Timer { id: welcomeTimer; interval: 3500; onTriggered: if (!UiState.locked) UiState.welcomeOpen = true }
+    Timer { id: welcomeTimer; interval: 700; onTriggered: if (!UiState.locked) UiState.welcomeOpen = true }
 
     // Botones de ventana para las apps que no son de BC
     WindowChrome { }
@@ -471,9 +473,10 @@ LayerWindow {
         Item {
             anchors.fill: parent
             Welcome {
+                id: welcomeView
                 anchors.fill: parent
                 visible: UiState.welcomeOpen
-                onVisibleChanged: if (visible) { step = 0; forceActiveFocus() }
+                onVisibleChanged: if (visible) { step = AppConfig.demo === "bienvenida-fondo" ? 2 : 0; forceActiveFocus() }
                 onFinished: UiState.welcomeOpen = false
             }
             LockScreen { active: UiState.locked; onUnlocked: UiState.locked = false }
@@ -801,7 +804,7 @@ LayerWindow {
         else if (d === "power") UiState.openPower("poweroff")
         else if (d === "launcher") UiState.toggleLauncher()
         else if (d === "centro") UiState.centerOpen = true
-        else if (d === "bienvenida") UiState.welcomeOpen = true
+        else if (d === "bienvenida" || d === "bienvenida-fondo") UiState.welcomeOpen = true
         else if (d === "inicio") { UiState.style = "win"; UiState.toggleLauncher() }
         else if (d === "tienda" || d === "monitor" || d === "ajustes") launch(d, "")
     }

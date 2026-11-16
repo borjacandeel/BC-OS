@@ -205,7 +205,7 @@ AppWindow {
                         color: modelData.idx === win.page ? (win.active || !Theme.gg ? Theme.accent : Theme.tileFill) : (ma.containsMouse ? Theme.tileFill : "transparent")
                         // Golden Gate: iconos en color solo en la ventana activa
                         Rectangle { x: 7; anchors.verticalCenter: parent.verticalCenter; width: Theme.gg ? 22 : 20; height: width; radius: Theme.gg ? 6 : 5
-                                    color: win.active || !Theme.gg ? (modelData.c || "#8E8E93") : Qt.rgba(0.5, 0.5, 0.55, 0.6)
+                                    color: modelData.c || "#8E8E93"   // como macOS: iconos en color también con la ventana inactiva
                                     Icon { visible: !modelData.g; anchors.centerIn: parent; name: modelData.icon || ""; size: 14; color: "white" }
                                     // Glifos dibujados como en macOS: Aspecto (círculo mitad blanco) y Escritorio y Dock (ventana con Dock)
                                     Rectangle { visible: modelData.g === "aspecto"; anchors.centerIn: parent; width: 13; height: 13; radius: 6.5; color: "white"
