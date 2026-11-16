@@ -57,8 +57,10 @@ printf 'default live.conf\ntimeout 5\nconsole-mode max\n' > "$T/loader.conf"
 OPTS="archisobasedir=arch archisolabel=$LABEL rw quiet splash plymouth.ignore-serial-consoles $CON lang=es_ES"
 printf 'title   BC OS (live)\nlinux   /%s\ninitrd  /initramfs-live.img\noptions %s\n' "$KIMG" "$OPTS" > "$T/live.conf"
 printf 'title   BC OS (live, modo seguro)\nlinux   /%s\ninitrd  /initramfs-live.img\noptions %s\n' "$KIMG" "${OPTS/quiet splash/plymouth.enable=0}" > "$T/live-seguro.conf"
+# Copiar todo a la RAM: tarda más en arrancar pero luego va fluido aunque el USB sea 2.0 (necesita ~6 GB de RAM)
+printf 'title   BC OS (live, cargar en RAM: USB lento)\nlinux   /%s\ninitrd  /initramfs-live.img\noptions %s copytoram=y\n' "$KIMG" "$OPTS" > "$T/live-ram.conf"
 mcopy -i "$T/efiboot.img" "$T/loader.conf" ::/loader/loader.conf
-mcopy -i "$T/efiboot.img" "$T/live.conf" "$T/live-seguro.conf" ::/loader/entries/
+mcopy -i "$T/efiboot.img" "$T/live.conf" "$T/live-seguro.conf" "$T/live-ram.conf" ::/loader/entries/
 mkdir -p "$T/iso/EFI"; cp "$T/efiboot.img" "$T/iso/EFI/efiboot.img"
 if [ -f "$T/eltorito.img" ]; then
   mkdir -p "$T/iso/boot/grub"; cp "$T/eltorito.img" "$T/iso/boot/grub/eltorito.img"
@@ -69,6 +71,7 @@ set timeout=5
 set default=0
 menuentry "BC OS (live)" { linux /boot/$KIMG $OPTS; initrd /boot/initramfs-live.img; }
 menuentry "BC OS (live, modo seguro)" { linux /boot/$KIMG ${OPTS/quiet splash/plymouth.enable=0}; initrd /boot/initramfs-live.img; }
+menuentry "BC OS (live, cargar en RAM: USB lento)" { linux /boot/$KIMG $OPTS copytoram=y; initrd /boot/initramfs-live.img; }
 G
 fi
 

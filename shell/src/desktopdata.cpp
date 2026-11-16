@@ -774,7 +774,8 @@ bool QuickTools::setMachineKind(const QString &kind) {
 static QString cornersPath() { return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/bc/esquinas"; }
 bool QuickTools::roundedCorners() {
     QFile f(cornersPath());
-    return f.open(QIODevice::ReadOnly) && QString::fromUtf8(f.readAll()).trimmed() == "si";   // de serie, desactivadas (rendimiento)
+    if (f.open(QIODevice::ReadOnly)) return QString::fromUtf8(f.readAll()).trimmed() == "si";
+    return !qEnvironmentVariableIsEmpty("BC_FX");   // de serie: activadas si la sesión las da por GPU (swayfx/Hyprland)
 }
 bool QuickTools::setRoundedCorners(bool on) {
     QDir().mkpath(QFileInfo(cornersPath()).absolutePath());

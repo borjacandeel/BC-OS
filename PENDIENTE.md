@@ -10,6 +10,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - ARM64 únicamente. Base Arch Linux ARM.
 
 ## En curso
+- [x] 2026-11-16 PC del padre (HP, GT 710, USB 2.0): esquinas en Firefox y apps externas → swayfx por GPU de serie si hay GPU real (nouveau incluida), Firefox con barra propia (CSD, pestañas en la barra); entrada de arranque «cargar en RAM» (copytoram). Falta: probar en el PC real; qué es la salida «RGT1352».
 - [ ] 2026-11-16 noche — probado 0.9.6 en VirtualBox ARM por el creador. HACER YA:
   - [x] Clave GPG del repo [bc] (actualizaciones firmadas): guiar al creador, secreto BC_REPO_GPG_KEY, clave pública en la imagen, SigLevel Required.
   - [x] Bienvenida: selección de fondos y temas se ve mal (carrusel cortado, tarjetas); rehacer como macOS.

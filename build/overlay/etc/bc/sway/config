@@ -155,6 +155,8 @@ bindsym Alt+Print exec bc-screenshot ventana
 
 # Ventanas que siempre flotan
 for_window [app_id="bc-.*"] border none
+# Firefox dibuja su barra (pestañas, semáforo y esquinas redondeadas): sin marco de sway
+for_window [app_id="firefox"] border none
 for_window [window_role="pop-up"] floating enable
 for_window [window_type="dialog"] floating enable
 

@@ -1,7 +1,11 @@
 {
   "policies": {
     "Preferences": {
-      "browser.tabs.inTitlebar": { "Value": 0, "Status": "default" }
+      "browser.tabs.inTitlebar": { "Value": 1, "Status": "default" },
+      "widget.gtk.rounded-bottom-corners.enabled": { "Value": true, "Status": "default" },
+      "browser.compactmode.show": { "Value": true, "Status": "default" },
+      "widget.gtk.overlay-scrollbars.enabled": { "Value": true, "Status": "default" },
+      "browser.uidensity": { "Value": 0, "Status": "default" }
     }
   }
 }
