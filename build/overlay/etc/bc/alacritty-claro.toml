@@ -1,0 +1,32 @@
+# Paleta clara de la Terminal de BC OS (aspecto claro, como el perfil «Básico» del Terminal de macOS)
+[colors.primary]
+background = "#ffffff"
+foreground = "#1d1d1f"
+
+[colors.cursor]
+cursor = "#7f7f7f"
+text = "#ffffff"
+
+[colors.selection]
+background = "#b4d7ff"
+text = "#1d1d1f"
+
+[colors.normal]
+black = "#000000"
+red = "#c91b00"
+green = "#00a600"
+yellow = "#a5a300"
+blue = "#0451d6"
+magenta = "#b13bd1"
+cyan = "#00a5c4"
+white = "#bfbfbf"
+
+[colors.bright]
+black = "#666666"
+red = "#e6332a"
+green = "#2bb83b"
+yellow = "#b8a80e"
+blue = "#3a6fe0"
+magenta = "#c751e6"
+cyan = "#17b4c8"
+white = "#e5e5e5"

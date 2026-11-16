@@ -6,6 +6,9 @@ import BCShell
 // colores y fondo, y organización de ventanas. Todo se aplica al instante.
 Item {
     id: root
+    // Modo claro/oscuro: tinta del texto y velos (blancos en oscuro, negros en claro)
+    readonly property color ink: Theme.lightUi ? "#1D1D1F" : Theme.white
+    function wash(a) { return Theme.lightUi ? Qt.rgba(0, 0, 0, a * 0.7) : Qt.rgba(1, 1, 1, a) }
     property int step: 0
     readonly property int steps: 4
     signal finished()
@@ -36,7 +39,7 @@ Item {
     Keys.onLeftPressed: if (step > 0) step--
     Keys.onReturnPressed: next()
 
-    Rectangle { anchors.fill: parent; color: Qt.rgba(0.02, 0.03, 0.07, 0.97) }
+    Rectangle { anchors.fill: parent; color: Theme.lightUi ? Qt.rgba(0.95, 0.95, 0.97, 0.97) : Qt.rgba(0.02, 0.03, 0.07, 0.97) }
     MouseArea { anchors.fill: parent }   // no deja pasar clics
 
     component Chip: Rectangle {
@@ -44,8 +47,8 @@ Item {
         property bool sel: false
         signal clicked()
         height: 34; width: chipT.implicitWidth + 32; radius: 17
-        color: sel ? Theme.accent : Qt.rgba(1, 1, 1, 0.1)
-        Text { id: chipT; anchors.centerIn: parent; text: parent.text; color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14 }
+        color: sel ? Theme.accent : root.wash(0.1)
+        Text { id: chipT; anchors.centerIn: parent; text: parent.text; color: parent.sel ? "white" : root.ink; font.family: Theme.fontFamily; font.pixelSize: 14 }
         MouseArea { anchors.fill: parent; onClicked: parent.clicked() }
     }
     component Card: Rectangle {
@@ -57,7 +60,7 @@ Item {
         default property alias preview: pv.data
         signal clicked()
         width: 230; height: 270; radius: 16
-        color: Qt.rgba(1, 1, 1, sel ? 0.12 : 0.06)
+        color: root.wash(sel ? 0.12 : 0.06)
         border.width: sel ? 2 : 1; border.color: sel ? Theme.accent : Theme.hairline
         Behavior on color { ColorAnimation { duration: Theme.dur(120) } }
         scale: hov.containsMouse ? 1.025 : 1
@@ -67,9 +70,9 @@ Item {
         Rectangle { visible: cardRoot.sel; x: parent.width - 36; y: 18; width: 22; height: 22; radius: 11; color: Theme.accent
                     Text { anchors.centerIn: parent; text: "✓"; color: Theme.white; font.pixelSize: 13 } }
         Row { x: 16; y: 162; spacing: 8
-              Text { text: cardRoot.title; color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 17; font.weight: Font.DemiBold }
+              Text { text: cardRoot.title; color: root.ink; font.family: Theme.fontFamily; font.pixelSize: 17; font.weight: Font.DemiBold }
               Rectangle { visible: cardRoot.badge !== ""; anchors.verticalCenter: parent.verticalCenter; width: bT.implicitWidth + 12; height: 18; radius: 9
-                          color: Qt.rgba(1, 1, 1, 0.14)
+                          color: root.wash(0.14)
                           Text { id: bT; anchors.centerIn: parent; text: cardRoot.badge; color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 11 } } }
         Text { x: 16; y: 192; width: parent.width - 32; text: cardRoot.desc; wrapMode: Text.WordWrap
                color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 13 }
@@ -124,9 +127,9 @@ Item {
         y: Math.max(24, parent.height * 0.08)
         spacing: 8
         Row { anchors.horizontalCenter: parent.horizontalCenter; spacing: 8
-              Brand { logoHeight: 14; anchors.verticalCenter: parent.verticalCenter }
+              Brand { logoHeight: 14; anchors.verticalCenter: parent.verticalCenter; color: root.ink }
               Text { text: qsTr("¡Bienvenido a BC OS!"); color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 14 } }
-        Text { anchors.horizontalCenter: parent.horizontalCenter; color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 32; font.weight: Font.DemiBold
+        Text { anchors.horizontalCenter: parent.horizontalCenter; color: root.ink; font.family: Theme.fontFamily; font.pixelSize: 32; font.weight: Font.DemiBold
                text: root.step === 0 ? qsTr("¿Dónde está instalado BC OS?") : root.step === 1 ? qsTr("Elige cómo se ve tu escritorio") : (root.step === 2 ? qsTr("Elige tus colores y tu fondo") : qsTr("Elige cómo se organizan tus ventanas")) }
         Text { anchors.horizontalCenter: parent.horizontalCenter; text: qsTr("Puedes cambiarlo cuando quieras desde Configuración."); color: Theme.textSecondary
                font.family: Theme.fontFamily; font.pixelSize: 14 }
@@ -255,16 +258,16 @@ Item {
     // Pie
     Row {
         anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; anchors.bottomMargin: 56; spacing: 18
-        Rectangle { visible: root.step === 0; width: 90; height: 38; radius: 19; color: Qt.rgba(1, 1, 1, 0.1)
-                    Text { anchors.centerIn: parent; text: qsTr("Saltar"); color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14 }
+        Rectangle { visible: root.step === 0; width: 90; height: 38; radius: 19; color: root.wash(0.1)
+                    Text { anchors.centerIn: parent; text: qsTr("Saltar"); color: root.ink; font.family: Theme.fontFamily; font.pixelSize: 14 }
                     MouseArea { anchors.fill: parent; onClicked: root.finish() } }
-        Rectangle { visible: root.step > 0; width: 90; height: 38; radius: 19; color: Qt.rgba(1, 1, 1, 0.1)
-                    Text { anchors.centerIn: parent; text: qsTr("Atrás"); color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14 }
+        Rectangle { visible: root.step > 0; width: 90; height: 38; radius: 19; color: root.wash(0.1)
+                    Text { anchors.centerIn: parent; text: qsTr("Atrás"); color: root.ink; font.family: Theme.fontFamily; font.pixelSize: 14 }
                     MouseArea { anchors.fill: parent; onClicked: root.step-- } }
         Row { anchors.verticalCenter: parent.verticalCenter; spacing: 8
               Repeater { model: root.steps
                          delegate: Rectangle { required property int index; width: index === root.step ? 22 : 8; height: 8; radius: 4
-                                               color: index === root.step ? Theme.accent : Qt.rgba(1, 1, 1, 0.3)
+                                               color: index === root.step ? Theme.accent : root.wash(0.3)
                                                Behavior on width { NumberAnimation { duration: Theme.dur(160) } } } } }
         Rectangle { width: root.step === root.steps - 1 ? 220 : 130; height: 38; radius: 19; color: Theme.accent
                     Text { anchors.centerIn: parent; text: root.step === root.steps - 1 ? qsTr("Empezar a usar BC OS") : qsTr("Continuar"); color: Theme.white

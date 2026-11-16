@@ -1,5 +1,11 @@
 # Alacritty en BC OS (copia a ~/.config/alacritty/alacritty.toml para personalizar)
 # Aspecto del Terminal de macOS (perfil oscuro): gris carbón casi opaco, texto claro, cursor de bloque.
+# La paleta (clara u oscura, como el perfil «Básico» del Terminal de macOS) se importa y cambia en caliente
+# con el aspecto del sistema: bc-appearance copia alacritty-oscuro.toml o alacritty-claro.toml.
+[general]
+import = ["~/.config/bc/alacritty-colores.toml"]
+live_config_reload = true
+
 [window]
 opacity = 0.97
 padding = { x = 6, y = 4 }
@@ -10,38 +16,6 @@ dynamic_padding = true
 [font]
 size = 11
 normal = { family = "DejaVu Sans Mono" }
-
-[colors.primary]
-background = "#1e1e1e"
-foreground = "#f2f2f2"
-
-[colors.cursor]
-cursor = "#c7c7c7"
-text = "#1e1e1e"
-
-[colors.selection]
-background = "#3f638b"
-text = "#ffffff"
-
-[colors.normal]
-black = "#000000"
-red = "#ff5f57"
-green = "#28c840"
-yellow = "#febc2e"
-blue = "#0a84ff"
-magenta = "#bf5af2"
-cyan = "#64d2ff"
-white = "#e5e5e7"
-
-[colors.bright]
-black = "#686868"
-red = "#ff6e67"
-green = "#5af78e"
-yellow = "#f4f99d"
-blue = "#57c7ff"
-magenta = "#ff6ac1"
-cyan = "#9aedfe"
-white = "#ffffff"
 
 [cursor.style]
 shape = "Block"

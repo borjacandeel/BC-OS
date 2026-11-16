@@ -1,0 +1,33 @@
+# Paleta oscura de la Terminal de BC OS (aspecto oscuro)
+[colors.primary]
+background = "#1e1e1e"
+foreground = "#f2f2f2"
+
+[colors.cursor]
+cursor = "#c7c7c7"
+text = "#1e1e1e"
+
+[colors.selection]
+background = "#3f638b"
+text = "#ffffff"
+
+[colors.normal]
+black = "#000000"
+red = "#ff5f57"
+green = "#28c840"
+yellow = "#febc2e"
+blue = "#0a84ff"
+magenta = "#bf5af2"
+cyan = "#64d2ff"
+white = "#e5e5e7"
+
+[colors.bright]
+black = "#686868"
+red = "#ff6e67"
+green = "#5af78e"
+yellow = "#f4f99d"
+blue = "#57c7ff"
+magenta = "#ff6ac1"
+cyan = "#9aedfe"
+white = "#ffffff"
+

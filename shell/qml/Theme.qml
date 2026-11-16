@@ -65,7 +65,7 @@ QtObject {
     // ---- Aspecto -------------------------------------------------------------------------
     readonly property bool gg: !AppConfig.classic                  // escritorio Golden Gate (no «BC clásico»)
     readonly property bool lightUi: gg && !dark
-    readonly property bool dark: Settings.appearance !== "light"
+    readonly property bool dark: Settings.darkNow   // «Automático» según la hora (antes quedaba siempre oscuro)
     // Deslizador de Liquid Glass (Ajustes ▸ Aspecto): 0 = ultratransparente · 1 = totalmente tintado
     readonly property real tint: Settings.glassTint
 

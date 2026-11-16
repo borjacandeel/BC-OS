@@ -14,6 +14,10 @@ else
   cols='client.focused #4A4A50 #2C2C31 #ECECEE #2C2C31 #4A4A50; client.focused_inactive #36363B #1F1F23 #7D7D83 #1F1F23 #36363B; client.unfocused #36363B #1F1F23 #7D7D83 #1F1F23 #36363B'
 fi
 [ -n "$SWAYSOCK" ] && swaymsg "$cols" >/dev/null 2>&1
+# Terminal: Alacritty recarga la paleta importada al instante; foot cambia de tema con una señal (USR1 oscuro, USR2 claro)
+if [ "$m" = light ]; then pal=/etc/bc/alacritty-claro.toml; sig=USR2; else pal=/etc/bc/alacritty-oscuro.toml; sig=USR1; fi
+[ -f "$pal" ] && cp "$pal" "$D/alacritty-colores.toml.tmp" && mv "$D/alacritty-colores.toml.tmp" "$D/alacritty-colores.toml"
+pkill -"$sig" -x foot 2>/dev/null || true
 if command -v gsettings >/dev/null 2>&1; then
   gsettings set org.gnome.desktop.interface color-scheme "$scheme" 2>/dev/null
   gsettings set org.gnome.desktop.interface gtk-theme "$gtk" 2>/dev/null

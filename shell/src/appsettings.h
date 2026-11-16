@@ -16,6 +16,8 @@ class AppSettings : public QObject {
     // Golden Gate: aspecto claro/oscuro, deslizador de Liquid Glass, Dock y widgets (se recargan en caliente
     // en todos los procesos de BC Shell vigilando el archivo de ajustes)
     Q_PROPERTY(QString appearance READ appearance WRITE setAppearance NOTIFY changed)
+    // Aspecto efectivo: «Automático» es claro de 8:00 a 20:00 y oscuro el resto (se revisa cada minuto)
+    Q_PROPERTY(bool darkNow READ darkNow NOTIFY changed)
     Q_PROPERTY(double glassTint READ glassTint WRITE setGlassTint NOTIFY changed)
     Q_PROPERTY(bool dockAutohide READ dockAutohide WRITE setDockAutohide NOTIFY changed)
     Q_PROPERTY(bool dockMagnify READ dockMagnify WRITE setDockMagnify NOTIFY changed)
@@ -31,6 +33,7 @@ class AppSettings : public QObject {
     Q_PROPERTY(QStringList hotCorners READ hotCorners WRITE setHotCorners NOTIFY changed)
 public:
     QString appearance() const { return m_appearance; }
+    bool darkNow() const;
     void setAppearance(const QString &a);
     double glassTint() const { return m_glass; }
     void setGlassTint(double v);

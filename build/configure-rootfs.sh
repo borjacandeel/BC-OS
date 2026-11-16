@@ -46,7 +46,7 @@ install -D -m644 "$HERE/overlay/etc/bc/sway/efectos.conf" "$R/etc/bc/sway/efecto
 # Hyprland (con aceleración 3D): animaciones fluidas tipo macOS
 install -D -m644 "$HERE/overlay/etc/bc/hypr/hyprland.lua" "$R/etc/bc/hypr/hyprland.lua"
 install -D -m644 "$HERE/overlay/etc/bc/sway/claro.conf" "$R/etc/bc/sway/claro.conf"
-install -D -m644 "$HERE/overlay/etc/bc/alacritty.toml" "$R/etc/bc/alacritty.toml"
+for f in alacritty alacritty-oscuro alacritty-claro; do install -D -m644 "$HERE/overlay/etc/bc/$f.toml" "$R/etc/bc/$f.toml"; done
 install -D -m644 "$HERE/overlay/etc/bc/ghostty.conf" "$R/etc/bc/ghostty.conf"
 # Apps de BC en el lanzador, Spotlight y el Dock (Archivos, Ajustes del Sistema, Monitor de Actividad, Tienda, Terminal)
 install -m644 "$HERE"/overlay/usr/share/applications/bc-*.desktop "$R/usr/share/applications/"

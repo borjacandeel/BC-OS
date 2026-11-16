@@ -8,10 +8,26 @@
 #include <QRegularExpression>
 #include <QProcess>
 #include <QStandardPaths>
+#include <QTime>
+#include <QTimer>
 
 AppSettings::AppSettings(QObject *parent) : QObject(parent) {
     reload();
     watch();
+    // En «Automático» se avisa al cruzar las 8:00 y las 20:00
+    auto *t = new QTimer(this); t->setInterval(60000);
+    connect(t, &QTimer::timeout, this, [this] { static int last = -1; const int d = darkNow(); if (m_appearance == "auto" && d != last) {
+        const bool first = last < 0; last = d; emit changed();
+        // GTK, Qt de terceros y barras de título siguen el cambio de la tarde/mañana
+        if (!first) { const QString exe = QStandardPaths::findExecutable("bc-appearance"); if (!exe.isEmpty()) QProcess::startDetached(exe, {"auto"}); }
+    } });
+    t->start();
+}
+
+bool AppSettings::darkNow() const {
+    if (m_appearance == "light") return false;
+    if (m_appearance == "auto") { const int h = QTime::currentTime().hour(); return h < 8 || h >= 20; }
+    return true;
 }
 
 // Otro proceso (Ajustes del Sistema, el panel) puede cambiar el archivo: se recarga y se avisa en caliente.

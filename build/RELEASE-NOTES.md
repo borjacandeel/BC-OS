@@ -11,6 +11,12 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
 
+### Novedades de 0.9.5 (modo claro)
+- **Modo claro en todo**: Bienvenida, Control Center (los módulos no disponibles ya no se vuelven transparentes),
+  Centro de notificaciones, pastillas «Editar controles/widgets» y logo; **«Automático»** cambia de verdad a claro
+  de 8:00 a 20:00 (antes se quedaba siempre oscuro) y avisa a GTK y a las barras de título.
+- **Terminal** con paleta clara u oscura que cambia en caliente con el aspecto (Alacritty y foot).
+
 ### Novedades de 0.9.4 (rendimiento)
 - **Fluidez en máquinas virtuales**: en VirtualBox/VMware se usa siempre sway ligero (pixman), también con «Aceleración
   3D» (la 3D virtual de VirtualBox es lenta); Hyprland queda para equipos físicos o si se elige en Ajustes ▸ General.

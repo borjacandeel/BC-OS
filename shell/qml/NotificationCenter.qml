@@ -67,8 +67,8 @@ Item {
                    style: Text.Raised; styleColor: Qt.rgba(0, 0, 0, 0.18) }
             Rectangle {
                 anchors.right: parent.right; anchors.rightMargin: px(2); anchors.verticalCenter: parent.verticalCenter
-                width: px(22); height: width; radius: width / 2; color: Qt.rgba(1, 1, 1, cma.containsMouse ? 0.42 : 0.3)
-                Text { anchors.centerIn: parent; text: "×"; color: "white"; font.pixelSize: px(15); font.weight: Font.Bold }
+                width: px(22); height: width; radius: width / 2; color: Qt.rgba(1, 1, 1, Theme.dark ? (cma.containsMouse ? 0.42 : 0.3) : (cma.containsMouse ? 0.95 : 0.8))
+                Text { anchors.centerIn: parent; text: "×"; color: Theme.dark ? "white" : "#1D1D1F"; font.pixelSize: px(15); font.weight: Font.Bold }
                 MouseArea { id: cma; anchors.fill: parent; hoverEnabled: true
                             onClicked: Notifications.history.length > 0 ? Notifications.clearHistory() : UiState.closePopups() }
             }
@@ -129,11 +129,11 @@ Item {
         // «Editar widgets» y cerrar
         Row {
             anchors.horizontalCenter: parent.horizontalCenter; spacing: px(8)
-            Rectangle { width: ew.implicitWidth + px(20); height: px(24); radius: height / 2; color: Qt.rgba(1, 1, 1, ewm.containsMouse ? 0.42 : 0.3)
-                        Text { id: ew; anchors.centerIn: parent; text: qsTr("Editar widgets"); color: "white"; font.family: Theme.font; font.pixelSize: px(12); font.weight: Font.DemiBold }
+            Rectangle { width: ew.implicitWidth + px(20); height: px(24); radius: height / 2; color: Qt.rgba(1, 1, 1, Theme.dark ? (ewm.containsMouse ? 0.42 : 0.3) : (ewm.containsMouse ? 0.95 : 0.8))
+                        Text { id: ew; anchors.centerIn: parent; text: qsTr("Editar widgets"); color: Theme.dark ? "white" : "#1D1D1F"; font.family: Theme.font; font.pixelSize: px(12); font.weight: Font.DemiBold }
                         MouseArea { id: ewm; anchors.fill: parent; hoverEnabled: true; onClicked: { UiState.closePopups(); UiState.widgetGalleryOpen = true } } }
-            Rectangle { width: px(24); height: width; radius: width / 2; color: Qt.rgba(1, 1, 1, xm.containsMouse ? 0.42 : 0.3)
-                        Text { anchors.centerIn: parent; text: "×"; color: "white"; font.pixelSize: px(15); font.weight: Font.Bold }
+            Rectangle { width: px(24); height: width; radius: width / 2; color: Qt.rgba(1, 1, 1, Theme.dark ? (xm.containsMouse ? 0.42 : 0.3) : (xm.containsMouse ? 0.95 : 0.8))
+                        Text { anchors.centerIn: parent; text: "×"; color: Theme.dark ? "white" : "#1D1D1F"; font.pixelSize: px(15); font.weight: Font.Bold }
                         MouseArea { id: xm; anchors.fill: parent; hoverEnabled: true; onClicked: UiState.closePopups() } }
         }
     }

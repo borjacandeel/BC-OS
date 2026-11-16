@@ -10,6 +10,9 @@ if command -v ghostty >/dev/null 2>&1 && [ ! -f "$RT/bc-no-ghostty" ]; then
   [ $# -eq 0 ] && [ $(( $(date +%s) - t0 )) -lt 4 ] && : > "$RT/bc-no-ghostty" || exit 0
 fi
 ACFG="$CFG/alacritty/alacritty.toml"; [ -f "$ACFG" ] || ACFG=/etc/bc/alacritty.toml
+# Paleta según el aspecto (la mantiene bc-appearance; si falta, se crea ahora)
+[ -f "$CFG/bc/alacritty-colores.toml" ] || { mkdir -p "$CFG/bc"; if [ "$(cat "$CFG/bc/appearance" 2>/dev/null)" = light ]; then
+  cp /etc/bc/alacritty-claro.toml "$CFG/bc/alacritty-colores.toml" 2>/dev/null; else cp /etc/bc/alacritty-oscuro.toml "$CFG/bc/alacritty-colores.toml" 2>/dev/null; fi; }
 if command -v alacritty >/dev/null 2>&1 && [ ! -f "$RT/bc-no-alacritty" ]; then
   t0=$(date +%s)
   alacritty --config-file "$ACFG" "$@" && exit 0

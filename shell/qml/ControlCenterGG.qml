@@ -48,9 +48,11 @@ Item {
         property string icon; property string label; property string status
         property bool on: false; property bool available: true; property string key: ""
         signal toggled(); signal expand()
-        width: px(140); height: px(62); opacity: available ? 1 : 0.5
+        width: px(140); height: px(62)
         rotation: cc.editing && key !== "" ? wob.r : 0
         Glass { anchors.fill: parent; radius: height / 2; tintBoost: 0.10; shadow: false }
+        // No disponible: velo del color del cristal sobre el contenido (el cristal sigue opaco y legible en modo claro)
+        Rectangle { z: 5; anchors.fill: parent; radius: height / 2; visible: !pl.available; color: Theme.glassTintColor; opacity: 0.55 }
         Rectangle { x: px(12); anchors.verticalCenter: parent.verticalCenter; width: px(38); height: width; radius: width / 2
                     color: pl.on ? "#FFFFFF" : Qt.rgba(1, 1, 1, Theme.dark ? 0.16 : 0.55)
                     Behavior on color { ColorAnimation { duration: Theme.d(Theme.durHover) } }
@@ -80,9 +82,10 @@ Item {
         id: sp
         property string title; property string icon; property string iconMax; property real value: 0; property bool available: true; property string key: ""
         signal moved(real v)
-        width: px(292); height: px(60); opacity: available ? 1 : 0.5
+        width: px(292); height: px(60)
         rotation: cc.editing && key !== "" ? wob.r : 0
         Glass { anchors.fill: parent; radius: px(26); tintBoost: 0.10; shadow: false }
+        Rectangle { z: 5; anchors.fill: parent; radius: px(26); visible: !sp.available; color: Theme.glassTintColor; opacity: 0.55 }
         Text { x: px(16); y: px(9); text: sp.title; color: Theme.label; font.family: Theme.font; font.pixelSize: px(13); font.weight: Font.DemiBold }
         Icon { x: px(14); y: px(33); name: sp.icon; size: px(15); color: Theme.label }
         Icon { anchors.right: parent.right; anchors.rightMargin: px(14); y: px(33); name: sp.iconMax || sp.icon; size: px(17); color: Theme.label }
@@ -277,9 +280,9 @@ Item {
             width: parent.width; height: px(26)
             Rectangle {
                 anchors.centerIn: parent; height: px(24); width: editTxt.implicitWidth + px(22); radius: height / 2
-                color: cc.editing ? Theme.accent : Qt.rgba(1, 1, 1, ema.containsMouse ? 0.42 : 0.30)
+                color: cc.editing ? Theme.accent : Qt.rgba(1, 1, 1, Theme.dark ? (ema.containsMouse ? 0.42 : 0.30) : (ema.containsMouse ? 0.95 : 0.80))
                 Text { id: editTxt; anchors.centerIn: parent; text: cc.editing ? qsTr("Listo") : qsTr("Editar controles")
-                       color: "white"; font.family: Theme.font; font.pixelSize: px(12); font.weight: Font.DemiBold }
+                       color: cc.editing || Theme.dark ? "white" : "#1D1D1F"; font.family: Theme.font; font.pixelSize: px(12); font.weight: Font.DemiBold }
                 MouseArea { id: ema; anchors.fill: parent; hoverEnabled: true; onClicked: cc.editing = !cc.editing }
             }
         }
