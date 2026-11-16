@@ -55,13 +55,13 @@ AppWindow {
         { idx: 9, name: qsTr("Notificaciones"), icon: "notification-symbolic", c: "#FF453A" },
         { idx: 3, name: qsTr("Batería y energía"), icon: "preferences-system-power-symbolic", c: "#30D158" },
         { sep: true },
-        { idx: 6, name: qsTr("Aspecto"), icon: "weather-clear-night-fill-symbolic", c: "#48484A" },
-        { idx: 7, name: qsTr("Escritorio y Dock"), icon: "view-app-grid-symbolic", c: "#48484A" },
-        { idx: 8, name: qsTr("Fondo de pantalla"), icon: "image-x-generic", c: "#32ADE6" },
+        { idx: 6, name: qsTr("Aspecto"), icon: "", g: "aspecto", c: "#1C1C1E" },
+        { idx: 7, name: qsTr("Escritorio y Dock"), icon: "", g: "dock", c: "#1C1C1E" },
+        { idx: 8, name: qsTr("Fondo de pantalla"), icon: "", g: "fondo", c: "#32ADE6" },
         { idx: 0, name: qsTr("General"), icon: "preferences-system-symbolic", c: "#8E8E93" },
-        { idx: 12, name: qsTr("Pantallas"), icon: "video-display-symbolic", c: "#0A84FF" },
+        { idx: 12, name: qsTr("Pantallas"), icon: "display-brightness-symbolic", c: "#0A84FF" },
         { idx: 13, name: qsTr("Teclado"), icon: "input-keyboard-symbolic", c: "#8E8E93" },
-        { idx: 14, name: qsTr("Fecha y hora"), icon: "preferences-system-time", c: "#8E8E93" },
+        { idx: 14, name: qsTr("Fecha y hora"), icon: "", g: "reloj", c: "#8E8E93" },
         { sep: true },
         { idx: 4, name: qsTr("Usuarios"), icon: "system-users-symbolic", c: "#8E8E93" },
         { idx: 5, name: qsTr("Acerca de"), icon: "dialog-information-symbolic", c: "#8E8E93" }
@@ -205,7 +205,24 @@ AppWindow {
                         // Golden Gate: iconos en color solo en la ventana activa
                         Rectangle { x: 7; anchors.verticalCenter: parent.verticalCenter; width: Theme.gg ? 22 : 20; height: width; radius: Theme.gg ? 6 : 5
                                     color: win.active || !Theme.gg ? (modelData.c || "#8E8E93") : Qt.rgba(0.5, 0.5, 0.55, 0.6)
-                                    Icon { anchors.centerIn: parent; name: modelData.icon || ""; size: 14; color: "white" } }
+                                    Icon { visible: !modelData.g; anchors.centerIn: parent; name: modelData.icon || ""; size: 14; color: "white" }
+                                    // Glifos dibujados como en macOS: Aspecto (círculo mitad blanco) y Escritorio y Dock (ventana con Dock)
+                                    Rectangle { visible: modelData.g === "aspecto"; anchors.centerIn: parent; width: 13; height: 13; radius: 6.5; color: "white"
+                                        Item { x: 1.5; y: 1.5; width: 5; height: 10; clip: true
+                                            Rectangle { width: 10; height: 10; radius: 5; color: modelData.c || "#1C1C1E" } } }
+                                    // Fondo de pantalla: flor de seis pétalos; Fecha y hora: reloj
+                                    Item { visible: modelData.g === "fondo"; anchors.centerIn: parent; width: 14; height: 14
+                                        Repeater { model: 6
+                                            Rectangle { required property int index; x: 5; y: 0; width: 4; height: 7; radius: 2; color: "white"; opacity: 0.95
+                                                        transformOrigin: Item.Bottom; rotation: index * 60 } } }
+                                    Rectangle { visible: modelData.g === "reloj"; anchors.centerIn: parent; width: 13; height: 13; radius: 6.5
+                                                color: "transparent"; border.width: 1.5; border.color: "white"
+                                        Rectangle { x: 5.75; y: 2.5; width: 1.5; height: 4.5; radius: 0.75; color: "white" }
+                                        Rectangle { x: 6; y: 5.75; width: 3.5; height: 1.5; radius: 0.75; color: "white" } }
+                                    Rectangle { visible: modelData.g === "dock"; anchors.centerIn: parent; width: 15; height: 12; radius: 3
+                                                color: "transparent"; border.width: 1.5; border.color: "white"
+                                        Rectangle { anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; anchors.bottomMargin: 2.5
+                                                    width: 9; height: 2.5; radius: 1.25; color: "white" } } }
                         Label { x: 37; anchors.verticalCenter: parent.verticalCenter; text: modelData.name || ""; font.pixelSize: 13
                                 color: modelData.idx === win.page && (win.active || !Theme.gg) ? "white" : Theme.textPrimary }
                         MouseArea { id: ma; anchors.fill: parent; hoverEnabled: true; onClicked: win.page = modelData.idx }
