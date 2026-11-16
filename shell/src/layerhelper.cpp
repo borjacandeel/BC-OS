@@ -1,4 +1,6 @@
 #include "layerhelper.h"
+#include <QScreen>
+#include <QVariant>
 #ifdef BC_HAVE_LAYERSHELL
 #include <LayerShellQt/Window>
 #endif
@@ -36,6 +38,11 @@ void LayerHelper::configure(QWindow *window, const QVariantMap &o) {
     w->setKeyboardInteractivity(kb == "exclusive" ? W::KeyboardInteractivityExclusive
                                 : kb == "ondemand" ? W::KeyboardInteractivityOnDemand : W::KeyboardInteractivityNone);
     w->setScope(o.value("scope", "bc-shell").toString());
+    // Multimonitor: cada superficie en SU pantalla (la de la QWindow), no en la que el compositor tenga activa.
+    // Sin esto, la barra y el Dock de la segunda pantalla salían apilados en la primera.
+    // (propiedades de layer-shell-qt ≥ 6.6; en versiones anteriores no existen y no hacen nada)
+    w->setProperty("wantsToBeOnActiveScreen", false);
+    if (window->screen()) w->setProperty("screen", QVariant::fromValue(window->screen()));
     w->setDesiredSize(QSize(o.value("width", 0).toInt(), o.value("height", 0).toInt()));
 #else
     Q_UNUSED(window); Q_UNUSED(o);

@@ -41,6 +41,8 @@ Window {
     onKeyboardChanged: if (ready) apply()
     onMarginsChanged: if (ready) apply()
     onExclusiveChanged: if (ready) apply()
+    // Si cambia su pantalla (monitor conectado tarde), se vuelve a crear la superficie en la pantalla correcta
+    onScreenChanged: if (ready) { const v = visible; visible = false; apply(); visible = Qt.binding(() => w.shown) }
     Component.onCompleted: {
         apply()
         ready = true
