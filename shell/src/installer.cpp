@@ -36,7 +36,11 @@ Installer::Installer(QObject *parent, const QString &program)
     });
 }
 
-bool Installer::live() const { return QFileInfo::exists("/run/archiso") || qEnvironmentVariableIsSet("BC_INSTALL_TEST"); }
+bool Installer::live() const {
+    if (QFileInfo::exists("/run/archiso") || qEnvironmentVariableIsSet("BC_INSTALL_TEST")) return true;
+    QFile f("/proc/cmdline");   // la ISO live arranca con archisolabel=…
+    return f.open(QIODevice::ReadOnly) && f.readAll().contains("archisolabel=");
+}
 
 QVariantList Installer::parseLsblk(const QByteArray &json) {
     QVariantList out;

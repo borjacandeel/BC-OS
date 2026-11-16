@@ -781,7 +781,8 @@ LayerWindow {
         UiState.style = Settings.desktopStyle === "win" ? "win" : "mac"
         UiState.widgets = Settings.widgets
         UiState.mode = Settings.mode
-        if (AppConfig.splash && !Settings.welcomed) welcomeTimer.start()
+        // En la ISO live no hay bienvenida (taparía el instalador): se abre «Instalar BC OS»
+        if (AppConfig.splash && !Settings.welcomed && !Installer.live) welcomeTimer.start()
         if (AppConfig.demo === "win") UiState.style = "win"
         if (!AppConfig.splash && AppConfig.demo === "") Notifications.push("BC OS", qsTr("Actualizaciones"), qsTr("BC OS está al día"), "", 600000)
         const d = AppConfig.demo

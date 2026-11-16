@@ -16,6 +16,12 @@ export LANG="${LANG:-es_ES.UTF-8}" XDG_CURRENT_DESKTOP=BC XDG_SESSION_TYPE=wayla
 
 es_vm() {
   systemd-detect-virt --vm -q 2>/dev/null && return 0
+  # GPU virtual (VirtualBox/VMware VMSVGA, virtio de QEMU/UTM, QXL, Bochs) o dispositivos PCI de hipervisor:
+  # VirtualBox en Mac ARM no siempre tiene DMI ni lo detecta systemd-detect-virt
+  for d in /sys/class/drm/card*/device/driver; do
+    case "$(basename "$(readlink -f "$d" 2>/dev/null)")" in vmwgfx|virtio_gpu|virtio-pci|vboxvideo|qxl|bochs-drm|bochs|cirrus|hyperv_drm) return 0 ;; esac
+  done
+  grep -qixE '0x(80ee|15ad|1af4|1234|1b36|1414)' /sys/bus/pci/devices/*/vendor 2>/dev/null && return 0
   cat /sys/class/dmi/id/sys_vendor /sys/class/dmi/id/product_name /sys/class/dmi/id/board_vendor 2>/dev/null \
     | grep -qiE 'virtualbox|innotek|oracle|qemu|vmware|parallels|kvm|hyper-v|microsoft corporation|utm|apple virtualization'
 }
@@ -45,7 +51,10 @@ fi
 [ -x /usr/bin/bc-appearance ] && bc-appearance "$(cat "$CFG/appearance" 2>/dev/null || echo dark)" >> "$LOG" 2>&1
 
 sway_software() {
-  export WLR_NO_HARDWARE_CURSORS=1 QT_QUICK_BACKEND=software
+  # Cursor por hardware (plano de cursor): fluido y con el tema McMojave también en VirtualBox. Si en algún equipo
+  # no se ve el puntero, «software» en ~/.config/bc/cursor lo vuelve a dibujar por software.
+  [ "$(cat "$CFG/cursor" 2>/dev/null)" = software ] && export WLR_NO_HARDWARE_CURSORS=1
+  export QT_QUICK_BACKEND=software
   # Sin 3D también hay esquinas redondeadas: swayfx con OpenGL ES por software (llvmpipe), solo esquinas
   # (sin sombras ni desenfoque). Si no arranca o muere enseguida, sway clásico con pixman, que siempre funciona.
   # Opcional (Ajustes ▸ General): por software cuesta mucha CPU, así que de serie se usa pixman, que es lo más fluido

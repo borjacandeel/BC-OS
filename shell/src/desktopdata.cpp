@@ -726,6 +726,18 @@ QString QuickTools::detectedMachine() {
         static const QRegularExpression re("VirtualBox|innotek|Oracle|QEMU|VMware|Parallels|KVM|Hyper-V|Microsoft Corporation|UTM|Apple Virtualization", QRegularExpression::CaseInsensitiveOption);
         if (re.match(id).hasMatch()) return "vm";
     }
+    // GPU virtual o PCI de hipervisor (VirtualBox ARM puede no tener DMI ni lo reconoce systemd-detect-virt)
+    for (const QFileInfo &card : QDir("/sys/class/drm").entryInfoList({"card?"}, QDir::Dirs | QDir::System)) {
+        static const QStringList vmDrv{"vmwgfx", "virtio_gpu", "virtio-pci", "vboxvideo", "qxl", "bochs-drm", "bochs", "cirrus", "hyperv_drm"};
+        if (vmDrv.contains(QFileInfo(QFileInfo(card.filePath() + "/device/driver").symLinkTarget()).fileName())) return "vm";
+    }
+    for (const QFileInfo &dev : QDir("/sys/bus/pci/devices").entryInfoList(QDir::Dirs | QDir::System | QDir::NoDotAndDotDot)) {
+        QFile vf(dev.filePath() + "/vendor");
+        if (vf.open(QIODevice::ReadOnly)) {
+            static const QStringList vmVendors{"0x80ee", "0x15ad", "0x1af4", "0x1234", "0x1b36", "0x1414"};
+            if (vmVendors.contains(QString::fromUtf8(vf.readAll()).trimmed().toLower())) return "vm";
+        }
+    }
     QProcess p;
     p.start("systemd-detect-virt", {"--vm"});
     if (p.waitForFinished(2000)) {

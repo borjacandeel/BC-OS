@@ -28,6 +28,9 @@ bc_umount "$R"
 
 # Solo en live: app «Instalar BC OS» y permiso polkit para lanzarla (ver overlay-live/LEEME.md)
 cp -a "$HERE/overlay-live/usr" "$HERE/overlay-live/etc" "$R/"
+# Live: entra directamente en la sesión (sin pedir contraseña) y se abre el instalador, como el de macOS.
+# bc-install quita este bloque al instalar (marcador «# bc-live»).
+printf '\n# bc-live\n[initial_session]\ncommand = "/usr/bin/bc-session --greetd"\nuser = "bc"\n' >> "$R/etc/greetd/config.toml"
 # En live no hay particiones propias: fstab vacío (la imagen de disco ya se generó antes con el suyo)
 printf '# BC OS live: la raíz la monta archiso\n' > "$R/etc/fstab"
 # 2) raíz en squashfs (zstd), en la ruta que espera archiso: /arch/<arch>/airootfs.sfs

@@ -204,8 +204,9 @@ Item {
             Behavior on scale { NumberAnimation { duration: Theme.dur(260); easing.type: Easing.OutCubic } }
             anchors.horizontalCenter: parent.horizontalCenter; spacing: 22
             Row { anchors.horizontalCenter: parent.horizontalCenter; spacing: 8
-                  Chip { text: qsTr("Oscuro"); sel: true }
-                  Chip { text: qsTr("Claro (próximamente)"); opacity: 0.5 } }
+                  Chip { text: qsTr("Oscuro"); sel: Settings.appearance === "dark"; onClicked: Settings.appearance = "dark" }
+                  Chip { text: qsTr("Claro"); sel: Settings.appearance === "light"; onClicked: Settings.appearance = "light" }
+                  Chip { text: qsTr("Automático"); sel: Settings.appearance === "auto"; onClicked: Settings.appearance = "auto" } }
             Row {
                 anchors.horizontalCenter: parent.horizontalCenter; spacing: 12
                 Repeater {

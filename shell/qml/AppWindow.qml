@@ -174,10 +174,15 @@ Window {
         hoverEnabled: true
         onPressed: win.startSystemResize(edges)
     }
-    Edge { edges: Qt.LeftEdge; x: 0; y: 10; width: 5; height: parent.height - 20; cursorShape: Qt.SizeHorCursor }
-    Edge { edges: Qt.RightEdge; x: parent.width - 5; y: 10; width: 5; height: parent.height - 20; cursorShape: Qt.SizeHorCursor }
-    Edge { edges: Qt.BottomEdge; x: 10; y: parent.height - 5; width: parent.width - 20; height: 5; cursorShape: Qt.SizeVerCursor }
-    Edge { edges: Qt.TopEdge; x: 10; y: 0; width: parent.width - 20; height: 4; cursorShape: Qt.SizeVerCursor }
-    Edge { edges: Qt.RightEdge | Qt.BottomEdge; x: parent.width - 12; y: parent.height - 12; width: 12; height: 12; cursorShape: Qt.SizeFDiagCursor }
-    Edge { edges: Qt.LeftEdge | Qt.BottomEdge; x: 0; y: parent.height - 12; width: 12; height: 12; cursorShape: Qt.SizeBDiagCursor }
+    // Bordes de redimensionado sobre el borde real de la ventana (con sombra propia hay 32 px transparentes alrededor):
+    // franja de 12 px centrada en el borde, como en macOS, y las cuatro esquinas en diagonal
+    readonly property int grip: 6
+    Edge { edges: Qt.LeftEdge; x: win.sh - win.grip; y: win.sh + 14; width: 2 * win.grip; height: parent.height - 2 * win.sh - 28; cursorShape: Qt.SizeHorCursor }
+    Edge { edges: Qt.RightEdge; x: parent.width - win.sh - win.grip; y: win.sh + 14; width: 2 * win.grip; height: parent.height - 2 * win.sh - 28; cursorShape: Qt.SizeHorCursor }
+    Edge { edges: Qt.BottomEdge; x: win.sh + 14; y: parent.height - win.sh - win.grip; width: parent.width - 2 * win.sh - 28; height: 2 * win.grip; cursorShape: Qt.SizeVerCursor }
+    Edge { edges: Qt.TopEdge; x: win.sh + 14; y: win.sh - win.grip; width: parent.width - 2 * win.sh - 28; height: win.grip + 2; cursorShape: Qt.SizeVerCursor }
+    Edge { edges: Qt.RightEdge | Qt.BottomEdge; x: parent.width - win.sh - 14; y: parent.height - win.sh - 14; width: 14 + win.grip; height: 14 + win.grip; cursorShape: Qt.SizeFDiagCursor }
+    Edge { edges: Qt.LeftEdge | Qt.BottomEdge; x: win.sh - win.grip; y: parent.height - win.sh - 14; width: 14 + win.grip; height: 14 + win.grip; cursorShape: Qt.SizeBDiagCursor }
+    Edge { edges: Qt.LeftEdge | Qt.TopEdge; x: win.sh - win.grip; y: win.sh - win.grip; width: 14 + win.grip; height: 14 + win.grip; cursorShape: Qt.SizeFDiagCursor }
+    Edge { edges: Qt.RightEdge | Qt.TopEdge; x: parent.width - win.sh - 14; y: win.sh - win.grip; width: 14 + win.grip; height: 14 + win.grip; cursorShape: Qt.SizeBDiagCursor }
 }

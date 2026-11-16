@@ -336,6 +336,8 @@ do_copy() {
   else
     rsync -aHAXx --numeric-ids "${ex[@]}" "$SOURCE"/ "$TARGET"/ >>"$LOG" 2>&1
   fi
+  # El sistema instalado no entra solo: se quita el inicio automático de la ISO live (bloque «# bc-live» de greetd)
+  [[ -f "$TARGET/etc/greetd/config.toml" ]] && sed -i '/^# bc-live$/,$d' "$TARGET/etc/greetd/config.toml"
   mkdir -p "$TARGET"/{proc,sys,dev,run,tmp,boot,mnt,media}; chmod 1777 "$TARGET/tmp"
   : >"$TARGET/etc/machine-id"
   cp "$SOURCE/boot/$KIMG" "$TARGET/boot/$KIMG"

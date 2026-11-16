@@ -81,7 +81,8 @@ Item {
     readonly property real baseLeft: (width - baseW) / 2
 
     // ---- Ampliación --------------------------------------------------------------------------
-    property real hoverX: -1                                      // en coordenadas de la disposición base
+    property real hoverX: -1
+    property int iconHovers: 0                                    // iconos con el puntero encima                                      // en coordenadas de la disposición base
     readonly property real range: px(Theme.dockMagnifyRange)
     function sizeAt(baseCenter) {
         if (hoverX < 0 || Theme.dockMagnify <= 0) return bs
@@ -119,9 +120,11 @@ Item {
             id: plateMa
             anchors.fill: parent; anchors.topMargin: -(dock.maxIcon - dock.bs)
             hoverEnabled: true; acceptedButtons: Qt.NoButton
-            onPositionChanged: (m) => dock.hoverX = m.x + plateArea.x - dock.baseLeft
-            onExited: dock.hoverX = -1
+            onPositionChanged: (m) => { hoverOff.stop(); dock.hoverX = m.x + plateArea.x - dock.baseLeft }
+            // Al pasar a un icono, su MouseArea se queda el puntero y esta «sale»: solo se apaga si de verdad salió del Dock
+            onExited: hoverOff.restart()
         }
+        Timer { id: hoverOff; interval: 60; onTriggered: if (!plateMa.containsMouse && dock.iconHovers === 0) dock.hoverX = -1 }
         // Separador vertical fino
         Rectangle {
             x: dock.realX(dock.items.length) - dock.sepW + px(Theme.dockSeparatorGap) - dock.gap / 2
@@ -265,7 +268,11 @@ Item {
             property real startX: 0
             property bool dragging: false
             onPressed: (m) => { startX = m.x; dragging = false }
-            onPositionChanged: (m) => { if (pressed && cell.dragEnabled && Math.abs(m.x - startX) > px(8)) { dragging = true; cell.dragDx = m.x - startX } }
+            onPositionChanged: (m) => {
+                // La ampliación sigue al puntero también encima de los iconos (antes solo en el fondo del Dock)
+                if (!pressed) { hoverOff.stop(); dock.hoverX = cell.mapToItem(plateArea, m.x, 0).x + plateArea.x - dock.baseLeft }
+                if (pressed && cell.dragEnabled && Math.abs(m.x - startX) > px(8)) { dragging = true; cell.dragDx = m.x - startX } }
+            onContainsMouseChanged: { dock.iconHovers += containsMouse ? 1 : -1; if (!containsMouse) hoverOff.restart() }
             onReleased: { if (dragging) { cell.dropped(cell.dragDx); cell.dragDx = 0 } }
             onClicked: (m) => { if (dragging) return; if (m.button === Qt.RightButton) cell.context(cell.mapToItem(null, m.x, m.y)); else cell.activated() }
             onPressAndHold: (m) => { if (!dragging) cell.context(cell.mapToItem(null, m.x, m.y)) }
