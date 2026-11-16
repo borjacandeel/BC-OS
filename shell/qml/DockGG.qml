@@ -80,14 +80,30 @@ Item {
     readonly property real baseW: 2 * padX + (items.length + nRight) * (bs + gap) - gap + sepW + sep2
     readonly property real baseLeft: (width - baseW) / 2
 
+    // Punto del menú contextual en coordenadas de pantalla (la superficie del Dock está pegada abajo):
+    // centrado sobre el icono y justo encima, como en macOS
+    function menuPoint(cell) {
+        const p = cell.mapToItem(null, cell.width / 2, 0)
+        return Qt.point(p.x - px(110), p.y + (UiState.sh - dock.height) - px(6))
+    }
+
     // ---- Ampliación --------------------------------------------------------------------------
     property real hoverX: -1
-    property int iconHovers: 0                                    // iconos con el puntero encima                                      // en coordenadas de la disposición base
+    // Intensidad de la ampliación (0–1): sube rápido al entrar y baja suave al salir, como macOS
+    property real mag: 0
+    Behavior on mag { NumberAnimation { duration: Theme.dur(dock.mag > 0.5 ? 240 : 110); easing.type: Easing.OutCubic } }
+    // ¿El puntero sigue sobre el Dock? (HoverHandler pasivo: no lo «roban» los iconos)
+    HoverHandler { id: dockHover }
+    function pointerOnDock() {
+        if (!dockHover.hovered) return false
+        const p = dockHover.point.position, top = plateArea.y - (maxIcon - bs) - px(10)
+        return p.x >= plateArea.x - px(4) && p.x <= plateArea.x + plateArea.width + px(4) && p.y >= top
+    }                                      // en coordenadas de la disposición base
     readonly property real range: px(Theme.dockMagnifyRange)
     function sizeAt(baseCenter) {
-        if (hoverX < 0 || Theme.dockMagnify <= 0) return bs
+        if (hoverX < 0 || mag <= 0.001 || Theme.dockMagnify <= 0) return bs
         const t = Math.abs(hoverX - baseCenter) / range
-        return t >= 1 ? bs : bs * (1 + Theme.dockMagnify * Math.cos(t * Math.PI / 2))
+        return t >= 1 ? bs : bs * (1 + Theme.dockMagnify * mag * Math.cos(t * Math.PI / 2))
     }
     function sepBefore(i) { return (i >= items.length ? sepW : 0) + (recents.length > 0 && i >= recentStart ? sep2 : 0) }
     function baseCenter(i) { return padX + i * (bs + gap) + bs / 2 + sepBefore(i) }
@@ -105,7 +121,7 @@ Item {
     // Zona que recibe el puntero (el resto deja pasar los clics a las ventanas)
     readonly property rect inputRect: Settings.dockAutohide && !revealed
         ? Qt.rect(0, height - px(3), width, px(3))
-        : Qt.rect((width - realW) / 2, height - plateH - px(Theme.dockBottom) - (hoverX >= 0 ? maxIcon - bs + px(30) : 0), realW, plateH + px(Theme.dockBottom) + (hoverX >= 0 ? maxIcon - bs + px(30) : 0))
+        : Qt.rect((width - realW) / 2, height - plateH - px(Theme.dockBottom) - (mag > 0 ? maxIcon - bs + px(30) : 0), realW, plateH + px(Theme.dockBottom) + (mag > 0 ? maxIcon - bs + px(30) : 0))
     // Punto de destino del «genio» al minimizar (centro del primer hueco de minimizadas)
     readonly property point minimizeTarget: Qt.point((width - baseW) / 2 + baseCenter(items.length + minimized.length), height - plateH / 2 - px(Theme.dockBottom))
 
@@ -120,11 +136,12 @@ Item {
             id: plateMa
             anchors.fill: parent; anchors.topMargin: -(dock.maxIcon - dock.bs)
             hoverEnabled: true; acceptedButtons: Qt.NoButton
-            onPositionChanged: (m) => { hoverOff.stop(); dock.hoverX = m.x + plateArea.x - dock.baseLeft }
+            onPositionChanged: (m) => { hoverOff.stop(); dock.hoverX = m.x + plateArea.x - dock.baseLeft; dock.mag = 1 }
             // Al pasar a un icono, su MouseArea se queda el puntero y esta «sale»: solo se apaga si de verdad salió del Dock
             onExited: hoverOff.restart()
         }
-        Timer { id: hoverOff; interval: 60; onTriggered: if (!plateMa.containsMouse && dock.iconHovers === 0) dock.hoverX = -1 }
+        // Al salir del Dock la ampliación se desvanece (no salta); si el puntero sigue encima, se comprueba de nuevo
+        Timer { id: hoverOff; interval: 60; onTriggered: if (!dock.pointerOnDock()) dock.mag = 0; else restart() }
         // Separador vertical fino
         Rectangle {
             x: dock.realX(dock.items.length) - dock.sepW + px(Theme.dockSeparatorGap) - dock.gap / 2
@@ -270,12 +287,12 @@ Item {
             onPressed: (m) => { startX = m.x; dragging = false }
             onPositionChanged: (m) => {
                 // La ampliación sigue al puntero también encima de los iconos (antes solo en el fondo del Dock)
-                if (!pressed) { hoverOff.stop(); dock.hoverX = cell.mapToItem(plateArea, m.x, 0).x + plateArea.x - dock.baseLeft }
+                if (!pressed) { hoverOff.stop(); dock.hoverX = cell.mapToItem(plateArea, m.x, 0).x + plateArea.x - dock.baseLeft; dock.mag = 1 }
                 if (pressed && cell.dragEnabled && Math.abs(m.x - startX) > px(8)) { dragging = true; cell.dragDx = m.x - startX } }
-            onContainsMouseChanged: { dock.iconHovers += containsMouse ? 1 : -1; if (!containsMouse) hoverOff.restart() }
+            onContainsMouseChanged: if (!containsMouse) hoverOff.restart()
             onReleased: { if (dragging) { cell.dropped(cell.dragDx); cell.dragDx = 0 } }
-            onClicked: (m) => { if (dragging) return; if (m.button === Qt.RightButton) cell.context(cell.mapToItem(null, m.x, m.y)); else cell.activated() }
-            onPressAndHold: (m) => { if (!dragging) cell.context(cell.mapToItem(null, m.x, m.y)) }
+            onClicked: (m) => { if (dragging) return; if (m.button === Qt.RightButton) cell.context(dock.menuPoint(cell)); else cell.activated() }
+            onPressAndHold: (m) => { if (!dragging) cell.context(dock.menuPoint(cell)) }
         }
         Behavior on dragDx { enabled: !ma.pressed; NumberAnimation { duration: Theme.d(180); easing.type: Theme.easeStandard } }
     }
