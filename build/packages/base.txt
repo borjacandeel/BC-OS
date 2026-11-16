@@ -18,6 +18,7 @@ qt6-base
 qt6-declarative
 qt6-wayland
 qt6-svg
+qtermwidget
 inter-font
 ttf-cascadia-code-nerd
 ttf-dejavu

@@ -80,6 +80,18 @@ qt_add_resources(bc-greeter bcicons_g PREFIX /BCShell/icons BASE ${CMAKE_CURRENT
 target_link_libraries(bc-greeter PRIVATE bccommon Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::Network)
 install(TARGETS bc-shell bc-greeter RUNTIME DESTINATION bin)
 
+# Terminal de BC (como el Terminal de macOS): solo si está QTermWidget (paquete «qtermwidget»)
+find_package(qtermwidget6 QUIET)
+if(qtermwidget6_FOUND)
+    find_package(Qt6 REQUIRED COMPONENTS Widgets)
+    add_executable(bc-terminal-app terminal/main.cpp)
+    target_link_libraries(bc-terminal-app PRIVATE Qt6::Widgets qtermwidget6)
+    install(TARGETS bc-terminal-app RUNTIME DESTINATION lib/bc)
+    install(FILES terminal/BC-Oscuro.colorscheme terminal/BC-Claro.colorscheme DESTINATION share/bc/terminal)
+else()
+    message(WARNING "qtermwidget6 no encontrado: no se compila la Terminal de BC (se usará Ghostty/Alacritty/foot)")
+endif()
+
 enable_testing()
 set(BC_ENV "QT_QPA_PLATFORM=offscreen" "QT_QUICK_BACKEND=software")
 add_test(NAME carga_es COMMAND bc-shell --check --lang es_ES --expect-title "Actualizaciones"

@@ -28,7 +28,7 @@ Item {
                                         calculadora: qsTr("Calculadora"), vista: qsTr("Vista previa") })
     function appIdOf(kind) {
         if (kind.indexOf("app:") === 0) return kind.substring(4)
-        if (kind === "terminal") return "com.mitchellh.ghostty"
+        if (kind === "terminal") return "bc-terminal"
         return Launcher.appIdFor(kind)
     }
     function isRunning(kind) {

@@ -18,7 +18,7 @@ ST="$W/stage"
 
 # --- bc-shell ---------------------------------------------------------------------------------
 DEPS="$(grep -v '^#' "$HERE/packages/build-deps.txt" | tr '\n' ' ')"
-sh "pacman -S --needed --noconfirm --disable-sandbox $DEPS fakeroot qt6-base qt6-declarative qt6-wayland qt6-svg layer-shell-qt"
+sh "pacman -S --needed --noconfirm --disable-sandbox $DEPS fakeroot qt6-base qt6-declarative qt6-wayland qt6-svg layer-shell-qt qtermwidget"
 cp -a "$TOP/shell" "$W/src-shell"
 sh "cd /tmp/bcrepo/src-shell && rm -rf build && cmake -S . -B build -G Ninja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr \
     && cmake --build build && DESTDIR=/tmp/bcrepo/stage/bc-shell cmake --install build"
@@ -75,7 +75,7 @@ package() { [ -d /tmp/bcrepo/stage/$n ] && cp -a /tmp/bcrepo/stage/$n/. "\$pkgdi
 P
 }
 A="${BC_ARCH:-aarch64}"
-mk bc-shell "$A" "BC Shell: escritorio Golden Gate y apps de BC OS" "'qt6-declarative' 'layer-shell-qt'"
+mk bc-shell "$A" "BC Shell: escritorio Golden Gate y apps de BC OS" "'qt6-declarative' 'layer-shell-qt' 'qtermwidget'"
 mk bc-core "$A" "BC Core: servicios del sistema de BC OS" ""
 mk bc-escritorio any "Sesión, configuración, fondos y sonidos de BC OS" "'bc-shell' 'sway'"
 mk bc-os any "BC OS: metapaquete del sistema completo" "'bc-shell' 'bc-core' 'bc-escritorio' $BASE"

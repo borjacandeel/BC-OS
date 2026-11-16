@@ -57,7 +57,7 @@ LayerWindow {
             else Launcher.launch("archivos", "trash")
             return
         }
-        if (Sway.focusApp(appId) || (kind === "terminal" && (Sway.focusApp("com.mitchellh.ghostty") || Sway.focusApp("foot")))) return
+        if (Sway.focusApp(appId) || (kind === "terminal" && (Sway.focusApp("bc-terminal") || Sway.focusApp("com.mitchellh.ghostty") || Sway.focusApp("foot") || Sway.focusApp("Alacritty")))) return
         const r = Launcher.launch(kind)
         if (r === "failed") Notifications.push("BC OS", name, qsTr("No se pudo abrir la aplicación"), "", 4000)
     }
@@ -257,7 +257,7 @@ LayerWindow {
         const ids = Sway.windows.map(w => w.appId), out = []
         for (const k of ["archivos", "ajustes", "monitor", "terminal", "tienda", "navegador"]) {
             const id = Launcher.appIdFor(k)
-            if (ids.indexOf(id) >= 0 || (k === "terminal" && (ids.indexOf("foot") >= 0 || ids.indexOf("com.mitchellh.ghostty") >= 0))) out.push(k)
+            if (ids.indexOf(id) >= 0 || (k === "terminal" && (ids.indexOf("bc-terminal") >= 0 || ids.indexOf("foot") >= 0 || ids.indexOf("com.mitchellh.ghostty") >= 0 || ids.indexOf("Alacritty") >= 0))) out.push(k)
         }
         return out
     }
