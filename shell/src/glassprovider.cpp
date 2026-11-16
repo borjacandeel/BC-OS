@@ -63,7 +63,21 @@ QImage GlassProvider::requestImage(const QString &id, QSize *size, const QSize &
         clip = clip.intersected([&] { QPainterPath q; q.addRect(0, 0, w, h); return q; }());
     } else clip.addRoundedRect(QRectF(0, 0, w, h), r, r);
     pa.setClipPath(clip);
-    pa.drawImage(QPoint(0, 0), blur, QRect(x, y, w, h));
+    // Si la superficie se sale de la pantalla (ventana más baja que el borde, barra lateral larga…), se prolonga
+    // el borde del fondo desenfocado en vez de dejar un hueco transparente con un corte visible.
+    const QRect src(x, y, w, h), ok = src & blur.rect();
+    if (!ok.isEmpty()) {
+        const int ox = ok.left() - x, oy = ok.top() - y;
+        pa.drawImage(QPoint(ox, oy), blur, ok);
+        if (ok.bottom() < src.bottom())
+            pa.drawImage(QRect(ox, ok.bottom() + 1 - y, ok.width(), src.bottom() - ok.bottom()), blur, QRect(ok.left(), ok.bottom(), ok.width(), 1));
+        if (ok.top() > src.top())
+            pa.drawImage(QRect(ox, 0, ok.width(), oy), blur, QRect(ok.left(), ok.top(), ok.width(), 1));
+        if (ok.right() < src.right())
+            pa.drawImage(QRect(ok.right() + 1 - x, 0, src.right() - ok.right(), h), out.copy(ok.right() - x, 0, 1, h), QRect(0, 0, 1, h));
+        if (ok.left() > src.left())
+            pa.drawImage(QRect(0, 0, ox, h), out.copy(ox, 0, 1, h), QRect(0, 0, 1, h));
+    }
     pa.end();
     if (size) *size = out.size();
     return out;
