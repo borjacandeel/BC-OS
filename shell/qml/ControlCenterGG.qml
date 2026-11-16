@@ -57,7 +57,7 @@ Item {
                     Icon { anchors.centerIn: parent; name: pl.icon; size: px(18); color: pl.on ? Theme.accent : Theme.label }
                     MouseArea { anchors.fill: parent; enabled: pl.available && !cc.editing; onClicked: pl.toggled() } }
         Column { x: px(58); anchors.verticalCenter: parent.verticalCenter; width: parent.width - px(64)
-                 Text { text: pl.label; color: Theme.label; font.family: Theme.font; font.pixelSize: px(13); font.weight: Font.DemiBold; width: parent.width; elide: Text.ElideRight }
+                 Text { text: pl.label; color: Theme.label; font.family: Theme.font; font.pixelSize: px(13); font.weight: Font.DemiBold; width: parent.width; fontSizeMode: Text.HorizontalFit; minimumPixelSize: px(10); elide: Text.ElideRight }
                  Text { visible: text !== ""; text: pl.status; color: Theme.labelSecondary; font.family: Theme.font; font.pixelSize: px(11); width: parent.width; elide: Text.ElideRight } }
         MouseArea { x: px(54); width: parent.width - px(54); height: parent.height; enabled: pl.available && !cc.editing; onClicked: pl.expand() }
         Badge { key: pl.key }
