@@ -242,14 +242,23 @@ int main(int argc, char *argv[]) {
             const int n = qBound(1, burst.section(':', 1, 1).toInt(), 60);
             auto *t = new QElapsedTimer; t->start();
             // Se evalúa en el contexto del panel (tiene importado BCShell y su UiState)
-            QQmlExpression ex(QQmlEngine::contextForObject(win), win, "UiState." + prop + " = true");
+            // «aviso»: un aviso de prueba que entra, dura 500 ms y sale (para ver las dos animaciones)
+            const QString js = prop == "aviso" ? QStringLiteral("Notifications.push(\"BC OS\", \"Aviso de prueba\", \"Entra, espera y sale\", \"\", 500)")
+                                               : "UiState." + prop + " = true";
+            QQmlExpression ex(QQmlEngine::contextForObject(win), win, js);
             ex.evaluate();
             if (ex.hasError()) { qCritical() << ex.error().toString(); app.exit(7); return; }
             auto *count = new int(0);
-            auto *tick = new QTimer(&app); tick->setInterval(1);
+            auto *tick = new QTimer(&app); tick->setInterval(qMax(1, qEnvironmentVariableIntValue("BC_BURST_MS")));
             QObject::connect(tick, &QTimer::timeout, &app, [&, t, count, n, tick] {
                 const qint64 ms = t->elapsed();
-                QImage img = grabComposite();
+                // BC_BURST_SCOPE=<scope de LayerWindow> captura solo esa superficie (mucho más rápido que la compuesta)
+                QImage img;
+                const QString scope = qEnvironmentVariable("BC_BURST_SCOPE");
+                if (!scope.isEmpty()) {
+                    for (QWindow *w : QGuiApplication::topLevelWindows())
+                        if (auto *qw = qobject_cast<QQuickWindow *>(w); qw && qw->isVisible() && qw->property("scope").toString() == scope) { img = qw->grabWindow(); break; }
+                } else img = grabComposite();
                 const QString base = p.value(oShot); const QString out = base.left(base.lastIndexOf('.')) + QString("-%1.png").arg(ms, 4, 10, QChar('0'));
                 img.save(out);
                 if (++*count >= n) { tick->stop(); app.exit(0); }

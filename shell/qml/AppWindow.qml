@@ -34,6 +34,19 @@ Window {
         onFinished: Qt.quit()
     }
 
+    // Expandir / restaurar (pantalla completa o maximizar): la ventana «crece» hasta su nuevo tamaño en vez de saltar
+    property int _lastVis: Window.Windowed
+    onVisibilityChanged: (v) => {
+        const big = v === Window.FullScreen || v === Window.Maximized, wasBig = _lastVis === Window.FullScreen || _lastVis === Window.Maximized
+        if (big !== wasBig && !Theme.reducedMotion && frame.opacity > 0.5 && !closeAnim.running) expandAnim.restart()
+        _lastVis = v
+    }
+    ParallelAnimation {
+        id: expandAnim
+        NumberAnimation { target: frame; property: "scale"; from: 0.96; to: 1; duration: Theme.durFullscreen * 0.55; easing.type: Easing.OutCubic }
+        NumberAnimation { target: frame; property: "opacity"; from: 0.82; to: 1; duration: Theme.durFullscreen * 0.4; easing.type: Easing.OutQuad }
+    }
+
     Connections {
         target: AppActions
         function onActionInvoked(a) {

@@ -230,6 +230,7 @@ LayerWindow {
     // Sonidos del sistema (originales de BC OS)
     Connections { target: UiState; function onLockedChanged() { Quick.setLockFlag(UiState.locked); if (UiState.locked && !UiState.classic) Sounds.play("lock") } }
     property bool _notifWas: false
+    property bool notifLeaving: false
     property bool _notifWasShown: false
     property bool _soundsReady: false
     Timer { interval: 6000; running: true; onTriggered: root._soundsReady = true }   // sin sonido para los avisos del arranque
@@ -431,9 +432,15 @@ LayerWindow {
     LayerWindow {
         layer: "top"; edges: ["top", "right"]; margins: [UiState.topInset + Math.round(14 * root.u), Math.round(14 * root.u), 0, 0]; scope: "bc-notify"
         width: Math.round(321 * root.u); height: Math.round(80 * root.u)
-        shown: Notifications.visible && !UiState.locked && !UiState.splashing
+        shown: (Notifications.visible || root.notifLeaving) && !UiState.locked && !UiState.splashing
         NotificationCard {
             id: notifCard
+            // Deslizar hacia la derecha para descartar (como en macOS); si no llega, vuelve a su sitio
+            DragHandler {
+                id: notifDrag; target: notifCard; yAxis.enabled: false; xAxis.minimum: 0; xAxis.maximum: notifCard.width
+                onActiveChanged: if (!active) { if (notifCard.x > notifCard.width * 0.3) Notifications.dismiss(); else notifBack.restart() }
+            }
+            NumberAnimation on x { id: notifBack; running: false; to: 0; duration: Theme.dur(220); easing.type: Easing.OutCubic }
             scale: root.u
             transformOrigin: Item.TopLeft
             title: Notifications.title
@@ -441,7 +448,17 @@ LayerWindow {
             onDismissed: Notifications.dismiss()
         }
         // La tarjeta vive en su propia superficie (siempre «visible»): la entrada se dispara con cada aviso
-        Connections { target: Notifications; function onChanged() { if (Notifications.visible && !root._notifWasShown) notifSlide.play(); root._notifWasShown = Notifications.visible } }
+        Connections { target: Notifications; function onChanged() {
+            if (Notifications.visible && !root._notifWasShown) { notifLeave.stop(); root.notifLeaving = false; notifCard.x = 0; notifCard.opacity = 1; notifSlide.play() }
+            // Al irse (tiempo, cerrar o deslizar) sale hacia la derecha desvaneciéndose, en vez de desaparecer de golpe
+            else if (!Notifications.visible && root._notifWasShown && !Theme.reducedMotion) { root.notifLeaving = true; notifLeave.restart() }
+            root._notifWasShown = Notifications.visible } }
+        ParallelAnimation {
+            id: notifLeave
+            NumberAnimation { target: notifCard; property: "x"; to: notifCard.width + 24; duration: Theme.durNotifyOut; easing.type: Easing.InCubic }
+            NumberAnimation { target: notifCard; property: "opacity"; to: 0; duration: Theme.durNotifyOut; easing.type: Easing.InQuad }
+            onFinished: { root.notifLeaving = false; notifCard.x = 0; notifCard.opacity = 1 }
+        }
         SlideIn { id: notifSlide; target: notifCard; dx: UiState.classic ? 60 : 340; dy: 0; duration: UiState.classic ? 260 : Theme.durNotifyIn }   // Golden Gate: entra desde fuera por la derecha
     }
 
