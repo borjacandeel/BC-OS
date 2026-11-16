@@ -65,6 +65,7 @@ while (($#)); do
   shift
 done
 SOURCE="${SOURCE%/}"; [[ -n "$SOURCE" ]] || SOURCE=/
+BIOS=0   # equipo sin UEFI (PC antiguo): GRUB para BIOS en una partición bios_grub
 # Arquitectura del sistema que se instala (la del origen): kernel, cargador EFI y consola serie
 if [[ -e "$SOURCE/boot/vmlinuz-linux" && ! -e "$SOURCE/boot/Image" ]]; then
   ARCH=x86_64 KIMG=vmlinuz-linux EFI_ARCH=x64 EFI_NAME=BOOTX64.EFI GRUB_TARGET=x86_64-efi
@@ -262,6 +263,8 @@ trap cleanup EXIT
 # ---------- Instalación ----------
 do_partition() {
   progress "$P_PART" 8
+  # x86_64 arrancado en modo BIOS (sin /sys/firmware/efi): GRUB i386-pc; la ESP se mantiene por si luego hay UEFI
+  if [[ "$ARCH" == x86_64 && ! -d /sys/firmware/efi ]] && ((DRY == 0)); then BIOS=1 BOOTLOADER=grub SECURE_BOOT=0; log "modo BIOS"; fi
   run wipefs -a -q "$DISK"
   local rootype=0FC63DAF-8483-4772-8E79-3D69D8477DE4
   ((ENCRYPT)) && rootype=CA7D7CCB-63ED-4C53-861C-1742536059CC
@@ -269,9 +272,10 @@ do_partition() {
     sfdisk -q "$DISK" >>"$LOG" 2>&1 <<E
 label: gpt
 unit: sectors
-first-lba: 2048
+first-lba: 34
 start=2048, size=$((ESP_MIB * 2048)), type=C12A7328-F81F-11D2-BA4B-00A0C93EC93B, name="BC-ESP"
 start=$((2048 + ESP_MIB * 2048)), type=$rootype, name="bc-root"
+$( ((BIOS)) && echo 'start=34, size=2014, type=21686148-6449-6E6F-744E-656564454649, name="BIOS"' )
 E
     command -v partprobe >/dev/null 2>&1 && partprobe "$DISK" >>"$LOG" 2>&1 || true
     command -v udevadm >/dev/null 2>&1 && udevadm settle >>"$LOG" 2>&1 || true
@@ -462,7 +466,8 @@ do_grub() {
   cmdline_n="$(sed -n 's/^options //p' "$TARGET/boot/loader/entries/bcos.conf" 2>/dev/null || echo "$BOOT_COMMON")"
   cmdline_s="$(sed -n 's/^options //p' "$TARGET/boot/loader/entries/bcos-seguro.conf" 2>/dev/null || echo "$BOOT_COMMON")"
   crun bash -c "command -v grub-install >/dev/null" || { say "Aviso: GRUB no está instalado; se usa systemd-boot"; return 0; }
-  crun grub-install --target="$GRUB_TARGET" --efi-directory=/boot --bootloader-id="BC OS" --removable
+  if ((BIOS)); then crun grub-install --target=i386-pc --boot-directory=/boot "$DISK"
+  else crun grub-install --target="$GRUB_TARGET" --efi-directory=/boot --bootloader-id="BC OS" --removable; fi
   {
     printf 'set timeout=%s\nset default=0\nset menu_color_normal=light-gray/black\nset menu_color_highlight=white/blue\n' "$BOOT_TIMEOUT"
     printf 'menuentry "%s" {\n  linux /%s %s\n  initrd /initramfs-linux.img\n}\n' "$S_BOOT_TITLE" "$KIMG" "$cmdline_n"

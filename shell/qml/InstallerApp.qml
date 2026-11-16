@@ -135,7 +135,7 @@ AppWindow {
             Body { text: qsTr("Este asistente instala BC OS en el disco de este equipo en unos minutos. Te pedirá el disco, tu cuenta y la región.\n\nAntes de seguir, guarda una copia de lo que tengas en el disco: la instalación lo borra por completo.") }
             Row { spacing: 10
                   Rectangle { width: 6; height: 6; radius: 3; color: Theme.accent; anchors.verticalCenter: parent.verticalCenter }
-                  Body { width: content.width - 20; text: qsTr("Requisitos: arranque UEFI y un disco de 12 GB o más.") } }
+                  Body { width: content.width - 20; text: qsTr("Requisitos: un disco de 12 GB o más; arranca en equipos UEFI y en PCs antiguos con BIOS.") } }
         }
 
         // 1 Licencia

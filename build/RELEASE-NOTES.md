@@ -11,6 +11,14 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
 
+### Novedades de 0.9.6
+- **ISO x86_64 también para PCs antiguos con BIOS** (además de UEFI), en CD o USB (balenaEtcher); el instalador pone GRUB
+  para BIOS si el equipo no tiene UEFI.
+- **Terminal de BC** como la de macOS (redondeada, translúcida, semáforo y título centrado, claro/oscuro, fluida sin GPU).
+- Dock: la ampliación funciona encima de los iconos. Ventanas de BC redimensionables desde el borde y las esquinas.
+- Cursor McMojave por hardware; mejor detección de máquina virtual; Liquid Glass con lente y luz en el borde.
+- ISO live: entra sola y abre «Instalar BC OS».
+
 ### Novedades de 0.9.5 (modo claro)
 - **Modo claro en todo**: Bienvenida, Control Center (los módulos no disponibles ya no se vuelven transparentes),
   Centro de notificaciones, pastillas «Editar controles/widgets» y logo; **«Automático»** cambia de verdad a claro
