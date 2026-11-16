@@ -11,6 +11,17 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
 
+### Novedades de 0.9.3
+- **Esquinas redondeadas en todas las ventanas también sin 3D** (VirtualBox ARM): swayfx con OpenGL ES por software,
+  solo esquinas; si no arranca, sway clásico. Se desactiva con `bc.fx=0` en el arranque.
+- **Iconos tipo macOS en todo el sistema**: Terminal «>_», carpetas especiales azules, tipos de archivo (PDF, ZIP, MP3…),
+  apps Qt de terceros con el mismo tema. Terminal de 80×24 con título y saludo como macOS.
+- **Ajustes del Sistema** en tarjetas agrupadas como macOS 27, Aspecto con vista previa de Liquid Glass, iconos nuevos.
+- **20 fondos 4K nuevos** («Formas»): dunas, esferas, cristal líquido, eclipse, horizonte, seda, órbita…
+- Liquid Glass: los emergentes brotan desde su origen con un leve muelle; botón verde con «Mover y redimensionar».
+- Arreglados: esquina de la barra lateral de Archivos, corte del vidrio en barras laterales, Spotlight que tapaba el
+  Dock, Calculadora en ventanas grandes, página de fondos sin desplazamiento, configuración de foot.
+
 ### Novedades de 0.9.0
 - **Hyprland** por defecto si hay aceleración 3D: animaciones fluidas tipo macOS (muelle al abrir, cierre que encoge,
   Spaces deslizantes), esquinas continuas, sombras y **desenfoque real**. Sin 3D, sway por software automáticamente.
