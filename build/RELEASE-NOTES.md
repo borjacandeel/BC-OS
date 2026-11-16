@@ -12,6 +12,10 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
 
 ### Novedades de 0.9.3
+- **Instalador gráfico «Instalar BC OS»** al estilo de macOS: en la **ISO live** se abre solo. Disco (con cifrado
+  opcional), cuenta, región, resumen y progreso real; al acabar, «Reiniciar». En Terminal sigue `sudo bc-install`.
+- **Animaciones**: avisos que entran y salen deslizándose (y se descartan deslizando), ventanas que crecen al
+  expandir/restaurar, emergentes que brotan con un leve muelle.
 - **Esquinas redondeadas en todas las ventanas también sin 3D** (VirtualBox ARM): swayfx con OpenGL ES por software,
   solo esquinas; si no arranca, sway clásico. Se desactiva con `bc.fx=0` en el arranque.
 - **Iconos tipo macOS en todo el sistema**: Terminal «>_», carpetas especiales azules, tipos de archivo (PDF, ZIP, MP3…),

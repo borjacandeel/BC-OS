@@ -47,6 +47,8 @@ Qué incluye (detalle técnico y decisiones en [`docs/escritorio/ESTADO.md`](doc
 - **Esquinas redondeadas en todas las ventanas**, también sin 3D (swayfx con OpenGL ES por software; se desactiva en Ajustes ▸ General).
 - **Iconos tipo macOS en todo el sistema** (tema MacOS-Like): apps, carpetas especiales azules, tipos de archivo, y también en apps Qt y GTK de terceros.
 - **Botón verde** con «Mover y redimensionar / Rellenar y organizar»; emergentes que brotan con un leve muelle (Liquid Glass).
+- **Instalador gráfico «Instalar BC OS»** al estilo de macOS en la ISO live: introducción, licencia, disco (con cifrado opcional), cuenta, región, resumen y barra de progreso real.
+- **Animaciones**: ventanas que se abren con muelle, se cierran encogiéndose, se minimizan con efecto genio y crecen al expandir; avisos que entran y salen deslizándose (se descartan deslizando); emergentes Liquid Glass que brotan desde su origen.
 - **Terminal como la de macOS**: 80×24, título «usuario — fish — 80×24» y «Último inicio de sesión».
 - Además: tema GTK MacTahoe para apps externas, fuente Inter, cursor McMojave, terminal Ghostty (Alacritty si su compilación falla) y arranque con barra blanca.
 
@@ -95,6 +97,9 @@ Qué incluye (detalle técnico y decisiones en [`docs/escritorio/ESTADO.md`](doc
   <tr>
     <td width="50%"><img src="docs/escritorio/capturas/21-fondos.jpg" alt="Ajustes ▸ Fondo de pantalla"><br><sub><b>Fondos</b>: 36 fondos propios (20 nuevos en 4K) en Ajustes ▸ Fondo de pantalla.</sub></td>
     <td width="50%"><img src="docs/escritorio/capturas/22-menu.jpg" alt="Menú BC"><br><sub><b>Menú BC</b>: Acerca de, Ajustes, Tienda, forzar salida, reposo, bloqueo y sesión.</sub></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><img src="docs/escritorio/capturas/23-instalador.jpg" alt="Instalar BC OS" width="80%"><br><sub><b>Instalar BC OS</b>: instalador gráfico al estilo de macOS (disco, cifrado, cuenta, región y progreso real); se abre solo en la ISO live.</sub></td>
   </tr>
   <tr>
     <td colspan="2" align="center"><img src="docs/escritorio/capturas/17-bienvenida-equipo.jpg" alt="Bienvenida: máquina virtual o equipo físico" width="70%"><br><sub><b>Primer arranque</b>: máquina virtual (ligero) o equipo físico (GPU, desenfoque real); se detecta solo.</sub></td>
@@ -213,6 +218,8 @@ La sesión por defecto también se puede fijar en **Ajustes ▸ General ▸ «En
 - Esquinas redondeadas en todas las ventanas también sin 3D (swayfx por software, con vuelta a sway si falla).
 - Iconos tipo macOS en todo el sistema, Ajustes en tarjetas, botón verde, 20 fondos 4K, Terminal como macOS.
 - Arreglos de esquinas (barras laterales, Calculadora, Monitor, Vista previa, hojas), Spotlight con alto máximo.
+- **Instalador gráfico** tipo macOS (probado con un instalador simulado; la instalación real usa `bc-install`, ya probado en QEMU).
+- Animaciones de avisos (entrada y salida) y de expandir ventanas; medidas a ritmo real con `BC_BURST` (ver ESTADO.md).
 
 **Pendiente:** firma GPG del repositorio, idiomas, Android y probar todo en máquinas virtuales con y sin 3D.
 
@@ -232,6 +239,9 @@ La sesión por defecto también se puede fijar en **Ajustes ▸ General ▸ «En
 
 Imágenes publicadas: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Cada release incluye `BC-OS-<versión>-ARM64.vdi.zip`, `BC-OS-<versión>-x86_64.vdi.zip`, las ISO live y `SHA256SUMS`. Última: **0.9.3-beta**.
 
+**Instalar en un disco (como macOS):** arranca la **ISO live** → se abre **Instalar BC OS** → elige el disco, tu cuenta y la
+región → **Instalar** → **Reiniciar**. También desde Terminal: `sudo bc-install`.
+
 1. Descomprime el `.zip` → `.vdi`. Comprueba `shasum -a 256`.
 2. VirtualBox → **Nueva**: Linux / Arch Linux (**ARM 64-bit** en Mac Apple Silicon o **64-bit** en PC), ≥ 4 GB RAM, 2-4 CPU.
 3. **Sistema → Habilitar EFI**. Disco: usar el `.vdi` existente. Gráficos: VMSVGA.
@@ -249,7 +259,7 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 | `0.3.x-alpha` | publicadas | **sway** (mosaico/flotante), menús globales por app, Dock con ventanas reales, Alacritty, animación de minimizar y swayfx experimental. |
 | `0.4.0-beta` / `0.4.1-beta` | publicadas (prerrelease) | Asistente de bienvenida, estilos, widgets, Modos, Flathub, fish, servicio de antivirus; resolución adaptable (`bc-display`), iconos Qogir, portapapeles (Súper+V). |
 | `0.5.0-beta` | prerrelease, en pruebas | Entorno **Dotfiles (bspwm)** elegible en el login. Verificado en QEMU; sin probar en VirtualBox. |
-| `0.9.3-beta` | prerelease | Esquinas redondeadas en todas las ventanas (también sin 3D), iconos tipo macOS en todo el sistema, Ajustes como macOS 27, botón verde, 20 fondos 4K, Terminal como macOS y muchos arreglos de esquinas y detalles. |
+| `0.9.3-beta` | prerelease | **Instalador gráfico tipo macOS**, animaciones de avisos y ventanas, esquinas redondeadas en todas las ventanas (también sin 3D), iconos tipo macOS en todo el sistema, Ajustes como macOS 27, botón verde, 20 fondos 4K, Terminal como macOS y muchos arreglos de esquinas y detalles. |
 | `0.9.0-beta` | prerelease | **Hyprland** por defecto con 3D (animaciones fluidas tipo macOS, desenfoque real), sway por software si no; arreglo del bucle de login en VirtualBox; Alacritty con marco. |
 | `0.8.0-beta` | prerelease | **x86_64** + ISO live, primer arranque VM/equipo físico, repositorio `[bc]`, instantáneas, Tienda sin contraseña, Ghostty, box64, instalador con GRUB/Secure Boot, Control Center editable, Recientes, 10 fondos, animaciones. |
 | `0.7.0-beta` | prerelease | Apps nuevas (Monitor, Tienda, Calculadora, Notas, Vista previa, Calendario, Recordatorios, Música), vibrancy, widgets editables, animaciones de cerrar/minimizar. |
