@@ -62,8 +62,17 @@ sh "systemctl enable paccache.timer 2>/dev/null || true"
 install -D -m755 "$HERE/overlay/usr/lib/bc/bc-paquetes" "$R/usr/lib/bc/bc-paquetes"
 install -D -m644 "$HERE/overlay/usr/share/polkit-1/actions/org.bcos.paquetes.policy" "$R/usr/share/polkit-1/actions/org.bcos.paquetes.policy"
 install -D -m644 "$HERE/overlay/etc/polkit-1/rules.d/50-bcos-paquetes.rules" "$R/etc/polkit-1/rules.d/50-bcos-paquetes.rules"
+# Firma del repositorio [bc]: si está la clave pública del creador (build/repo/bcos-repo.asc), pacman la confía y
+# exige paquetes firmados; si no, el repositorio se acepta sin firma (como hasta ahora).
+BC_SIG="Optional TrustAll"
+if [ -f "$HERE/repo/bcos-repo.asc" ]; then
+  cp "$HERE/repo/bcos-repo.asc" "$R/tmp/bcos-repo.asc"
+  FPR="$(gpg --with-colons --show-keys "$HERE/repo/bcos-repo.asc" 2>/dev/null | awk -F: '/^fpr/{print $10; exit}')"
+  sh "pacman-key --init >/dev/null 2>&1 || true; pacman-key --add /tmp/bcos-repo.asc && pacman-key --lsign-key $FPR" && BC_SIG="Required"
+  rm -f "$R/tmp/bcos-repo.asc"
+fi
 if ! grep -q '^\[bc\]' "$R/etc/pacman.conf"; then
-  sed -i '0,/^\[core\]/s//# Repositorio propio de BC OS (GitHub). Firmado cuando el creador añada la clave (ver build\/repo\/LEEME.md)\n[bc]\nSigLevel = Optional TrustAll\nServer = https:\/\/github.com\/borjacandeel\/BC-OS\/releases\/download\/repo-$arch\n\n[core]/' "$R/etc/pacman.conf"
+  sed -i '0,/^\[core\]/s//# Repositorio propio de BC OS (GitHub). Firmado cuando el creador añada la clave (ver build\/repo\/LEEME.md)\n[bc]\nSigLevel = '"$BC_SIG"'\nServer = https:\/\/github.com\/borjacandeel\/BC-OS\/releases\/download\/repo-$arch\n\n[core]/' "$R/etc/pacman.conf"
 fi
 # Iconos propios de las apps de BC (estilo Golden Gate, icons/src/app) como bc-<app> en hicolor
 HI="$R/usr/share/icons/hicolor/scalable/apps"; mkdir -p "$HI"
