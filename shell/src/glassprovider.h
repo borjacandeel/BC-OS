@@ -13,6 +13,7 @@ public:
     GlassProvider();
     QImage requestImage(const QString &id, QSize *size, const QSize &requested) override;
     static QString wallpaperPath();
+    static void refract(QImage &img, int radius, bool leftOnly);
     static QImage blurred(const QImage &src, int radiusPx);   // desenfoque por reducción y ampliación sucesivas
 
 private:

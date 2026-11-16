@@ -1,4 +1,5 @@
 #include "glassprovider.h"
+#include <cmath>
 #include <QFile>
 #include <QFileInfo>
 #include <QPainter>
@@ -79,6 +80,55 @@ QImage GlassProvider::requestImage(const QString &id, QSize *size, const QSize &
             pa.drawImage(QRect(0, 0, ox, h), out.copy(ox, 0, 1, h), QRect(0, 0, 1, h));
     }
     pa.end();
+    refract(out, r, p.value(8) == "L");
     if (size) *size = out.size();
     return out;
+}
+
+// Liquid Glass: cerca del borde el cristal actúa como una lente (curva el fondo hacia dentro, con una leve
+// separación de colores) y la luz cae desde arriba a la izquierda (borde brillante en esa cara, más oscuro en la
+// opuesta). Solo se recalcula una franja junto al borde, así que es barato también sin GPU.
+void GlassProvider::refract(QImage &img, int radius, bool leftOnly) {
+    const int w = img.width(), h = img.height();
+    if (w < 8 || h < 8) return;
+    const qreal band = qBound<qreal>(4, qMin(w, h) * 0.22, 22);
+    const QImage src = img.copy();
+    const qreal rw = leftOnly ? w + radius : w;          // en barras laterales el borde derecho no cuenta
+    const qreal hx = rw / 2.0, hy = h / 2.0, rad = qMin<qreal>(radius, qMin(hx, hy));
+    auto sdf = [&](qreal x, qreal y) {                    // distancia con signo a la caja redondeada (negativa dentro)
+        const qreal qx = qAbs(x - hx) - (hx - rad), qy = qAbs(y - hy) - (hy - rad);
+        const qreal ox = qMax<qreal>(qx, 0), oy = qMax<qreal>(qy, 0);
+        return std::sqrt(ox * ox + oy * oy) + qMin<qreal>(qMax(qx, qy), 0) - rad;
+    };
+    auto sample = [&](qreal x, qreal y, int ch) {
+        const int ix = qBound(0, int(x + 0.5), w - 1), iy = qBound(0, int(y + 0.5), h - 1);
+        const QRgb c = reinterpret_cast<const QRgb *>(src.constScanLine(iy))[ix];
+        return ch == 0 ? qRed(c) : ch == 1 ? qGreen(c) : qBlue(c);
+    };
+    const qreal lx = -0.6, ly = -0.8;                     // dirección de la luz (arriba a la izquierda)
+    for (int y = 0; y < h; ++y) {
+        QRgb *row = reinterpret_cast<QRgb *>(img.scanLine(y));
+        for (int x = 0; x < w; ++x) {
+            const qreal d = -sdf(x + 0.5, y + 0.5);       // distancia al borde hacia dentro
+            if (d < 0 || d > band) { if (x > band && x < w - band - 1 && y > band && y < h - band) x = int(w - band - 1); continue; }
+            const QRgb o = row[x];
+            if (qAlpha(o) == 0) continue;
+            // Normal hacia fuera (gradiente de la distancia)
+            qreal nx = sdf(x + 1.5, y + 0.5) - sdf(x - 0.5, y + 0.5), ny = sdf(x + 0.5, y + 1.5) - sdf(x + 0.5, y - 0.5);
+            const qreal nl = std::sqrt(nx * nx + ny * ny); if (nl < 1e-6) continue; nx /= nl; ny /= nl;
+            const qreal t = 1.0 - d / band;               // 1 en el borde, 0 al final de la franja
+            const qreal bend = t * t * band * 0.85;       // cuánto se curva el fondo hacia dentro
+            const qreal sx = x - nx * bend, sy = y - ny * bend;
+            const qreal ca = t * t * 1.6;                 // aberración cromática leve en el filo
+            int rr = sample(sx - nx * ca, sy - ny * ca, 0), gg = sample(sx, sy, 1), bb = sample(sx + nx * ca, sy + ny * ca, 2);
+            // Luz: realce en la cara iluminada y sombra suave en la opuesta, más intensa en el filo
+            const qreal lit = -(nx * lx + ny * ly);       // >0 de cara a la luz
+            const qreal k = std::pow(t, 3.0);
+            const qreal add = k * (lit > 0 ? 70 * lit : 0) + std::pow(t, 6.0) * 40;
+            const qreal mul = 1.0 - k * (lit < 0 ? 0.18 * -lit : 0);
+            rr = qBound(0, int(rr * mul + add), 255); gg = qBound(0, int(gg * mul + add), 255); bb = qBound(0, int(bb * mul + add), 255);
+            const int a = qAlpha(o);                      // conservar el antialias del recorte (premultiplicado)
+            row[x] = qRgba(rr * a / 255, gg * a / 255, bb * a / 255, a);
+        }
+    }
 }

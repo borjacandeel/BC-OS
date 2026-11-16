@@ -49,12 +49,12 @@ hl.config({
         },
         blur = {
             enabled = true,          -- Liquid Glass real: desenfoque de lo que hay detrás
-            size = 10,
-            passes = 3,
-            noise = 0.012,
-            contrast = 1.0,
-            brightness = 1.0,
-            vibrancy = 0.22,
+            size = 6,                -- Liquid Glass de macOS: más claro que el desenfoque clásico, con color vivo
+            passes = 2,
+            noise = 0.01,
+            contrast = 1.08,
+            brightness = 1.05,
+            vibrancy = 0.35,
             vibrancy_darkness = 0.0,
             popups = true,
             new_optimizations = true,
