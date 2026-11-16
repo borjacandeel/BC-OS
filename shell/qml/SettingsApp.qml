@@ -610,7 +610,7 @@ AppWindow {
             Rectangle { width: 260; height: 40; radius: 12; color: Theme.accent
                         Text { anchors.centerIn: parent; text: qsTr("Abrir el asistente de bienvenida"); color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14 }
                         MouseArea { anchors.fill: parent; onClicked: Launcher.run("bc-ctl", ["welcome"]) } }
-            Label { text: qsTr("Instantáneas del sistema") }
+            Label { text: qsTr("Instantáneas del sistema"); font.weight: Theme.gg ? Font.Bold : Font.DemiBold; leftPadding: Theme.gg ? 10 : 0; topPadding: Theme.gg ? 6 : 0 }
             Hint { width: parent.width; text: qsTr("Se guarda una antes de cada actualización o instalación. Restaurar vuelve a las versiones de entonces.") }
             Column {
                 width: parent.width; spacing: 6
@@ -629,7 +629,7 @@ AppWindow {
                     }
                 }
             }
-            Label { text: qsTr("Dónde se ejecuta BC OS") }
+            Label { text: qsTr("Dónde se ejecuta BC OS"); font.weight: Theme.gg ? Font.Bold : Font.DemiBold; leftPadding: Theme.gg ? 10 : 0; topPadding: Theme.gg ? 6 : 0 }
             Row {
                 id: eqRow; spacing: 12
                 property string kind: Quick.machineKind()
@@ -649,8 +649,14 @@ AppWindow {
                     }
                 }
             }
-            Hint { width: parent.width; text: qsTr("Se aplica al volver a iniciar sesión.") }
-            Label { text: qsTr("Entorno al iniciar sesión") }
+            Group {
+                Row2 { id: cornersRow; label: qsTr("Esquinas redondeadas en todas las ventanas (también sin GPU)"); value: ""
+                       property bool on: Quick.roundedCorners()
+                       Switch { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                                on: cornersRow.on; onToggled: (v) => { if (Quick.setRoundedCorners(v)) cornersRow.on = v } } }
+            }
+            Hint { width: parent.width; text: qsTr("Se aplica al volver a iniciar sesión. Sin GPU las esquinas se dibujan por software: si notas lentitud, desactívalas.") }
+            Label { text: qsTr("Entorno al iniciar sesión"); font.weight: Theme.gg ? Font.Bold : Font.DemiBold; leftPadding: Theme.gg ? 10 : 0; topPadding: Theme.gg ? 6 : 0 }
             Row {
                 spacing: 12
                 Repeater {
@@ -669,7 +675,7 @@ AppWindow {
                 }
             }
             Hint { id: envNote; text: qsTr("Elige el entorno y cierra sesión para cambiar: en el login también puedes escogerlo.") }
-            Label { text: qsTr("Estilo de escritorio") }
+            Label { text: qsTr("Estilo de escritorio"); font.weight: Theme.gg ? Font.Bold : Font.DemiBold; leftPadding: Theme.gg ? 10 : 0; topPadding: Theme.gg ? 6 : 0 }
             Row {
                 spacing: 12
                 Repeater {

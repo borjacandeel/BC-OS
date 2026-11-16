@@ -757,6 +757,18 @@ bool QuickTools::setMachineKind(const QString &kind) {
     f.write(kind.toUtf8() + "\n");
     return f.commit();
 }
+static QString cornersPath() { return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/bc/esquinas"; }
+bool QuickTools::roundedCorners() {
+    QFile f(cornersPath());
+    return !(f.open(QIODevice::ReadOnly) && QString::fromUtf8(f.readAll()).trimmed() == "no");
+}
+bool QuickTools::setRoundedCorners(bool on) {
+    QDir().mkpath(QFileInfo(cornersPath()).absolutePath());
+    QSaveFile f(cornersPath());
+    if (!f.open(QIODevice::WriteOnly)) return false;
+    f.write(on ? "si\n" : "no\n");
+    return f.commit();
+}
 bool QuickTools::hasGpu() { return !QDir("/dev/dri").entryList({"renderD*"}, QDir::System).isEmpty(); }
 
 static QString lockFlagPath() { const QString d = qEnvironmentVariable("XDG_RUNTIME_DIR"); return d.isEmpty() ? QString() : d + "/bc-bloqueado"; }

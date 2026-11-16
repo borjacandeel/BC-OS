@@ -128,6 +128,9 @@ public:
     Q_INVOKABLE static QString machineKind();       // elección guardada o, si no hay, la detectada
     Q_INVOKABLE static bool setMachineKind(const QString &kind);
     Q_INVOKABLE static bool hasGpu();               // hay /dev/dri/renderD*
+    // Esquinas redondeadas en todas las ventanas sin 3D (swayfx por software): ~/.config/bc/esquinas («no» las quita)
+    Q_INVOKABLE static bool roundedCorners();
+    Q_INVOKABLE static bool setRoundedCorners(bool on);
     // Bloqueo a prueba de fallos: marca en $XDG_RUNTIME_DIR/bc-bloqueado mientras la pantalla está bloqueada.
     // Si el panel se cae bloqueado, la sesión lanza swaylock y el panel, al volver, se vuelve a bloquear.
     Q_INVOKABLE static void setLockFlag(bool on);
