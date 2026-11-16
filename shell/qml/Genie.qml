@@ -21,7 +21,8 @@ Item {
         from = rect; target = dockPoint; iconSize = icon; reverse = back
         p = back ? 1 : 0
         anim.from = back ? 1 : 0; anim.to = back ? 0 : 1
-        anim.duration = Theme.d(back ? Theme.durRestore : Theme.durMinimize)
+        // Por software, algo más corto (menos fotogramas que dibujar) y con curva suave
+        anim.duration = Theme.d((back ? Theme.durRestore : Theme.durMinimize) * (simple ? 0.7 : 1))
         anim.restart()
     }
     NumberAnimation { id: anim; target: g; property: "p"; easing.type: Easing.InOutSine; onFinished: { g.source = ""; g.finished() } }
@@ -29,8 +30,21 @@ Item {
     function clamp(x) { return Math.max(0, Math.min(1, x)) }
     function ease(x) { return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2 }
 
+    // Por software: efecto «Escala» de macOS (una sola imagen que se encoge hacia el icono del Dock), fluido sin GPU
+    readonly property bool simple: Quick.softwareRender
+    Image {
+        visible: g.simple && g.source !== ""
+        source: g.simple ? g.source : ""
+        cache: true; smooth: true; asynchronous: false
+        readonly property real e: g.ease(g.p)
+        width: g.from.width + (g.iconSize - g.from.width) * e
+        height: g.from.height + (g.iconSize * g.from.height / Math.max(1, g.from.width) - g.from.height) * e
+        x: g.from.x + g.from.width / 2 + (g.target.x - g.from.x - g.from.width / 2) * e - width / 2
+        y: g.from.y + (g.target.y - g.iconSize / 2 - g.from.y) * e
+        opacity: 1 - Math.max(0, (g.p - 0.75) / 0.25) * (g.reverse ? 0 : 1)
+    }
     Repeater {
-        model: g.source !== "" ? g.strips : 0
+        model: g.source !== "" && !g.simple ? g.strips : 0
         delegate: Image {
             required property int index
             readonly property real v: index / g.strips                         // posición de la franja (0 arriba, 1 abajo)
