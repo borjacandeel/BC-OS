@@ -28,7 +28,7 @@ Item {
         l._activos = a; Settings.widgetLayout = JSON.stringify(l)
     }
     // Widgets activos (Editar widgets…): orden de la columna. Por defecto, los de la captura de referencia.
-    readonly property var heights: ({ baterias: Theme.widgetLargeH, app: Theme.widgetMediumH, recordatorios: Theme.widgetLargeH,
+    readonly property var heights: ({ baterias: Theme.widgetLargeH, app: Theme.widgetMediumH, recordatorios: Theme.widgetMediumH,
                                       calendario: Theme.widgetSmall, reloj: Theme.widgetSmall })
     readonly property var smalls: ["calendario", "reloj"]
     // Sin baterías (máquina virtual, sobremesa) el widget de baterías no aparece: en su lugar, calendario y reloj
@@ -61,7 +61,7 @@ Item {
         id: w
         property string wid
         property int order: 0
-        property real baseH: Theme.widgetLargeH
+        property real baseH: root.heights[wid] || Theme.widgetMediumH
         property real baseW: Theme.widgetW
         default property alias content: inner.data
         width: root.px(baseW); height: root.px(baseH)

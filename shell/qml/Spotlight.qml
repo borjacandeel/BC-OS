@@ -9,9 +9,12 @@ Item {
     // macOS 27: barra de 520 pt muy redondeada y, debajo, los resultados en una tarjeta de vidrio aparte
     readonly property int barH: px(64)
     width: px(560)
-    height: barH + (results.length ? px(12) + list.contentHeight + px(16) : 0)
+    // Como en macOS 27: la lista de resultados tiene un alto máximo y se desplaza por dentro
+    readonly property real listH: Math.min(list.contentHeight, px(420))
+    height: barH + (results.length ? px(12) + listH + px(16) : 0)
     property var results: []
     property int selected: 0
+    onSelectedChanged: list.positionViewAtIndex(selected, ListView.Contain)
     signal done()
 
     readonly property var actions: [
@@ -65,7 +68,7 @@ Item {
     }
 
     Glass { width: parent.width; height: sp.barH; radius: height / 2; tintBoost: 0.55 }
-    Glass { visible: sp.results.length > 0; y: sp.barH + px(12); width: parent.width; height: list.contentHeight + px(16); radius: px(28); tintBoost: 0.4 }
+    Glass { visible: sp.results.length > 0; y: sp.barH + px(12); width: parent.width; height: sp.listH + px(16); radius: px(28); tintBoost: 0.4 }
     Icon { x: px(24); y: (sp.barH - height) / 2; name: Icons.search; size: px(22); color: Theme.labelSecondary }
     TextInput {
         id: field
@@ -102,8 +105,9 @@ Item {
     }
     ListView {
         id: list
-        y: sp.barH + px(20); x: px(8); width: parent.width - px(16); height: contentHeight
-        interactive: false
+        y: sp.barH + px(20); x: px(8); width: parent.width - px(16); height: sp.listH
+        clip: true; boundsBehavior: Flickable.StopAtBounds; highlightMoveDuration: Theme.dur(120)
+        interactive: contentHeight > height
         model: sp.results.slice(0, 14)
         delegate: Rectangle {
             required property var modelData
