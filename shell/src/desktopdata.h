@@ -86,8 +86,11 @@ class QuickTools : public QObject {
     Q_PROPERTY(bool active READ active WRITE setActive NOTIFY activeChanged)   // sondeo de reproducción solo con el panel visible
     // Con Hyprland el compositor desenfoca de verdad lo que hay detrás: el cristal no pinta el fondo precalculado
     Q_PROPERTY(bool realBlur READ realBlur CONSTANT)
+    // Render por software (sway sin GPU): las animaciones evitan escalados, que cuestan mucha CPU
+    Q_PROPERTY(bool softwareRender READ softwareRender CONSTANT)
 public:
     bool active() const { return m_mediaTimer.isActive(); }
+    static bool softwareRender() { return qEnvironmentVariable("QT_QUICK_BACKEND") == "software" || qEnvironmentVariable("QT_QUICK_BACKEND") == "softwarecontext"; }
     static bool realBlur() { return qEnvironmentVariable("BC_COMPOSITOR") == "hyprland" || !qEnvironmentVariable("HYPRLAND_INSTANCE_SIGNATURE").isEmpty(); }
     void setActive(bool on) { if (on == active()) return; if (on) { refreshMedia(); m_mediaTimer.start(); } else m_mediaTimer.stop(); emit activeChanged(); }
     explicit QuickTools(QObject *parent = nullptr);
@@ -130,6 +133,8 @@ public:
     Q_INVOKABLE static bool hasGpu();               // hay /dev/dri/renderD*
     // Esquinas redondeadas en todas las ventanas sin 3D (swayfx por software): ~/.config/bc/esquinas («no» las quita)
     Q_INVOKABLE static bool roundedCorners();
+    // ¿La franja superior del fondo es clara? (texto oscuro en la barra de menús, como macOS). "" = fondo por defecto
+    Q_INVOKABLE static bool wallpaperTopLight(const QString &path);
     Q_INVOKABLE static bool setRoundedCorners(bool on);
     // Bloqueo a prueba de fallos: marca en $XDG_RUNTIME_DIR/bc-bloqueado mientras la pantalla está bloqueada.
     // Si el panel se cae bloqueado, la sesión lanza swaylock y el panel, al volver, se vuelve a bloquear.

@@ -12,7 +12,7 @@ Item {
     property bool fade: true
     // Liquid Glass (Golden Gate): además de deslizarse, el cristal «brota» desde su origen con un leve muelle.
     // El origen por defecto es el borde por el que entra (arriba si baja, abajo si sube, el lateral si entra de lado).
-    property real fromScale: Theme.gg && dx === 0 ? 0.94 : 1
+    property real fromScale: Theme.gg && dx === 0 && !Quick.softwareRender ? 0.94 : 1   // por software, sin escalar (CPU)
     property real originX: target ? (dx > 0 ? target.width : (dx < 0 ? 0 : target.width / 2)) : 0
     property real originY: target ? (dy > 0 ? target.height : (dy < 0 ? 0 : target.height / 2)) : 0
     width: 0; height: 0

@@ -2,9 +2,8 @@
 # Sesión gráfica de BC OS.
 #  · Con aceleración 3D (GPU real, VirtualBox x86 con «Aceleración 3D», QEMU con virgl): Hyprland, con animaciones
 #    fluidas tipo macOS, desenfoque real y sombras. Si Hyprland falla al arrancar, sway por software.
-#  · Sin aceleración (p. ej. VirtualBox en Mac ARM): swayfx con OpenGL ES por software (llvmpipe) solo para las
-#    esquinas redondeadas de todas las ventanas; si no arranca, sway con pixman. bc.fx=0 o «no» en
-#    ~/.config/bc/esquinas lo desactiva (probado en QEMU con virtio-gpu 2D).
+#  · Sin aceleración, o en máquina virtual (VirtualBox, VMware…): sway con pixman, lo más ligero y fluido.
+#    Opcional (Ajustes ▸ General, «si» en ~/.config/bc/esquinas): swayfx por software con esquinas en todas las ventanas.
 #  bc.gpu=0 en el kernel (o «sway» en ~/.config/bc/compositor) fuerza sway; bc.gpu=1 o «hyprland», Hyprland.
 # «BC clásico»: el escritorio anterior a Golden Gate, elegible en el login.
 if [ "$1" = "--classic" ]; then export BC_CLASSIC=1; shift; fi
@@ -36,7 +35,8 @@ acelerado() {
 PREF="$(cat "$CFG/compositor" 2>/dev/null)"
 COMP=sway
 if grep -qw "bc.gpu=0" /proc/cmdline || [ "$PREF" = sway ]; then COMP=sway
-elif command -v Hyprland >/dev/null 2>&1 && { grep -qw "bc.gpu=1" /proc/cmdline || [ "$PREF" = hyprland ] || acelerado; }; then COMP=hyprland
+# En máquinas virtuales (VirtualBox VMSVGA, VMware…) la «3D» virtual es lenta: sway ligero salvo que se pida Hyprland
+elif command -v Hyprland >/dev/null 2>&1 && { grep -qw "bc.gpu=1" /proc/cmdline || [ "$PREF" = hyprland ] || { [ "$EQUIPO" = fisico ] && acelerado; }; }; then COMP=hyprland
 fi
 { date; echo "equipo: $EQUIPO  compositor: $COMP  renderD: $(ls /dev/dri 2>&1 | tr '\n' ' ')"
   command -v eglinfo >/dev/null && timeout 5 eglinfo -B 2>/dev/null | grep -i -m2 'renderer\|vendor'; } > "$LOG" 2>&1
@@ -48,7 +48,8 @@ sway_software() {
   export WLR_NO_HARDWARE_CURSORS=1 QT_QUICK_BACKEND=software
   # Sin 3D también hay esquinas redondeadas: swayfx con OpenGL ES por software (llvmpipe), solo esquinas
   # (sin sombras ni desenfoque). Si no arranca o muere enseguida, sway clásico con pixman, que siempre funciona.
-  if [ -x /opt/swayfx/bin/sway ] && ! grep -qw "bc.fx=0" /proc/cmdline && [ "$(cat "$CFG/esquinas" 2>/dev/null)" != no ]; then
+  # Opcional (Ajustes ▸ General): por software cuesta mucha CPU, así que de serie se usa pixman, que es lo más fluido
+  if [ -x /opt/swayfx/bin/sway ] && ! grep -qw "bc.fx=0" /proc/cmdline && [ "$(cat "$CFG/esquinas" 2>/dev/null)" = si ]; then
     export WLR_RENDERER=gles2 WLR_RENDERER_ALLOW_SOFTWARE=1 BC_FX=ligero
     bc-wm-mode init >> "$LOG" 2>&1
     t1=$(date +%s)

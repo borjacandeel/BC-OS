@@ -13,7 +13,7 @@ Item {
     property real iconSize: 46
     property real p: 0                  // 0 = ventana, 1 = dentro del Dock
     property bool reverse: false
-    readonly property int strips: 28
+    readonly property int strips: Quick.softwareRender ? 12 : 28   // menos franjas por software (CPU)
     signal finished()
 
     function run(src, rect, dockPoint, icon, back) {

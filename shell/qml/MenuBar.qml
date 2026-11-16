@@ -9,7 +9,8 @@ Item {
     readonly property real s: Theme.s
     property date now: new Date()
     readonly property var loc: Qt.locale(AppConfig.language)
-    readonly property color ink: Theme.barText
+    // Como macOS: texto oscuro si el fondo bajo la barra es claro, blanco si es oscuro (no depende del modo claro/oscuro)
+    readonly property color ink: Quick.wallpaperTopLight(Settings.wallpaper) ? "#1D1D1F" : Theme.barText
 
     Timer {
         interval: 1000; running: true; repeat: true; triggeredOnStart: true
@@ -63,7 +64,7 @@ Item {
             width: Math.round((Theme.barLogoH * 2103 / 856) * bar.s) + Math.round(18 * bar.s)
             open: UiState.menu === "system"
             onClicked: (x) => UiState.openMenu("system", x)
-            Brand { anchors.centerIn: parent; logoHeight: Math.round(Theme.barLogoH * bar.s) }
+            Brand { anchors.centerIn: parent; logoHeight: Math.round(Theme.barLogoH * bar.s); color: bar.ink }
         }
         BarItem {
             width: appName.implicitWidth + Math.round(Theme.barItemGap * bar.s)

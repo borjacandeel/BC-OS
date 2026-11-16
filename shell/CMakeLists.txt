@@ -41,7 +41,7 @@ qt_add_qml_module(bc-shell
     URI BCShell
     VERSION 1.0
     QML_FILES ${BC_QML_FILES}
-    RESOURCES assets/BC-logo-blanco.svg assets/wallpaper-default.png assets/wallpaper-login.png assets/window-shadow.png
+    RESOURCES assets/BC-logo-blanco.svg assets/BC-logo-oscuro.svg assets/wallpaper-default.png assets/wallpaper-login.png assets/window-shadow.png
 )
 
 qt_add_translations(bc-shell

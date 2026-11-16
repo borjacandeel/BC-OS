@@ -25,7 +25,10 @@ AppWindow {
         if (s.indexOf("e") >= 0) return s.replace(".", ",")
         const neg = s.charAt(0) === "-"; if (neg) s = s.substring(1)
         const parts = s.split(".")
-        parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".")
+        // Separador de miles a mano (la expresión regular con \B fallaba en el motor de QML: «1..008»)
+        let ent = parts[0], grouped = ""
+        while (ent.length > 3) { grouped = "." + ent.slice(-3) + grouped; ent = ent.slice(0, -3) }
+        parts[0] = ent + grouped
         return (neg ? "-" : "") + parts.join(",")
     }
     function value() { return parseFloat(display.replace(/\./g, "").replace(",", ".")) || 0 }

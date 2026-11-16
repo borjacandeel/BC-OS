@@ -15,7 +15,8 @@ Item {
         Image {
             height: root.logoHeight
             width: height * 2103 / 856
-            source: "qrc:/BCShell/assets/BC-logo-blanco.svg"
+            // Logo oscuro cuando el color pedido es oscuro (barra de menús sobre un fondo claro)
+            source: root.color.hslLightness < 0.5 ? "qrc:/BCShell/assets/BC-logo-oscuro.svg" : "qrc:/BCShell/assets/BC-logo-blanco.svg"
             sourceSize.height: root.logoHeight * 2
             smooth: true
         }

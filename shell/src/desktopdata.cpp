@@ -1,3 +1,5 @@
+#include <QImageReader>
+#include <QHash>
 #include "desktopdata.h"
 #include <QDBusArgument>
 #include <QDBusConnection>
@@ -760,7 +762,7 @@ bool QuickTools::setMachineKind(const QString &kind) {
 static QString cornersPath() { return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/bc/esquinas"; }
 bool QuickTools::roundedCorners() {
     QFile f(cornersPath());
-    return !(f.open(QIODevice::ReadOnly) && QString::fromUtf8(f.readAll()).trimmed() == "no");
+    return f.open(QIODevice::ReadOnly) && QString::fromUtf8(f.readAll()).trimmed() == "si";   // de serie, desactivadas (rendimiento)
 }
 bool QuickTools::setRoundedCorners(bool on) {
     QDir().mkpath(QFileInfo(cornersPath()).absolutePath());
@@ -768,6 +770,25 @@ bool QuickTools::setRoundedCorners(bool on) {
     if (!f.open(QIODevice::WriteOnly)) return false;
     f.write(on ? "si\n" : "no\n");
     return f.commit();
+}
+bool QuickTools::wallpaperTopLight(const QString &path) {
+    static QHash<QString, bool> cache;
+    const QString file = path.isEmpty() ? QStringLiteral(":/BCShell/assets/wallpaper-default.png") : path;
+    if (cache.contains(file)) return cache.value(file);
+    QImageReader r(file);
+    const QSize sz = r.size();
+    if (sz.isValid()) r.setScaledSize(QSize(64, qMax(1, 64 * sz.height() / qMax(1, sz.width()))));   // lectura reducida: rápido
+    const QImage img = r.read();
+    bool light = false;
+    if (!img.isNull()) {
+        const int rows = qMax(1, img.height() / 20);   // ~5 % superior (bajo la barra)
+        double sum = 0; int n = 0;
+        for (int y = 0; y < rows; ++y)
+            for (int x = 0; x < img.width(); ++x) { const QColor c = img.pixelColor(x, y); sum += 0.2126 * c.redF() + 0.7152 * c.greenF() + 0.0722 * c.blueF(); ++n; }
+        light = n && sum / n > 0.6;
+    }
+    cache.insert(file, light);
+    return light;
 }
 bool QuickTools::hasGpu() { return !QDir("/dev/dri").entryList({"renderD*"}, QDir::System).isEmpty(); }
 

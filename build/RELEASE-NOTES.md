@@ -11,6 +11,13 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
 
+### Novedades de 0.9.4 (rendimiento)
+- **Fluidez en máquinas virtuales**: en VirtualBox/VMware se usa siempre sway ligero (pixman), también con «Aceleración
+  3D» (la 3D virtual de VirtualBox es lenta); Hyprland queda para equipos físicos o si se elige en Ajustes ▸ General.
+- Las esquinas redondeadas por software (swayfx + llvmpipe) pasan a ser **opcionales** (Ajustes ▸ General): cargaban la CPU.
+- Por software, las animaciones ya no escalan ventanas ni paneles (fundido y desplazamiento, mucho más ligeros).
+- Arreglos: Calculadora («1..008»), color de la barra de menús según el fondo (texto oscuro sobre fondos claros, como macOS).
+
 ### Novedades de 0.9.3
 - **Instalador gráfico «Instalar BC OS»** al estilo de macOS: en la **ISO live** se abre solo. Disco (con cifrado
   opcional), cuenta, región, resumen y progreso real; al acabar, «Reiniciar». En Terminal sigue `sudo bc-install`.
