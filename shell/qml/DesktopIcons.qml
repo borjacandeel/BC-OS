@@ -110,7 +110,7 @@ Item {
                     fillMode: Image.PreserveAspectFit; asynchronous: true; sourceSize: Qt.size(120, 104); source: ic.kind === "imagen" ? "file://" + ic.filePath : "" }
             Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter; y: px(68)
-                width: Math.min(parent.width, lbl.implicitWidth + px(10)); height: lbl.height + px(2); radius: px(4)
+                width: Math.min(parent.width, lbl.implicitWidth + px(12)); height: lbl.height + px(3); radius: height / 2   // óvalo azul de macOS
                 color: desk.isSel(ic.name) ? Theme.selection : "transparent"
                 TextInput {
                     id: ren; visible: desk.renaming === ic.index; anchors.centerIn: parent; width: desk.cellW - px(8)

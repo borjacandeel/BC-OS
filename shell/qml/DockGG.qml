@@ -57,6 +57,13 @@ Item {
         if (kind === "terminal") return "bc-terminal"
         return Launcher.appIdFor(kind)
     }
+    // Globo rojo de macOS: avisos pendientes de cada app en el Centro de notificaciones
+    function badgeFor(name) {
+        if (!name) return 0
+        let n = 0; const h = Notifications.history || []
+        for (let i = 0; i < h.length; ++i) if (h[i].app === name) n++
+        return n
+    }
     function isRunning(kind) {
         const ids = Sway.appIds
         if (kind === "terminal") return ids.indexOf("com.mitchellh.ghostty") >= 0 || ids.indexOf("Alacritty") >= 0 || ids.indexOf("foot") >= 0
@@ -293,6 +300,16 @@ Item {
             Image { id: thumbImg; visible: cell.minimizedWindow && cell.thumb !== ""; anchors.fill: parent; anchors.margins: parent.width * 0.04
                     source: cell.thumb; fillMode: Image.PreserveAspectFit; smooth: true; mipmap: true; asynchronous: true
                     sourceSize.width: Math.round(dock.maxIcon * 2 * Screen.devicePixelRatio) }
+            // Globo rojo con el número de avisos (como macOS)
+            Rectangle {
+                readonly property int n: cell.minimizedWindow || cell.trash ? 0 : dock.badgeFor(cell.name)
+                visible: n > 0; z: 5
+                height: Math.round(cell.sz * 0.36); width: Math.max(height, badgeTxt.implicitWidth + height * 0.5); radius: height / 2
+                anchors.right: parent.right; anchors.rightMargin: -width * 0.18; y: -height * 0.18
+                color: "#FF3B30"; border.width: 1; border.color: Qt.rgba(0, 0, 0, 0.12)
+                Text { id: badgeTxt; anchors.centerIn: parent; text: parent.n > 99 ? "99+" : parent.n; color: "white"
+                       font.family: Theme.font; font.pixelSize: Math.round(parent.height * 0.62); font.weight: Font.DemiBold }
+            }
             AppIcon { visible: cell.kind !== "" && !cell.stack && !thumbImg.visible; anchors.fill: parent; kind: cell.kind; size: cell.sz
                       full: cell.trash && trashModel.count > 0 }
             Image { visible: cell.kind === "" && !cell.stack && !thumbImg.visible; anchors.fill: parent; smooth: true; fillMode: Image.PreserveAspectFit

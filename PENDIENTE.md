@@ -176,7 +176,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 72. Icono de Archivos con la cara sonriente bicolor (propio, sin copiar el de Apple)
 - [x] 73. Icono de Papelera que cambia visualmente entre vacía y llena
 - [x] 74. Iconos monocromáticos minimalistas en la barra de menús superior
-- [ ] 75. Badges (globos rojos) de notificación en esquinas de iconos
+- [x] 75. Badges (globos rojos) de notificación en esquinas de iconos
 - [x] 76. Etiquetas de colores circulares (Tags) para organizar archivos
 - [x] 77. Miniaturas de vista previa en tiempo real del contenido de documentos e imágenes
 - [~] 78. Iconos de carpetas en azul degradado con relieve sutil del tipo de contenido
@@ -210,18 +210,18 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [~] 106. Pilas (Stacks) que se despliegan en abanico o cuadrícula
 - [ ] 107. Botón de agrupación para ocultar iconos sobrantes en la barra de menús
 - [~] 108. Menús desplegables redondeados y separados de la barra superior
-- [ ] 109. Atajos de teclado alineados a la derecha en gris tenue en cada menú
+- [x] 109. Atajos de teclado alineados a la derecha en gris tenue en cada menú
 - [~] 110. Resaltado en color de énfasis redondeado al navegar por menús
 - [x] 111. Barra de búsqueda flotante centrada de Spotlight muy redondeada
 - [x] 112. Panel lateral derecho deslizante para el Centro de Notificaciones y Widgets
 - [~] 113. Widgets de escritorio que se vuelven monocromos/translúcidos al perder el foco
-- [ ] 114. Escritorio limpio por defecto con iconos alineados a la derecha
+- [x] 114. Escritorio limpio por defecto con iconos alineados a la derecha
 - [ ] 115. Pilas automáticas en el escritorio que agrupan archivos por tipo
 - [ ] 116. Fondos dinámicos que cambian de luz según la hora del día
 - [ ] 117. Salvapantallas en movimiento lento que se congelan al iniciar sesión
 - [x] 118. Menú BC fijo en la esquina superior izquierda
 - [x] 119. Nombre de la aplicación activa en negrita junto al menú BC
-- [ ] 120. Flechas de submenú alineadas a la derecha en los menús
+- [x] 120. Flechas de submenú alineadas a la derecha en los menús
 - [x] 121. Marcas de verificación a la izquierda de opciones activas en menús
 - [x] 122. Separadores horizontales limpios en menús largos
 - [ ] 123. Búsqueda dentro del menú Ayuda que señala la opción en los menús
@@ -230,8 +230,8 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 126. Nube de humo (Poof) al sacar un icono del Dock
 - [ ] 127. Progreso de descarga sobre el icono en el Dock
 - [~] 128. Marco de selección translúcido al arrastrar en el escritorio
-- [ ] 129. Nombres de archivo del escritorio con sombra para legibilidad
-- [ ] 130. Resaltado ovalado azul del nombre de un archivo seleccionado en el escritorio
+- [x] 129. Nombres de archivo del escritorio con sombra para legibilidad
+- [x] 130. Resaltado ovalado azul del nombre de un archivo seleccionado en el escritorio
 - [ ] 131. Espacio superior reservado para que las ventanas maximizadas no tapen la barra
 - [ ] 132. Escritorios numerados con miniaturas arriba en Mission Control
 - [ ] 133. Fondo desenfocado detrás de cada escritorio en Mission Control
