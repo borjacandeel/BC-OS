@@ -17,7 +17,7 @@ target_link_libraries(bccommon PUBLIC Qt6::Core Qt6::Gui)
 qt_add_executable(bc-shell src/main.cpp src/launcher.h src/launcher.cpp src/filebrowser.h src/filebrowser.cpp
     src/pamauth.h src/pamauth.cpp src/systemstatus.h src/systemstatus.cpp
     src/notifications.h src/notifications.cpp src/sysmonitor.h src/sysmonitor.cpp src/appindex.h src/appindex.cpp src/packagestore.h src/packagestore.cpp
-    src/swaycontrol.h src/swaycontrol.cpp src/sessionlist.h src/sessionlist.cpp src/clipboardhistory.h src/clipboardhistory.cpp src/updatechecker.h src/updatechecker.cpp src/layerhelper.h src/layerhelper.cpp src/shellcontrol.h src/shellcontrol.cpp src/glassprovider.h src/glassprovider.cpp src/desktopdata.h src/desktopdata.cpp src/installer.h src/installer.cpp)
+    src/swaycontrol.h src/swaycontrol.cpp src/sessionlist.h src/sessionlist.cpp src/clipboardhistory.h src/clipboardhistory.cpp src/updatechecker.h src/updatechecker.cpp src/layerhelper.h src/layerhelper.cpp src/shellcontrol.h src/shellcontrol.cpp src/glassprovider.h src/glassprovider.cpp src/genieitem.h src/genieitem.cpp src/desktopdata.h src/desktopdata.cpp src/installer.h src/installer.cpp)
 
 set(BC_QML_FILES
     qml/Panel.qml qml/Taskbar.qml qml/StartMenu.qml qml/Widgets.qml qml/Welcome.qml qml/SlideIn.qml qml/WindowChrome.qml qml/Osd.qml qml/ClipboardPopup.qml qml/LayerWindow.qml qml/UiState.qml qml/AppMenus.qml qml/MenuPopup.qml qml/FilesApp.qml

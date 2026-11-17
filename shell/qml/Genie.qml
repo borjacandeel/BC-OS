@@ -13,9 +13,6 @@ Item {
     property real iconSize: 46
     property real p: 0                  // 0 = ventana, 1 = dentro del Dock
     property bool reverse: false
-    // Franjas de ~3 px: bordes del embudo suaves (sin escalones), como el genio de macOS
-    property int strips: 40
-    onFromChanged: strips = Math.max(40, Math.min(Quick.softwareRender ? 200 : 300, Math.round(from.height / 3)))
     signal finished()
 
     function run(src, rect, dockPoint, icon, back) {
@@ -58,31 +55,14 @@ Item {
     function rowT(v) { const h = from.height / dist; return Math.min(1, v * h + slide * (1 + h) * 1.0) }
     function halfW(t) { return from.width / 2 + (iconSize / 2 - from.width / 2) * bend * smooth(t) }
     function centerX(t) { const cx = from.x + from.width / 2; return cx + (target.x - cx) * bend * smooth(t) }
-    // Cada franja es un recorte (clip) de la MISMA imagen: se decodifica una sola vez (antes, una por franja) y el
-    // primer fotograma sale al instante; luego solo cambian posiciones y tamaños (barato también por software)
-    Repeater {
-        model: g.source !== "" ? g.strips : 0
-        delegate: Item {
-            required property int index
-            readonly property real tt: g.rowT(index / g.strips)
-            readonly property real tb: g.rowT((index + 1) / g.strips)
-            readonly property real tm: (tt + tb) / 2
-            readonly property real bandH: g.from.height / g.strips
-            readonly property real k: height / Math.max(0.01, bandH)          // compresión vertical de la franja
-            visible: tt < 0.999
-            clip: true
-            width: 2 * g.halfW(tm)
-            height: Math.max(0.5, (tb - tt) * g.dist) + 0.6
-            x: g.centerX(tm) - width / 2
-            y: g.y0 + tt * g.dist
-            opacity: g.p > 0.96 && !g.reverse ? (1 - g.p) * 25 : 1
-            Image {
-                source: g.source
-                cache: true; smooth: true; asynchronous: false
-                width: parent.width
-                height: g.from.height * parent.k
-                y: -parent.index * parent.bandH * parent.k
-            }
-        }
+    // Dibujado fila a fila en C++ con bordes suavizados (GenieItem): sin escalones ni pixelado
+    GenieItem {
+        anchors.fill: parent
+        visible: g.source !== ""
+        source: g.source
+        from: g.from
+        target: g.target
+        iconSize: g.iconSize
+        progress: g.p
     }
 }

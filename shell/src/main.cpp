@@ -32,6 +32,7 @@
 #include "filebrowser.h"
 #include "launcher.h"
 #include "glassprovider.h"
+#include "genieitem.h"
 #include "desktopdata.h"
 
 static int g_warnings = 0;
@@ -126,6 +127,7 @@ int main(int argc, char *argv[]) {
     qmlRegisterSingletonInstance("BCShell", 1, 0, "WindowControl", &windowControl);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Batteries", &batteries);
     qmlRegisterType<FileBrowser>("BCShell", 1, 0, "FileModel");
+    qmlRegisterType<GenieItem>("BCShell", 1, 0, "GenieItem");
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Reminders", &reminders);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Sounds", &sounds);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Processes", &processes);
