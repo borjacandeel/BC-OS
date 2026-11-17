@@ -120,6 +120,7 @@ public:
     // Ajustes del Sistema ▸ Pantallas y Teclado
     Q_INVOKABLE void listDisplayModes();                       // → displayModes
     Q_INVOKABLE void setDisplayMode(const QString &mode);      // «1920x1080» o «auto»
+    Q_INVOKABLE QString savedDisplayMode() const;              // la recordada por bc-display o «auto»
     Q_INVOKABLE bool setKeyboardLayout(const QString &code);   // es, us, gb, fr, de, it, pt, latam
     Q_INVOKABLE static QString keyboardLayout();
     // Datos JSON de las apps (Calendario…): ~/.local/share/bc/<nombre>.json (nombre: letras minúsculas y guiones)

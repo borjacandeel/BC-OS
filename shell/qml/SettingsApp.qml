@@ -139,6 +139,48 @@ AppWindow {
             Text { anchors.horizontalCenter: parent.horizontalCenter; y: 7; text: "⌄"; color: Theme.textPrimary; font.pixelSize: 9; font.bold: true } }
         MouseArea { anchors.fill: parent; anchors.margins: -4; onClicked: pb.clicked() }
     }
+    // Título de sección sobre un grupo (como en Ajustes de macOS)
+    component Section: Text {
+        leftPadding: 10; topPadding: 8
+        color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 13; font.weight: Font.Bold
+    }
+    // Control segmentado compacto de macOS: cápsula con la opción elegida resaltada
+    component PillSeg: Rectangle {
+        id: ps
+        property var options: []
+        property int current: 0
+        signal picked(int i)
+        width: psRow.width + 4; height: 26; radius: 7
+        color: Theme.lightUi ? Qt.rgba(0, 0, 0, 0.06) : Qt.rgba(1, 1, 1, 0.08)
+        Row {
+            id: psRow; x: 2; y: 2
+            Repeater {
+                model: ps.options
+                Rectangle {
+                    required property int index
+                    required property string modelData
+                    width: psT.implicitWidth + 22; height: 22; radius: 5
+                    color: index === ps.current ? (Theme.lightUi ? "white" : Qt.rgba(1, 1, 1, 0.22)) : "transparent"
+                    border.width: index === ps.current && Theme.lightUi ? 0.5 : 0; border.color: Qt.rgba(0, 0, 0, 0.12)
+                    Behavior on color { ColorAnimation { duration: Theme.dur(140) } }
+                    Text { id: psT; anchors.centerIn: parent; text: modelData; color: Theme.textPrimary
+                           font.family: Theme.fontFamily; font.pixelSize: 12; font.weight: index === ps.current ? Font.DemiBold : Font.Normal }
+                    MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: ps.picked(index) }
+                }
+            }
+        }
+    }
+    // Botón pequeño gris de macOS («Abrir…», «Restaurar»)
+    component SmallBtn: Rectangle {
+        id: sb
+        property string text
+        signal clicked()
+        width: sbT.implicitWidth + 22; height: 24; radius: 6
+        color: sbM.pressed ? Theme.fillHover : (Theme.lightUi ? "white" : Qt.rgba(1, 1, 1, 0.12))
+        border.width: Theme.lightUi ? 0.5 : 0; border.color: Qt.rgba(0, 0, 0, 0.15)
+        Text { id: sbT; anchors.centerIn: parent; text: sb.text; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 12 }
+        MouseArea { id: sbM; anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: sb.clicked() }
+    }
     component Segmented: Row {
         property var options: []
         property int current: 0
@@ -521,29 +563,42 @@ AppWindow {
             }
         }
 
-        // 12 Pantallas
+        // 12 Pantallas (como macOS: monitor con el fondo actual y la resolución en una lista agrupada)
         Column {
-            visible: win.page === 12; width: parent.width; spacing: 12
-            onVisibleChanged: if (visible) Quick.listDisplayModes()
+            id: dispPage
+            visible: win.page === 12; width: parent.width; spacing: 10
+            property string chosen: Quick.savedDisplayMode()
+            onVisibleChanged: if (visible) { Quick.listDisplayModes(); chosen = Quick.savedDisplayMode() }
             Label { visible: !Theme.gg; text: qsTr("Pantallas"); font.pixelSize: 20; font.weight: Font.Bold }
-            Rectangle {
-                anchors.horizontalCenter: parent.horizontalCenter; width: 260; height: 150; radius: 8; color: "#1C1C1E"; border.width: 3; border.color: "#3A3A3C"
-                Image { anchors.fill: parent; anchors.margins: 3; source: "qrc:/BCShell/assets/wallpaper-default.png"; fillMode: Image.PreserveAspectCrop; sourceSize.width: 520 }
+            Item {
+                width: parent.width; height: 196
+                Rectangle {
+                    id: mon; anchors.horizontalCenter: parent.horizontalCenter; y: 8; width: 280; height: 160; radius: 10; color: "#0B0B0D"
+                    border.width: 4; border.color: Theme.lightUi ? "#C7C7CC" : "#3A3A3C"
+                    Image { anchors.fill: parent; anchors.margins: 4; fillMode: Image.PreserveAspectCrop; sourceSize.width: 560; asynchronous: true
+                            source: Settings.wallpaper !== "" ? "file://" + Settings.wallpaper : "qrc:/BCShell/assets/wallpaper-default.png" }
+                }
+                Rectangle { anchors.horizontalCenter: parent.horizontalCenter; anchors.top: mon.bottom; width: 70; height: 10; radius: 2
+                            color: Theme.lightUi ? "#C7C7CC" : "#3A3A3C" }
+                Text { anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; text: dispPage.chosen === "auto" ? qsTr("Pantalla integrada · resolución automática") : qsTr("Pantalla integrada · %1").arg(dispPage.chosen.replace("x", " × "))
+                       color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 12 }
             }
-            Label { text: qsTr("Resolución"); font.weight: Theme.gg ? Font.Bold : Font.DemiBold; leftPadding: Theme.gg ? 10 : 0; topPadding: Theme.gg ? 6 : 0 }
-            Flow {
-                width: parent.width; spacing: 8
+            Section { text: qsTr("Resolución") }
+            Group {
                 Repeater {
-                    model: ["auto"].concat(Quick.displayModes.slice(0, 11))
-                    Rectangle {
+                    model: ["auto"].concat(Quick.displayModes.length ? Quick.displayModes.slice(0, 10) : ["1280x800", "1440x900", "1600x900", "1920x1080", "2560x1440"])
+                    delegate: Row2 {
                         required property string modelData
-                        width: rt.implicitWidth + 24; height: 30; radius: 8; color: rma.containsMouse ? Theme.fillHover : Theme.tileFill
-                        Text { id: rt; anchors.centerIn: parent; text: modelData === "auto" ? qsTr("Automática") : modelData.replace("x", " × "); color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 12 }
-                        MouseArea { id: rma; anchors.fill: parent; hoverEnabled: true; onClicked: Quick.setDisplayMode(modelData) }
+                        label: modelData === "auto" ? qsTr("Automática (recomendada)") : modelData.replace("x", " × ")
+                        value: ""
+                        Text { anchors.right: parent.right; anchors.rightMargin: 14; anchors.verticalCenter: parent.verticalCenter
+                               visible: dispPage.chosen === modelData; text: "✓"; color: Theme.accent; font.pixelSize: 14; font.weight: Font.Bold }
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                    onClicked: { Quick.setDisplayMode(modelData); dispPage.chosen = modelData } }
                     }
                 }
             }
-            Hint { width: parent.width; text: qsTr("«Automática» se adapta al monitor o a la ventana de la máquina virtual.") }
+            Hint { width: parent.width; text: qsTr("La resolución elegida se recuerda y se aplica en cada inicio. «Automática» usa la nativa del monitor (o el tamaño de la ventana de la máquina virtual) a su frecuencia más alta.") }
         }
 
         // 13 Teclado
@@ -600,136 +655,83 @@ AppWindow {
             Hint { width: parent.width; text: qsTr("Con «No molestar» las notificaciones se guardan en el Centro de notificaciones sin mostrarse. Ábrelo pulsando la fecha y la hora.") }
         }
 
-        // 0 Apariencia
+        // 0 General (como Ajustes ▸ General de macOS: secciones con filas agrupadas)
         Column {
-            visible: win.page === 0; width: parent.width; spacing: 12
-            Label { visible: !Theme.gg; text: qsTr("General"); font.pixelSize: Theme.gg ? 20 : 22; font.weight: Theme.gg ? Font.Bold : Font.DemiBold }
+            visible: win.page === 0; width: parent.width; spacing: 10
+            Label { visible: !Theme.gg; text: qsTr("General"); font.pixelSize: 20; font.weight: Font.Bold }
+            Section { text: qsTr("Escritorio") }
             Group {
                 Row2 { label: qsTr("Widgets en el escritorio"); value: ""
                        Switch { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
                                 on: Settings.widgets; onToggled: (v) => Settings.widgets = v } }
+                Row2 { label: qsTr("Reducir movimiento"); value: ""
+                       Switch { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                                on: Settings.reducedMotion; onToggled: (v) => Settings.reducedMotion = v } }
+                Row2 { label: qsTr("Idioma"); value: ""
+                       PillSeg { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                                 options: ["Español", "English"]; current: Settings.language.indexOf("en") === 0 ? 1 : 0
+                                 onPicked: (i) => Settings.language = i === 1 ? "en" : "es_ES" } }
+                Row2 { label: qsTr("Asistente de bienvenida"); value: ""
+                       SmallBtn { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                                  text: qsTr("Abrir…"); onClicked: Launcher.run("bc-ctl", ["welcome"]) } }
             }
-            Rectangle { width: 260; height: 40; radius: 12; color: Theme.accent
-                        Text { anchors.centerIn: parent; text: qsTr("Abrir el asistente de bienvenida"); color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 14 }
-                        MouseArea { anchors.fill: parent; onClicked: Launcher.run("bc-ctl", ["welcome"]) } }
-            Label { text: qsTr("Instantáneas del sistema"); font.weight: Theme.gg ? Font.Bold : Font.DemiBold; leftPadding: Theme.gg ? 10 : 0; topPadding: Theme.gg ? 6 : 0 }
-            Hint { width: parent.width; text: qsTr("Se guarda una antes de cada actualización o instalación. Restaurar vuelve a las versiones de entonces.") }
-            Column {
-                width: parent.width; spacing: 6
-                property var list: win.page === 0 ? Quick.snapshots() : []
-                Hint { visible: parent.list.length === 0; text: qsTr("Todavía no hay instantáneas.") }
-                Repeater {
-                    model: parent.list.slice(0, 5)
-                    delegate: Rectangle {
-                        required property var modelData
-                        width: parent.width; height: 40; radius: 10; color: Theme.tileFill
-                        Label { x: 14; anchors.verticalCenter: parent.verticalCenter; text: modelData.fecha + "  ·  " + qsTr("%1 paquetes").arg(modelData.paquetes) }
-                        Rectangle { anchors.right: parent.right; anchors.rightMargin: 8; anchors.verticalCenter: parent.verticalCenter
-                                    width: rT.implicitWidth + 24; height: 26; radius: 13; color: Theme.accent
-                                    Text { id: rT; anchors.centerIn: parent; text: qsTr("Restaurar"); color: "white"; font.family: Theme.fontFamily; font.pixelSize: 12 }
-                                    MouseArea { anchors.fill: parent; onClicked: Launcher.run("pkexec", ["/usr/lib/bc/bc-paquetes", "restaurar", modelData.id]) } }
-                    }
-                }
-            }
-            Label { text: qsTr("Dónde se ejecuta BC OS"); font.weight: Theme.gg ? Font.Bold : Font.DemiBold; leftPadding: Theme.gg ? 10 : 0; topPadding: Theme.gg ? 6 : 0 }
-            Row {
-                id: eqRow; spacing: 12
-                property string kind: Quick.machineKind()
-                Repeater {
-                    model: [ { k: "vm", t: qsTr("Máquina virtual"), d: qsTr("Por software, sin efectos de GPU") },
-                             { k: "fisico", t: qsTr("Equipo físico"), d: Quick.hasGpu() ? qsTr("GPU: desenfoque, sombras, esquinas") : qsTr("GPU (no detectada ahora)") } ]
-                    delegate: Rectangle {
-                        required property var modelData
-                        readonly property bool sel: eqRow.kind === modelData.k
-                        width: 250; height: 66; radius: 14
-                        color: sel ? Theme.accentSelected : Theme.tileFill
-                        border.width: sel ? 2 : 0; border.color: Theme.accent
-                        Column { anchors.centerIn: parent; spacing: 4
-                                 Label { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.t + (Quick.detectedMachine() === modelData.k ? qsTr(" · detectado") : ""); font.weight: Font.DemiBold }
-                                 Hint { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.d } }
-                        MouseArea { anchors.fill: parent; onClicked: { if (Quick.setMachineKind(modelData.k)) eqRow.kind = modelData.k } }
-                    }
-                }
-            }
+            Hint { width: parent.width; text: qsTr("El idioma se aplica al volver a iniciar sesión.") }
+
+            Section { text: qsTr("Rendimiento") }
             Group {
-                Row2 { id: cornersRow; label: qsTr("Esquinas redondeadas en todas las ventanas (también sin GPU)"); value: ""
+                Row2 { id: eqRow; label: qsTr("Este equipo es"); value: ""
+                       property string kind: Quick.machineKind()
+                       PillSeg { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                                 options: [qsTr("Máquina virtual"), qsTr("Equipo físico")]; current: eqRow.kind === "vm" ? 0 : 1
+                                 onPicked: (i) => { const k = i === 0 ? "vm" : "fisico"; if (Quick.setMachineKind(k)) eqRow.kind = k } } }
+                Row2 { id: cornersRow; label: qsTr("Esquinas redondeadas en todas las ventanas"); value: ""
                        property bool on: Quick.roundedCorners()
                        Switch { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
                                 on: cornersRow.on; onToggled: (v) => { if (Quick.setRoundedCorners(v)) cornersRow.on = v } } }
             }
-            Hint { width: parent.width; text: qsTr("Se aplica al volver a iniciar sesión. Sin GPU las esquinas se dibujan por software: si notas lentitud, desactívalas.") }
-            Label { text: qsTr("Entorno al iniciar sesión"); font.weight: Theme.gg ? Font.Bold : Font.DemiBold; leftPadding: Theme.gg ? 10 : 0; topPadding: Theme.gg ? 6 : 0 }
-            Row {
-                spacing: 12
+            Hint { width: parent.width
+                   text: (Quick.detectedMachine() === "vm" ? qsTr("Detectado: máquina virtual (dibujo por software, ligero). ")
+                                                           : (Quick.hasGpu() ? qsTr("Detectado: equipo físico con GPU (desenfoque, sombras y esquinas por GPU). ")
+                                                                             : qsTr("Detectado: equipo físico sin GPU utilizable. ")))
+                         + qsTr("Los cambios se aplican al volver a iniciar sesión.") }
+
+            Section { text: qsTr("Al iniciar sesión") }
+            Group {
                 Repeater {
                     model: Sessions.sessions
-                    delegate: Rectangle {
+                    delegate: Row2 {
                         required property var modelData
-                        readonly property bool sel: Sessions.runningId === modelData.id
-                        width: 250; height: 66; radius: 14
-                        color: sel ? Theme.accentSelected : Theme.tileFill
-                        border.width: sel ? 2 : 0; border.color: Theme.accent
-                        Column { anchors.centerIn: parent; spacing: 4
-                                 Label { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.name; font.weight: Font.DemiBold }
-                                 Hint { anchors.horizontalCenter: parent.horizontalCenter; width: 230; horizontalAlignment: Text.AlignHCenter; text: modelData.comment } }
-                        MouseArea { anchors.fill: parent; onClicked: { if (Sessions.remember(Sessions.currentUserName(), modelData.id)) { envNote.text = qsTr("Se usará «%1» la próxima vez que inicies sesión.").arg(modelData.name) } } }
+                        label: modelData.name; value: ""
+                        Text { anchors.right: parent.right; anchors.rightMargin: 14; anchors.verticalCenter: parent.verticalCenter
+                               visible: Sessions.runningId === modelData.id || envNote.chosen === modelData.id
+                               text: "✓"; color: Theme.accent; font.pixelSize: 14; font.weight: Font.Bold }
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                    onClicked: if (Sessions.remember(Sessions.currentUserName(), modelData.id)) { envNote.chosen = modelData.id
+                                        envNote.text = qsTr("Se usará «%1» la próxima vez que inicies sesión.").arg(modelData.name) } }
                     }
                 }
             }
-            Hint { id: envNote; text: qsTr("Elige el entorno y cierra sesión para cambiar: en el login también puedes escogerlo.") }
-            Label { text: qsTr("Estilo de escritorio"); font.weight: Theme.gg ? Font.Bold : Font.DemiBold; leftPadding: Theme.gg ? 10 : 0; topPadding: Theme.gg ? 6 : 0 }
-            Row {
-                spacing: 12
+            Hint { id: envNote; property string chosen: ""; width: parent.width
+                   text: qsTr("BC OS o tus Dotfiles (bspwm). También se elige en la pantalla de inicio de sesión.") }
+
+            Section { text: qsTr("Instantáneas del sistema") }
+            Group {
+                id: snapGroup
+                property var list: win.page === 0 ? Quick.snapshots() : []
+                Row2 { visible: snapGroup.list.length === 0; label: qsTr("Todavía no hay instantáneas"); value: "" }
                 Repeater {
-                    model: [{ id: "mac", name: qsTr("BC"), desc: qsTr("Barra superior y Dock") },
-                            { id: "win", name: qsTr("Windows"), desc: qsTr("Barra de tareas y menú Inicio") }]
-                    delegate: Rectangle {
+                    model: snapGroup.list.slice(0, 5)
+                    delegate: Row2 {
                         required property var modelData
-                        readonly property bool sel: Settings.desktopStyle === modelData.id
-                        width: 160; height: 76; radius: 14
-                        color: sel ? Theme.accentSelected : Theme.tileFill
-                        border.width: sel ? 2 : 0; border.color: Theme.accent
-                        Column { anchors.centerIn: parent; spacing: 4
-                                 Label { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.name; font.weight: Font.DemiBold }
-                                 Hint { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.desc } }
-                        MouseArea { anchors.fill: parent; onClicked: Settings.desktopStyle = modelData.id }
+                        label: modelData.fecha; value: ""
+                        Text { anchors.right: rb.left; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                               text: qsTr("%1 paquetes").arg(modelData.paquetes); color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 12 }
+                        SmallBtn { id: rb; anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                                   text: qsTr("Restaurar"); onClicked: Launcher.run("pkexec", ["/usr/lib/bc/bc-paquetes", "restaurar", modelData.id]) }
                     }
                 }
             }
-            Rectangle {
-                width: parent.width; height: 56; radius: 12; color: Theme.tileFill
-                Label { x: 14; y: 9; text: qsTr("Reducir movimiento") }
-                Hint { x: 14; y: 31; text: qsTr("Desactiva las animaciones del escritorio"); width: parent.width - 90 }
-                Switch { anchors.right: parent.right; anchors.rightMargin: 14; anchors.verticalCenter: parent.verticalCenter
-                         on: Settings.reducedMotion; onToggled: (v) => Settings.reducedMotion = v }
-            }
-            Rectangle {
-                width: parent.width; height: 74; radius: 12; color: Theme.tileFill
-                Label { x: 14; y: 9; text: qsTr("Idioma") }
-                Hint { x: 14; y: 33; text: qsTr("Se aplica al volver a iniciar sesión"); width: parent.width - 28 }
-                Segmented {
-                    anchors.right: parent.right; anchors.rightMargin: 14; y: 9
-                    options: [{ label: "Español" }, { label: "English" }]
-                    current: Settings.language.indexOf("en") === 0 ? 1 : 0
-                    onPicked: (i) => Settings.language = i === 1 ? "en" : "es_ES"
-                }
-            }
-            Rectangle {
-                width: parent.width; height: 74; radius: 12; color: Theme.tileFill
-                Label { x: 14; y: 9; text: qsTr("Tema") }
-                Hint { x: 14; y: 33; text: qsTr("El tema claro llegará en una versión futura"); width: parent.width - 28 }
-                Segmented {
-                    anchors.right: parent.right; anchors.rightMargin: 14; y: 9
-                    options: [{ label: qsTr("Oscuro") }, { label: qsTr("Claro"), enabled: false }]
-                }
-            }
-            Rectangle {
-                width: parent.width; height: 150; radius: 12; color: Theme.tileFill
-                Label { x: 14; y: 9; text: qsTr("Fondo de pantalla") }
-                Image { x: 14; y: 36; height: 100; width: 160; fillMode: Image.PreserveAspectCrop
-                        source: "qrc:/BCShell/assets/wallpaper-default.png"; smooth: true }
-                Hint { x: 190; y: 40; text: qsTr("BC OS (predeterminado)"); width: 200 }
-            }
+            Hint { width: parent.width; text: qsTr("Se guarda una antes de cada actualización o instalación. Restaurar vuelve a las versiones de entonces.") }
         }
 
         // 1 Sonido

@@ -809,6 +809,13 @@ bool QuickTools::setMachineKind(const QString &kind) {
     f.write(kind.toUtf8() + "\n");
     return f.commit();
 }
+QString QuickTools::savedDisplayMode() const {
+    QFile f(QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/bc/resolucion");
+    if (!f.open(QIODevice::ReadOnly)) return QStringLiteral("auto");
+    const QString m = QString::fromUtf8(f.readAll()).trimmed();
+    static const QRegularExpression ok("^\\d{3,5}x\\d{3,5}$");
+    return ok.match(m).hasMatch() ? m : QStringLiteral("auto");
+}
 static QString cornersPath() { return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/bc/esquinas"; }
 bool QuickTools::roundedCorners() {
     QFile f(cornersPath());
