@@ -90,7 +90,7 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 - Escritorio por defecto rehecho al estilo de **macOS 27 Golden Gate**: barra de menús transparente, widgets de vidrio a la izquierda (baterías, uso del equipo o widget de otra app, recordatorios), Dock de vidrio con ampliación, pila de Descargas y Papelera, **Liquid Glass** con deslizador, modo **claro/oscuro** en caliente, fuente Inter.
 - **Spotlight** (Ctrl/Súper+Espacio), **Aplicaciones** (F4 o el 2.º icono del Dock), **Mission Control** (Ctrl+↑ / F3, Ctrl+←/→ escritorios), **selector de apps** (Alt+Tab), **Control Center** y **Centro de notificaciones** (clic en la hora), minimizar al Dock con **efecto genio**, iconos en el escritorio.
 - **Archivos** como Finder (iconos, lista, columnas, galería, Vista rápida con Espacio, etiquetas, pestañas) y **Ajustes del Sistema** nuevos. Terminal **Ghostty** (si su compilación falla, Alacritty). Sonidos propios.
-- ¿Algo falla? En el login elige **«BC clásico»**: el escritorio anterior. Estado y decisiones: `docs/escritorio/ESTADO.md`.
+- Estado y decisiones: `docs/escritorio/ESTADO.md`.
 
 ### Novedades de 0.5.0: entorno «Dotfiles (bspwm)»
 - En el **login** (y en Configuración, y en la bienvenida) puedes elegir entre **BC OS** (sway) y **Dotfiles (bspwm)**, un entorno de mosaico X11 basado en `borjacandeel/dotfiles-2026`: **bspwm + sxhkd + polybar + picom + rofi + dunst**, con tus atajos (Súper+Intro, Súper+D, Ctrl+flechas, Ctrl+B Firefox…; lista en `/etc/bc/atajos-dotfiles.txt`, Súper+F1), fondo «Montañas», barra minimal (escritorios numerados, pista del reproductor, reloj) y la pantalla que se adapta a la ventana de la máquina virtual.
@@ -150,11 +150,12 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 - `ctest` del shell (carga QML es/en, protocolo greetd, notificaciones D-Bus, Papelera, lanzador, analizadores).
 
 ### No verificado / problemas conocidos
-- **Esta versión puede no estar probada en VirtualBox ARM64** (las anteriores 0.1.2 y 0.1.3 sí arrancaron).
-- Sin hardware real probado con sway. Tema claro, Música, Android (Waydroid) y juegos x86 (FEX/box64) aún no existen.
-- El servicio de antivirus no tiene interfaz; Flathub necesita red y se verifica poco.
-- El bloqueo es una superposición: no usa `ext-session-lock`, otra ventana podría recibir teclado. Contraseña por defecto pública.
-- Música sin implementar; sin tema claro; Wi-Fi/Bluetooth solo probados por sus analizadores (sin hardware en la VM).
-- Render por software (VirtualBox no tiene 3D): rendimiento no medido con precisión. RAM en reposo observada: ~250 MB usados tras iniciar sesión (QEMU, 2 GB).
+- **Hardware real**: la ISO x86_64 arranca en un PC con BIOS y NVIDIA (GT 710); Hyprland con nouveau en ese equipo
+  aún sin probar (si falla al arrancar, la sesión pasa sola a sway).
+- Semáforo y esquinas de las apps de terceros: comprobado en Firefox; el resto de apps GTK/Qt sin probar una a una.
+- Arranque animado (Plymouth) simulado, no visto aún en una máquina real.
+- Android (Waydroid) y juegos x86 (FEX) aún no existen; el antivirus no tiene interfaz.
+- El bloqueo es una superposición: no usa `ext-session-lock`. Contraseña por defecto pública: cámbiala con `passwd`.
+- Wi-Fi/Bluetooth solo probados por sus analizadores (sin hardware en la VM).
 
 SHA256 del zip en `SHA256SUMS`.

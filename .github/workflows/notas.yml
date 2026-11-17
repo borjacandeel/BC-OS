@@ -1,0 +1,36 @@
+name: Notas de versión
+
+# Actualiza el texto de un release ya publicado con build/RELEASE-NOTES.md (sin reconstruir las imágenes).
+# Se lanza a mano (workflow_dispatch) o solo al cambiar las notas en main (aplica a la última versión publicada).
+on:
+  push:
+    branches: [main]
+    paths: ['build/RELEASE-NOTES.md']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Versión (p. ej. 0.9.9); vacío = la última publicada"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+jobs:
+  notas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Editar el release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version }}
+        run: |
+          set -e
+          if [ -z "$VERSION" ]; then
+            VERSION="$(gh release list --limit 1 --json tagName -q '.[0].tagName' | sed 's/^v//')"
+          fi
+          sed -i "s/@VERSION@/$VERSION/g" build/RELEASE-NOTES.md
+          ! grep -q '@VERSION@' build/RELEASE-NOTES.md
+          gh release edit "v$VERSION" --notes-file build/RELEASE-NOTES.md
+          echo "Notas de v$VERSION actualizadas"

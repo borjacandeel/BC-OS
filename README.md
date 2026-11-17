@@ -8,7 +8,7 @@
 Sistema operativo Linux (ARM64 y x86_64) creado por <b>Borja Candel</b>, en español por defecto.</p>
 
 <p align="center">
-  <img alt="Versión" src="https://img.shields.io/badge/versi%C3%B3n-0.9.0--beta%20(prerelease)-2F7BFF">
+  <img alt="Versión" src="https://img.shields.io/badge/versi%C3%B3n-0.9.9--beta%20(prerelease)-2F7BFF">
   <img alt="Arquitectura" src="https://img.shields.io/badge/arquitectura-ARM64%20%7C%20x86__64-04111F">
   <img alt="Base" src="https://img.shields.io/badge/base-Arch%20Linux%20%2F%20ARM-1793D1">
   <img alt="Idioma" src="https://img.shields.io/badge/idioma-espa%C3%B1ol%20(es__ES)-C60B1E">
@@ -22,7 +22,7 @@ BC OS es un Linux ligero y en español para **ARM64** (sobre **Arch Linux ARM**)
   <br><sub>Escritorio Golden Gate: barra de menús, widgets de vidrio, iconos en el escritorio, aviso y Dock. Captura del shell en el anfitrión de desarrollo.</sub>
 </p>
 
-> **Estado honesto:** beta experimental. La **0.9.0-beta** sale para ARM64 y x86_64 (disco VDI e ISO live) con **Hyprland** por defecto si hay 3D; la 0.6.0-beta arrancó en QEMU aarch64 con login y escritorio correctos. Muchas piezas están compiladas y vistas en capturas, pero **pendientes de prueba real**. Ver [estado y pendientes](#estado-honesto-de-golden-gate).
+> **Estado honesto:** beta experimental. La **0.9.9-beta** sale para ARM64 y x86_64 (disco VDI e ISO live UEFI y BIOS) con **Hyprland** si hay cualquier GPU real y sway si no; la ISO x86_64 ya arranca en un PC real (BIOS, NVIDIA GT 710). Muchas piezas están compiladas y vistas en capturas, pero **pendientes de prueba real**. Ver [estado y pendientes](#estado-honesto-de-golden-gate).
 
 ---
 
@@ -95,7 +95,7 @@ Qué incluye (detalle técnico y decisiones en [`docs/escritorio/ESTADO.md`](doc
     <td width="50%"><img src="docs/escritorio/capturas/20-centro-notificaciones.jpg" alt="Centro de notificaciones"><br><sub><b>Centro de notificaciones</b>: avisos y widgets de calendario y recordatorios.</sub></td>
   </tr>
   <tr>
-    <td width="50%"><img src="docs/escritorio/capturas/21-fondos.jpg" alt="Ajustes ▸ Fondo de pantalla"><br><sub><b>Fondos</b>: 36 fondos propios (20 nuevos en 4K) en Ajustes ▸ Fondo de pantalla.</sub></td>
+    <td width="50%"><img src="docs/escritorio/capturas/21-fondos.jpg" alt="Ajustes ▸ Fondo de pantalla"><br><sub><b>Fondos</b>: 46 fondos propios en Ajustes ▸ Fondo de pantalla.</sub></td>
     <td width="50%"><img src="docs/escritorio/capturas/22-menu.jpg" alt="Menú BC"><br><sub><b>Menú BC</b>: Acerca de, Ajustes, Tienda, forzar salida, reposo, bloqueo y sesión.</sub></td>
   </tr>
   <tr>
@@ -109,6 +109,33 @@ Qué incluye (detalle técnico y decisiones en [`docs/escritorio/ESTADO.md`](doc
 <sub>Capturas del shell renderizado en el anfitrión de desarrollo (por eso aparece el usuario <code>root</code>), no dentro de la máquina virtual.</sub>
 
 ### Fondos de pantalla
+
+Colección «Bosques» (nueva en 0.9.9): 10 fondos 4K minimalistas al estilo macOS, 5 claros y 5 oscuros, con pinos en
+capas, niebla, lagos con reflejo, luna y aurora (generados con `assets/wallpapers/generar-bosques.py`).
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/escritorio/fondos/bosque-niebla.jpg" alt="Fondo Bosque en la niebla"><br><sub><b>Bosque en la niebla</b> · claro</sub></td>
+    <td width="50%"><img src="docs/escritorio/fondos/pinar-alba.jpg" alt="Fondo Pinar al alba"><br><sub><b>Pinar al alba</b> · claro</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/escritorio/fondos/lago-claro.jpg" alt="Fondo Lago"><br><sub><b>Lago</b> · claro</sub></td>
+    <td width="50%"><img src="docs/escritorio/fondos/nieve.jpg" alt="Fondo Nieve"><br><sub><b>Nieve</b> · claro</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/escritorio/fondos/salvia.jpg" alt="Fondo Salvia"><br><sub><b>Salvia</b> · claro</sub></td>
+    <td width="50%"><img src="docs/escritorio/fondos/bosque-noche.jpg" alt="Fondo Bosque de noche"><br><sub><b>Bosque de noche</b> · oscuro</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/escritorio/fondos/aurora-boreal.jpg" alt="Fondo Aurora boreal"><br><sub><b>Aurora boreal</b> · oscuro</sub></td>
+    <td width="50%"><img src="docs/escritorio/fondos/lago-noche.jpg" alt="Fondo Lago de noche"><br><sub><b>Lago de noche</b> · oscuro</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/escritorio/fondos/bruma-verde.jpg" alt="Fondo Bruma verde"><br><sub><b>Bruma verde</b> · oscuro</sub></td>
+    <td width="50%"><img src="docs/escritorio/fondos/luna.jpg" alt="Fondo Luna"><br><sub><b>Luna</b> · oscuro</sub></td>
+  </tr>
+</table>
+
 
 Colección propia «Ondas» con el logo BC en el centro, en tonos oscuros, claros y minimalistas (4K, generados con
 `assets/wallpapers/generar-fondos.py`). Se eligen en **Ajustes ▸ Fondo de pantalla** o en la bienvenida.
@@ -196,10 +223,9 @@ Lista completa: [`build/overlay/etc/bc/atajos.txt`](build/overlay/etc/bc/atajos.
 | Sesión | Qué es |
 |---|---|
 | **BC OS** | El escritorio **Golden Gate** (por defecto). |
-| **BC clásico** | El escritorio anterior de BC Shell (misma sesión sway con `BC_CLASSIC=1`). Úsala si algo de Golden Gate falla. |
 | **Dotfiles (bspwm)** | Entorno de mosaico X11 (bspwm, sxhkd, polybar, picom, rofi, dunst) basado en `borjacandeel/dotfiles-2026`. |
 
-La sesión por defecto también se puede fijar en **Ajustes ▸ General ▸ «Entorno al iniciar sesión»**.
+En el login solo aparecen **BC OS** y **Dotfiles**. La sesión por defecto también se fija en **Ajustes ▸ General ▸ «Al iniciar sesión»**.
 
 ## Estado honesto de Golden Gate
 
@@ -221,7 +247,15 @@ La sesión por defecto también se puede fijar en **Ajustes ▸ General ▸ «En
 - **Instalador gráfico** tipo macOS (probado con un instalador simulado; la instalación real usa `bc-install`, ya probado en QEMU).
 - Animaciones de avisos (entrada y salida) y de expandir ventanas; medidas a ritmo real con `BC_BURST` (ver ESTADO.md).
 
-**Pendiente:** firma GPG del repositorio, idiomas, Android y probar todo en máquinas virtuales con y sin 3D.
+**Hecho en 0.9.4 – 0.9.9** (compilado, capturas en el anfitrión; ISO x86_64 arrancada en un PC real con BIOS y NVIDIA):
+- Repositorio `[bc]` **firmado con GPG** (SigLevel Required); ISO que arranca en **BIOS** y UEFI; arranque «cargar en RAM».
+- **Hyprland con cualquier GPU real** (también NVIDIA con nouveau); multimonitor con barra y Dock por pantalla (verificado
+  con sway headless de dos salidas); foco al hacer clic como macOS.
+- **Semáforo y esquinas en todas las apps** (CSD; Firefox con `bc-firefox.css`, comprobado), genio de macOS en dos fases.
+- Resolución recordada (y elegible en la bienvenida en VM), aviso de actualizaciones que actualiza al pulsar.
+- Arranque Plymouth animado, 10 fondos «Bosques», Ajustes ▸ General/Pantallas rehechos, CaskaydiaCove en la Terminal.
+
+**Pendiente:** Android, idiomas, probar Hyprland en el PC real y el arranque animado en hardware.
 
 **Limitaciones conocidas:**
 - Cristal (Liquid Glass): con Hyprland desenfoca de verdad lo que hay detrás; con sway por software refleja el **fondo** desenfocado.
@@ -229,15 +263,15 @@ La sesión por defecto también se puede fijar en **Ajustes ▸ General ▸ «En
 - Ventanas de apps externas: con Hyprland, animaciones del compositor; con sway, cierre con captura que se encoge y apertura con fundido.
 - Multimonitor: barra, Dock, cristal y Mission Control por pantalla; los widgets, en la principal.
 - Iconos: tema MacOS-Like (elegido por el creador), que imita el estilo de macOS; los de Apple no se copian (copyright).
-- Sin 3D, las esquinas de las ventanas se dibujan por software: si una máquina va lenta, se desactivan en Ajustes ▸ General.
+- Sin GPU, las ventanas de terceros dibujan sus propias esquinas (CSD); las esquinas del compositor por software son opcionales en Ajustes ▸ General.
 - Duraciones, curvas y algunas medidas son estimaciones (Apple no las publica); ver «Sin confirmar» en [`ESTADO.md`](docs/escritorio/ESTADO.md).
-- Generales: el bloqueo de BC es una capa del panel (si el panel cae, entra swaylock con `ext-session-lock`); sin hardware real probado; contraseña por defecto pública y SSH activo (solo para máquinas virtuales).
+- Generales: el bloqueo de BC es una capa del panel (si el panel cae, entra swaylock con `ext-session-lock`); contraseña por defecto pública y SSH activo (solo para máquinas virtuales).
 
 ---
 
 ## Descargar y probar
 
-Imágenes publicadas: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Cada release incluye `BC-OS-<versión>-ARM64.vdi.zip`, `BC-OS-<versión>-x86_64.vdi.zip`, las ISO live y `SHA256SUMS`. Última: **0.9.3-beta**.
+Imágenes publicadas: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Cada release incluye `BC-OS-<versión>-ARM64.vdi.zip`, `BC-OS-<versión>-x86_64.vdi.zip`, las ISO live y `SHA256SUMS`. Última: **0.9.9-beta**.
 
 **Instalar en un disco (como macOS):** arranca la **ISO live** → se abre **Instalar BC OS** → elige el disco, tu cuenta y la
 región → **Instalar** → **Reiniciar**. También desde Terminal: `sudo bc-install`.
@@ -259,12 +293,15 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 | `0.3.x-alpha` | publicadas | **sway** (mosaico/flotante), menús globales por app, Dock con ventanas reales, Alacritty, animación de minimizar y swayfx experimental. |
 | `0.4.0-beta` / `0.4.1-beta` | publicadas (prerrelease) | Asistente de bienvenida, estilos, widgets, Modos, Flathub, fish, servicio de antivirus; resolución adaptable (`bc-display`), iconos Qogir, portapapeles (Súper+V). |
 | `0.5.0-beta` | prerrelease, en pruebas | Entorno **Dotfiles (bspwm)** elegible en el login. Verificado en QEMU; sin probar en VirtualBox. |
+| `0.9.9-beta` | prerelease | Arranque animado, 10 fondos «Bosques», semáforo y esquinas en todas las apps (Firefox incluido), **Hyprland con cualquier GPU**, genio en dos fases, resolución recordada, aviso de actualizaciones que actualiza al pulsar, Ajustes rehechos, login solo BC OS y Dotfiles. |
+| `0.9.8-beta` | prerelease | Multimonitor (barra y Dock por pantalla), foco al hacer clic, cristal fluido al mover ventanas, arranque «cargar en RAM». |
+| `0.9.4` – `0.9.7-beta` | prerelease | Fluidez en VM, modo claro en todo, Terminal de BC, ISO con **BIOS**, actualizaciones **firmadas** con GPG. |
 | `0.9.3-beta` | prerelease | **Instalador gráfico tipo macOS**, animaciones de avisos y ventanas, esquinas redondeadas en todas las ventanas (también sin 3D), iconos tipo macOS en todo el sistema, Ajustes como macOS 27, botón verde, 20 fondos 4K, Terminal como macOS y muchos arreglos de esquinas y detalles. |
 | `0.9.0-beta` | prerelease | **Hyprland** por defecto con 3D (animaciones fluidas tipo macOS, desenfoque real), sway por software si no; arreglo del bucle de login en VirtualBox; Alacritty con marco. |
 | `0.8.0-beta` | prerelease | **x86_64** + ISO live, primer arranque VM/equipo físico, repositorio `[bc]`, instantáneas, Tienda sin contraseña, Ghostty, box64, instalador con GRUB/Secure Boot, Control Center editable, Recientes, 10 fondos, animaciones. |
 | `0.7.0-beta` | prerelease | Apps nuevas (Monitor, Tienda, Calculadora, Notas, Vista previa, Calendario, Recordatorios, Música), vibrancy, widgets editables, animaciones de cerrar/minimizar. |
 | `0.6.0-beta` | prerelease | Escritorio **Golden Gate** por defecto; «BC clásico» en el login. Arranca en QEMU con login y escritorio correctos. |
-| → `1.0.0` | planificada | Prueba completa en VirtualBox y hardware, firma GPG del repositorio y primera estable. Es un hito, no una promesa. |
+| → `1.0.0` | planificada | Prueba completa en VirtualBox y hardware real y primera estable. Es un hito, no una promesa. |
 
 Detalle de cada versión en [`build/RELEASE-NOTES.md`](build/RELEASE-NOTES.md) y en las [notas de cada release](https://github.com/borjacandeel/BC-OS/releases). Capturas de versiones anteriores (BC clásico, login antiguo, Tienda, arranque) en [`docs/screenshots/`](docs/screenshots/).
 
@@ -291,8 +328,8 @@ En VirtualBox hay que **activar EFI**. Instalar: `sudo bc-install` (opciones `--
 
 ## Animaciones fluidas: Hyprland
 
-Con aceleración 3D (equipo real, **UTM** en Mac con pantalla `virtio-gpu-gl-pci`, VirtualBox x86 con «Habilitar
-aceleración 3D», QEMU con virgl) BC OS arranca **Hyprland** con animaciones tipo macOS: apertura con muelle, cierre
+Con cualquier GPU real (dedicada o integrada, también NVIDIA con nouveau; en VM, solo si se pide: **UTM** con
+`virtio-gpu-gl-pci` o QEMU con virgl) BC OS arranca **Hyprland** con animaciones tipo macOS: apertura con muelle, cierre
 que encoge y desvanece, Spaces que se deslizan, menús con zoom, esquinas continuas, sombras y **desenfoque real**
 detrás del vidrio. Gestos de 3 dedos que siguen al dedo. Sin 3D (p. ej. VirtualBox en Mac ARM) entra **sway** por
 software automáticamente; si Hyprland fallara, también. Configuración: `/etc/bc/hypr/hyprland.lua` (personalizable en
@@ -301,7 +338,8 @@ software automáticamente; si Hyprland fallara, también. Configuración: `/etc/
 ## Primer arranque: máquina virtual o equipo físico
 
 La bienvenida pregunta dónde se ejecuta BC OS (y lo detecta solo). **Máquina virtual** (VirtualBox, UTM, QEMU):
-dibujo por software, ligero. **Equipo físico**: GPU con esquinas, sombras y desenfoque real detrás de las ventanas.
+dibujo por software, ligero, y pregunta la **resolución** (se recuerda en cada inicio). **Equipo físico**: GPU con
+Hyprland, esquinas, sombras y desenfoque real detrás de las ventanas.
 
 ## Arquitectura
 
@@ -310,7 +348,7 @@ dibujo por software, ligero. **Equipo físico**: GPU con esquinas, sombras y des
 | Base | Arch Linux ARM (aarch64), kernel Linux estándar, systemd, pacman |
 | Gráficos | Wayland · compositor **sway** (mosaico y flotante) · respaldo por software · swayfx opcional con GPU real (`bc.gpu=1`: radios y desenfoque real) |
 | Shell | **BC Shell**: Qt 6 / QML; proceso «panel» con superficies `layer-shell` (barra, Dock, widgets, Spotlight, Mission Control…) + apps BC (`bc-shell --app …`) |
-| Login | greetd + pantalla propia; sesiones BC OS, BC clásico y Dotfiles (bspwm) |
+| Login | greetd + pantalla propia; sesiones BC OS y Dotfiles (bspwm) |
 | Control | D-Bus `org.bcos.Shell` · `bc-ctl` (`spotlight`, `mission`, `switcher`…) · `bc-session` · `bc-appearance` |
 | Aspecto | Tokens únicos en `shell/qml/Theme.qml` · Inter · MacTahoe (GTK) · MacOS-Like (iconos) · McMojave (cursor) |
 | Servicios | **BC Core**: Rust + D-Bus (`bc-daemon`, settings, update, security, hardware, performance) |
