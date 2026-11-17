@@ -26,6 +26,9 @@ class SystemStatus : public QObject {
     Q_PROPERTY(bool bluetoothAvailable READ bluetoothAvailable NOTIFY changed)
     Q_PROPERTY(bool bluetoothOn READ bluetoothOn NOTIFY changed)
     Q_PROPERTY(bool dnd READ dnd WRITE setDnd NOTIFY changed)
+    // Punto naranja (micrófono) o verde (cámara) en la barra mientras se usan, como macOS
+    Q_PROPERTY(bool micActive READ micActive NOTIFY changed)
+    Q_PROPERTY(bool camActive READ camActive NOTIFY changed)
 public:
     explicit SystemStatus(QObject *parent = nullptr);
     bool audioAvailable() const { return m_audio; }
@@ -53,6 +56,8 @@ public:
     Q_INVOKABLE void setBluetooth(bool on);
     void setDnd(bool on);
     Q_INVOKABLE void refresh();
+    bool micActive() const { return m_mic; }
+    bool camActive() const { return m_cam; }
 
     // Analizadores puros (probados en tst_shell).
     struct Volume { bool ok = false; double value = 0; bool muted = false; };
@@ -70,6 +75,8 @@ signals:
 private:
     void run(const QString &program, const QStringList &args, std::function<void(int, const QString &)> done);
     void readBattery();
+    static bool cameraInUse();
+    bool m_mic = false, m_cam = false;
     QTimer m_timer;
     bool m_audio = false, m_muted = false, m_hasWifi = false, m_wifiEnabled = false, m_online = false, m_wired = false;
     QSet<QString> m_running;

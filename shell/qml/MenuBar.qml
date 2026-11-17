@@ -128,6 +128,13 @@ Item {
             onClicked: Sway.toggleTiling()
             Icon { anchors.centerIn: parent; name: Sway.tiling ? "view-grid-symbolic" : "view-restore-symbolic"; size: Math.round(Theme.barIconPx * bar.s); color: bar.ink }
         }
+        // Micrófono (naranja) o cámara (verde) en uso: punto de privacidad de macOS
+        BarItem {
+            visible: SystemStatus.micActive || SystemStatus.camActive
+            width: Math.round(14 * bar.s)
+            Rectangle { anchors.centerIn: parent; width: Math.round(7 * bar.s); height: width; radius: width / 2
+                        color: SystemStatus.camActive ? "#30D158" : "#FF9F0A" }
+        }
         // Concentración (luna) — visible cuando hay un modo activo o «No molestar»
         BarItem {
             visible: SystemStatus.dnd || UiState.mode !== ""

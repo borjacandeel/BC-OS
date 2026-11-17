@@ -123,8 +123,25 @@ void SystemStatus::readBattery() {
     m_hasBattery = found;
 }
 
+bool SystemStatus::cameraInUse() {
+    // ¿Algún proceso del usuario tiene abierta una cámara (/dev/video*)?
+    const QStringList pids = QDir("/proc").entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    for (const QString &pid : pids) {
+        if (pid.isEmpty() || !pid.at(0).isDigit()) continue;
+        QDir fd("/proc/" + pid + "/fd");
+        for (const QFileInfo &f : fd.entryInfoList(QDir::Files | QDir::System | QDir::NoDotAndDotDot))
+            if (f.symLinkTarget().startsWith("/dev/video")) return true;
+    }
+    return false;
+}
+
 void SystemStatus::refresh() {
     readBattery();
+    { const bool cam = cameraInUse(); if (cam != m_cam) { m_cam = cam; emit changed(); } }
+    run("pactl", {"list", "short", "source-outputs"}, [this](int code, const QString &out) {
+        const bool mic = code == 0 && !out.trimmed().isEmpty();
+        if (mic != m_mic) { m_mic = mic; emit changed(); }
+    });
     run("wpctl", {"get-volume", "@DEFAULT_AUDIO_SINK@"}, [this](int code, const QString &out) {
         const Volume v = code == 0 ? parseWpctl(out) : Volume();
         if (v.ok != m_audio || v.value != m_volume || v.muted != m_muted) {

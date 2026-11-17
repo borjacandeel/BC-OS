@@ -270,7 +270,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 166. Selector de colores nativo (rueda, deslizadores, lápices)
 - [ ] 167. Selector de tipografías con previsualización
 - [ ] 168. Selector de emojis y símbolos con categorías
-- [ ] 169. Indicador de micrófono o cámara activa (punto naranja o verde) en la barra
+- [x] 169. Indicador de micrófono o cámara activa (punto naranja o verde) en la barra
 - [x] 170. Botón de borrar (x circular gris) en todos los campos de búsqueda
 - [~] 171. Atenuación de elementos deshabilitados
 - [~] 172. Cambio de tema sincronizado al instante en todas las ventanas
