@@ -224,6 +224,7 @@ LayerWindow {
             else if (name === "notifications") UiState.toggleNotifCenter()
             else if (name === "minimize") root.minimizeGenie(Sway.focusedId)
             else if (name === "close") root.closeAnimated(Sway.focusedId)
+            else if (name.indexOf("thumb:") === 0) shotThumb.show(name.substring(6))
             else if (name === "appearance") Settings.appearance = Theme.dark ? "light" : "dark"
             else if (name === "desktop") {
                 const vis = Sway.windows.filter(w => !w.minimized)
@@ -431,6 +432,29 @@ LayerWindow {
             anchors.fill: parent
             onLaunch: (k, n) => root.launch(k, n)
             onLaunchDesktop: (id, n) => { if (!Apps.launch(id)) Notifications.push("BC OS", n, qsTr("No se pudo abrir la aplicación"), "", 4000) }
+        }
+    }
+
+    // Miniatura flotante de captura (como macOS): entra deslizándose abajo a la derecha, 5 s, pulsar = Vista previa
+    LayerWindow {
+        id: shotThumb
+        layer: "overlay"; edges: ["bottom", "right"]; margins: [0, 16, Math.round(16 * root.u), 0]; scope: "bc-captura"
+        width: Math.round(220 * root.u) + 20; height: Math.round(140 * root.u) + 20
+        property string path: ""
+        property real t: 0
+        shown: path !== "" && !UiState.locked
+        function show(p) { path = ""; path = p; slide.restart(); hideT.restart() }
+        NumberAnimation { id: slide; target: shotThumb; property: "t"; from: 0; to: 1; duration: Theme.d(320); easing.type: Easing.OutCubic }
+        NumberAnimation { id: slideOut; target: shotThumb; property: "t"; to: 0; duration: Theme.d(260); easing.type: Easing.InCubic; onFinished: shotThumb.path = "" }
+        Timer { id: hideT; interval: 5000; onTriggered: slideOut.start() }
+        Item {
+            x: 10 + (1 - shotThumb.t) * (shotThumb.width); y: 10; width: shotThumb.width - 20; height: shotThumb.height - 20
+            opacity: shotThumb.t
+            Rectangle { anchors.fill: parent; anchors.margins: -3; radius: 12; color: Qt.rgba(1, 1, 1, 0.85) }
+            Image { anchors.fill: parent; source: shotThumb.path !== "" ? "file://" + shotThumb.path : ""; fillMode: Image.PreserveAspectCrop
+                    sourceSize.width: 440; asynchronous: true; smooth: true }
+            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                        onClicked: { hideT.stop(); Launcher.run("bc-shell", ["--app", "preview", "--open", shotThumb.path]); slideOut.start() } }
         }
     }
 

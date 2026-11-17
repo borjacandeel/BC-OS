@@ -1,4 +1,5 @@
 #pragma once
+#include <QDir>
 #include <QObject>
 #include <QVariantMap>
 
@@ -26,6 +27,9 @@ public slots:
     void Action(const QString &name) {
         static const QStringList ok{"spotlight", "mission", "switcher", "switcher-back", "launchpad", "notifications", "minimize", "close", "appearance", "desktop"};
         if (ok.contains(name)) emit actionRequested(name);
+        // «thumb:<ruta>»: miniatura de una captura recién hecha (solo PNG en la carpeta de imágenes del usuario)
+        else if (name.startsWith("thumb:") && name.endsWith(".png") && !name.contains("..") && name.mid(6).startsWith(QDir::homePath() + "/"))
+            emit actionRequested(name);
     }
 signals:
     void actionRequested(const QString &name);

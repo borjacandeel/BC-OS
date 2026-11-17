@@ -12,5 +12,6 @@ case "${1:-pantalla}" in
 esac || exit 1
 [ -f /usr/share/sounds/bc/screenshot.wav ] && { pw-play /usr/share/sounds/bc/screenshot.wav >/dev/null 2>&1 || paplay /usr/share/sounds/bc/screenshot.wav >/dev/null 2>&1; } &
 command -v wl-copy >/dev/null 2>&1 && wl-copy < "$F"
-command -v notify-send >/dev/null 2>&1 && notify-send -a "BC OS" "Captura guardada" "$F" -i camera-photo
+# Como macOS: miniatura flotante abajo a la derecha (pulsarla abre Vista previa); si el panel no responde, aviso
+bc-ctl thumb "$F" >/dev/null 2>&1 || { command -v notify-send >/dev/null 2>&1 && notify-send -a "BC OS" "Captura guardada" "$F" -i camera-photo; }
 echo "$F"

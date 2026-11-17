@@ -26,6 +26,28 @@ Item {
     property int dragFrom: -1
     property int dragTo: -1
     property bool dragOut: false
+    property point poofAt: Qt.point(0, 0)
+    // Nube de humo «poof» de macOS al sacar un icono del Dock: bocanadas que crecen y se desvanecen
+    Item {
+        id: poof
+        z: 100; width: 1; height: 1
+        property real t: 1
+        visible: t < 1
+        function play(px, py) { x = px; y = Math.max(dock.bs * 0.6, py); anim.restart() }   // dentro de la superficie del Dock
+        NumberAnimation { id: anim; target: poof; property: "t"; from: 0; to: 1; duration: Theme.d(420); easing.type: Easing.OutQuad }
+        Repeater {
+            model: 7
+            Rectangle {
+                required property int index
+                readonly property real a: index / 7 * Math.PI * 2
+                readonly property real r: dock.bs * (0.15 + 0.55 * poof.t)
+                width: dock.bs * (0.35 + 0.45 * poof.t); height: width; radius: width / 2
+                x: Math.cos(a) * r - width / 2; y: Math.sin(a) * r * 0.8 - width / 2 - dock.bs * 0.3 * poof.t
+                color: Theme.dark ? Qt.rgba(0.92, 0.93, 0.96, 1) : Qt.rgba(0.85, 0.86, 0.9, 1)
+                opacity: (1 - poof.t) * 0.85
+            }
+        }
+    }
     readonly property var kindNames: ({ archivos: qsTr("Archivos"), lanzador: qsTr("Aplicaciones"), navegador: qsTr("Firefox"),
                                         terminal: qsTr("Terminal"), tienda: qsTr("Tienda"), ajustes: qsTr("Ajustes del Sistema"),
                                         monitor: qsTr("Monitor de Actividad"), musica: qsTr("Música"), notas: qsTr("Notas"),
@@ -332,6 +354,7 @@ Item {
                     dragging = true; cell.dragDx = m.x - startX; cell.dragDy = Math.min(0, m.y - startY)
                     dock.dragFrom = cell.cellIndex
                     dock.dragOut = m.y - startY < -dock.bs * 1.4
+                    dock.poofAt = cell.mapToItem(dock, m.x, m.y)
                     dock.dragTo = Math.max(0, Math.min(dock.pinnedKinds.length - 1, cell.cellIndex + Math.round(cell.dragDx / (dock.bs + dock.gap))))
                 } }
             onContainsMouseChanged: if (!containsMouse) hoverOff.restart()
@@ -351,7 +374,7 @@ Item {
         const to = dragTo
         dragFrom = -1; dragTo = -1; dragOut = false
         if (from < 0 || from >= list.length) return
-        if (out) { list.splice(from, 1); Settings.dockApps = list; return }   // soltar fuera: quitar del Dock
+        if (out) { list.splice(from, 1); Settings.dockApps = list; poof.play(poofAt.x, poofAt.y); return }   // soltar fuera: quitar del Dock con «poof»
         if (to < 0 || to === from) return
         const k = list.splice(from, 1)[0]
         list.splice(to, 0, k)
