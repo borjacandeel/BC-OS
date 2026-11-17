@@ -1,3 +1,4 @@
+#include <QFile>
 #include <QDir>
 #include <QFileInfo>
 #include "packagestore.h"
@@ -157,6 +158,9 @@ void PackageStore::setBusy(bool b) {
     if (b == m_busy) return;
     m_busy = b; emit busyChanged();
     if (!b) { ++m_stamp; emit stampChanged(); }
+    // Marca para el panel: barra de progreso sobre el icono de la Tienda en el Dock, como macOS
+    const QString flag = QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation) + "/bc-tienda-ocupada";
+    if (b) { QFile f(flag); if (f.open(QIODevice::WriteOnly)) f.close(); } else QFile::remove(flag);
 }
 bool PackageStore::isInstalled(const QString &name) const {
     static const QRegularExpression ok("^[a-z0-9@_+][a-z0-9@._+-]{0,127}$");

@@ -57,6 +57,9 @@ Item {
         if (kind === "terminal") return "bc-terminal"
         return Launcher.appIdFor(kind)
     }
+    // Tienda instalando: barra de progreso indeterminada bajo su icono (solo se comprueba mientras está abierta)
+    property bool storeBusy: false
+    Timer { interval: 900; repeat: true; running: dock.isRunning("tienda") || dock.storeBusy; onTriggered: dock.storeBusy = Quick.storeBusy() }
     // Globo rojo de macOS: avisos pendientes de cada app en el Centro de notificaciones
     function badgeFor(name) {
         if (!name) return 0
@@ -300,6 +303,16 @@ Item {
             Image { id: thumbImg; visible: cell.minimizedWindow && cell.thumb !== ""; anchors.fill: parent; anchors.margins: parent.width * 0.04
                     source: cell.thumb; fillMode: Image.PreserveAspectFit; smooth: true; mipmap: true; asynchronous: true
                     sourceSize.width: Math.round(dock.maxIcon * 2 * Screen.devicePixelRatio) }
+            // Progreso de descarga sobre el icono (Tienda instalando)
+            Rectangle {
+                visible: cell.kind === "tienda" && dock.storeBusy; z: 5
+                anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; anchors.bottomMargin: parent.height * 0.08
+                width: parent.width * 0.78; height: Math.max(4, Math.round(parent.height * 0.11)); radius: height / 2
+                color: Qt.rgba(0, 0, 0, 0.45); clip: true
+                Rectangle { id: busyBar; width: parent.width * 0.35; height: parent.height; radius: height / 2; color: "white"
+                            SequentialAnimation on x { running: dock.storeBusy; loops: Animation.Infinite
+                                NumberAnimation { from: -busyBar.width; to: busyBar.parent.width; duration: 1100; easing.type: Easing.InOutQuad } } }
+            }
             // Globo rojo con el número de avisos (como macOS)
             Rectangle {
                 readonly property int n: cell.minimizedWindow || cell.trash ? 0 : dock.badgeFor(cell.name)

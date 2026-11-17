@@ -850,6 +850,9 @@ bool QuickTools::roundedCorners() {
     // usa sway con pixman (fluido) y solo las ventanas que dibujan su marco (BC, Firefox, GTK) llevan esquinas
     return !qEnvironmentVariableIsEmpty("BC_FX") || !qEnvironmentVariableIsEmpty("HYPRLAND_INSTANCE_SIGNATURE");
 }
+bool QuickTools::storeBusy() {
+    return QFileInfo::exists(QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation) + "/bc-tienda-ocupada");
+}
 bool QuickTools::setRoundedCorners(bool on) {
     QDir().mkpath(QFileInfo(cornersPath()).absolutePath());
     QSaveFile f(cornersPath());

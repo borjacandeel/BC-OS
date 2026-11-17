@@ -156,8 +156,8 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [~] 52. Barras laterales de ancho ajustable con colapso fluido
 - [x] 53. Encabezados de tabla limpios con flechas minimalistas de ordenación
 - [x] 54. Filas alternas con coloración sutil en listas de datos y tablas del sistema
-- [ ] 55. Cuadros de alerta centrados con icono de la aplicación a la izquierda o arriba
-- [ ] 56. Botón de acción principal destacado en color de énfasis en cuadros de diálogo
+- [x] 55. Cuadros de alerta centrados con icono de la aplicación a la izquierda o arriba
+- [x] 56. Botón de acción principal destacado en color de énfasis en cuadros de diálogo
 - [x] 57. Espaciado estándar (rejilla de 8 puntos) en toda la interfaz
 - [x] 58. Pestañas segmentadas (Segmented Controls) con indicador deslizante redondeado
 - [ ] 59. Ventanas sin barra de título visible donde el contenido llega hasta el borde superior
@@ -228,7 +228,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [~] 124. Previsualización enriquecida en el panel derecho de Spotlight
 - [ ] 125. Dock a la izquierda o derecha manteniendo su estética
 - [x] 126. Nube de humo (Poof) al sacar un icono del Dock
-- [ ] 127. Progreso de descarga sobre el icono en el Dock
+- [x] 127. Progreso de descarga sobre el icono en el Dock
 - [~] 128. Marco de selección translúcido al arrastrar en el escritorio
 - [x] 129. Nombres de archivo del escritorio con sombra para legibilidad
 - [x] 130. Resaltado ovalado azul del nombre de un archivo seleccionado en el escritorio
