@@ -80,12 +80,19 @@ Window {
     }
     Shortcut { sequence: "Ctrl+W"; onActivated: win.closeRequested() }
 
+    // Al arrastrar la ventana se «levanta»: sombra algo más marcada y un toque de transparencia, que vuelven con
+    // suavidad al soltarla
+    property bool lifting: false
+    Connections { target: Quick; function onWindowPosChanged() { if (win.active && Quick.trackWindow) { win.lifting = true; liftOff.restart() } } }
+    Timer { id: liftOff; interval: 220; onTriggered: win.lifting = false }
     BorderImage {
         visible: win.sh > 0
         anchors.fill: parent
+        anchors.margins: win.lifting ? -4 : 0
+        Behavior on anchors.margins { NumberAnimation { duration: Theme.d(180); easing.type: Easing.OutCubic } }
         source: "qrc:/BCShell/assets/window-shadow.png"
         border { left: 64; right: 64; top: 64; bottom: 64 }
-        opacity: win.active ? 1 : 0.6
+        opacity: win.lifting ? 1 : (win.active ? 0.85 : 0.5)
         Behavior on opacity { NumberAnimation { duration: Theme.d(Theme.durHover) } }
     }
     Rectangle {

@@ -11,6 +11,10 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
 
+### Novedades de 0.9.13
+- **Genio de minimizar suave**: franjas de ~3 px en lugar de 32, sin escalones en los bordes del embudo (como macOS).
+- **Mover ventanas**: al arrastrarla, la ventana se «levanta» con la sombra más marcada y vuelve con suavidad al soltarla.
+
 ### Novedades de 0.9.12
 - **Minimizar y cerrar sin parpadeo**: la ventana se oculta cuando el genio (o la captura que se encoge) ya está encima;
   el genio sale al instante (la captura se decodifica una vez, no una por franja) y con más franjas, más suave.

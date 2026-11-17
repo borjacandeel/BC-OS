@@ -13,7 +13,9 @@ Item {
     property real iconSize: 46
     property real p: 0                  // 0 = ventana, 1 = dentro del Dock
     property bool reverse: false
-    readonly property int strips: Quick.softwareRender ? 32 : 56   // menos franjas por software (CPU)
+    // Franjas de ~3 px: bordes del embudo suaves (sin escalones), como el genio de macOS
+    property int strips: 40
+    onFromChanged: strips = Math.max(40, Math.min(Quick.softwareRender ? 200 : 300, Math.round(from.height / 3)))
     signal finished()
 
     function run(src, rect, dockPoint, icon, back) {
