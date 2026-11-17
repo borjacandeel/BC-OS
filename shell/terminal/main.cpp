@@ -57,7 +57,9 @@ public:
         for (const QString &d : {QStringLiteral("/usr/share/bc/terminal"), QCoreApplication::applicationDirPath() + "/../share/bc/terminal",
                                  QCoreApplication::applicationDirPath() + "/terminal"})
             if (QFileInfo::exists(d)) QTermWidget::addCustomColorSchemeDir(d);
-        QFont f(QStringLiteral("DejaVu Sans Mono"));   // la base de Menlo, la letra del Terminal de macOS
+        // CaskaydiaCove Nerd Font (Cascadia Code con iconos Nerd: git, carpetas…); si falta, DejaVu Sans Mono
+        QFont f(QFontDatabase::families().contains(QStringLiteral("CaskaydiaCove Nerd Font")) ? QStringLiteral("CaskaydiaCove Nerd Font")
+                                                                                               : QStringLiteral("DejaVu Sans Mono"));
         f.setPointSizeF(11);
         f.setStyleHint(QFont::Monospace);
         term->setTerminalFont(f);
