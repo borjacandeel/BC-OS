@@ -104,10 +104,10 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 ## Detalles visuales de macOS (lista del creador, 200). Estado estimado: [x] hecho · [~] parcial · [ ] falta
 - [x] 1. Efecto Liquid Glass con refracción de luz en los bordes
 - [x] 2. Desenfoque dinámico de fondo (Vibrancy y acrílico)
-- [ ] 3. Tinte ambiental que absorbe el color del fondo de pantalla
+- [x] 3. Tinte ambiental que absorbe el color del fondo de pantalla
 - [~] 4. Brillos especulares dinámicos en los bordes de ventanas
 - [~] 5. Sombras paralelas de múltiples capas según profundidad
-- [~] 6. Sombra más intensa y amplia en la ventana activa frente a las inactivas
+- [x] 6. Sombra más intensa y amplia en la ventana activa frente a las inactivas
 - [x] 7. Barra de menús global translúcida y fusionada con el escritorio
 - [x] 8. Contraste automático del texto de la barra superior según la luz del fondo
 - [x] 9. Modo Oscuro con grises profundos en lugar de negro puro
@@ -116,12 +116,12 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 12. Efecto cristal esmerilado en el Centro de Control y notificaciones
 - [~] 13. Difuminado progresivo detrás de ventanas modales y alertas
 - [~] 14. Efecto de vidrio líquido en botones flotantes y cápsulas de acción
-- [ ] 15. Atenuación suave del brillo de la ventana madre al abrir una hoja de diálogo
+- [x] 15. Atenuación suave del brillo de la ventana madre al abrir una hoja de diálogo
 - [ ] 16. Reflexión difusa de elementos brillantes detrás de menús contextuales
 - [ ] 17. Gradientes sutiles en barras de herramientas para simular volumen físico
 - [ ] 18. Transición suave de luz y color al cambiar entre Modo Claro y Modo Oscuro
 - [x] 19. Desenfoque gaussiano en tiempo real detrás del Dock
-- [ ] 20. Borde exterior fino y semitransparente que separa ventanas superpuestas en modo oscuro
+- [x] 20. Borde exterior fino y semitransparente que separa ventanas superpuestas en modo oscuro
 - [ ] 21. Efecto de profundidad atmosférica en Mission Control al oscurecer el escritorio
 - [~] 22. Capa translúcida con desenfoque de fondo al abrir Launchpad
 - [~] 23. Iluminación sutil en botones al pasar el cursor por encima (hover)

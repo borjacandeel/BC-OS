@@ -5,3 +5,4 @@
 - **PCs reales (x86_64)**: firmware de gráficas AMD, NVIDIA e Intel, Vulkan, vídeo por hardware y microcódigo de la CPU.
 - **Dock**: globo rojo con el número de avisos de cada app, como macOS.
 - **Escritorio**: nombre seleccionado en óvalo azul.
+- **Liquid Glass con tinte ambiental**: el cristal toma un poco del color del fondo de pantalla.

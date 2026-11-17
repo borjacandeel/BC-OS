@@ -152,7 +152,10 @@ QtObject {
     // ---- Liquid Glass --------------------------------------------------------------------
     // Material = fondo desenfocado (capa precalculada del fondo) + tinte + reflejo de borde + sombra.
     readonly property real glassBlur: 48                       // radio de desenfoque del fondo (px a 1080p)
-    readonly property color glassTintColor: dark ? Qt.rgba(0.035, 0.04, 0.11, 1) : Qt.rgba(0.97, 0.97, 0.99, 1)
+    // Tinte ambiental: el cristal toma un poco del color del fondo de pantalla (como macOS)
+    readonly property color ambient: typeof Quick !== "undefined" ? Quick.wallpaperAverage(Settings.wallpaper) : "#808080"   // el login no tiene Quick
+    readonly property color glassTintColor: dark ? Qt.tint(Qt.rgba(0.035, 0.04, 0.11, 1), Qt.rgba(ambient.r, ambient.g, ambient.b, 0.10))
+                                                 : Qt.tint(Qt.rgba(0.97, 0.97, 0.99, 1), Qt.rgba(ambient.r, ambient.g, ambient.b, 0.07))
     readonly property real glassTintMin: dark ? 0.12 : 0.30    // ultratransparente (claro: suelo más alto para que el texto oscuro se lea sobre fondos oscuros)
     readonly property real glassTintMax: dark ? 0.86 : 0.94    // totalmente tintado
     readonly property real glassOpacity: glassTintMin + (glassTintMax - glassTintMin) * tint

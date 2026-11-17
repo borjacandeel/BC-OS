@@ -857,6 +857,28 @@ bool QuickTools::setRoundedCorners(bool on) {
     f.write(on ? "si\n" : "no\n");
     return f.commit();
 }
+QColor QuickTools::wallpaperAverage(const QString &path) {
+    static QHash<QString, QColor> cache;
+    const QString file = path.isEmpty() ? QStringLiteral(":/BCShell/assets/wallpaper-default.png") : path;
+    if (cache.contains(file)) return cache.value(file);
+    QImageReader r(file);
+    r.setScaledSize(QSize(32, 20));
+    const QImage img = r.read();
+    QColor out(128, 128, 128);
+    if (!img.isNull()) {
+        double R = 0, G = 0, B = 0; int n = 0;
+        for (int y = 0; y < img.height(); ++y)
+            for (int x = 0; x < img.width(); ++x) { const QColor c = img.pixelColor(x, y); R += c.redF(); G += c.greenF(); B += c.blueF(); ++n; }
+        if (n) {
+            QColor m = QColor::fromRgbF(R / n, G / n, B / n);
+            float h, s, l; m.getHslF(&h, &s, &l);
+            out = QColor::fromHslF(h < 0 ? 0 : h, qMin(1.0f, s * 1.6f + 0.1f), 0.5f);
+        }
+    }
+    cache.insert(file, out);
+    return out;
+}
+
 bool QuickTools::wallpaperTopLight(const QString &path) {
     static QHash<QString, bool> cache;
     const QString file = path.isEmpty() ? QStringLiteral(":/BCShell/assets/wallpaper-default.png") : path;
