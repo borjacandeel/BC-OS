@@ -8,7 +8,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - Skill `0-palabras` siempre.
 - Todo se sube siempre a `main` (sin force-push).
 - Cada cambio (nuevo o corregido) se refleja SIEMPRE en: README.md, build/RELEASE-NOTES.md (el workflow «Notas de versión» actualiza solo la página del último release) y la web https://borjacandeel.github.io/bcos/ (repo borjacandeel/borjacandeel.github.io, `bcos/index.html`; permiso del creador 2026-11-17).
-- Imágenes (image.yml) solo cuando el creador lo pida. 2026-11-17: pidió 0.9.17-beta (run 44144764741).
+- Imágenes (image.yml) solo cuando el creador lo pida. 0.9.17-beta publicada (ISO) 2026-11-17.
 - Releases (creador 2026-11-17): SOLO ISO (ARM64 y x86_64). build/RELEASE-NOTES.md = SOLO las novedades de esa versión, nada más (al empezar la siguiente, se vacía y se empieza de cero).
 - ARM64 únicamente. Base Arch Linux ARM.
 
