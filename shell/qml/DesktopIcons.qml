@@ -51,7 +51,8 @@ Item {
         onClicked: (m) => {
             UiState.closePopups()
             if (m.button === Qt.RightButton) UiState.openContextMenu([
-                { label: qsTr("Nueva carpeta"), cmd: "bc:desktopNewFolder" }, { sep: true },
+                { label: qsTr("Nueva carpeta"), cmd: "bc:desktopNewFolder" },
+                { label: qsTr("Pegar"), cmd: "bc:desktopPaste" }, { sep: true },
                 { label: qsTr("Ordenar por nombre"), cmd: "bc:desktopSort" },
                 { label: qsTr("Editar widgets…"), cmd: "bc:widgetGallery" },
                 { label: qsTr("Volver a colocar los widgets"), cmd: "bc:widgetsReset" }, { sep: true },
@@ -59,6 +60,32 @@ Item {
                 { label: Settings.widgets ? qsTr("Ocultar widgets") : qsTr("Mostrar widgets"), cmd: "bc:toggleWidgets" }
             ], Qt.point(m.x, m.y))
         }
+    }
+    property int renaming: -1
+    onRenamingChanged: if (renaming < 0) UiState.desktopKeyboard = false
+    property var info: null
+    Timer { id: pasteReload; interval: 900; onTriggered: fm.reload() }
+    // Panel «Obtener información» (como el del Finder): vidrio con nombre, tipo, tamaño, fechas y ubicación
+    Item {
+        visible: desk.info !== null && desk.info.name !== undefined
+        z: 50; width: px(300); height: infoCol.height + px(28)
+        x: (desk.width - width) / 2; y: (desk.height - height) / 3
+        Glass { anchors.fill: parent; radius: px(14); tintBoost: 0.45 }
+        Column {
+            id: infoCol; x: px(16); y: px(14); width: parent.width - px(32); spacing: px(6)
+            Text { text: desk.info ? desk.info.name : ""; color: Theme.label; font.family: Theme.font; font.pixelSize: px(15); font.weight: Font.Bold; width: parent.width; elide: Text.ElideMiddle }
+            Text { text: desk.info ? desk.info.kind + " · " + desk.info.size : ""; color: Theme.labelSecondary; font.family: Theme.font; font.pixelSize: px(12) }
+            Rectangle { width: parent.width; height: 1; color: Theme.separator }
+            Repeater {
+                model: desk.info ? [[qsTr("Ubicación"), desk.info.path], [qsTr("Creado"), desk.info.created], [qsTr("Modificado"), desk.info.modified]] : []
+                Row { required property var modelData; spacing: px(8)
+                      Text { width: px(80); text: modelData[0]; color: Theme.labelSecondary; font.family: Theme.font; font.pixelSize: px(12); horizontalAlignment: Text.AlignRight }
+                      Text { width: infoCol.width - px(88); text: modelData[1]; color: Theme.label; font.family: Theme.font; font.pixelSize: px(12); wrapMode: Text.WrapAnywhere } }
+            }
+        }
+        Rectangle { x: parent.width - px(30); y: px(10); width: px(20); height: width; radius: width / 2; color: Theme.fill
+                    Text { anchors.centerIn: parent; text: "×"; color: Theme.label; font.pixelSize: px(13) }
+                    MouseArea { anchors.fill: parent; anchors.margins: -px(4); onClicked: desk.info = null } }
     }
     Rectangle { id: band; color: Qt.rgba(1, 1, 1, 0.12); border.width: 1; border.color: Qt.rgba(1, 1, 1, 0.5); radius: 2 }
 
@@ -85,7 +112,16 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter; y: px(68)
                 width: Math.min(parent.width, lbl.implicitWidth + px(10)); height: lbl.height + px(2); radius: px(4)
                 color: desk.isSel(ic.name) ? Theme.selection : "transparent"
-                Text { id: lbl; anchors.centerIn: parent; width: Math.min(implicitWidth, desk.cellW - px(10)); text: ic.name; color: "white"
+                TextInput {
+                    id: ren; visible: desk.renaming === ic.index; anchors.centerIn: parent; width: desk.cellW - px(8)
+                    horizontalAlignment: Text.AlignHCenter; color: "white"; selectionColor: Theme.accent; selectByMouse: true
+                    font.family: Theme.font; font.pixelSize: px(12); font.weight: Font.Medium; clip: true
+                    onVisibleChanged: if (visible) { text = ic.name; forceActiveFocus(); const d = text.lastIndexOf("."); select(0, d > 0 ? d : text.length) }
+                    onAccepted: { if (text !== "" && text !== ic.name) fm.renameAt(ic.index, text); desk.renaming = -1; fm.reload() }
+                    Keys.onEscapePressed: desk.renaming = -1
+                    onActiveFocusChanged: if (!activeFocus && visible) accepted()
+                }
+                Text { id: lbl; visible: desk.renaming !== ic.index; anchors.centerIn: parent; width: Math.min(implicitWidth, desk.cellW - px(10)); text: ic.name; color: "white"
                        horizontalAlignment: Text.AlignHCenter; elide: Text.ElideMiddle; maximumLineCount: 2; wrapMode: Text.Wrap
                        font.family: Theme.font; font.pixelSize: px(12); font.weight: Font.Medium; style: Text.Raised; styleColor: Qt.rgba(0, 0, 0, 0.45) }
             }
@@ -94,14 +130,27 @@ Item {
                 acceptedButtons: Qt.LeftButton | Qt.RightButton
                 drag.target: ic; drag.threshold: px(6)
                 onPressed: (m) => { if (!desk.isSel(ic.name) || (m.modifiers & Qt.ControlModifier)) desk.select(ic.name, m.modifiers & Qt.ControlModifier) }
-                onReleased: if (drag.active) desk.savePos(ic.name, ic.x, ic.y)
+                // Soltar sobre la Papelera del Dock: a la papelera (como macOS); si no, se guarda la nueva posición
+                function overTrash() { const p = ic.mapToItem(null, ic.width / 2, ic.height / 2); const r = UiState.trashRect
+                                       return r.width > 0 && p.x > r.x - 10 && p.x < r.x + r.width + 10 && p.y > r.y - 20 }
+                onPositionChanged: if (drag.active) UiState.trashHover = overTrash()
+                onReleased: {
+                    if (!drag.active) return
+                    const t = overTrash(); UiState.trashHover = false
+                    if (t) { if (fm.trashAt(ic.index)) Sounds.play("trash"); fm.reload() }
+                    else desk.savePos(ic.name, ic.x, ic.y)
+                }
                 onDoubleClicked: Quick.open(ic.filePath)
                 onClicked: (m) => {
                     if (m.button !== Qt.RightButton) return
                     UiState.openContextMenu([
                         { label: qsTr("Abrir"), cmd: "bc:open:" + ic.filePath },
-                        { label: qsTr("Mostrar en Archivos"), cmd: "sway:exec bc-shell --app files" }, { sep: true },
-                        { label: qsTr("Mover a la papelera"), cmd: "bc:desktopTrash:" + ic.index }
+                        { label: qsTr("Mover a la papelera"), cmd: "bc:desktopTrash:" + ic.index }, { sep: true },
+                        { label: qsTr("Obtener información"), cmd: "bc:desktopInfo:" + ic.filePath },
+                        { label: qsTr("Renombrar"), cmd: "bc:desktopRename:" + ic.index },
+                        { label: qsTr("Copiar «%1»").arg(ic.name), cmd: "bc:desktopCopy:" + ic.filePath },
+                        { label: qsTr("Pegar"), cmd: "bc:desktopPaste" }, { sep: true },
+                        { label: qsTr("Mostrar en Archivos"), cmd: "sway:exec bc-shell --app files" }
                     ], ic.mapToItem(null, m.x, m.y))
                 }
             }
@@ -115,6 +164,10 @@ Item {
             else if (arg === "desktopSort") { const l = Object.assign({}, desk.layout); for (const k in l) if (k.indexOf("icono:") === 0) delete l[k]; Settings.widgetLayout = JSON.stringify(l) }
             else if (arg.indexOf("desktopTrash:") === 0) { if (fm.trashAt(parseInt(arg.substring(13)))) Sounds.play("trash"); fm.reload() }
             else if (arg.indexOf("open:") === 0) Quick.open(arg.substring(5))
+            else if (arg.indexOf("desktopCopy:") === 0) Quick.copyFiles([arg.substring(12)])
+            else if (arg === "desktopPaste") { Quick.pasteFilesInto(fm.path); pasteReload.restart() }
+            else if (arg.indexOf("desktopRename:") === 0) { desk.renaming = parseInt(arg.substring(14)); UiState.desktopKeyboard = true }
+            else if (arg.indexOf("desktopInfo:") === 0) { desk.info = Quick.fileInfo(arg.substring(12)) }
             else if (arg === "toggleWidgets") Settings.widgets = !Settings.widgets
         }
     }

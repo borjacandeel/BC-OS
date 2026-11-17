@@ -812,6 +812,8 @@ LayerWindow {
         else if (d === "launcher") UiState.toggleLauncher()
         else if (d === "centro") UiState.centerOpen = true
         else if (d === "bienvenida" || d === "bienvenida-fondo") UiState.welcomeOpen = true
+        else if (d === "contexto") UiState.openContextMenu([{ label: qsTr("Abrir"), cmd: "" }, { label: qsTr("Vaciar papelera…"), cmd: "" }, { sep: true },
+                                                             { label: qsTr("Obtener información"), cmd: "" }, { label: qsTr("Renombrar"), cmd: "" }], Qt.point(UiState.sw * 0.6, UiState.sh - 160))
         else if (d === "inicio") { UiState.style = "win"; UiState.toggleLauncher() }
         else if (d === "tienda" || d === "monitor" || d === "ajustes") launch(d, "")
     }

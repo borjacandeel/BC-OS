@@ -895,3 +895,70 @@ QVariantList QuickTools::snapshots() {
     }
     return out;
 }
+
+// ---------------------------------------------------------------------------------------------
+// Copiar / pegar archivos (escritorio): el panel es una superficie layer-shell sin foco de teclado, así que el
+// portapapeles se usa con wl-copy / wl-paste en formato text/uri-list (compatible con Archivos y apps GTK/Qt)
+void QuickTools::copyFiles(const QStringList &paths) {
+    QStringList uris;
+    for (const QString &p : paths) if (QFileInfo::exists(p)) uris << QUrl::fromLocalFile(p).toString();
+    if (uris.isEmpty() || QStandardPaths::findExecutable("wl-copy").isEmpty()) return;
+    auto *p = new QProcess(this);
+    connect(p, &QProcess::finished, p, &QObject::deleteLater);
+    p->start("wl-copy", {"--type", "text/uri-list"});
+    p->write(uris.join("\r\n").toUtf8() + "\r\n");
+    p->closeWriteChannel();
+}
+void QuickTools::pasteFilesInto(const QString &dir) {
+    if (!QFileInfo(dir).isDir() || QStandardPaths::findExecutable("wl-paste").isEmpty()) return;
+    auto *p = new QProcess(this);
+    connect(p, &QProcess::finished, this, [p, dir](int code) {
+        p->deleteLater();
+        if (code != 0) return;
+        for (const QString &line : QString::fromUtf8(p->readAllStandardOutput()).split(QRegularExpression("[\r\n]+"), Qt::SkipEmptyParts)) {
+            const QUrl u(line.trimmed());
+            if (!u.isLocalFile()) continue;
+            const QFileInfo src(u.toLocalFile());
+            if (!src.exists()) continue;
+            // Nombre libre como el Finder: «archivo copia», «archivo copia 2»…
+            const QString base = src.completeBaseName(), ext = src.suffix().isEmpty() || src.isDir() ? QString() : "." + src.suffix();
+            const QString stem = src.isDir() ? src.fileName() : base;
+            QString dst = dir + "/" + src.fileName();
+            for (int n = 1; QFileInfo::exists(dst); ++n) dst = dir + "/" + stem + (n == 1 ? QObject::tr(" copia") : QObject::tr(" copia %1").arg(n)) + ext;
+            QProcess::startDetached("cp", {"-a", "--", src.absoluteFilePath(), dst});
+        }
+    });
+    p->start("wl-paste", {"--no-newline", "--type", "text/uri-list"});
+}
+QVariantMap QuickTools::fileInfo(const QString &path) const {
+    const QFileInfo fi(path);
+    if (!fi.exists()) return {};
+    qint64 size = fi.size();
+    if (fi.isDir()) { size = 0; QDirIterator it(path, QDir::Files | QDir::Hidden | QDir::NoDotAndDotDot, QDirIterator::Subdirectories);
+                      int n = 0; while (it.hasNext() && n++ < 20000) { it.next(); size += it.fileInfo().size(); } }
+    const QLocale l;
+    return {{"name", fi.fileName()}, {"dir", fi.isDir()}, {"path", QString(fi.absolutePath()).replace(QDir::homePath(), "~")},
+            {"size", l.formattedDataSize(size)}, {"modified", l.toString(fi.lastModified(), QLocale::LongFormat)},
+            {"created", l.toString(fi.birthTime().isValid() ? fi.birthTime() : fi.lastModified(), QLocale::LongFormat)},
+            {"kind", fi.isDir() ? QObject::tr("Carpeta") : FileBrowser::kindFor(fi)}};
+}
+
+QString QuickTools::systemVersion() const {
+    QFile f(QStringLiteral("/etc/os-release"));
+    if (f.open(QIODevice::ReadOnly))
+        for (const QString &l : QString::fromUtf8(f.readAll()).split('\n'))
+            if (l.startsWith("VERSION_ID=") || l.startsWith("VERSION=")) return l.section('=', 1).remove('"');
+    return QStringLiteral("?");
+}
+void QuickTools::checkUpdates() {
+    const QString exe = QStandardPaths::findExecutable("checkupdates");
+    if (exe.isEmpty()) { emit updatesChecked({}, false); return; }
+    auto *p = new QProcess(this);
+    connect(p, &QProcess::finished, this, [this, p](int code) {
+        const QStringList l = QString::fromUtf8(p->readAllStandardOutput()).split('\n', Qt::SkipEmptyParts);
+        emit updatesChecked(l, code == 0 || code == 2);   // 2 = no hay actualizaciones
+        p->deleteLater();
+    });
+    QTimer::singleShot(120000, p, [p] { if (p->state() != QProcess::NotRunning) p->kill(); });
+    p->start(exe, {});
+}

@@ -159,7 +159,7 @@ bindsym Alt+Print exec bc-screenshot ventana
 # Como macOS: TODAS las apps Wayland dibujan su propia ventana (semáforo a la izquierda, esquinas redondeadas,
 # redimensionables desde el borde): GTK con el tema MacTahoe, Qt con «adwaita», Firefox con bc-firefox.css.
 # Las X11 (XWayland) mantienen el marco de sway.
-for_window [shell="xdg_shell"] border csd
+for_window [shell="xdg_shell" app_id="^(?!bc-)"] border csd
 for_window [app_id="bc-.*"] border none
 # Firefox dibuja su barra (pestañas, semáforo y esquinas redondeadas): sin marco de sway
 for_window [window_role="pop-up"] floating enable

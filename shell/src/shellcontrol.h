@@ -72,4 +72,6 @@ public:
     explicit WindowControl(QObject *parent = nullptr) : QObject(parent) {}
     Q_INVOKABLE void minimize();
     Q_INVOKABLE void toggleFullscreen();
+    // Zoom de macOS (doble clic en la barra o botón verde): ocupar el área útil y volver al tamaño de antes
+    Q_INVOKABLE void setGeometry(int x, int y, int w, int h);
 };

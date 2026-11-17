@@ -26,6 +26,9 @@ QtObject {
     property real sh: scr ? scr.height : 800
     property bool splashing: false
     property var minShots: ({})          // id de ventana minimizada → captura (miniatura en el Dock)
+    property rect trashRect: Qt.rect(0, 0, 0, 0)   // Papelera del Dock en coordenadas de pantalla (soltar archivos)
+    property bool trashHover: false
+    property bool desktopKeyboard: false // el escritorio pide teclado (renombrar un icono)
     signal command(string kind, string arg)
     readonly property real u: Math.max(0.6, Math.min(1.25, Math.min(sw / 1586, sh / 992)))
     property bool classic: false                // sesión «BC clásico» (escritorio anterior); la fija Panel.qml

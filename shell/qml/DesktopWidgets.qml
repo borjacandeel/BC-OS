@@ -180,6 +180,11 @@ Item {
         id: remW
         wid: "recordatorios"; order: 2
         property bool adding: false
+        // Filas que caben (si no caben todas, se deja sitio para «y N más»)
+        readonly property real rowsSpace: height - root.px(92) - root.px(6) - (adding ? root.px(Theme.reminderRowH) : 0)
+        readonly property int fitAll: Math.max(0, Math.floor(rowsSpace / root.px(Theme.reminderRowH)))
+        readonly property int shown: Reminders.items.length <= fitAll ? Reminders.items.length
+                                     : Math.max(0, Math.floor((rowsSpace - root.px(16)) / root.px(Theme.reminderRowH)))
         Label { x: root.px(Theme.widgetPad); y: root.px(16); text: Reminders.pending; font.pixelSize: root.px(Theme.reminderCountPx); font.weight: Font.Bold }
         Label { x: root.px(Theme.widgetPad); y: root.px(50); text: qsTr("Recordatorios"); font.pixelSize: root.px(Theme.widgetTitlePx - 1); font.weight: Font.Bold }
         // Botón circular de lista: añadir un recordatorio
@@ -191,6 +196,12 @@ Item {
             MouseArea { id: lbMa; anchors.fill: parent; hoverEnabled: true; onClicked: { remW.adding = !remW.adding; if (remW.adding) input.forceActiveFocus() } }
         }
         Rectangle { x: root.px(Theme.widgetPad); y: root.px(82); width: parent.width - 2 * root.px(Theme.widgetPad); height: 1; color: Theme.separator }
+        Text {
+            readonly property int more: Reminders.items.length - remW.shown
+            visible: more > 0
+            x: root.px(Theme.widgetPad) + root.px(32); y: remW.height - root.px(8) - height
+            text: qsTr("y %1 más").arg(more); color: Theme.labelSecondary; font.family: Theme.font; font.pixelSize: root.px(12)
+        }
         Column {
             x: root.px(Theme.widgetPad); y: root.px(90); width: parent.width - 2 * root.px(Theme.widgetPad)
             Item {
@@ -206,7 +217,8 @@ Item {
                 }
             }
             Repeater {
-                model: Reminders.items.slice(0, remW.adding ? 6 : 7)
+                // Solo los que caben en el alto del widget (el resto: «y N más»), nunca se salen
+                model: Reminders.items.slice(0, remW.shown)
                 delegate: Item {
                     required property var modelData
                     width: parent.width; height: root.px(Theme.reminderRowH)

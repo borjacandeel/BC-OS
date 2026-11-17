@@ -122,7 +122,14 @@ public:
     // Ajustes del Sistema ▸ Pantallas y Teclado
     Q_INVOKABLE void listDisplayModes();                       // → displayModes
     Q_INVOKABLE void setDisplayMode(const QString &mode);      // «1920x1080» o «auto»
-    Q_INVOKABLE QString savedDisplayMode() const;              // la recordada por bc-display o «auto»
+    Q_INVOKABLE QString savedDisplayMode() const;
+    // Copiar y pegar archivos como en el Finder (portapapeles de Wayland con wl-copy / wl-paste, text/uri-list)
+    Q_INVOKABLE void copyFiles(const QStringList &paths);
+    // Ajustes ▸ General ▸ Actualizaciones: versión instalada y paquetes pendientes (checkupdates, sin root)
+    Q_INVOKABLE QString systemVersion() const;
+    Q_INVOKABLE void checkUpdates();
+    Q_INVOKABLE void pasteFilesInto(const QString &dir);
+    Q_INVOKABLE QVariantMap fileInfo(const QString &path) const;   // nombre, tipo, tamaño, fechas, ruta              // la recordada por bc-display o «auto»
     Q_INVOKABLE void setRefreshRate(const QString &hz);        // «60», «144»… o «auto» (la más alta)
     Q_INVOKABLE QString savedRefreshRate() const;
     Q_INVOKABLE void setUiScale(const QString &s);             // «1», «1.25», «1.5», «2» o «auto» (según los ppp)
@@ -164,6 +171,7 @@ signals:
     void wifiResult(bool ok, const QString &ssid);
     void filesChanged();
     void displayModesChanged();
+    void updatesChecked(const QStringList &lines, bool ok);
     void windowPosChanged();
     void captured(const QString &tag, const QString &path, bool ok);
 private:

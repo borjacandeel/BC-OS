@@ -56,3 +56,14 @@ static void swayForSelf(const QString &verb) {
 }
 void WindowControl::minimize() { swayForSelf("move scratchpad"); }
 void WindowControl::toggleFullscreen() { swayForSelf("fullscreen toggle"); }
+void WindowControl::setGeometry(int x, int y, int w, int h) {
+    if (w < 100 || h < 100) return;   // x, y pueden ser negativos (sombra fuera de la pantalla)
+    if (!qEnvironmentVariableIsEmpty("HYPRLAND_INSTANCE_SIGNATURE")) {
+        const QString exe = QStandardPaths::findExecutable("hyprctl");
+        if (exe.isEmpty()) return;
+        const QString win = QString("pid:%1").arg(QCoreApplication::applicationPid());
+        QProcess::startDetached(exe, {"--batch", QString("dispatch resizewindowpixel exact %1 %2,%3 ; dispatch movewindowpixel exact %4 %5,%3").arg(w).arg(h).arg(win).arg(x).arg(y)});
+        return;
+    }
+    swayForSelf(QString("resize set %1 %2, move absolute position %3 %4").arg(w).arg(h).arg(x).arg(y));
+}

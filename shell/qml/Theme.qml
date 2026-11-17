@@ -124,9 +124,9 @@ QtObject {
     readonly property int trafficGap: 9
     readonly property int trafficLeft: 18           // macOS 27: primer botón a 18 pt del borde
     readonly property int sidebarW: 220            // barra lateral de borde a borde (Golden Gate)
-    readonly property int menuRadius: 12           // sin confirmar
-    readonly property int menuItemH: 24
-    readonly property int menuPad: 5
+    readonly property int menuRadius: 16           // Golden Gate: menús más redondeados (≈16 pt)
+    readonly property int menuItemH: 28
+    readonly property int menuPad: 7
 
     // ---- Tipografía ----------------------------------------------------------------------
     // Inter: fuente abierta (OFL) de métricas próximas a SF Pro. Interletrado ajustado para igualar la captura.

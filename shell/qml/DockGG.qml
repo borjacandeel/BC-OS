@@ -205,6 +205,14 @@ Item {
         DockCell {
             cellIndex: dock.items.length + dock.minimized.length + 1
             kind: "papelera"; name: qsTr("Papelera"); trash: true
+            // Posición en pantalla para soltar archivos del escritorio encima (el Dock está abajo y centrado)
+            readonly property var winRef: Window.window
+            function pub() { const p = mapToItem(null, 0, 0); const w = Window.window
+                             if (w) UiState.trashRect = Qt.rect(p.x + (w.originX || 0), p.y + (w.originY || 0), width, height) }
+            onXChanged: pub(); onWidthChanged: pub()
+            Component.onCompleted: pub()
+            scale: UiState.trashHover ? 1.18 : 1
+            Behavior on scale { NumberAnimation { duration: Theme.d(140) } }
             onActivated: dock.launch("papelera", qsTr("Papelera"))
             onContext: (p) => UiState.openContextMenu([{ label: qsTr("Abrir"), cmd: "bc:trash:open" }, { label: qsTr("Vaciar papelera…"), cmd: "bc:trash:empty" }], p)
         }

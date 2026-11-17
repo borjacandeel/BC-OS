@@ -82,6 +82,20 @@ Window {
 
     // Al arrastrar la ventana se «levanta»: sombra algo más marcada y un toque de transparencia, que vuelven con
     // suavidad al soltarla
+    // Zoom (doble clic en la barra de título o botón verde): ocupa la pantalla bajo la barra de menús; otra vez, vuelve
+    // al tamaño y sitio de antes. Con animación de crecer (expandAnim)
+    property var zoomBack: null
+    function toggleZoom() {
+        const s = win.screen, bar = Math.round(30 * Math.max(0.7, Math.min(2.0, (s ? s.height : 1080) / 1080)))
+        if (zoomBack) {
+            const b = zoomBack; zoomBack = null
+            WindowControl.setGeometry(b.x, b.y, b.w, b.h)
+        } else {
+            zoomBack = { x: Quick.windowPos.x, y: Quick.windowPos.y, w: win.width, h: win.height }
+            // La sombra va por fuera del marco: la ventana se coloca de modo que el marco quede justo bajo la barra
+            WindowControl.setGeometry(-win.sh, bar - win.sh, (s ? s.width : 1280) + 2 * win.sh, (s ? s.height : 800) - bar + 2 * win.sh)
+        }
+    }
     property bool lifting: false
     Connections { target: Quick; function onWindowPosChanged() { if (win.active && Quick.trackWindow) { win.lifting = true; liftOff.restart() } } }
     Timer { id: liftOff; interval: 220; onTriggered: win.lifting = false }
@@ -126,7 +140,7 @@ Window {
                 anchors.fill: parent
                 onPressed: { win.startSystemMove(); Quick.followWindowMove() }
                 onReleased: Quick.refreshWindowPos()
-                onDoubleClicked: WindowControl.toggleFullscreen()
+                onDoubleClicked: win.toggleZoom()
             }
             Row {
                 x: Theme.gg ? Theme.trafficLeft + 4 : 16; anchors.verticalCenter: parent.verticalCenter; spacing: Theme.gg ? Theme.trafficGap : 9
@@ -141,7 +155,7 @@ Window {
                                font.pixelSize: parent.d - 2; font.weight: Font.Black }
                         MouseArea {
                             anchors.fill: parent; anchors.margins: -3
-                            onClicked: modelData.a === 0 ? win.closeRequested() : (modelData.a === 1 ? win.minimizeAnimated() : WindowControl.toggleFullscreen())
+                            onClicked: modelData.a === 0 ? win.closeRequested() : (modelData.a === 1 ? win.minimizeAnimated() : win.toggleZoom())
                         }
                     }
                 }

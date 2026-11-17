@@ -13,7 +13,7 @@ Item {
     readonly property int itemH: Math.round(Theme.menuItemH * s)
     readonly property int pad: Math.round(Theme.menuPad * s)
     property int openSub: -1
-    width: Math.max(Math.round(220 * s), measure.width)
+    width: Math.max(Math.round(230 * s), measure.width)
     height: col.height + pad * 2
     transformOrigin: Item.TopLeft
 
@@ -31,7 +31,7 @@ Item {
         width: { let w = 0; for (let i = 0; i < children.length; ++i) w = Math.max(w, children[i].implicitWidth || 0); return w + Math.round(56 * card.s) }
     }
 
-    Glass { anchors.fill: parent; radius: Math.round(Theme.menuRadius * card.s); tintBoost: 0.35 }
+    Glass { anchors.fill: parent; radius: Math.round(Theme.menuRadius * card.s); tintBoost: 0.55 }
 
     Column {
         id: col
@@ -49,12 +49,12 @@ Item {
                 Rectangle {
                     visible: row.modelData.sep === true
                     anchors.verticalCenter: parent.verticalCenter
-                    x: Math.round(10 * card.s); width: parent.width - Math.round(20 * card.s); height: 1; color: Theme.separator
+                    x: Math.round(12 * card.s); width: parent.width - Math.round(24 * card.s); height: 1; color: Theme.separator
                 }
                 Rectangle {
                     visible: !row.modelData.sep
                     anchors.fill: parent
-                    radius: Math.round(5 * card.s)
+                    radius: Math.round(8 * card.s)
                     color: (ia.containsMouse || card.openSub === row.index) && !row.modelData.disabled ? Theme.selection : "transparent"
                     readonly property color ink: (ia.containsMouse || card.openSub === row.index) && !row.modelData.disabled ? "#FFFFFF" : Theme.label
                     opacity: row.modelData.disabled ? 0.38 : 1

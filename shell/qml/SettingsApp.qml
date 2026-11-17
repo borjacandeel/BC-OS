@@ -726,6 +726,35 @@ AppWindow {
             }
             Hint { width: parent.width; text: qsTr("El idioma se aplica al volver a iniciar sesión.") }
 
+            Section { text: qsTr("Actualizaciones") }
+            Group {
+                id: upd
+                property string state: ""          // "", "buscando", "al-dia", "hay", "error"
+                property var list: []
+                Connections { target: Quick; function onUpdatesChecked(lines, ok) { upd.list = lines; upd.state = !ok ? "error" : (lines.length ? "hay" : "al-dia") } }
+                Row2 { label: qsTr("BC OS"); value: qsTr("Versión %1").arg(Quick.systemVersion()) }
+                Row2 { label: upd.state === "buscando" ? qsTr("Buscando actualizaciones…")
+                              : upd.state === "al-dia" ? qsTr("BC OS está al día")
+                              : upd.state === "hay" ? qsTr("%1 actualizaciones disponibles").arg(upd.list.length)
+                              : upd.state === "error" ? qsTr("No se pudo comprobar (¿sin conexión?)") : qsTr("Actualizaciones de software")
+                       value: ""
+                       SmallBtn { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                                  visible: upd.state !== "buscando"
+                                  text: upd.state === "hay" ? qsTr("Actualizar ahora") : qsTr("Buscar actualizaciones")
+                                  onClicked: { if (upd.state === "hay") Launcher.run("bc-terminal", ["--actualizar"]); else { upd.state = "buscando"; Quick.checkUpdates() } } } }
+                // Detalle (como el panel de Actualización de software de macOS): paquete y versión nueva
+                Repeater {
+                    model: upd.state === "hay" ? upd.list.slice(0, 8) : []
+                    Row2 { required property string modelData
+                           label: modelData.split(" ")[0]; value: modelData.split(" ").slice(1).join(" ") }
+                }
+                Row2 { visible: upd.state === "hay" && upd.list.length > 8; label: qsTr("y %1 más").arg(upd.list.length - 8); value: "" }
+                Row2 { label: qsTr("Novedades de esta versión"); value: ""
+                       SmallBtn { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                                  text: qsTr("Ver…"); onClicked: Quick.open("https://github.com/borjacandeel/BC-OS/releases/latest") } }
+            }
+            Hint { width: parent.width; text: qsTr("Las actualizaciones llegan firmadas desde el repositorio de BC OS: escritorio, apps, ajustes y sistema. Al terminar, cierra sesión para ver las novedades.") }
+
             Section { text: qsTr("Rendimiento") }
             Group {
                 Row2 { id: eqRow; label: qsTr("Este equipo es"); value: ""
