@@ -37,6 +37,18 @@ static inline quint32 scalePx(quint32 a, int w) {   // multiplica por w/256 (cob
     return rb | ag;
 }
 
+QRect GenieItem::box() const {
+    if (m_img.isNull() || m_from.width() < 2 || m_from.height() < 2 || m_p >= 0.999) return {};
+    const qreal H = m_from.height(), y0 = m_from.y();
+    const qreal dist = qMax<qreal>(1, m_target.y() - m_icon / 2 - y0);
+    const qreal slide = qPow(clamp01((m_p - 0.3) / 0.7), 1.35), h = H / dist;
+    const int top = qMax(0, int(qFloor(y0 + slide * (1 + h) * dist)));
+    const int bottom = int(qCeil(qMin(y0 + dist, y0 + (h + slide * (1 + h)) * dist)));
+    const int left = int(qFloor(qMin(m_from.x(), m_target.x() - m_icon / 2))) - 2;
+    const int right = int(qCeil(qMax(m_from.right(), m_target.x() + m_icon / 2))) + 2;
+    return bottom > top && right > left ? QRect(left, top, right - left, bottom - top) : QRect();
+}
+
 void GenieItem::paint(QPainter *painter) {
     if (m_img.isNull() || m_from.width() < 2 || m_from.height() < 2) return;
     const qreal p = m_p;
@@ -60,8 +72,16 @@ void GenieItem::paint(QPainter *painter) {
     if (bottom <= top || right <= left) return;
     const int fw = right - left, fh = bottom - top;
     if (m_frame.width() < fw || m_frame.height() < fh) m_frame = QImage(qMax(fw, m_frame.width()), qMax(fh, m_frame.height()), QImage::Format_ARGB32_Premultiplied);
-    const qreal sx = m_img.width() / W, sy = m_img.height() / H;   // la captura puede tener otra escala
-    const int iw = m_img.width(), ih = m_img.height();
+    // La captura (a menudo ×2 en HiDPI) se reduce UNA vez al tamaño lógico de la ventana: 4 veces menos píxeles que
+    // muestrear por fotograma y casi sin promedios (antes hasta 12 muestras por píxel): mucho más fluido por software
+    const QSize ls(qMax(1, qRound(W)), qMax(1, qRound(H)));
+    if (m_small.size() != ls || m_smallKey != m_img.cacheKey()) {
+        m_small = (m_img.size() == ls ? m_img : m_img.scaled(ls, Qt::IgnoreAspectRatio, Qt::SmoothTransformation))
+                      .convertToFormat(QImage::Format_ARGB32_Premultiplied);
+        m_smallKey = m_img.cacheKey();
+    }
+    const QImage &src = m_small;
+    const int iw = src.width(), ih = src.height();
     const qreal fade = p > 0.96 ? (1 - p) * 25 : 1;
     const int alpha = int(256 * clamp01(fade));
 
@@ -79,11 +99,11 @@ void GenieItem::paint(QPainter *painter) {
         const qreal syf = qBound<qreal>(0, v * ih - 0.5, ih - 1);
         const int sy0 = int(syf), sy1 = qMin(ih - 1, sy0 + 1);
         const int wy = int((syf - sy0) * 256);
-        const quint32 *s0 = reinterpret_cast<const quint32 *>(m_img.constScanLine(sy0));
-        const quint32 *s1 = reinterpret_cast<const quint32 *>(m_img.constScanLine(sy1));
+        const quint32 *s0 = reinterpret_cast<const quint32 *>(src.constScanLine(sy0));
+        const quint32 *s1 = reinterpret_cast<const quint32 *>(src.constScanLine(sy1));
         const int x0 = qMax(int(qFloor(xl)), left), x1 = qMin(int(qCeil(xr)), right - 1);
         const qreal du = iw / (xr - xl);
-        const int taps = qBound(1, int(du), 12);
+        const int taps = qBound(1, int(du), 6);
         for (int x = x0; x <= x1; ++x) {
             const qreal pxl = x, pxr = x + 1;
             const qreal cov = qMin(pxr, xr) - qMax(pxl, xl);       // cobertura horizontal del píxel (bordes suaves)
@@ -109,6 +129,5 @@ void GenieItem::paint(QPainter *painter) {
             dst[x - left] = c;
         }
     }
-    Q_UNUSED(sx); Q_UNUSED(sy);
     painter->drawImage(QPointF(left, top), m_frame, QRectF(0, 0, fw, fh));
 }

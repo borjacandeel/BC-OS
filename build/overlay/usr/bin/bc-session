@@ -78,7 +78,10 @@ sway_software() {
   # software, solo esquinas). Se quitan con «no» en ~/.config/bc/esquinas (Ajustes ▸ General) si un equipo va lento.
   ESQ="$(cat "$CFG/esquinas" 2>/dev/null)"
   GPU=0; gpu_real && GPU=1
-  if [ -x /opt/swayfx/bin/sway ] && ! grep -qw "bc.fx=0" /proc/cmdline && [ "$ESQ" != no ]; then
+  # Sin GPU (máquinas virtuales) swayfx por software (llvmpipe) hacía que todo fuera a golpes (0.9.17): ahí sway con
+  # pixman, lo más fluido; las apps de BC, Firefox y GTK ya dibujan sus propias esquinas. «si» en ~/.config/bc/esquinas
+  # fuerza swayfx también sin GPU.
+  if [ -x /opt/swayfx/bin/sway ] && ! grep -qw "bc.fx=0" /proc/cmdline && [ "$ESQ" != no ] && { [ $GPU = 1 ] || [ "$ESQ" = si ]; }; then
     export BC_FX=ligero
     # Con GPU, BC Shell y las apps Qt también dibujan con OpenGL (la CPU queda libre: sin «your system is too slow»)
     if [ $GPU = 1 ]; then unset WLR_RENDERER WLR_RENDERER_ALLOW_SOFTWARE QT_QUICK_BACKEND; else

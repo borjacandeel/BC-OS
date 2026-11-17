@@ -352,7 +352,9 @@ void QuickTools::capture(const QString &tag, const QString &geom) {
     const QString dir = QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation) + "/bc-captures";
     QDir().mkpath(dir);
     const QString path = dir + "/" + tag + ".ppm";      // PPM: sin compresión, lo más rápido de escribir y leer
-    QStringList a{"-t", "ppm"};
+    // A escala 1 (tamaño lógico): en pantallas ×2 son 4 veces menos píxeles que capturar, escribir y leer, y el genio
+    // y las miniaturas no necesitan más
+    QStringList a{"-t", "ppm", "-s", "1"};
     if (!geom.isEmpty()) a << "-g" << geom;
     a << path;
     run("grim", a, [this, tag, path](int code, const QString &) { emit captured(tag, path, code == 0); });
@@ -844,7 +846,9 @@ static QString cornersPath() { return QStandardPaths::writableLocation(QStandard
 bool QuickTools::roundedCorners() {
     QFile f(cornersPath());
     if (f.open(QIODevice::ReadOnly)) return QString::fromUtf8(f.readAll()).trimmed() == "si";
-    return true;   // de serie: activadas siempre (swayfx o Hyprland)
+    // De serie: activadas si el compositor las dibuja (swayfx con GPU o Hyprland); en máquinas virtuales sin GPU se
+    // usa sway con pixman (fluido) y solo las ventanas que dibujan su marco (BC, Firefox, GTK) llevan esquinas
+    return !qEnvironmentVariableIsEmpty("BC_FX") || !qEnvironmentVariableIsEmpty("HYPRLAND_INSTANCE_SIGNATURE");
 }
 bool QuickTools::setRoundedCorners(bool on) {
     QDir().mkpath(QFileInfo(cornersPath()).absolutePath());

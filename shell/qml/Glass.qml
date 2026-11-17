@@ -23,7 +23,12 @@ Item {
     // Posición global para recortar el fondo desenfocado correcto
     property point gp: Qt.point(0, 0)
     function sync() { const p = g.mapToItem(null, 0, 0); gp = Qt.point(Math.round(p.x + originX), Math.round(p.y + originY)) }
-    onXChanged: sync(); onYChanged: sync(); onWidthChanged: sync(); onHeightChanged: sync()
+    onXChanged: sync(); onYChanged: sync()
+    // Cambiando de tamaño (Dock que se amplía, paneles que crecen): recortes rápidos sin lente mientras dura; la lente
+    // solo al asentarse. Así la animación no satura la CPU recalculando la refracción cada 70 ms (iba a golpes en VM)
+    property bool resizing: false
+    onWidthChanged: { sync(); resizing = true; still.restart() }
+    onHeightChanged: { sync(); resizing = true; still.restart() }
     Component.onCompleted: { sync(); bufA.asynchronous = false; bufA.source = want; asked = want; bufA.asynchronous = true }
     // Los padres pueden moverse o escalarse (animaciones de entrada): se vuelve a calcular al aparecer y al asentarse
     onVisibleChanged: if (visible) { sync(); settle.restart() }
@@ -46,12 +51,12 @@ Item {
     function _moved() { sync(); if (win && win.titlebarHeight !== undefined) { moving = true; still.restart() } }
     onOriginXChanged: _moved()
     onOriginYChanged: _moved()
-    Timer { id: still; interval: 180; onTriggered: g.moving = false }
+    Timer { id: still; interval: 180; onTriggered: { g.moving = false; g.resizing = false } }
     // Fondo desenfocado recortado (GlassProvider). Doble búfer con carga en segundo plano: el recorte nuevo se
     // calcula en otro hilo y solo se muestra cuando está listo, así las animaciones (paneles que aparecen, Dock que se
     // amplía, ventanas que se mueven) no se frenan esperando al recorte. Como mucho uno cada 70 ms (16 ms moviendo).
     readonly property string want: !Quick.realBlur && g.width > 2 && g.height > 2
-        ? "image://glass/" + [g.gp.x, g.gp.y, Math.round(g.width), Math.round(g.height), Math.round(g.radius), Math.round(g.scrW), Math.round(g.scrH), g.version].join("_") + (g.leftOnly ? "_L" : "_R") + (g.moving ? "_M" : "")
+        ? "image://glass/" + [g.gp.x, g.gp.y, Math.round(g.width), Math.round(g.height), Math.round(g.radius), Math.round(g.scrW), Math.round(g.scrH), g.version].join("_") + (g.leftOnly ? "_L" : "_R") + (g.moving || g.resizing ? "_M" : "")
         : ""
     property int front: 0
     property string asked: ""

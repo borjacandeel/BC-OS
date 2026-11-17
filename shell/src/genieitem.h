@@ -25,14 +25,19 @@ public:
     qreal iconSize() const { return m_icon; }
     void setIconSize(qreal s) { m_icon = s; update(); emit changed(); }
     qreal progress() const { return m_p; }
-    void setProgress(qreal p) { m_p = p; update(); emit changed(); }
+    // Solo se repinta la zona que ocupa el efecto (la de este fotograma y la del anterior), no toda la pantalla
+    void setProgress(qreal p) { m_p = p; const QRect b = box(); update(b.united(m_lastBox).adjusted(-2, -2, 2, 2)); m_lastBox = b; emit changed(); }
     void paint(QPainter *painter) override;
+    QRect box() const;   // zona del efecto en el fotograma actual
 signals:
     void changed();
 private:
     QString m_source;
     QImage m_img;          // captura en ARGB32 premultiplicado
     QImage m_frame;        // fotograma (reutilizado)
+    QImage m_small;        // captura reducida al tamaño lógico de la ventana
+    qint64 m_smallKey = 0;
+    QRect m_lastBox;
     QRectF m_from;
     QPointF m_target;
     qreal m_icon = 48, m_p = 0;
