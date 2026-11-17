@@ -13,7 +13,10 @@ case "$cmd" in
   set)
     case "$2" in [0-9]*x[0-9]*) ;; *) echo "uso: bc-display set 1920x1080" >&2; exit 2 ;; esac
     mkdir -p "$(dirname "$GUARDADA")"; echo "$2" > "$GUARDADA"
-    outs | jq -r '.[] | select(.active) | .name' | while read -r n; do swaymsg "output $n mode $2" >/dev/null; done ;;
+    # Si el monitor (o la pantalla virtual) no anuncia ese modo, se fuerza como modo propio (--custom)
+    outs | jq -r '.[] | select(.active) | .name' | while read -r n; do
+      swaymsg "output $n mode $2" >/dev/null 2>&1 || swaymsg "output $n mode --custom $2" >/dev/null 2>&1
+    done ;;
   auto|inicio)
     # «auto» desde Ajustes olvida la resolución guardada; al iniciar sesión («inicio», watch) se respeta
     [ "$cmd" = auto ] && [ "${2:-}" = olvidar ] && rm -f "$GUARDADA"
@@ -22,14 +25,15 @@ case "$cmd" in
     # Resolución nativa (la del primer modo) a la frecuencia MÁS ALTA que admita el monitor (60, 100, 120, 144 Hz…):
     # el compositor y las animaciones de BC van a esa frecuencia
     outs | jq -r --argjson ww "${ww:-0}" --argjson wh "${wh:-0}" '.[] | select(.active) | . as $o
-      | ([$o.modes[] | select(.width == $ww and .height == $wh)] | if length > 0 then .[0] else $o.modes[0] end) as $m0
-      | ([$o.modes[] | select(.width == $m0.width and .height == $m0.height) | .refresh] | max) as $r
+      | ([$o.modes[] | select(.width == $ww and .height == $wh)] | if length > 0 then .[0]
+          elif $ww > 0 then {width: $ww, height: $wh, refresh: 60000} else $o.modes[0] end) as $m0
+      | ([$o.modes[] | select(.width == $m0.width and .height == $m0.height) | .refresh] | max // 60000) as $r
       | "\($o.name) \($m0.width) \($m0.height) \($r) \($o.current_mode.width) \($o.current_mode.height) \($o.current_mode.refresh)"' |
     while read -r n w h r cw ch cr; do
       [ -n "$w" ] && [ "$w" != "null" ] || continue
       if [ "$w" != "$cw" ] || [ "$h" != "$ch" ] || [ "$r" != "$cr" ]; then
         hz=$(awk -v r="$r" 'BEGIN { printf "%.3f", r/1000 }')
-        swaymsg "output $n mode ${w}x${h}@${hz}Hz" >/dev/null
+        swaymsg "output $n mode ${w}x${h}@${hz}Hz" >/dev/null 2>&1 || swaymsg "output $n mode --custom ${w}x${h}@${hz}Hz" >/dev/null 2>&1
       fi
       # Retina/HiDPI (p. ej. VirtualBox en Mac con «salida HiDPI sin escalar»): escala 2 para texto e iconos nítidos.
       # ~/.config/bc/escala fija otra (1, 1.5, 2…).

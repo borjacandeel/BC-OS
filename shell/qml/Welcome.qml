@@ -14,10 +14,10 @@ Item {
     signal finished()
     readonly property string wallDir: "/usr/share/bc/wallpapers/"
     readonly property var wallpapers: [
-        { f: "ondas.jpg", n: qsTr("Ondas") }, { f: "aurora.jpg", n: qsTr("Aurora") }, { f: "atardecer.jpg", n: qsTr("Atardecer") },
-        { f: "amanecer.jpg", n: qsTr("Amanecer") }, { f: "lavanda.jpg", n: qsTr("Lavanda") }, { f: "noche.jpg", n: qsTr("Noche") },
-        { f: "dunas.jpg", n: qsTr("Dunas") }, { f: "cristal.jpg", n: qsTr("Cristal líquido") }, { f: "esferas.jpg", n: qsTr("Esferas") },
-        { f: "horizonte.jpg", n: qsTr("Horizonte") }, { f: "bruma.jpg", n: qsTr("Bruma") }, { f: "eclipse.jpg", n: qsTr("Eclipse") }]
+        { f: "bosque-niebla.jpg", n: qsTr("Bosque en la niebla") }, { f: "pinar-alba.jpg", n: qsTr("Pinar al alba") }, { f: "lago-claro.jpg", n: qsTr("Lago") },
+        { f: "nieve.jpg", n: qsTr("Nieve") }, { f: "salvia.jpg", n: qsTr("Salvia") }, { f: "ondas.jpg", n: qsTr("Ondas") },
+        { f: "bosque-noche.jpg", n: qsTr("Bosque de noche") }, { f: "aurora-boreal.jpg", n: qsTr("Aurora boreal") }, { f: "lago-noche.jpg", n: qsTr("Lago de noche") },
+        { f: "bruma-verde.jpg", n: qsTr("Bruma verde") }, { f: "luna.jpg", n: qsTr("Luna") }, { f: "eclipse.jpg", n: qsTr("Eclipse") }]
     // Solo los colores base de BC OS (los del semáforo y los de las tarjetas del Monitor)
     readonly property var accents: [Theme.gg ? "#0A84FF" : "#2F7BF5", "#34C759", "#FF9F0A", "#FF5F57", "#8E9BB2"]
 
@@ -31,6 +31,7 @@ Item {
     readonly property string detected: Quick.detectedMachine()
     property string machine: Quick.machineKind()
     function pickMachine(k) { machine = k; Quick.setMachineKind(k) }
+    property string resolution: "auto"
     function next() { if (step < steps - 1) step++; else finish() }
     function finish() { Settings.welcomed = true; root.finished() }
     focus: true
@@ -165,6 +166,31 @@ Item {
                            Rectangle { anchors.centerIn: parent; anchors.verticalCenterOffset: -8; width: 130; height: 82; radius: 6; color: "#05070D"; border.width: 3; border.color: "#3A4256"
                                Image { anchors.fill: parent; anchors.margins: 3; source: "qrc:/BCShell/assets/wallpaper-default.png"; fillMode: Image.PreserveAspectCrop; sourceSize.width: 260 } }
                            Rectangle { anchors.horizontalCenter: parent.horizontalCenter; y: parent.height / 2 + 34; width: 40; height: 6; radius: 3; color: "#3A4256" } } }
+            }
+            // En máquina virtual: resolución de la pantalla (se aplica ya y se recuerda en cada inicio)
+            Column {
+                visible: root.machine === "vm"
+                anchors.horizontalCenter: parent.horizontalCenter; spacing: 8
+                Text { anchors.horizontalCenter: parent.horizontalCenter; text: qsTr("Resolución de la pantalla")
+                       color: root.ink; font.family: Theme.fontFamily; font.pixelSize: 13; font.weight: Font.DemiBold }
+                Row {
+                    anchors.horizontalCenter: parent.horizontalCenter; spacing: 8
+                    Repeater {
+                        model: ["auto", "1280x800", "1440x900", "1600x900", "1920x1080", "2560x1440"]
+                        Rectangle {
+                            required property string modelData
+                            readonly property bool on: root.resolution === modelData
+                            width: rtxt.implicitWidth + 26; height: 30; radius: 15
+                            color: on ? Theme.accent : root.wash(rhov.containsMouse ? 0.16 : 0.1)
+                            border.width: on ? 0 : 1; border.color: root.wash(0.16)
+                            Behavior on color { ColorAnimation { duration: Theme.dur(160) } }
+                            Text { id: rtxt; anchors.centerIn: parent; text: modelData === "auto" ? qsTr("Automática") : modelData.replace("x", " × ")
+                                   color: parent.on ? Theme.white : root.ink; font.family: Theme.fontFamily; font.pixelSize: 12; font.weight: Font.Medium }
+                            MouseArea { id: rhov; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                                        onClicked: { root.resolution = modelData; Quick.setDisplayMode(modelData) } }
+                        }
+                    }
+                }
             }
             Text { anchors.horizontalCenter: parent.horizontalCenter; text: qsTr("Se aplica al volver a iniciar sesión. Se puede cambiar en Ajustes ▸ General.")
                    color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 13 }

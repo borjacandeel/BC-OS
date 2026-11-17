@@ -424,7 +424,9 @@ AppWindow {
                 columns: Math.max(3, Math.floor((parent.width + 12) / 162)); spacing: 12
                 readonly property real cellW: (parent.width - (columns - 1) * spacing) / columns
                 Repeater {
-                    model: ["ondas.jpg", "aurora.jpg", "atardecer.jpg", "rubi.jpg", "bosque.jpg", "carbon.jpg", "noche.jpg", "medianoche.jpg",
+                    model: ["bosque-niebla.jpg", "pinar-alba.jpg", "lago-claro.jpg", "nieve.jpg", "salvia.jpg",
+                            "bosque-noche.jpg", "aurora-boreal.jpg", "lago-noche.jpg", "bruma-verde.jpg", "luna.jpg",
+                            "ondas.jpg", "aurora.jpg", "atardecer.jpg", "rubi.jpg", "bosque.jpg", "carbon.jpg", "noche.jpg", "medianoche.jpg",
                             "amanecer.jpg", "lavanda.jpg", "menta.jpg", "niebla.jpg", "oceano.jpg", "montanas.jpg", "grafito.jpg", "plata.jpg",
                             "dunas.jpg", "dunas-noche.jpg", "esferas.jpg", "esferas-luz.jpg", "anillos.jpg", "cristal.jpg", "seda.jpg", "pliegues.jpg", "bruma.jpg", "nebulosa.jpg", "horizonte.jpg", "colinas.jpg", "arcos.jpg", "cuarzo.jpg", "orbita.jpg", "topografia.jpg", "petalos.jpg", "burbujas.jpg", "cinta.jpg", "eclipse.jpg"]
                     Rectangle {

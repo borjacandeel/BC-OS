@@ -12,5 +12,7 @@ OV="$OV --overwrite /usr/lib/firefox/distribution/policies.json --overwrite /usr
 pacman -Syy --noconfirm
 if pacman -Qq bc-os >/dev/null 2>&1; then pacman -Su --noconfirm $OV "$@"
 else pacman -S --noconfirm --needed $OV bc-os "$@" && pacman -Su --noconfirm "$@"; fi
+# En el login solo BC OS y Dotfiles
+rm -f /usr/share/bc/sessions/bc-clasico.desktop
 gtk-update-icon-cache -q -f /usr/share/icons/hicolor 2>/dev/null || true
 echo "BC OS actualizado. Ya puedes cerrar esta ventana."
