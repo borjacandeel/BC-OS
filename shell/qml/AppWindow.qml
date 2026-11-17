@@ -118,7 +118,7 @@ Window {
         radius: Theme.radiusWindow
         color: Theme.gg && !win.active ? Theme.windowBgInactive : Theme.windowFill
         border.width: 1
-        border.color: Theme.gg ? (Theme.dark ? Qt.rgba(1, 1, 1, 0.14) : Qt.rgba(0, 0, 0, 0.16)) : Theme.hairline
+        border.color: Settings.increaseContrast ? (Theme.dark ? Qt.rgba(1, 1, 1, 0.6) : Qt.rgba(0, 0, 0, 0.55)) : Theme.gg ? (Theme.dark ? Qt.rgba(1, 1, 1, 0.14) : Qt.rgba(0, 0, 0, 0.16)) : Theme.hairline
         Behavior on color { ColorAnimation { duration: Theme.d(Theme.durHover) } }
         clip: true
         // Por software se abre solo con fundido: escalar toda la ventana en cada fotograma cuesta mucha CPU

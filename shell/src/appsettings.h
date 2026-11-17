@@ -6,6 +6,9 @@
 class AppSettings : public QObject {
     Q_OBJECT
     Q_PROPERTY(bool reducedMotion READ reducedMotion WRITE setReducedMotion NOTIFY changed)
+    // Accesibilidad ▸ Pantalla (macOS): cristal opaco y bordes más marcados
+    Q_PROPERTY(bool reduceTransparency READ reduceTransparency WRITE setReduceTransparency NOTIFY changed)
+    Q_PROPERTY(bool increaseContrast READ increaseContrast WRITE setIncreaseContrast NOTIFY changed)
     Q_PROPERTY(QString desktopStyle READ desktopStyle WRITE setDesktopStyle NOTIFY changed)
     Q_PROPERTY(bool widgets READ widgets WRITE setWidgets NOTIFY changed)
     Q_PROPERTY(QString mode READ mode WRITE setMode NOTIFY changed)
@@ -61,6 +64,8 @@ public:
     void setSounds(bool on);
     explicit AppSettings(QObject *parent = nullptr);
     bool reducedMotion() const { return m_reduced; }
+    bool reduceTransparency() const { return m_solid; }
+    bool increaseContrast() const { return m_contrast; }
     QString desktopStyle() const { return m_style; }
     void setDesktopStyle(const QString &s);
     bool widgets() const { return m_widgets; }
@@ -75,6 +80,8 @@ public:
     void setWelcomed(bool on);
     QString language() const { return m_language; }
     void setReducedMotion(bool on);
+    void setReduceTransparency(bool on);
+    void setIncreaseContrast(bool on);
     void setLanguage(const QString &l);
     void reload();
 signals:
@@ -82,7 +89,7 @@ signals:
 
 private:
     void dynamicWallpaper();
-    bool m_reduced = false;
+    bool m_reduced = false, m_solid = false, m_contrast = false;
     QString m_language = "es_ES";
     QString m_style = "mac";
     bool m_widgets = true, m_welcomed = false;

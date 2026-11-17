@@ -90,7 +90,7 @@ Item {
     Item {
         anchors.fill: parent; clip: g.leftOnly
     Rectangle { width: parent.width + (g.leftOnly ? g.radius : 0); height: parent.height; radius: g.radius; color: g.tintColor
-                opacity: Math.min(0.97, Quick.realBlur ? Math.max(Theme.dark ? 0.32 : 0.5, 0.75 * (Theme.glassOpacity + g.tintBoost)) : Theme.glassOpacity + g.tintBoost) }
+                opacity: Settings.reduceTransparency ? 0.97 : Math.min(0.97, Quick.realBlur ? Math.max(Theme.dark ? 0.32 : 0.5, 0.75 * (Theme.glassOpacity + g.tintBoost)) : Theme.glassOpacity + g.tintBoost) }
     // Reflejo superior: refracción uniforme de Golden Gate
     Rectangle {
         width: parent.width + (g.leftOnly ? g.radius : 0); height: parent.height; radius: g.radius
@@ -104,7 +104,7 @@ Item {
     // Borde fino luminoso: más claro arriba (luz) que abajo
     Rectangle {
         visible: g.rim; anchors.fill: parent; radius: g.radius; color: "transparent"
-        border.width: 1; border.color: Theme.glassRim
+        border.width: Settings.increaseContrast ? 2 : 1; border.color: Settings.increaseContrast ? (Theme.dark ? Qt.rgba(1, 1, 1, 0.6) : Qt.rgba(0, 0, 0, 0.55)) : Theme.glassRim
     }
     Rectangle {
         visible: g.rim; anchors.fill: parent; anchors.margins: 1; radius: Math.max(0, g.radius - 1); color: "transparent"

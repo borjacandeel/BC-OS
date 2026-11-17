@@ -103,6 +103,8 @@ void AppSettings::reload() {
     QSettings s("BC-OS", "bc-shell");
     s.sync();
     m_reduced = s.value("movimientoReducido", false).toBool();
+    m_solid = s.value("transparenciaReducida", false).toBool();
+    m_contrast = s.value("masContraste", false).toBool();
     m_language = s.value("idioma", "es_ES").toString();
     m_style = s.value("estiloEscritorio", "mac").toString();
     if (m_style != "win" && m_style != "minimal") m_style = "mac";
@@ -133,6 +135,13 @@ void AppSettings::setReducedMotion(bool on) {
     m_reduced = on;
     QSettings("BC-OS", "bc-shell").setValue("movimientoReducido", on);
     emit changed();
+}
+
+void AppSettings::setReduceTransparency(bool on) {
+    reload(); if (on == m_solid) return; m_solid = on; QSettings("BC-OS", "bc-shell").setValue("transparenciaReducida", on); emit changed();
+}
+void AppSettings::setIncreaseContrast(bool on) {
+    reload(); if (on == m_contrast) return; m_contrast = on; QSettings("BC-OS", "bc-shell").setValue("masContraste", on); emit changed();
 }
 
 void AppSettings::setLanguage(const QString &l) {

@@ -126,8 +126,8 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [~] 22. Capa translúcida con desenfoque de fondo al abrir Launchpad
 - [~] 23. Iluminación sutil en botones al pasar el cursor por encima (hover)
 - [~] 24. Sombras internas suaves dentro de campos de texto y barras de búsqueda
-- [ ] 25. Contraste elevado automático en bordes cuando se activa Aumentar Contraste
-- [~] 26. Reducción de transparencia limpia que convierte el cristal en tonos sólidos mate
+- [x] 25. Contraste elevado automático en bordes cuando se activa Aumentar Contraste
+- [x] 26. Reducción de transparencia limpia que convierte el cristal en tonos sólidos mate
 - [x] 27. Degradado imperceptible en el fondo de las barras laterales activas
 - [ ] 28. Efecto de capa de papel iluminado en vistas de lectura y documentos
 - [ ] 29. Sombras proyectadas dinámicas en los iconos del escritorio sobre el wallpaper

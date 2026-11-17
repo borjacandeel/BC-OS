@@ -392,6 +392,12 @@ AppWindow {
                 Row2 { label: qsTr("Sonidos de la interfaz"); value: ""
                        Switch { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
                                 on: Settings.sounds; onToggled: (v) => Settings.sounds = v } }
+                Row2 { label: qsTr("Reducir transparencia"); value: ""
+                       Switch { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                                on: Settings.reduceTransparency; onToggled: (v) => Settings.reduceTransparency = v } }
+                Row2 { label: qsTr("Aumentar contraste"); value: ""
+                       Switch { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                                on: Settings.increaseContrast; onToggled: (v) => Settings.increaseContrast = v } }
             }
         }
 

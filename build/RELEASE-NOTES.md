@@ -10,3 +10,4 @@
 - **Privacidad**: punto naranja en la barra mientras se usa el micrófono y verde con la cámara.
 - **Dock**: barra de progreso sobre el icono de la Tienda mientras instala.
 - **Mission Control**: soltar una ventana en «+» crea un escritorio nuevo con ella.
+- **Accesibilidad** (Ajustes ▸ Aspecto): «Reducir transparencia» (cristal opaco) y «Aumentar contraste» (bordes marcados).
