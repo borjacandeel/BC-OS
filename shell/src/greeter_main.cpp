@@ -1,3 +1,5 @@
+#include <QQuickImageProvider>
+#include <QUrl>
 #include <QCommandLineParser>
 #include <QDebug>
 #include <QFile>
@@ -76,6 +78,26 @@ int main(int argc, char *argv[]) {
 
     g_prev = qInstallMessageHandler(countingHandler);
     QQmlApplicationEngine engine;
+    // «image://blur/<ruta>»: el fondo del usuario muy desenfocado (como el login de macOS), calculado una vez
+    class BlurProvider : public QQuickImageProvider {
+    public:
+        BlurProvider() : QQuickImageProvider(QQuickImageProvider::Image) {}
+        QImage requestImage(const QString &id, QSize *size, const QSize &req) override {
+            QString path = QUrl::fromPercentEncoding(id.toUtf8());
+            QImage src(path);
+            if (src.isNull()) src = QImage(":/BCShell/assets/wallpaper-default.png");
+            const QSize out = req.isValid() ? req : QSize(1920, 1080);
+            src = src.scaled(out, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+            // Reducción por mitades (promedia y quita el tramado) y ampliación suave: desenfoque gaussiano amplio
+            QImage small = src.convertToFormat(QImage::Format_RGB32);
+            while (small.width() > 48) small = small.scaled(small.width() / 2, small.height() / 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+            QImage mid = small.scaled(small.width() * 4, small.height() * 4, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+            QImage res = mid.scaled(src.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+            if (size) *size = res.size();
+            return res;
+        }
+    };
+    engine.addImageProvider("blur", new BlurProvider);
     QObject::connect(&engine, &QQmlEngine::quit, &app, [] { QCoreApplication::exit(0); });   // Qt.quit() de QML
     engine.load(QUrl("qrc:/BCShell/Greeter.qml"));
     if (engine.rootObjects().isEmpty()) return 2;

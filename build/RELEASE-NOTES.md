@@ -11,6 +11,13 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
 
+### Novedades de 0.9.14
+- **Login rehecho como macOS**: tu fondo de pantalla desenfocado, avatar grande, campo de contraseña de vidrio, Reposo /
+  Reiniciar / Apagar abajo y el entorno (BC OS o Dotfiles) en una pastilla discreta.
+- **El login usa tu resolución, frecuencia y escala** (las de Ajustes ▸ Pantallas del último usuario que las cambió).
+- **Esquinas suavizadas** en todo el cristal (barras laterales, paneles, Dock, widgets): ya no se ven pixeladas.
+- **Genio** dibujado fila a fila con bordes suavizados y filtrado: sin escalones ni punteado.
+
 ### Novedades de 0.9.13
 - **Genio de minimizar suave**: franjas de ~3 px en lugar de 32, sin escalones en los bordes del embudo (como macOS).
 - **Mover ventanas**: al arrastrarla, la ventana se «levanta» con la sombra más marcada y vuelve con suavidad al soltarla.

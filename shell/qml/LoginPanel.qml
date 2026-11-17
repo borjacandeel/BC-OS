@@ -32,20 +32,20 @@ Item {
 
         Rectangle {
             id: avatar
-            width: Theme.gg ? 64 : 108; height: width; radius: width / 2
+            width: Theme.gg ? 84 : 108; height: width; radius: width / 2
             anchors.horizontalCenter: parent.horizontalCenter
             gradient: Gradient {
                 GradientStop { position: 0.0; color: "#6E86B8" }
                 GradientStop { position: 1.0; color: "#2C3E66" }
             }
-            border.width: 2
-            border.color: Qt.rgba(1, 1, 1, 0.35)
+            border.width: Theme.gg ? 3 : 2
+            border.color: Qt.rgba(1, 1, 1, Theme.gg ? 0.28 : 0.35)
             Text {
                 anchors.centerIn: parent
                 text: root.displayName.length > 0 ? root.displayName.charAt(0).toUpperCase() : "?"
                 color: Theme.white
                 font.family: Theme.fontFamily
-                font.pixelSize: Theme.gg ? 28 : 46
+                font.pixelSize: Theme.gg ? 36 : 46
                 font.weight: Font.DemiBold
             }
         }
@@ -62,7 +62,7 @@ Item {
 
         Rectangle {
             id: field
-            width: Theme.gg ? 220 : 280; height: Theme.gg ? 34 : 42; radius: height / 2
+            width: Theme.gg ? 240 : 280; height: Theme.gg ? 36 : 42; radius: height / 2
             anchors.horizontalCenter: parent.horizontalCenter
             color: Qt.rgba(1, 1, 1, pw.activeFocus ? 0.20 : 0.14)
             border.width: 1

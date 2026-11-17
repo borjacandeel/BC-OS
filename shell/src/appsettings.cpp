@@ -171,6 +171,13 @@ void AppSettings::setWallpaper(const QString &p) {
     QDir().mkpath(dir);
     QFile f(dir + "/wallpaper");
     if (f.open(QIODevice::WriteOnly | QIODevice::Truncate)) { f.write(p.toUtf8() + "\n"); f.close(); }
+    // El login (usuario «greeter», sin acceso a las carpetas personales) muestra el mismo fondo: copia legible en
+    // /var/lib/bc-greeter (carpeta compartida con permisos 1777)
+    if (QFileInfo(QStringLiteral("/var/lib/bc-greeter")).isWritable()) {
+        const QString dst = QStringLiteral("/var/lib/bc-greeter/fondo-%1").arg(QString::fromUtf8(qgetenv("USER")));
+        QFile::remove(dst);
+        if (!p.isEmpty()) { QFile::copy(p, dst); QFile::setPermissions(dst, QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup | QFileDevice::ReadOther); }
+    }
     notifyPanel("wallpaper", p.isEmpty() ? "-" : p);
     emit changed();
 }

@@ -3,6 +3,16 @@
 #  auto  : aplica el modo preferido (el que anuncia el monitor o la ventana de la máquina virtual)
 #  watch : vigila cambios de pantalla (DRM) y aplica «auto»; así la ventana de VirtualBox/QEMU se adapta al redimensionarla
 cmd="${1:-auto}"
+# Copia para la pantalla de inicio de sesión (usuario «greeter»): la misma resolución, frecuencia y escala
+para_login() {
+  [ -d /var/lib/bc-greeter ] && [ -w /var/lib/bc-greeter ] || return 0
+  f="/var/lib/bc-greeter/pantalla-$(id -un)"
+  { echo "resolucion=$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/bc/resolucion" 2>/dev/null)"
+    echo "frecuencia=$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/bc/frecuencia" 2>/dev/null)"
+    echo "escala=$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/bc/escala" 2>/dev/null)"; } > "$f.tmp" 2>/dev/null && mv -f "$f.tmp" "$f"
+  ln -sfn "$f" /var/lib/bc-greeter/pantalla 2>/dev/null || true
+}
+
 # Frecuencia elegida por el usuario (Ajustes ▸ Pantallas); sin ella, la más alta que admita el monitor
 GHZ="${XDG_CONFIG_HOME:-$HOME/.config}/bc/frecuencia"
 fhz="$(cat "$GHZ" 2>/dev/null)"; case "$fhz" in [0-9][0-9]|[0-9][0-9][0-9]) ;; *) fhz= ;; esac
@@ -11,12 +21,12 @@ GESC="${XDG_CONFIG_HOME:-$HOME/.config}/bc/escala"
 if [ "$cmd" = escala ]; then
   mkdir -p "$(dirname "$GESC")"
   case "$2" in 1|1.25|1.5|1.75|2) echo "$2" > "$GESC" ;; *) rm -f "$GESC" ;; esac
-  exec "$0" inicio
+  para_login; exec "$0" inicio
 fi
 if [ "$cmd" = hz-set ]; then
   mkdir -p "$(dirname "$GHZ")"
   case "$2" in [0-9][0-9]|[0-9][0-9][0-9]) echo "$2" > "$GHZ" ;; *) rm -f "$GHZ" ;; esac
-  exec "$0" inicio
+  para_login; exec "$0" inicio
 fi
 # Hyprland: la frecuencia más alta la pone su configuración («highrr»); aquí solo la resolución elegida por el usuario
 if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
@@ -27,7 +37,7 @@ if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
   # Frecuencia elegida sin resolución elegida: la resolución actual del monitor a esa frecuencia
   actual() { hyprctl monitors -j 2>/dev/null | jq -r '.[0] | "\(.width)x\(.height)"'; }
   case "${1:-auto}" in
-    set) case "$2" in [0-9]*x[0-9]*) mkdir -p "$(dirname "$G")"; echo "$2" > "$G"; hmode "$2@$R" ;; *) exit 2 ;; esac ;;
+    set) case "$2" in [0-9]*x[0-9]*) mkdir -p "$(dirname "$G")"; echo "$2" > "$G"; para_login; hmode "$2@$R" ;; *) exit 2 ;; esac ;;
     auto) [ "${2:-}" = olvidar ] && rm -f "$G"; w="$(cat "$G" 2>/dev/null)"; case "$w" in [0-9]*x[0-9]*) hmode "$w@$R" ;; *) if [ -n "$fhz" ]; then hmode "$(actual)@$fhz"; else hmode highrr; fi ;; esac ;;
     inicio|watch) w="$(cat "$G" 2>/dev/null)"; case "$w" in [0-9]*x[0-9]*) hmode "$w@$R" ;; *) [ -n "$fhz" ] && hmode "$(actual)@$fhz" ;; esac ;;
     seguir) hmode preferred ;;
@@ -49,11 +59,11 @@ case "$cmd" in
     mkdir -p "$(dirname "$GUARDADA")"; echo "$2" > "$GUARDADA"
     # Aplica con la frecuencia elegida (o la más alta); si el monitor o la pantalla virtual no anuncia ese modo, se
     # fuerza como modo propio (--custom), p. ej. las resoluciones de MacBook (1470 × 956…) en una máquina virtual
-    exec "$0" inicio ;;
+    para_login; exec "$0" inicio ;;
   auto|inicio|seguir)
     # «auto» desde Ajustes olvida la resolución guardada; al iniciar sesión («inicio») se respeta.
     # «seguir»: la ventana de la máquina virtual cambió de tamaño (pantalla completa, redimensionar): se adapta a ella
-    [ "$cmd" = auto ] && [ "${2:-}" = olvidar ] && rm -f "$GUARDADA"
+    [ "$cmd" = auto ] && [ "${2:-}" = olvidar ] && { rm -f "$GUARDADA"; para_login; }
     want="$(cat "$GUARDADA" 2>/dev/null)"; [ "$cmd" = seguir ] && want=; case "$want" in [0-9]*x[0-9]*) ;; *) want= ;; esac
     ww="${want%x*}"; wh="${want#*x}"; [ -n "$want" ] || { ww=0; wh=0; }
     # Resolución nativa (la del primer modo) a la frecuencia MÁS ALTA que admita el monitor (60, 100, 120, 144 Hz…):

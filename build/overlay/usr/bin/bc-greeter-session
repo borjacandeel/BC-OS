@@ -12,4 +12,17 @@ fi
 export WLR_RENDERER=pixman WLR_NO_HARDWARE_CURSORS=1 QT_QUICK_BACKEND=software
 export XCURSOR_THEME=McMojave-cursors XCURSOR_SIZE=24
 export QT_QPA_PLATFORM=wayland XDG_SESSION_TYPE=wayland LANG="${LANG:-es_ES.UTF-8}" BC_GREETER_DIR="$D"
-exec cage -s -- /usr/bin/bc-greeter
+# La pantalla del login con la resolución, frecuencia y escala que eligió el último usuario (bc-display)
+exec cage -s -- sh -c '
+P=/var/lib/bc-greeter/pantalla
+if [ -r "$P" ] && command -v wlr-randr >/dev/null 2>&1; then
+  res=$(sed -n "s/^resolucion=//p" "$P"); hz=$(sed -n "s/^frecuencia=//p" "$P"); esc=$(sed -n "s/^escala=//p" "$P")
+  o=$(wlr-randr 2>/dev/null | awk "NR==1{print \$1}")
+  if [ -n "$o" ]; then
+    case "$res" in [0-9]*x[0-9]*) m="$res"; [ -n "$hz" ] && m="$m@${hz}Hz"
+      wlr-randr --output "$o" --mode "$m" 2>/dev/null || wlr-randr --output "$o" --custom-mode "$m" 2>/dev/null ;; esac
+    case "$esc" in 1|1.25|1.5|1.75|2) wlr-randr --output "$o" --scale "$esc" 2>/dev/null ;; esac
+  fi
+fi
+exec /usr/bin/bc-greeter'
+

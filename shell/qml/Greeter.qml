@@ -18,12 +18,23 @@ Window {
     Component.onCompleted: Sessions.selectFor(current.name)
     readonly property var current: userList.length > 0 ? userList[Math.min(userIndex, userList.length - 1)] : ({ name: "bc", display: "BC" })
 
-    Wallpaper { anchors.fill: parent; source: Theme.gg ? "qrc:/BCShell/assets/wallpaper-default.png" : "qrc:/BCShell/assets/wallpaper-login.png" }
+    Wallpaper { anchors.fill: parent; visible: !Theme.gg; source: "qrc:/BCShell/assets/wallpaper-login.png" }
+    // Golden Gate: el fondo del usuario (copia en /var/lib/bc-greeter), desenfocado como el login de macOS.
+    // Desenfoque barato: la imagen se carga diminuta y se amplía con filtrado suave (dos pasadas)
+    Item {
+        anchors.fill: parent; visible: Theme.gg
+        Image {
+            anchors.fill: parent; fillMode: Image.PreserveAspectCrop; smooth: true; asynchronous: true
+            sourceSize: Qt.size(Math.max(640, win.width), Math.max(400, win.height))
+            source: "image://blur/" + encodeURIComponent("/var/lib/bc-greeter/fondo-" + win.current.name)
+        }
+        Rectangle { anchors.fill: parent; color: Qt.rgba(0, 0, 0, 0.18) }
+    }
     Rectangle {
         anchors.fill: parent
         gradient: Gradient {
-            GradientStop { position: 0.0; color: Qt.rgba(0.01, 0.04, 0.10, 0.10) }
-            GradientStop { position: 1.0; color: Qt.rgba(0.01, 0.04, 0.10, 0.55) }
+            GradientStop { position: 0.0; color: Qt.rgba(0.01, 0.04, 0.10, Theme.gg ? 0.05 : 0.10) }
+            GradientStop { position: 1.0; color: Qt.rgba(0.01, 0.04, 0.10, Theme.gg ? 0.40 : 0.55) }
         }
     }
 
@@ -42,7 +53,7 @@ Window {
     LoginPanel {
         id: panel
         anchors.horizontalCenter: parent.horizontalCenter
-        y: Math.round(win.height * (Theme.gg ? 0.66 : 0.42)) + (1 - win.enter) * 30
+        y: Math.round(win.height * (Theme.gg ? 0.60 : 0.42)) + (1 - win.enter) * 30
         opacity: win.enter
         userName: win.current.name
         displayName: win.current.display
@@ -52,28 +63,22 @@ Window {
         Component.onCompleted: focusField()
     }
 
-    // Entorno de escritorio: BC OS (sway) o Dotfiles (bspwm); se recuerda la última elección y la que cada usuario fija en Configuración
-    // Golden Gate: el selector de entorno va arriba a la derecha, discreto (en macOS ahí están los menús de estado)
-    Row {
+    // Entorno de escritorio: pastilla discreta bajo la contraseña (pulsar alterna BC OS / Dotfiles), como el menú de
+    // sesión de los logins de macOS con varias opciones
+    Rectangle {
         visible: Sessions.sessions.length > 1
-        x: Theme.gg ? parent.width - width - 56 : (parent.width - width) / 2
-        y: Theme.gg ? 14 : panel.y + panel.height * panel.scale + (win.userList.length > 1 ? 62 : 10) * panel.scale
-        spacing: 8
+        x: parent.width - width - 24; y: parent.height - height - 24
+        height: 26; width: sesT.implicitWidth + 34; radius: 13
+        color: sesM.containsMouse ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(1, 1, 1, 0.12)
+        border.width: 1; border.color: Qt.rgba(1, 1, 1, 0.16)
         opacity: win.enter
-        Repeater {
-            model: Sessions.sessions
-            delegate: Rectangle {
-                required property var modelData
-                required property int index
-                readonly property bool sel: index === Sessions.current
-                height: Theme.gg ? 26 : 30; width: st.implicitWidth + (Theme.gg ? 22 : 28); radius: height / 2
-                color: sel ? Qt.rgba(1, 1, 1, 0.9) : Qt.rgba(1, 1, 1, 0.14)
-                Behavior on color { ColorAnimation { duration: Theme.dur(120) } }
-                Text { id: st; anchors.centerIn: parent; text: modelData.name; color: sel ? Theme.midnight : Theme.white
-                       font.family: Theme.fontFamily; font.pixelSize: Theme.gg ? 12 : 13; font.weight: sel ? Font.DemiBold : Font.Normal }
-                MouseArea { anchors.fill: parent; onClicked: { Sessions.current = index; panel.focusField() } }
-            }
-        }
+        Text { id: sesT; anchors.centerIn: parent; anchors.horizontalCenterOffset: -5
+               text: Sessions.sessions.length ? Sessions.sessions[Math.max(0, Sessions.current)].name : ""
+               color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 12; font.weight: Font.Medium }
+        Text { anchors.verticalCenter: parent.verticalCenter; anchors.right: parent.right; anchors.rightMargin: 10
+               text: "⌄"; color: Qt.rgba(1, 1, 1, 0.7); font.pixelSize: 11 }
+        MouseArea { id: sesM; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
+                    onClicked: { Sessions.current = (Sessions.current + 1) % Sessions.sessions.length; panel.focusField() } }
     }
 
     // Selector de usuario (solo si hay más de uno).
@@ -97,9 +102,35 @@ Window {
         }
     }
 
-    // macOS 27: apagar, reiniciar y suspender en un menú del icono de encendido, arriba a la derecha
-    Rectangle {
+    // macOS: Reposo, Reiniciar y Apagar abajo, con iconos redondos de vidrio y su nombre
+    Row {
         visible: Theme.gg
+        anchors.horizontalCenter: parent.horizontalCenter
+        anchors.bottom: parent.bottom; anchors.bottomMargin: Math.round(34 * Math.min(1, win.height / 800))
+        spacing: 34
+        opacity: win.enter
+        Repeater {
+            model: [ { i: Icons.suspend, t: qsTr("Reposo"), a: "suspend" }, { i: Icons.reboot, t: qsTr("Reiniciar"), a: "reboot" },
+                     { i: Icons.shutdown, t: qsTr("Apagar"), a: "poweroff" } ]
+            Column {
+                required property var modelData
+                spacing: 6
+                Rectangle {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: 40; height: 40; radius: 20
+                    color: pbm.containsMouse ? Qt.rgba(1, 1, 1, 0.26) : Qt.rgba(1, 1, 1, 0.14)
+                    border.width: 1; border.color: Qt.rgba(1, 1, 1, 0.18)
+                    Behavior on color { ColorAnimation { duration: Theme.dur(140) } }
+                    Icon { anchors.centerIn: parent; name: modelData.i; size: 18; color: Theme.white }
+                    MouseArea { id: pbm; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: dialog.open(modelData.a) }
+                }
+                Text { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.t; color: Qt.rgba(1, 1, 1, 0.85)
+                       font.family: Theme.fontFamily; font.pixelSize: 12 }
+            }
+        }
+    }
+    Rectangle {
+        visible: false
         x: parent.width - width - 14; y: 9; width: 28; height: 28; radius: 14
         color: pwm.containsMouse ? Qt.rgba(1, 1, 1, 0.22) : "transparent"; opacity: win.enter
         Icon { anchors.centerIn: parent; name: Icons.shutdown; size: 16; color: Theme.white }

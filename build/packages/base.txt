@@ -33,6 +33,7 @@ libnewt
 plymouth
 greetd
 cage
+wlr-randr
 firefox
 brightnessctl
 bluez
