@@ -174,9 +174,10 @@ install -D -m644 /dev/stdin "$R/usr/share/icons/default/index.theme" <<'CUR'
 Inherits=McMojave-cursors
 CUR
 
-# Reducción de tamaño (imagen para máquinas virtuales UEFI; BC_KEEP_FIRMWARE=1 conserva todo el firmware).
-# Se quitan los firmware de GPU/CPU x86 y se mantienen los de Wi-Fi/Bluetooth (atheros, broadcom, mediatek, realtek).
-if [[ "${BC_KEEP_FIRMWARE:-0}" != "1" ]]; then
+# Reducción de tamaño solo en ARM64 (máquinas virtuales; BC_KEEP_FIRMWARE=1 conserva todo el firmware): se quitan los
+# firmware de GPU/CPU x86 y se mantienen los de Wi-Fi/Bluetooth. En x86_64 se instala en PCs reales: sin el firmware
+# de amdgpu/radeon/nvidia/intel la GPU no acelera (AMD ni siquiera da imagen) y todo va lento y con fallos.
+if [[ "${BC_KEEP_FIRMWARE:-0}" != "1" && "${BC_ARCH:-aarch64}" != x86_64 ]]; then
   FW="$(sh "pacman -Qq | grep -E '^linux-firmware-(amd|amdgpu|intel|nvidia|radeon|cirrus|ti|other)$' | tr '\n' ' '")"
   [[ -n "$FW" ]] && sh "pacman -Rdd --noconfirm --disable-sandbox $FW" || true
 fi
