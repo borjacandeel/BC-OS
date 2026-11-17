@@ -232,11 +232,11 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [~] 128. Marco de selección translúcido al arrastrar en el escritorio
 - [x] 129. Nombres de archivo del escritorio con sombra para legibilidad
 - [x] 130. Resaltado ovalado azul del nombre de un archivo seleccionado en el escritorio
-- [ ] 131. Espacio superior reservado para que las ventanas maximizadas no tapen la barra
-- [ ] 132. Escritorios numerados con miniaturas arriba en Mission Control
-- [ ] 133. Fondo desenfocado detrás de cada escritorio en Mission Control
-- [ ] 134. Etiquetas con el nombre de cada ventana al pasar el cursor en Mission Control
-- [ ] 135. Arrastrar una ventana al borde superior en Mission Control crea un escritorio
+- [x] 131. Espacio superior reservado para que las ventanas maximizadas no tapen la barra
+- [x] 132. Escritorios numerados con miniaturas arriba en Mission Control
+- [x] 133. Fondo desenfocado detrás de cada escritorio en Mission Control
+- [x] 134. Etiquetas con el nombre de cada ventana al pasar el cursor en Mission Control
+- [x] 135. Arrastrar una ventana al borde superior en Mission Control crea un escritorio
 - [x] 136. Puntero negro con borde blanco nítido y sombra sutil
 - [ ] 137. Aumento temporal del puntero al agitarlo
 - [x] 138. Barras de desplazamiento ocultas que aparecen al desplazar

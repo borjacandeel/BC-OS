@@ -78,8 +78,13 @@ Item {
         }
         // Añadir escritorio
         Rectangle {
-            width: px(56); height: px(108); radius: px(8); color: Qt.rgba(1, 1, 1, addMa.containsMouse ? 0.22 : 0.12)
+            width: px(56); height: px(108); radius: px(8); color: Qt.rgba(1, 1, 1, addMa.containsMouse || addDrop.containsDrag ? 0.22 : 0.12)
             Text { anchors.centerIn: parent; text: "+"; color: "white"; font.pixelSize: px(30); font.weight: Font.Light }
+            // Soltar una ventana aquí crea un escritorio nuevo con ella (como arrastrarla arriba en macOS)
+            DropArea { id: addDrop; anchors.fill: parent; keys: ["bc-window"]
+                       onDropped: (d) => { let n = 1; for (const w of mc.spaces) n = Math.max(n, w.num + 1); Sway.moveToWorkspace(d.source.winId, String(n)) } }
+            scale: addDrop.containsDrag ? 1.15 : 1
+            Behavior on scale { NumberAnimation { duration: Theme.d(160); easing.type: Easing.OutCubic } }
             MouseArea { id: addMa; anchors.fill: parent; hoverEnabled: true
                         onClicked: { let n = 1; for (const w of mc.spaces) n = Math.max(n, w.num + 1); Sway.switchWorkspace(String(n)); mc.close() } }
         }
