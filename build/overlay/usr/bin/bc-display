@@ -31,7 +31,7 @@ fi
 # Hyprland: la frecuencia más alta la pone su configuración («highrr»); aquí solo la resolución elegida por el usuario
 if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
   G="${XDG_CONFIG_HOME:-$HOME/.config}/bc/resolucion"
-  HE="$(cat "$GESC" 2>/dev/null)"; case "$HE" in 1|1.25|1.5|1.75|2) ;; *) HE=auto ;; esac
+  HE="$(cat "$GESC" 2>/dev/null)"; case "$HE" in 1|1.25|1.5|1.75|2) ;; *) HE=1 ;; esac
   hmode() { hyprctl eval "hl.monitor({ output = \"\", mode = \"$1\", position = \"auto\", scale = \"$HE\" })" >/dev/null 2>&1; }
   R="${fhz:-60}"
   # Frecuencia elegida sin resolución elegida: la resolución actual del monitor a esa frecuencia
@@ -39,7 +39,13 @@ if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
   case "${1:-auto}" in
     set) case "$2" in [0-9]*x[0-9]*) mkdir -p "$(dirname "$G")"; echo "$2" > "$G"; para_login; hmode "$2@$R" ;; *) exit 2 ;; esac ;;
     auto) [ "${2:-}" = olvidar ] && rm -f "$G"; w="$(cat "$G" 2>/dev/null)"; case "$w" in [0-9]*x[0-9]*) hmode "$w@$R" ;; *) if [ -n "$fhz" ]; then hmode "$(actual)@$fhz"; else hmode highrr; fi ;; esac ;;
-    inicio|watch) w="$(cat "$G" 2>/dev/null)"; case "$w" in [0-9]*x[0-9]*) hmode "$w@$R" ;; *) [ -n "$fhz" ] && hmode "$(actual)@$fhz" ;; esac ;;
+    inicio|watch) w="$(cat "$G" 2>/dev/null)"
+      case "$w" in [0-9]*x[0-9]*) hmode "$w@$R" ;;
+        # Sin resolución elegida: la nativa a su frecuencia más alta (solo modos de esa misma resolución)
+        *) nat="$(hyprctl monitors -j 2>/dev/null | jq -r '.[0] | "\(.width)x\(.height)"')"
+           best="$(hyprctl monitors -j 2>/dev/null | jq -r --arg n "$nat" '[.[0].availableModes[] | select(startswith($n + "@")) | sub(".*@"; "") | sub("Hz"; "") | tonumber] | max // 60')"
+           hmode "$nat@${fhz:-$best}" ;;
+      esac ;;
     seguir) hmode preferred ;;
     list) hyprctl monitors -j 2>/dev/null | jq -r '.[0].availableModes[]' | sed 's/@.*//' | sort -u -t x -k1,1nr -k2,2nr ;;
     hz) hyprctl monitors -j 2>/dev/null | jq -r '.[0] as $m | $m.availableModes[] | select(startswith("\($m.width)x\($m.height)@"))

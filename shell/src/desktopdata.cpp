@@ -844,7 +844,7 @@ static QString cornersPath() { return QStandardPaths::writableLocation(QStandard
 bool QuickTools::roundedCorners() {
     QFile f(cornersPath());
     if (f.open(QIODevice::ReadOnly)) return QString::fromUtf8(f.readAll()).trimmed() == "si";
-    return !qEnvironmentVariableIsEmpty("BC_FX");   // de serie: activadas si la sesión las da por GPU (swayfx/Hyprland)
+    return true;   // de serie: activadas siempre (swayfx o Hyprland)
 }
 bool QuickTools::setRoundedCorners(bool on) {
     QDir().mkpath(QFileInfo(cornersPath()).absolutePath());

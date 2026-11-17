@@ -28,6 +28,9 @@ public:
     void setFlathub(bool on);
     bool flatpakAvailable() const;
 
+    Q_INVOKABLE bool isInstalled(const QString &name) const;   // pacman -Q (instantáneo, base de datos local)
+    Q_PROPERTY(int stamp READ stamp NOTIFY stampChanged)        // cambia tras instalar/quitar: refresca los botones
+    int stamp() const { return m_stamp; }
     Q_INVOKABLE void search(const QString &query);     // repositorios
     Q_INVOKABLE void listInstalled();                   // paquetes explícitos instalados
     Q_INVOKABLE void showDetails(const QString &name);
@@ -43,6 +46,7 @@ public:
     static bool validFlatpakId(const QString &id);
     static QStringList sudoArgs(const QStringList &pacmanArgs);
 signals:
+    void stampChanged();
     void busyChanged();
     void logChanged();
     void detailsChanged();
@@ -51,6 +55,7 @@ signals:
     void finished(bool ok, const QString &action);
 
 private:
+    int m_stamp = 0;
     void runRead(const QStringList &args, std::function<void(const QString &)> done);
     void runPrivileged(const QStringList &pacmanArgs, const QString &password, const QString &action);
     void runPolkit(const QStringList &args, const QString &action);

@@ -436,9 +436,11 @@ LayerWindow {
 
     // Notificación emergente
     LayerWindow {
-        layer: "top"; edges: ["top", "right"]; margins: [UiState.topInset + Math.round(14 * root.u), Math.round(14 * root.u), 0, 0]; scope: "bc-notify"
-        width: Math.round(321 * root.u); height: Math.round(80 * root.u)
+        layer: "top"; edges: ["top", "right"]; margins: [UiState.topInset + Math.round(14 * root.u) - 16, Math.round(14 * root.u) - 20, 0, 0]; scope: "bc-notify"
+        width: Math.round(321 * root.u) + 40; height: Math.round(80 * root.u) + 36
         shown: (Notifications.visible || root.notifLeaving) && !UiState.locked && !UiState.splashing
+        // Margen alrededor de la tarjeta: la sombra y el brillo del cristal no se cortan en el borde de la superficie
+        Item { x: 20; y: 16
         NotificationCard {
             id: notifCard
             // Deslizar hacia la derecha para descartar (como en macOS); si no llega, vuelve a su sitio
@@ -452,6 +454,7 @@ LayerWindow {
             title: Notifications.title
             body: Notifications.body
             onDismissed: Notifications.dismiss()
+        }
         }
         // La tarjeta vive en su propia superficie (siempre «visible»): la entrada se dispara con cada aviso
         Connections { target: Notifications; function onChanged() {

@@ -40,8 +40,11 @@ acelerado() {
   r="$(timeout 5 eglinfo -B 2>/dev/null | grep -m1 -i 'renderer')"
   [ -n "$r" ] || return 1
   echo "$r" | grep -qiE 'llvmpipe|softpipe|swrast|software' && return 1
-  # Cualquier GPU de verdad (dedicada o integrada; también NVIDIA con nouveau): Hyprland. Si no arranca o muere
-  # enseguida, la sesión pasa sola a sway (más abajo). ~/.config/bc/compositor = sway lo desactiva.
+  # NVIDIA con el controlador libre (nouveau): sin control de frecuencias la GPU va al mínimo y Hyprland se arrastra
+  # (probado en una GT 710: animaciones a saltos). Ahí sway con esquinas por GPU (swayfx) es mucho más fluido.
+  # Hyprland: «hyprland» en ~/.config/bc/compositor. Cualquier otra GPU real (Intel, AMD, NVIDIA propietario): Hyprland.
+  echo "$r" | grep -qiE 'nouveau|NV[0-9A-F]{2,3}\b|GK[0-9]|GM[0-9]|GF[0-9]' && return 1
+  lsmod 2>/dev/null | grep -q '^nouveau' && ! lsmod | grep -q '^nvidia' && return 1
   return 0
 }
 # GPU de verdad (incluida NVIDIA con nouveau), no OpenGL por software: para las esquinas de swayfx
@@ -71,14 +74,18 @@ sway_software() {
   # Sin 3D también hay esquinas redondeadas: swayfx con OpenGL ES por software (llvmpipe), solo esquinas
   # (sin sombras ni desenfoque). Si no arranca o muere enseguida, sway clásico con pixman, que siempre funciona.
   # Opcional (Ajustes ▸ General): por software cuesta mucha CPU, así que de serie se usa pixman, que es lo más fluido
-  # Con GPU real (aunque sea modesta: NVIDIA con nouveau, Intel antigua…) las esquinas van por GPU y cuestan poco:
-  # swayfx de serie. Sin GPU, solo si se activa en Ajustes ▸ General («si» en ~/.config/bc/esquinas).
+  # Esquinas redondeadas en TODAS las ventanas, siempre de serie: swayfx (por GPU si la hay; sin GPU, OpenGL ES por
+  # software, solo esquinas). Se quitan con «no» en ~/.config/bc/esquinas (Ajustes ▸ General) si un equipo va lento.
   ESQ="$(cat "$CFG/esquinas" 2>/dev/null)"
   GPU=0; gpu_real && GPU=1
-  if [ -x /opt/swayfx/bin/sway ] && ! grep -qw "bc.fx=0" /proc/cmdline && { [ "$ESQ" = si ] || { [ $GPU = 1 ] && [ "$ESQ" != no ]; }; }; then
+  if [ -x /opt/swayfx/bin/sway ] && ! grep -qw "bc.fx=0" /proc/cmdline && [ "$ESQ" != no ]; then
     export BC_FX=ligero
     # Con GPU, BC Shell y las apps Qt también dibujan con OpenGL (la CPU queda libre: sin «your system is too slow»)
-    if [ $GPU = 1 ]; then unset WLR_RENDERER WLR_RENDERER_ALLOW_SOFTWARE QT_QUICK_BACKEND; else export WLR_RENDERER=gles2 WLR_RENDERER_ALLOW_SOFTWARE=1; fi
+    if [ $GPU = 1 ]; then unset WLR_RENDERER WLR_RENDERER_ALLOW_SOFTWARE QT_QUICK_BACKEND; else
+      # Sin GPU (máquinas virtuales): OpenGL ES por software (llvmpipe sobre kms_swrast). Sin esto, en VMware/VMSVGA el
+      # controlador virtual sin 3D hacía fallar EGL y se perdían las esquinas
+      export WLR_RENDERER=gles2 WLR_RENDERER_ALLOW_SOFTWARE=1 LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe
+    fi
     bc-wm-mode init >> "$LOG" 2>&1
     t1=$(date +%s)
     /opt/swayfx/bin/sway -c "${XDG_RUNTIME_DIR:-/tmp}/bc-sway.conf" >> "$LOG" 2>&1
@@ -88,7 +95,7 @@ sway_software() {
   fi
   export QT_QUICK_BACKEND=software
   export WLR_RENDERER=pixman
-  unset BC_FX WLR_RENDERER_ALLOW_SOFTWARE
+  unset BC_FX WLR_RENDERER_ALLOW_SOFTWARE LIBGL_ALWAYS_SOFTWARE GALLIUM_DRIVER
   bc-wm-mode init >> "$LOG" 2>&1
   sway -c "${XDG_RUNTIME_DIR:-/tmp}/bc-sway.conf" >> "$LOG" 2>&1
 }

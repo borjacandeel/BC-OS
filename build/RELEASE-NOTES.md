@@ -11,6 +11,15 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
 
+### Novedades de 0.9.17
+- **PC con NVIDIA (nouveau)**: vuelve a sway con esquinas por GPU (Hyprland iba a saltos sin control de frecuencias).
+- **Resolución nativa a la primera** también con Hyprland (antes podía elegir otra resolución y escala ×1,5–2).
+- **Esquinas redondeadas en todas las ventanas siempre de serie** (también en máquinas virtuales, por software).
+- **Liquid Glass al máximo de serie** (sin tinte).
+- **Tienda**: catálogo al día antes de instalar (antes fallaba con la lista vieja), botón «Obtener/Quitar» según lo
+  instalado de verdad, destacadas que existen en ARM y x86.
+- **Avisos** sin sombra cortada en los bordes.
+
 ### Novedades de 0.9.16
 - **Liquid Glass como en liquid-glass-react**: desenfoque ligero (se ve el fondo curvado por la lente), tinte mínimo
   de serie (Ajustes ▸ Aspecto lo sube si quieres más contraste) y anillo especular.

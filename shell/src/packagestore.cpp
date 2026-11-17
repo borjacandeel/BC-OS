@@ -1,3 +1,4 @@
+#include <QDir>
 #include <QFileInfo>
 #include "packagestore.h"
 #include <QRegularExpression>
@@ -152,7 +153,16 @@ QStringList PackageStore::sudoArgs(const QStringList &pacmanArgs) {
     return QStringList{"-S", "-p", "", "--", "pacman"} + pacmanArgs;
 }
 
-void PackageStore::setBusy(bool b) { if (b != m_busy) { m_busy = b; emit busyChanged(); } }
+void PackageStore::setBusy(bool b) {
+    if (b == m_busy) return;
+    m_busy = b; emit busyChanged();
+    if (!b) { ++m_stamp; emit stampChanged(); }
+}
+bool PackageStore::isInstalled(const QString &name) const {
+    static const QRegularExpression ok("^[a-z0-9@_+][a-z0-9@._+-]{0,127}$");
+    if (!ok.match(name).hasMatch()) return false;
+    return QFileInfo::exists(QStringLiteral("/var/lib/pacman/local")) && !QDir(QStringLiteral("/var/lib/pacman/local")).entryList({name + "-*"}, QDir::Dirs).filter(QRegularExpression("^" + QRegularExpression::escape(name) + "-[^-]+-[^-]+$")).isEmpty();
+}
 
 void PackageStore::runRead(const QStringList &args, std::function<void(const QString &)> done) {
     const QString exe = QStandardPaths::findExecutable("pacman");
@@ -247,7 +257,7 @@ bool PackageStore::passwordless() { return usePkexec(); }
 void PackageStore::install(const QString &name, const QString &password) {
     if (m_flathub) { if (!validFlatpakId(name)) return; runFlatpakWrite({"install", "--user", "-y", "--noninteractive", "flathub", "--", name}, "install"); return; }
     if (usePkexec()) { runPolkit({"instalar", name}, "install"); return; }
-    runPrivileged({"-S", "--noconfirm", "--needed", "--", name}, password, "install");
+    runPrivileged({"-Sy", "--noconfirm", "--needed", "--", name}, password, "install");
 }
 void PackageStore::remove(const QString &name, const QString &password) {
     if (m_flathub) { if (!validFlatpakId(name)) return; runFlatpakWrite({"uninstall", "--user", "-y", "--noninteractive", "--", name}, "remove"); return; }

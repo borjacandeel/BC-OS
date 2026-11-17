@@ -5,7 +5,8 @@ set -eu
 op="${1:-}"; pkg="${2:-}"
 valid() { printf '%s' "$1" | grep -Eq '^[a-z0-9@_+][a-z0-9@._+-]{0,127}$'; }
 case "$op" in
-  instalar) valid "$pkg" || { echo "Nombre de paquete no válido" >&2; exit 2; }; exec pacman -S --noconfirm --needed -- "$pkg" ;;
+  instalar) valid "$pkg" || { echo "Nombre de paquete no válido" >&2; exit 2; }; pacman -Sy --noconfirm >/dev/null 2>&1 || true   # catálogo al día: sin esto, con la lista vieja la descarga da 404
+            exec pacman -S --noconfirm --needed -- "$pkg" ;;
   quitar)   valid "$pkg" || { echo "Nombre de paquete no válido" >&2; exit 2; }
             case "$pkg" in bc-os|bc-shell|bc-core|bc-escritorio|base|linux|linux-aarch64|systemd|pacman|sudo|sway|greetd)
               echo "«$pkg» es parte del sistema y no se puede quitar desde la Tienda" >&2; exit 3 ;; esac

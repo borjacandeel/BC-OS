@@ -60,8 +60,8 @@ AppWindow {
         { id: "vlc", name: "VLC", desc: qsTr("Reproduce cualquier vídeo y música"), c: "#FF8800" },
         { id: "thunderbird", name: "Thunderbird", desc: qsTr("Correo, calendario y contactos"), c: "#0A84FF" },
         { id: "krita", name: "Krita", desc: qsTr("Pintura digital"), c: "#3BABFF" },
-        { id: "obs-studio", icon: "com.obsproject.Studio", name: "OBS Studio", desc: qsTr("Graba y emite tu pantalla"), c: "#302E31" },
-        { id: "code", icon: "code-oss", name: "Code - OSS", desc: qsTr("Editor de código"), c: "#23A9F2" }
+        { id: "kdenlive", icon: "kdenlive", name: "Kdenlive", desc: qsTr("Edición de vídeo"), c: "#1D99F3" },
+        { id: "audacity", icon: "audacity", name: "Audacity", desc: qsTr("Graba y edita audio"), c: "#0000CC" }
     ]
     readonly property var categories: [
         { k: "office", t: qsTr("Productividad"), q: "office", i: "x-office-document" },
@@ -145,8 +145,9 @@ AppWindow {
     // Botón «Obtener» de App Store: cápsula gris con texto del color de resalte
     component GetButton: Rectangle {
         id: gb
-        property bool installed: false
         property string pkg
+        // Instalada o no según la base de datos local (se vuelve a mirar tras cada instalación)
+        property bool installed: Store.stamp >= 0 && pkg !== "" && Store.isInstalled(pkg)
         width: Math.max(72, gt.implicitWidth + 28); height: 26; radius: 13
         color: Theme.lightUi ? "#EEEEF0" : Qt.rgba(1, 1, 1, 0.12)
         opacity: Store.busy ? 0.5 : 1
@@ -238,7 +239,7 @@ AppWindow {
                     Text { text: model.desc; color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 12; width: parent.width; elide: Text.ElideRight }
                     Text { text: model.version + (model.repo !== "" ? " · " + model.repo : ""); color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 11 }
                 }
-                GetButton { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; installed: model.installed; pkg: model.id }
+                GetButton { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; pkg: model.id; installed: model.installed || (Store.stamp >= 0 && Store.isInstalled(model.id)) }
                 Rectangle { x: 72; anchors.bottom: parent.bottom; width: parent.width - 72; height: 1; color: Theme.hairline }
             }
             Text { visible: Store.count === 0; anchors.centerIn: parent; color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 15

@@ -3,7 +3,9 @@
 -- Atajos iguales que en la sesión sway: lista completa en /etc/bc/atajos.txt
 
 ---------------- Pantalla y entrada ----------------
-hl.monitor({ output = "", mode = "highrr", position = "auto", scale = "auto" })   -- la frecuencia más alta del monitor
+-- Resolución NATIVA del monitor («preferred») y escala 1: «highrr» podía elegir otra resolución (la de más Hz) y
+-- «auto» agrandaba todo en algunos monitores. La frecuencia más alta y la escala por ppp las aplica bc-display.
+hl.monitor({ output = "", mode = "preferred", position = "auto", scale = 1 })
 
 local function leer(ruta) local f = io.open(ruta, "r"); if not f then return nil end; local s = f:read("*l"); f:close(); return s end
 local home = os.getenv("HOME") or "/root"

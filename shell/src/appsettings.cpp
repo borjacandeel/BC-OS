@@ -92,7 +92,7 @@ void AppSettings::reload() {
     m_widgets = s.value("widgets", true).toBool();
     m_mode = s.value("modo", "").toString();
     m_appearance = s.value("aspecto", "dark").toString();
-    m_glass = qBound(0.0, s.value("cristal", 0.12).toDouble(), 1.0);
+    m_glass = qBound(0.0, s.value("cristal", 0.0).toDouble(), 1.0);
     m_dockAutohide = s.value("dockOcultar", false).toBool();
     m_dockMagnify = s.value("dockAmpliar", true).toBool();
     m_dockSize = qBound(32, s.value("dockTamano", 49).toInt(), 96);
