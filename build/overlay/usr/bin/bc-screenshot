@@ -5,7 +5,8 @@ DIR="$(xdg-user-dir PICTURES 2>/dev/null || echo "$HOME/Imágenes")"
 mkdir -p "$DIR"
 F="$DIR/captura-$(date +%F_%H-%M-%S).png"
 case "${1:-pantalla}" in
-  area)    G="$(slurp)" || exit 0; grim -g "$G" "$F" ;;
+  # Como macOS: la pantalla se oscurece y la zona elegida queda iluminada, con borde fino y medidas
+  area)    G="$(slurp -d -b 00000066 -c ffffffcc -s 00000000 -w 1)" || exit 0; grim -g "$G" "$F" ;;
   ventana) if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then G="$(hyprctl -j activewindow | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')"
            else G="$(swaymsg -t get_tree | jq -r '.. | select(.focused?==true) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')"; fi; grim -g "$G" "$F" ;;
   *)       grim "$F" ;;

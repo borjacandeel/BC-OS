@@ -253,7 +253,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 149. Ventana flotante de definición (diccionario)
 - [x] 150. HUD translúcidos centrados para volumen y brillo
 - [x] 151. Miniatura flotante abajo a la derecha tras una captura
-- [ ] 152. Selección de captura con zona iluminada y resto oscurecido
+- [x] 152. Selección de captura con zona iluminada y resto oscurecido
 - [~] 153. Anillo de enfoque alrededor de campos activos al navegar con Tab
 - [ ] 154. Animación de expansión del anillo de enfoque
 - [ ] 155. Cursor de texto fino con parpadeo suave
