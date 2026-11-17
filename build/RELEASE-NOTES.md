@@ -6,3 +6,4 @@
 - **Dock**: globo rojo con el número de avisos de cada app, como macOS.
 - **Escritorio**: nombre seleccionado en óvalo azul.
 - **Liquid Glass con tinte ambiental**: el cristal toma un poco del color del fondo de pantalla.
+- **Fondos dinámicos**: los fondos con versión de día y de noche (bosque, lago, pinar, nieve, salvia, dunas) cambian solos con el aspecto claro/oscuro.

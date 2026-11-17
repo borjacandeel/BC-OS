@@ -81,6 +81,7 @@ signals:
     void changed();
 
 private:
+    void dynamicWallpaper();
     bool m_reduced = false;
     QString m_language = "es_ES";
     QString m_style = "mac";

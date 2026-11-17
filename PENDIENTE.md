@@ -217,7 +217,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [~] 113. Widgets de escritorio que se vuelven monocromos/translúcidos al perder el foco
 - [x] 114. Escritorio limpio por defecto con iconos alineados a la derecha
 - [ ] 115. Pilas automáticas en el escritorio que agrupan archivos por tipo
-- [ ] 116. Fondos dinámicos que cambian de luz según la hora del día
+- [x] 116. Fondos dinámicos que cambian de luz según la hora del día
 - [ ] 117. Salvapantallas en movimiento lento que se congelan al iniciar sesión
 - [x] 118. Menú BC fijo en la esquina superior izquierda
 - [x] 119. Nombre de la aplicación activa en negrita junto al menú BC

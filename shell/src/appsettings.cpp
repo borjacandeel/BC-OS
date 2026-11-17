@@ -20,8 +20,10 @@ AppSettings::AppSettings(QObject *parent) : QObject(parent) {
         const bool first = last < 0; last = d; emit changed();
         // GTK, Qt de terceros y barras de título siguen el cambio de la tarde/mañana
         if (!first) { const QString exe = QStandardPaths::findExecutable("bc-appearance"); if (!exe.isEmpty()) QProcess::startDetached(exe, {"auto"}); }
+        dynamicWallpaper();
     } });
     t->start();
+    QTimer::singleShot(0, this, [this] { dynamicWallpaper(); });   // al abrir: el fondo de la hora actual
 }
 
 bool AppSettings::darkNow() const {
@@ -63,6 +65,24 @@ void AppSettings::setAppearance(const QString &a) {
     // GTK, Qt y sway siguen el aspecto (bc-appearance aplica gsettings y colores de las barras de título)
     const QString exe = QStandardPaths::findExecutable("bc-appearance");
     if (!exe.isEmpty()) QProcess::startDetached(exe, {v});
+    dynamicWallpaper();
+}
+// Fondos dinámicos (como macOS): los que tienen versión de día y de noche cambian con el aspecto claro/oscuro
+void AppSettings::dynamicWallpaper() {
+    static const QList<QPair<QString, QString>> pares{
+        {"bosque-niebla", "bosque-noche"}, {"pinar-alba", "luna"}, {"lago-claro", "lago-noche"},
+        {"nieve", "aurora-boreal"}, {"salvia", "bruma-verde"}, {"dunas", "dunas-noche"}};
+    const QFileInfo fi(m_wallpaper);
+    if (fi.suffix() != "jpg") return;
+    const bool dark = darkNow();
+    for (const auto &p : pares) {
+        const QString want = dark ? p.second : p.first;
+        if ((fi.completeBaseName() == p.first || fi.completeBaseName() == p.second) && fi.completeBaseName() != want) {
+            const QString other = fi.absolutePath() + "/" + want + ".jpg";
+            if (QFileInfo(other).isFile()) setWallpaper(other);
+            return;
+        }
+    }
 }
 void AppSettings::setGlassTint(double v) {
     v = qBound(0.0, v, 1.0);
