@@ -12,15 +12,15 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - ARM64 únicamente. Base Arch Linux ARM.
 
 ## Pendiente del creador 2026-11-17 (tarde)
-- [ ] Recordatorios: con más de 2 se salen del widget (limitar filas al alto o «y N más»).
-- [ ] Ajustes ▸ General: «Buscar actualizaciones» → minimenú con versión actual, novedades y botón Actualizar.
-- [ ] Escritorio: clic derecho en iconos → Obtener información, Renombrar, Copiar, Pegar (como Finder).
-- [ ] Arrastrar archivos (escritorio/Archivos) a la Papelera del Dock.
-- [ ] Menú de la Papelera (Vaciar…): aspecto raro y esquinas poco redondeadas → rehacer menús contextuales.
-- [ ] Iconos que se ven mal al 200 % → SVG/sourceSize según devicePixelRatio en todos los iconos.
-- [ ] Animaciones de cerrar y agrandar como macOS.
-- [ ] Doble clic en la barra de título → ocupar la pantalla; otra vez → tamaño original (ahora va a pantalla completa).
-- [ ] Log: «for_window [shell=xdg_shell] … doesn't support client side decorations» → excluir bc-* de la regla CSD.
+- [x] Recordatorios: con más de 2 se salen del widget (limitar filas al alto o «y N más»).
+- [x] Ajustes ▸ General: «Buscar actualizaciones» → minimenú con versión actual, novedades y botón Actualizar.
+- [x] Escritorio: clic derecho en iconos → Obtener información, Renombrar, Copiar, Pegar (como Finder).
+- [x] Arrastrar archivos (escritorio/Archivos) a la Papelera del Dock.
+- [x] Menú de la Papelera (Vaciar…): aspecto raro y esquinas poco redondeadas → rehacer menús contextuales.
+- [x] Iconos que se ven mal al 200 % → SVG/sourceSize según devicePixelRatio en todos los iconos.
+- [x] Animaciones de cerrar y agrandar como macOS.
+- [x] Doble clic en la barra de título → ocupar la pantalla; otra vez → tamaño original (ahora va a pantalla completa).
+- [x] Log: «for_window [shell=xdg_shell] … doesn't support client side decorations» → excluir bc-* de la regla CSD.
 - [x] Dock: arrastrar iconos como macOS, «Quitar del Dock», minimizadas con miniatura; fish con colores; bc-actualizar sin conflictos.
 
 ## Animaciones de macOS a replicar (lista del creador, 73). Estado: [x] hecho · [~] parcial · [ ] falta
@@ -54,7 +54,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 27 Notificaciones y widgets deslizándose
 - [ ] 28 Reacciones en videollamadas
 - [ ] 29 Duplicación del iPhone
-- [ ] 30 Captura de pantalla → miniatura flotante abajo a la derecha
+- [x] 30 Captura de pantalla → miniatura flotante abajo a la derecha
 - [x] 31 Hojas de diálogo (Sheets)
 - [~] 32 Vista rápida (zoom de expansión)
 - [ ] 33 Desplazamiento en columnas del Finder
@@ -62,7 +62,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 35 Vuelo de archivos al Dock o carpetas
 - [ ] 36 Carpetas en Launchpad
 - [~] 37 Pilas del Dock (abanico/cuadrícula)
-- [ ] 38 Nube de humo «poof» al sacar un icono del Dock
+- [x] 38 Nube de humo «poof» al sacar un icono del Dock
 - [ ] 39 Smart Zoom con doble toque
 - [ ] 40 Deslizar historial atrás/adelante (navegador)
 - [ ] 41 Vista general de pestañas (navegador)
@@ -226,7 +226,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 123. Búsqueda dentro del menú Ayuda que señala la opción en los menús
 - [~] 124. Previsualización enriquecida en el panel derecho de Spotlight
 - [ ] 125. Dock a la izquierda o derecha manteniendo su estética
-- [ ] 126. Nube de humo (Poof) al sacar un icono del Dock
+- [x] 126. Nube de humo (Poof) al sacar un icono del Dock
 - [ ] 127. Progreso de descarga sobre el icono en el Dock
 - [~] 128. Marco de selección translúcido al arrastrar en el escritorio
 - [ ] 129. Nombres de archivo del escritorio con sombra para legibilidad
@@ -251,7 +251,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 148. Lupa circular con cuadrícula de píxeles en el selector de color
 - [ ] 149. Ventana flotante de definición (diccionario)
 - [x] 150. HUD translúcidos centrados para volumen y brillo
-- [ ] 151. Miniatura flotante abajo a la derecha tras una captura
+- [x] 151. Miniatura flotante abajo a la derecha tras una captura
 - [ ] 152. Selección de captura con zona iluminada y resto oscurecido
 - [~] 153. Anillo de enfoque alrededor de campos activos al navegar con Tab
 - [ ] 154. Animación de expansión del anillo de enfoque
