@@ -140,6 +140,7 @@ LayerWindow {
             // La ventana se oculta cuando el genio ya está encima (Genie.began), no antes
             if (!ok) { Sway.minimizeWindow(g.id); root.geniePending = null; return }
             const s = Object.assign({}, root.genieShots); s[g.id] = { path: path, rect: g.rect }; root.genieShots = s
+            const ms = Object.assign({}, UiState.minShots); ms[g.id] = "file://" + path; UiState.minShots = ms
             genieWin.shown = true
             genie.run("file://" + path, g.rect, Qt.point(dockGG.minimizeTarget.x + dockWin.originX, dockGG.minimizeTarget.y + dockWin.originY), dockGG.bs, false)
         }

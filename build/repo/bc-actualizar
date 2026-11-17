@@ -9,6 +9,7 @@ OV="--overwrite /usr/bin/bc-* --overwrite /usr/share/bc/* --overwrite /usr/share
 OV="$OV --overwrite /usr/share/icons/hicolor/scalable/apps/bc-* --overwrite /usr/share/sounds/bc/* --overwrite /usr/lib/systemd/user/bc-*"
 OV="$OV --overwrite /etc/systemd/user/default.target.wants/bc-* --overwrite /usr/lib/bc/* --overwrite /usr/share/libalpm/hooks/00-bc-* --overwrite /usr/share/polkit-1/actions/org.bcos.* --overwrite /etc/polkit-1/rules.d/50-bcos-*"
 OV="$OV --overwrite /usr/share/plymouth/themes/bcos/* --overwrite /usr/lib/tmpfiles.d/bc-*"
+OV="$OV --overwrite /etc/fish/functions/* --overwrite /etc/fish/conf.d/bcos.fish --overwrite /usr/share/fish/tools/web_config/themes/BC-*"
 OV="$OV --overwrite /usr/lib/firefox/distribution/policies.json --overwrite /usr/lib/firefox/defaults/pref/bc-* --overwrite /usr/lib/firefox/bc*"
 # Huella del tema de arranque antes de actualizar: si cambia, se rehace el initramfs (el arranque animado va en él)
 ply0="$(cat /usr/share/plymouth/themes/bcos/* 2>/dev/null | md5sum)"

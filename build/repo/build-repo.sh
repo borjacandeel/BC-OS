@@ -55,6 +55,11 @@ install -d "$E2/usr/share/plymouth/themes/bcos" "$E2/usr/share/bc/sessions"
 install -m644 "$HERE"/plymouth/bcos/* "$E2/usr/share/plymouth/themes/bcos/"
 install -m644 "$HERE"/overlay-dotfiles/usr/share/bc/sessions/*.desktop "$E2/usr/share/bc/sessions/"
 install -D -m644 "$O/usr/lib/tmpfiles.d/bc-greeter.conf" "$E2/usr/lib/tmpfiles.d/bc-greeter.conf"
+# fish: prompt con colores, saludo, temas (bc-tema) y abreviaturas de BC OS
+install -d "$E2/etc/fish/functions" "$E2/etc/fish/conf.d" "$E2/usr/share/fish/tools/web_config/themes"
+install -m644 "$O"/etc/fish/functions/*.fish "$E2/etc/fish/functions/"
+install -m644 "$O/etc/fish/conf.d/bcos.fish" "$E2/etc/fish/conf.d/bcos.fish"
+install -m644 "$O"/usr/share/fish/tools/web_config/themes/BC-*.theme "$E2/usr/share/fish/tools/web_config/themes/"
 for pair in bc-files:system-file-manager bc-settings:preferences-system bc-monitor:utilities-system-monitor bc-store:gnome-software \
             bc-terminal:com.mitchellh.ghostty bc-calculator:accessories-calculator bc-notes:accessories-notes bc-preview:multimedia-photo-viewer \
             bc-calendar:bc-calendar bc-reminders:bc-reminders bc-music:multimedia-audio-player; do

@@ -25,6 +25,7 @@ QtObject {
     property real sw: scr ? scr.width : 1280
     property real sh: scr ? scr.height : 800
     property bool splashing: false
+    property var minShots: ({})          // id de ventana minimizada → captura (miniatura en el Dock)
     signal command(string kind, string arg)
     readonly property real u: Math.max(0.6, Math.min(1.25, Math.min(sw / 1586, sh / 992)))
     property bool classic: false                // sesión «BC clásico» (escritorio anterior); la fija Panel.qml

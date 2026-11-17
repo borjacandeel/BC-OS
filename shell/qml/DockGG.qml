@@ -22,6 +22,10 @@ Item {
     // ---- Modelo ------------------------------------------------------------------------------
     readonly property var defaultApps: ["archivos", "lanzador", "navegador", "notas", "calculadora", "vista", "musica", "terminal", "monitor", "tienda", "ajustes"]
     readonly property var pinnedKinds: Settings.dockApps.length > 0 ? Settings.dockApps : defaultApps
+    // Arrastre para reordenar (como macOS): los demás iconos se apartan al hueco; soltar muy arriba lo quita del Dock
+    property int dragFrom: -1
+    property int dragTo: -1
+    property bool dragOut: false
     readonly property var kindNames: ({ archivos: qsTr("Archivos"), lanzador: qsTr("Aplicaciones"), navegador: qsTr("Firefox"),
                                         terminal: qsTr("Terminal"), tienda: qsTr("Tienda"), ajustes: qsTr("Ajustes del Sistema"),
                                         monitor: qsTr("Monitor de Actividad"), musica: qsTr("Música"), notas: qsTr("Notas"),
@@ -186,6 +190,7 @@ Item {
                 readonly property var info: Apps.infoFor(modelData.appId)
                 kind: modelData.appId.indexOf("bc-") === 0 ? ({ "bc-files": "archivos", "bc-settings": "ajustes", "bc-monitor": "monitor", "bc-store": "tienda", "bc-notes": "notas", "bc-calculator": "calculadora", "bc-preview": "vista", "bc-music": "musica" })[modelData.appId] || "" : ""
                 icon: info.iconPath || ""; name: modelData.title; minimizedWindow: true
+                thumb: UiState.minShots[modelData.id] || ""
                 onActivated: UiState.run("bc:restore:" + modelData.id)
             }
         }
@@ -216,16 +221,32 @@ Item {
         property bool stack: false
         property bool trash: false
         property bool minimizedWindow: false
+        property string thumb: ""
         property bool dragEnabled: false
         signal activated()
         signal context(point p)
         signal dropped(real dx)
         readonly property real sz: dock.sizes[cellIndex] || dock.bs
-        x: dock.realX(cellIndex) + dragDx
+        readonly property real shift: {
+            if (dock.dragFrom < 0 || cellIndex === dock.dragFrom || !dragEnabled) return 0
+            const f = dock.dragFrom, t = dock.dragTo, step = dock.bs + dock.gap
+            if (f < t && cellIndex > f && cellIndex <= t) return -step
+            if (f > t && cellIndex >= t && cellIndex < f) return step
+            return 0
+        }
+        property real shiftA: shift
+        Behavior on shiftA { NumberAnimation { duration: Theme.d(200); easing.type: Easing.OutCubic } }
+        x: dock.realX(cellIndex) + dragDx + shiftA
+        // Las ventanas minimizadas entran creciendo (no aparecen de golpe)
+        property real grow: minimizedWindow ? 0 : 1
+        Component.onCompleted: if (minimizedWindow) growIn.start()
+        NumberAnimation { id: growIn; target: cell; property: "grow"; to: 1; duration: Theme.d(320); easing.type: Easing.OutBack }
+        scale: grow; opacity: 0.4 + 0.6 * grow; transformOrigin: Item.Bottom
         width: sz; height: dock.plateH
         property real jump: 0
         property real dragDx: 0
-        z: ma.drag.active ? 10 : 0
+        property real dragDy: 0
+        z: ma.dragging ? 10 : 0
         function bounce() { if (!Theme.reduced) bounceAnim.restart() }
         SequentialAnimation {
             id: bounceAnim
@@ -236,10 +257,15 @@ Item {
         Item {
             id: art
             width: cell.sz; height: cell.sz
-            anchors.bottom: parent.bottom; anchors.bottomMargin: dock.padY + cell.jump
-            AppIcon { visible: cell.kind !== "" && !cell.stack; anchors.fill: parent; kind: cell.kind; size: cell.sz
+            anchors.bottom: parent.bottom; anchors.bottomMargin: dock.padY + cell.jump - cell.dragDy
+            opacity: ma.dragging && dock.dragOut ? 0.45 : 1
+            // Ventana minimizada: su miniatura real (captura) y el icono de la app pequeño en la esquina, como macOS
+            Image { id: thumbImg; visible: cell.minimizedWindow && cell.thumb !== ""; anchors.fill: parent; anchors.margins: parent.width * 0.04
+                    source: cell.thumb; fillMode: Image.PreserveAspectFit; smooth: true; mipmap: true; asynchronous: true
+                    sourceSize.width: Math.round(dock.maxIcon * 2 * Screen.devicePixelRatio) }
+            AppIcon { visible: cell.kind !== "" && !cell.stack && !thumbImg.visible; anchors.fill: parent; kind: cell.kind; size: cell.sz
                       full: cell.trash && trashModel.count > 0 }
-            Image { visible: cell.kind === "" && !cell.stack; anchors.fill: parent; smooth: true; fillMode: Image.PreserveAspectFit
+            Image { visible: cell.kind === "" && !cell.stack && !thumbImg.visible; anchors.fill: parent; smooth: true; fillMode: Image.PreserveAspectFit
                     sourceSize: Qt.size(Math.ceil(dock.maxIcon * Screen.devicePixelRatio / 16) * 16, Math.ceil(dock.maxIcon * Screen.devicePixelRatio / 16) * 16); mipmap: true
                     source: cell.icon !== "" ? "file://" + cell.icon : "qrc:/BCShell/apps/system-file-manager.svg" }
             // Pila de documentos: tres hojas apiladas con el archivo más reciente arriba
@@ -259,9 +285,14 @@ Item {
                     }
                 }
             }
-            // Marca de ventana minimizada
-            Rectangle { visible: cell.minimizedWindow; anchors.right: parent.right; anchors.bottom: parent.bottom; width: parent.width * 0.38; height: width * 0.75
-                        radius: px(3); color: Theme.windowBg; border.width: 1; border.color: Theme.glassRim }
+            // Icono de la app en la esquina de la miniatura
+            Item {
+                visible: thumbImg.visible
+                anchors.right: parent.right; anchors.bottom: parent.bottom; width: parent.width * 0.42; height: width
+                AppIcon { visible: cell.kind !== ""; anchors.fill: parent; kind: cell.kind; size: parent.width }
+                Image { visible: cell.kind === ""; anchors.fill: parent; smooth: true; mipmap: true; fillMode: Image.PreserveAspectFit
+                        sourceSize: Qt.size(128, 128); source: cell.icon !== "" ? "file://" + cell.icon : "" }
+            }
         }
         // Punto de app abierta
         Rectangle {
@@ -271,7 +302,7 @@ Item {
         }
         // Nombre sobre el icono al pasar (vidrio)
         Item {
-            visible: ma.containsMouse && !ma.drag.active
+            visible: ma.containsMouse && !ma.dragging
             anchors.horizontalCenter: art.horizontalCenter; y: art.y - height - px(10)
             width: lbl.implicitWidth + px(20); height: px(26)
             Glass { anchors.fill: parent; radius: height / 2; tintBoost: 0.4; shadow: false }
@@ -284,23 +315,40 @@ Item {
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             property real startX: 0
             property bool dragging: false
-            onPressed: (m) => { startX = m.x; dragging = false }
+            property real startY: 0
+            onPressed: (m) => { startX = m.x; startY = m.y; dragging = false }
             onPositionChanged: (m) => {
                 // La ampliación sigue al puntero también encima de los iconos (antes solo en el fondo del Dock)
                 if (!pressed) { hoverOff.stop(); dock.hoverX = cell.mapToItem(plateArea, m.x, 0).x + plateArea.x - dock.baseLeft; dock.mag = 1 }
-                if (pressed && cell.dragEnabled && Math.abs(m.x - startX) > px(8)) { dragging = true; cell.dragDx = m.x - startX } }
+                if (pressed && cell.dragEnabled && (dragging || Math.abs(m.x - startX) > px(8) || Math.abs(m.y - startY) > px(8))) {
+                    dragging = true; cell.dragDx = m.x - startX; cell.dragDy = Math.min(0, m.y - startY)
+                    dock.dragFrom = cell.cellIndex
+                    dock.dragOut = m.y - startY < -dock.bs * 1.4
+                    dock.dragTo = Math.max(0, Math.min(dock.pinnedKinds.length - 1, cell.cellIndex + Math.round(cell.dragDx / (dock.bs + dock.gap))))
+                } }
             onContainsMouseChanged: if (!containsMouse) hoverOff.restart()
-            onReleased: { if (dragging) { cell.dropped(cell.dragDx); cell.dragDx = 0 } }
+            onReleased: { if (dragging) { const out = dock.dragOut; dock.finishDrag(cell.cellIndex, out); cell.dragDx = 0; cell.dragDy = 0 } }
             onClicked: (m) => { if (dragging) return; if (m.button === Qt.RightButton) cell.context(dock.menuPoint(cell)); else cell.activated() }
             onPressAndHold: (m) => { if (!dragging) cell.context(dock.menuPoint(cell)) }
         }
-        Behavior on dragDx { enabled: !ma.pressed; NumberAnimation { duration: Theme.d(180); easing.type: Theme.easeStandard } }
+        Behavior on dragDy { enabled: !ma.pressed; NumberAnimation { duration: Theme.d(180); easing.type: Theme.easeStandard } }
     }
 
     FileModel { id: trashModel; Component.onCompleted: openTrash() }
     Timer { interval: 5000; running: true; repeat: true; onTriggered: trashModel.reload() }
 
     // ---- Reordenar y menú contextual ----------------------------------------------------------
+    function finishDrag(from, out) {
+        const list = pinnedKinds.slice()
+        const to = dragTo
+        dragFrom = -1; dragTo = -1; dragOut = false
+        if (from < 0 || from >= list.length) return
+        if (out) { list.splice(from, 1); Settings.dockApps = list; return }   // soltar fuera: quitar del Dock
+        if (to < 0 || to === from) return
+        const k = list.splice(from, 1)[0]
+        list.splice(to, 0, k)
+        Settings.dockApps = list
+    }
     function reorder(from, dx) {
         const list = pinnedKinds.slice()
         if (from >= list.length) return
@@ -315,6 +363,7 @@ Item {
         const ws = Sway.windows.filter(w => w.appId === m.appId)
         for (const w of ws) items.push({ label: w.title || m.name, cmd: "sway:exec swaymsg '[con_id=" + w.id + "]' focus" })
         if (ws.length) items.push({ sep: true })
+        if (m.pinned) items.push({ label: qsTr("Quitar del Dock"), cmd: "bc:dock:unpin:" + m.key })
         items.push({ label: qsTr("Opciones"), items: [
             m.pinned ? { label: qsTr("Quitar del Dock"), cmd: "bc:dock:unpin:" + m.key } : { label: qsTr("Mantener en el Dock"), cmd: "bc:dock:pin:" + m.key },
             { label: qsTr("Mostrar en Archivos"), cmd: "sway:exec bc-shell --app files --open /usr/share/applications" } ] })
