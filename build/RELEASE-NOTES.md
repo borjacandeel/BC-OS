@@ -27,6 +27,11 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 - **Nube «poof»** al sacar un icono del Dock; **miniatura flotante** de la captura abajo a la derecha (abre Vista previa).
 - **Barras de desplazamiento como macOS**: ocultas, aparecen al desplazar, se ensanchan con el puntero y se arrastran;
   **rebote elástico** al llegar al final en Archivos, Ajustes, Tienda, Notas, Música y más.
+- **Hyprland**: widgets visibles (el cristal del escritorio ahora se desenfoca) y **varias pantallas** ordenadas con la
+  principal (HDMI/DP antes que VGA) enfocada: barra, widgets e instalador salen en ella.
+- **Firefox bajo sway**: el botón **amarillo minimiza** al Dock y el **verde** (o doble clic en la barra) pone pantalla
+  completa.
+- **Liquid Glass claro** más transparente, como liquid-glass-react.
 
 ### Novedades de 0.9.16
 - **Liquid Glass como en liquid-glass-react**: desenfoque ligero (se ve el fondo curvado por la lente), tinte mínimo
