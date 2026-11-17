@@ -11,6 +11,18 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
 
+### Novedades de 0.9.12
+- **Minimizar y cerrar sin parpadeo**: la ventana se oculta cuando el genio (o la captura que se encoge) ya está encima;
+  el genio sale al instante (la captura se decodifica una vez, no una por franja) y con más franjas, más suave.
+- **Más fluido**: el cristal (Liquid Glass) se recorta en segundo plano con doble búfer; las animaciones de paneles,
+  Dock y ventanas ya no esperan al recorte.
+- **Mover ventanas**: el cristal de la barra lateral sigue a la ventana con sus esquinas redondeadas (antes se veían
+  rectas mientras se arrastraba).
+- **Tamaño de la interfaz** en Ajustes ▸ Pantallas: Auto (según los puntos por pulgada reales del monitor, como una
+  Retina), 100 %, 125 %, 150 % o 200 %.
+- Archivos: la barra de herramientas se adapta a ventanas estrechas (la búsqueda se encoge); Tienda con columnas
+  según el ancho; ventanas con barra lateral con un ancho mínimo para que nada se monte.
+
 ### Novedades de 0.9.11
 - **Resoluciones de MacBook**: Air 13″ (1470 × 956), Pro 14″ (1512 × 982), Air 15″ (1710 × 1112) y Pro 16″
   (1728 × 1117) en Ajustes ▸ Pantallas y en la bienvenida; en máquina virtual se crean al vuelo.

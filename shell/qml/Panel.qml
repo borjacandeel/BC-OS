@@ -127,8 +127,8 @@ LayerWindow {
         function onCaptured(tag, path, ok) {
             if (tag.indexOf("close-") === 0 && root.closePending) {
                 const cp = root.closePending; root.closePending = null
-                Sway.closeWindow(cp.id)
-                if (!ok) return
+                if (!ok) { Sway.closeWindow(cp.id); return }
+                closeLater.wid = cp.id; closeLater.restart()
                 genieWin.shown = true
                 closeShot.source = ""; closeShot.source = "file://" + path
                 closeShot.x = cp.rect.x; closeShot.y = cp.rect.y; closeShot.width = cp.rect.width; closeShot.height = cp.rect.height
@@ -137,13 +137,15 @@ LayerWindow {
             }
             if (tag.indexOf("genie-") !== 0 || !root.geniePending) return
             const g = root.geniePending
-            Sway.minimizeWindow(g.id)
-            if (!ok) { root.geniePending = null; return }
+            // La ventana se oculta cuando el genio ya está encima (Genie.began), no antes
+            if (!ok) { Sway.minimizeWindow(g.id); root.geniePending = null; return }
             const s = Object.assign({}, root.genieShots); s[g.id] = { path: path, rect: g.rect }; root.genieShots = s
             genieWin.shown = true
             genie.run("file://" + path, g.rect, Qt.point(dockGG.minimizeTarget.x + dockWin.originX, dockGG.minimizeTarget.y + dockWin.originY), dockGG.bs, false)
         }
     }
+    // Cerrar con animación: la ventana real se cierra cuando la captura ya la tapa (sin parpadeo)
+    Timer { id: closeLater; interval: 70; property int wid: -1; onTriggered: Sway.closeWindow(wid) }
     LayerWindow {
         id: genieWin
         layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-genie"; passthrough: true
@@ -161,6 +163,7 @@ LayerWindow {
         }
         Genie {
             id: genie
+            onBegan: { const g = root.geniePending; if (g && !g.back) Sway.minimizeWindow(g.id) }
             onFinished: {
                 genieWin.shown = false
                 const g = root.geniePending

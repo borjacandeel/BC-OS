@@ -25,7 +25,19 @@ Item {
         anim.duration = Theme.d(back ? Theme.durRestore : Theme.durMinimize)
         anim.restart()
     }
-    NumberAnimation { id: anim; target: g; property: "p"; easing.type: Easing.InOutQuad; onFinished: { g.source = ""; g.finished() } }
+    // Antes de empezar, la captura se muestra quieta encima de la ventana unos milisegundos (lo que tarda la capa en
+    // aparecer); entonces se avisa (began) para ocultar la ventana real: así no hay parpadeo entre ventana y genio
+    signal began()
+    SequentialAnimation {
+        id: anim
+        property alias from: na.from
+        property alias to: na.to
+        property alias duration: na.duration
+        PauseAnimation { duration: 70 }
+        ScriptAction { script: g.began() }
+        NumberAnimation { id: na; target: g; property: "p"; easing.type: Easing.InOutQuad }
+        onFinished: { g.source = ""; g.finished() }
+    }
 
     function clamp(x) { return Math.max(0, Math.min(1, x)) }
     function ease(x) { return x < 0.5 ? 2 * x * x : 1 - Math.pow(-2 * x + 2, 2) / 2 }
