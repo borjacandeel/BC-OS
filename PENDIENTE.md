@@ -7,6 +7,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - Castellano siempre.
 - Skill `0-palabras` siempre.
 - Todo se sube siempre a `main` (sin force-push).
+- Cada cambio se refleja también en la web https://borjacandeel.github.io/bcos/ (repo borjacandeel/borjacandeel.github.io, `bcos/index.html`; permiso del creador 2026-11-17).
 - ARM64 únicamente. Base Arch Linux ARM.
 
 ## En curso
