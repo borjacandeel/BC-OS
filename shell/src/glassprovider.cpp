@@ -64,7 +64,8 @@ QImage GlassProvider::requestImage(const QString &id, QSize *size, const QSize &
         clip.addRoundedRect(QRectF(0, 0, w + r, h), r, r);
         clip = clip.intersected([&] { QPainterPath q; q.addRect(0, 0, w, h); return q; }());
     } else clip.addRoundedRect(QRectF(0, 0, w, h), r, r);
-    pa.setClipPath(clip);
+    // (sin setClipPath: QPainter no suaviza los bordes de un recorte; la forma se aplica al final con una máscara
+    // dibujada con antialias, así las esquinas redondeadas no se ven pixeladas)
     // Si la superficie se sale de la pantalla (ventana más baja que el borde, barra lateral larga…), se prolonga
     // el borde del fondo desenfocado en vez de dejar un hueco transparente con un corte visible.
     const QRect src(x, y, w, h), ok = src & blur.rect();
@@ -82,6 +83,17 @@ QImage GlassProvider::requestImage(const QString &id, QSize *size, const QSize &
     }
     pa.end();
     if (p.value(9) != "M") refract(out, r, p.value(8) == "L");   // «M»: ventana en movimiento, recorte rápido sin lente
+    {
+        QImage mask(w, h, QImage::Format_ARGB32_Premultiplied);
+        mask.fill(Qt::transparent);
+        QPainter mp(&mask);
+        mp.setRenderHint(QPainter::Antialiasing);
+        mp.fillPath(clip, Qt::white);
+        mp.end();
+        QPainter ap(&out);
+        ap.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+        ap.drawImage(0, 0, mask);
+    }
     if (size) *size = out.size();
     return out;
 }
