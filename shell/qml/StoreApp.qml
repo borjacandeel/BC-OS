@@ -177,7 +177,9 @@ AppWindow {
         // ---- Descubrir ----
         Flickable {
             visible: win.section === "discover"
-            anchors.fill: parent; contentHeight: disc.height + 40; clip: true; boundsBehavior: Flickable.StopAtBounds
+            id: discFlick
+            OverlayScroll { flick: discFlick }
+            anchors.fill: parent; contentHeight: disc.height + 40; clip: true; boundsBehavior: Flickable.DragAndOvershootBounds
             Column {
                 id: disc; x: 28; y: 18; width: parent.width - 56; spacing: 16
                 Text { text: qsTr("Descubrir"); color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 26; font.weight: Font.Bold }
@@ -226,9 +228,10 @@ AppWindow {
         }
         ListView {
             id: list
+            OverlayScroll { flick: list }
             visible: win.section !== "discover" && win.section !== "updates"
             x: 18; y: 64; width: parent.width - 36; height: parent.height - 64 - 12
-            clip: true; model: Store; boundsBehavior: Flickable.StopAtBounds
+            clip: true; model: Store; boundsBehavior: Flickable.DragAndOvershootBounds
             delegate: Item {
                 width: list.width; height: 72
                 AppTile { x: 10; anchors.verticalCenter: parent.verticalCenter; width: 48; height: 48; radius: 11; letter: model.name.charAt(0).toUpperCase(); icon: model.name

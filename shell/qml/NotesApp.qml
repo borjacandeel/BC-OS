@@ -126,8 +126,9 @@ AppWindow {
     // ---- Editor -------------------------------------------------------------------------------
     Flickable {
         id: flick
+        OverlayScroll { flick: flick }
         x: notesList.x + notesList.width + 1; width: parent.width - x; height: parent.height
-        contentHeight: editor.height + 60; clip: true; boundsBehavior: Flickable.StopAtBounds
+        contentHeight: editor.height + 60; clip: true; boundsBehavior: Flickable.DragAndOvershootBounds
         Text { visible: win.current !== ""; anchors.horizontalCenter: parent.horizontalCenter; y: 10; color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 11
                text: { const n = win.list.find(x => x.id === win.current); return n ? n.modified.toLocaleString(Qt.locale(AppConfig.language), "d 'de' MMMM 'de' yyyy, H:mm") : "" } }
         TextEdit {

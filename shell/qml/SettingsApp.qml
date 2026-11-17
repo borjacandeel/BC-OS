@@ -229,7 +229,7 @@ AppWindow {
         }
         Flickable {
             x: 10; y: 100; width: parent.width - 20; height: parent.height - 108; clip: true
-            contentHeight: sideCol.height; boundsBehavior: Flickable.StopAtBounds
+            contentHeight: sideCol.height; boundsBehavior: Flickable.DragAndOvershootBounds
         Column {
             id: sideCol
             width: parent.width; spacing: 1
@@ -277,6 +277,7 @@ AppWindow {
     }
 
     Flickable {
+        id: pageFlick
         x: 254; y: 18; width: parent.width - 254 - 24; height: parent.height - 18 - 12
         // Alto de la página visible (todas las páginas son hijas directas): así cualquier página larga se desplaza
         contentHeight: { let h = height; const ch = contentItem.children; for (let i = 0; i < ch.length; i++) if (ch[i].visible) h = Math.max(h, ch[i].y + ch[i].height + 16); return h }
@@ -903,4 +904,5 @@ AppWindow {
             Hint { width: parent.width; text: qsTr("Creado por Borja Candel. LIGERO. POTENTE. FLUIDO.") }
         }
     }
+    OverlayScroll { flick: pageFlick }
 }

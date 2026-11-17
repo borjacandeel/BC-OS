@@ -95,9 +95,10 @@ AppWindow {
     // Imagen
     Flickable {
         id: view
+        OverlayScroll { flick: view }
         x: win.showSidebar ? side.width : 0; width: parent.width - x; height: parent.height
         contentWidth: Math.max(width, frame.width); contentHeight: Math.max(height, frame.height); clip: true
-        boundsBehavior: Flickable.StopAtBounds
+        boundsBehavior: Flickable.DragAndOvershootBounds
         // Fondo con la esquina inferior derecha de la ventana (las demás quedan fuera del recorte del Flickable)
         Rectangle { x: -Theme.radiusWindow; y: -Theme.radiusWindow; width: view.width + Theme.radiusWindow; height: view.height + Theme.radiusWindow
                     radius: Theme.radiusWindow; color: Theme.dark ? "#1C1C1E" : "#ECECEE"; z: -1 }

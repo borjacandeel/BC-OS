@@ -168,8 +168,9 @@ AppWindow {
             // Desplazable y recortada por encima de la esquina inferior: nada asoma por la esquina redondeada
             Flickable {
                 id: sideFlick
+                OverlayScroll { flick: sideFlick }
                 y: win.titlebarHeight + 4; width: parent.width; height: parent.height - y - Theme.radiusWindow * 0.6
-                clip: true; contentHeight: sideCol.height + 8; boundsBehavior: Flickable.StopAtBounds
+                clip: true; contentHeight: sideCol.height + 8; boundsBehavior: Flickable.DragAndOvershootBounds
             Column {
                 id: sideCol
                 width: parent.width
@@ -250,10 +251,11 @@ AppWindow {
                 // Iconos
                 GridView {
                     id: grid
+                    OverlayScroll { flick: grid }
                     visible: win.view === "icons" && !win.searchAll && !win.recents
                     anchors.fill: parent; anchors.margins: 10
                     cellWidth: Math.max(104, Math.floor(width / Math.max(1, Math.floor(width / 112)))); cellHeight: 112
-                    model: Files; boundsBehavior: Flickable.StopAtBounds
+                    model: Files; boundsBehavior: Flickable.DragAndOvershootBounds
                     delegate: Item {
                         id: cell
                         required property int index
@@ -302,8 +304,9 @@ AppWindow {
                     Rectangle { y: 26; width: parent.width; height: 1; color: Theme.hairline }
                     ListView {
                         id: list
+                        OverlayScroll { flick: list }
                         y: 28; x: 10; width: parent.width - 20; height: parent.height - 28; clip: true
-                        model: Files; boundsBehavior: Flickable.StopAtBounds
+                        model: Files; boundsBehavior: Flickable.DragAndOvershootBounds
                         delegate: Rectangle {
                             id: lr
                             required property int index
@@ -412,9 +415,10 @@ AppWindow {
                 // Recientes como en macOS: iconos agrupados por fecha (Hoy, Ayer, Últimos 7 días…)
                 Flickable {
                     id: recentView
+                    OverlayScroll { flick: recentView }
                     visible: win.recents && !win.searchAll
                     anchors.fill: parent; anchors.margins: 14; clip: true
-                    contentHeight: recentCol.height; boundsBehavior: Flickable.StopAtBounds
+                    contentHeight: recentCol.height; boundsBehavior: Flickable.DragAndOvershootBounds
                     readonly property var groups: {
                         const g = []
                         for (const r of win.recentList) { if (!g.length || g[g.length - 1].t !== r.group) g.push({ t: r.group, items: [] }); g[g.length - 1].items.push(r) }

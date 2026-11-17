@@ -76,6 +76,7 @@ AppWindow {
         }
         ListView {
             id: lv
+            OverlayScroll { flick: lv }
             x: 20; y: 78; width: parent.width - 40; height: parent.height - 78 - 10; clip: true
             model: win.items
             delegate: Item {

@@ -101,6 +101,7 @@ AppWindow {
             }
             ListView {
                 id: songs; x: 16; y: 26; width: parent.width - 32; height: parent.height - 26; clip: true
+                OverlayScroll { flick: songs }
                 model: win.list
                 delegate: Rectangle {
                     required property var modelData

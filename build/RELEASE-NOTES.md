@@ -24,6 +24,9 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 - **Tienda**: catálogo al día antes de instalar (antes fallaba con la lista vieja), botón «Obtener/Quitar» según lo
   instalado de verdad, destacadas que existen en ARM y x86.
 - **Avisos** sin sombra cortada en los bordes.
+- **Nube «poof»** al sacar un icono del Dock; **miniatura flotante** de la captura abajo a la derecha (abre Vista previa).
+- **Barras de desplazamiento como macOS**: ocultas, aparecen al desplazar, se ensanchan con el puntero y se arrastran;
+  **rebote elástico** al llegar al final en Archivos, Ajustes, Tienda, Notas, Música y más.
 
 ### Novedades de 0.9.16
 - **Liquid Glass como en liquid-glass-react**: desenfoque ligero (se ve el fondo curvado por la lente), tinte mínimo

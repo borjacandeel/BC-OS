@@ -98,8 +98,9 @@ AppWindow {
         Rectangle { y: 26; width: parent.width; height: 1; color: Theme.hairline }
         ListView {
             id: list
+            OverlayScroll { flick: list }
             x: 10; y: 28; width: parent.width - 20; height: parent.height - 28; clip: true
-            model: Processes.list; boundsBehavior: Flickable.StopAtBounds
+            model: Processes.list; boundsBehavior: Flickable.DragAndOvershootBounds
             delegate: Rectangle {
                 id: row
                 required property var modelData

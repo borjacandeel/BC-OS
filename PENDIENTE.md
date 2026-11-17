@@ -73,7 +73,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 45 Accesorios de barra de título
 - [x] 46 Iconos ocultos en la barra de menús (flecha)
 - [ ] 47 Deslizar para actualizar
-- [ ] 48 Rebote elástico al desplazar (rubberbanding)
+- [x] 48 Rebote elástico al desplazar (rubberbanding)
 - [x] 49 HUD de volumen y brillo
 - [~] 50 Menús contextuales (aparición/desvanecimiento; rehacer aspecto)
 - [~] 51 Popovers con flecha
@@ -96,7 +96,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [~] 68 Vaciar Papelera / copiar archivos (progreso fluido + sonido)
 - [~] 69 Microtransiciones de controles (hover, hundirse al clic, listas)
 - [ ] 70 Texto y selección (tiradores, sugerencias, brillo al buscar)
-- [ ] 71 Barras de desplazamiento overlay (aparecer, ensanchar, desvanecer)
+- [x] 71 Barras de desplazamiento overlay (aparecer, ensanchar, desvanecer)
 - [ ] 72 Detalles de apps (reloj del Dock con manecillas, calendario con fecha)
 - [~] 73 Cursor dinámico (mano, texto, redimensionar en bordes)
 
@@ -238,8 +238,8 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 135. Arrastrar una ventana al borde superior en Mission Control crea un escritorio
 - [ ] 136. Puntero negro con borde blanco nítido y sombra sutil
 - [ ] 137. Aumento temporal del puntero al agitarlo
-- [~] 138. Barras de desplazamiento ocultas que aparecen al desplazar
-- [ ] 139. Ensanchamiento de la barra de desplazamiento al acercar el cursor
+- [x] 138. Barras de desplazamiento ocultas que aparecen al desplazar
+- [x] 139. Ensanchamiento de la barra de desplazamiento al acercar el cursor
 - [x] 140. Interruptores ovalados con sombra interior y deslizamiento elástico
 - [ ] 141. Radio buttons y casillas con brillo al activarse
 - [x] 142. Deslizadores de volumen y brillo con iconos dinámicos en el Centro de Control
@@ -263,7 +263,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 160. Barras de progreso indeterminadas con franjas animadas
 - [~] 161. Tooltips con retraso suave al aparecer
 - [~] 162. Cursores contextuales (mano, mano cerrada, cruz, redimensionado)
-- [ ] 163. Rebote elástico (rubberbanding) al llegar al límite de un scroll
+- [x] 163. Rebote elástico (rubberbanding) al llegar al límite de un scroll
 - [ ] 164. Resaltado amarillo con salto al buscar texto (Ctrl+F)
 - [x] 165. Menú contextual con bordes redondeados y sombra profunda
 - [ ] 166. Selector de colores nativo (rueda, deslizadores, lápices)
