@@ -11,11 +11,24 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
 
+### Novedades de 0.9.9
+- **Arranque animado** nuevo: orbes de color que flotan, logo que crece con destello y barra fina como macOS.
+- **10 fondos «Bosques»** 4K (5 claros y 5 oscuros), los primeros en Ajustes y en la bienvenida.
+- **Semáforo y esquinas redondeadas en todas las apps** (Firefox incluido) y redimensionables desde el borde.
+- **Hyprland con cualquier GPU real** (dedicada o integrada, también NVIDIA con nouveau); si falla, sway solo.
+- **Resolución recordada** en cada inicio; en máquina virtual la bienvenida pregunta cuál quieres.
+- **Aviso de actualizaciones** al arrancar: pulsarlo abre la Terminal con la actualización (solo pide la contraseña).
+- Genio de macOS en dos fases (también sin GPU), Ajustes ▸ General y Pantallas rehechos, CaskaydiaCove Nerd Font
+  en la Terminal, login solo con BC OS y Dotfiles.
+
+### Novedades de 0.9.8
+- Multimonitor: barra y Dock en cada pantalla (HDMI/DP como principal), foco al hacer clic como macOS, cristal fluido
+  al arrastrar ventanas y arranque «cargar en RAM» para USB lentos.
+
 ### Novedades de 0.9.7
 - **Actualizaciones firmadas**: el repositorio [bc] se firma con la clave de BC OS y el sistema solo acepta paquetes
   firmados; las novedades llegan solas (aviso + Tienda ▸ Actualizaciones o `sudo bc-actualizar`), sin volver a descargar la imagen.
 - **ISO x86_64 arranca en BIOS** (PCs antiguos) además de UEFI; el instalador pone GRUB para BIOS si hace falta.
-  NVIDIA con nouveau: sway ligero (más estable).
 - Dock: la ampliación entra y sale suave (ya no se queda ampliada) y el menú del clic derecho sale encima del icono.
 - Minimizar fluido sin GPU (efecto «Escala»); widgets que ya no desaparecen al cambiar fondo o aspecto.
 - Bienvenida rehecha (aspecto, fondos y acento como macOS) y sale nada más entrar.
