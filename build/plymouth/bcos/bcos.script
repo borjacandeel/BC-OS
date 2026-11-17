@@ -1,52 +1,70 @@
-# Tema Plymouth BC OS: logo BC con fade-in y respiración, barra fina de progreso #2F7BFF.
+# Tema Plymouth BC OS: orbes de color en movimiento, logo que crece con destello y respira, barra como macOS.
 # Sin 3D: solo sprites 2D (framebuffer/DRM simple).
 
 sw = Window.GetWidth();
 sh = Window.GetHeight();
 
-Window.SetBackgroundTopColor(0.016, 0.067, 0.122);     # #04111F
-Window.SetBackgroundBottomColor(0.016, 0.067, 0.122);
 
-# Escala según la pantalla: logo ~ 26 % del ancho (entre 220 y 420 px)
-logo_img = Image("logo.png");
-lw = sw * 0.26;
+# Arranque «Golden Gate»: fondo negro, tres orbes de color difusos que flotan despacio, el logo aparece creciendo
+# con suavidad (de 88 % a 100 %) y un destello de luz lo recorre; después respira. Todo con sprites 2D.
+Window.SetBackgroundTopColor(0, 0, 0);
+Window.SetBackgroundBottomColor(0.012, 0.016, 0.035);
+
+base_logo = Image("logo.png");
+lw = sw * 0.24;
 if (lw < 220) lw = 220;
-if (lw > 420) lw = 420;
-scale = lw / logo_img.GetWidth();
-logo_img = logo_img.Scale(lw, logo_img.GetHeight() * scale);
-shine_img = Image("logo-plata.png").Scale(logo_img.GetWidth(), logo_img.GetHeight());
-
-glow_size = sh * 1.1;
-glow_img = Image("glow.png").Scale(glow_size, glow_size);
-
+if (lw > 400) lw = 400;
+lh = base_logo.GetHeight() * lw / base_logo.GetWidth();
+logo_img = base_logo.Scale(lw, lh);
 cx = sw / 2;
-logo_x = cx - logo_img.GetWidth() / 2;
-logo_y = sh * 0.46 - logo_img.GetHeight() / 2;
+cy = sh * 0.45;
+logo_x = cx - lw / 2;
+logo_y = cy - lh / 2;
 
-glow = Sprite(glow_img);
+# Orbes de color (se mueven en órbitas lentas y distintas)
+osz = sh * 0.9;
+orb_imgs[0] = Image("orbe-azul.png").Scale(osz, osz);
+orb_imgs[1] = Image("orbe-violeta.png").Scale(osz * 0.85, osz * 0.85);
+orb_imgs[2] = Image("orbe-cian.png").Scale(osz * 0.6, osz * 0.6);
+for (i = 0; i < 3; i++) {
+  orbs[i] = Sprite(orb_imgs[i]);
+  orbs[i].SetZ(-20 + i);
+  orbs[i].SetOpacity(0);
+}
+
+glow_size = sh * 0.9;
+glow = Sprite(Image("glow.png").Scale(glow_size, glow_size));
 glow.SetX(cx - glow_size / 2);
-glow.SetY(sh * 0.46 - glow_size / 2);
+glow.SetY(cy - glow_size / 2);
 glow.SetZ(-10);
 glow.SetOpacity(0);
 
-logo = Sprite(logo_img);
-logo.SetX(logo_x);
-logo.SetY(logo_y);
+# Logo: versiones escaladas precalculadas para el crecimiento inicial (sin reescalar en cada fotograma)
+for (i = 0; i <= 12; i++) {
+  k = 0.88 + 0.12 * i / 12;
+  logo_steps[i] = base_logo.Scale(lw * k, lh * k);
+}
+logo = Sprite(logo_steps[0]);
 logo.SetZ(10);
 logo.SetOpacity(0);
 
-shine = Sprite(shine_img);
+# Destello (24 fotogramas) sobre el logo
+for (i = 0; i < 24; i++) {
+  if (i < 10) n = "0" + i; else n = "" + i;
+  shine_imgs[i] = Image("brillo-" + n + ".png").Scale(lw, lh);
+}
+shine = Sprite(shine_imgs[0]);
 shine.SetX(logo_x);
 shine.SetY(logo_y);
 shine.SetZ(11);
 shine.SetOpacity(0);
 
 # Barra de progreso inferior
-bar_w = 320;
+bar_w = 200;
 if (sw < 480) bar_w = sw * 0.6;
-bar_h = 4;
+bar_h = 5;
 bar_x = cx - bar_w / 2;
-bar_y = sh * 0.80;
+bar_y = cy + lh / 2 + sh * 0.09;
 
 track_img = Image("bar-track.png").Scale(bar_w, bar_h);
 track = Sprite(track_img);
@@ -82,29 +100,54 @@ progress_target = 0;
 progress_now = 0;
 last_w = 0;
 
+fun smooth(x) {
+  if (x < 0) x = 0;
+  if (x > 1) x = 1;
+  return x * x * (3 - 2 * x);
+}
+
 fun refresh() {
   frame++;
   t = frame / 50.0;                       # segundos aprox. (~50 Hz)
 
-  # Fade-in de 1,2 s con suavizado
-  fade = t / 1.2;
-  if (fade > 1) fade = 1;
-  fade = fade * fade * (3 - 2 * fade);
+  # Orbes: entran en 2 s y flotan
+  of = smooth(t / 2.0);
+  orbs[0].SetX(cx - osz / 2 + Math.Sin(t * 0.35) * sw * 0.16 - sw * 0.10);
+  orbs[0].SetY(cy - osz / 2 + Math.Cos(t * 0.30) * sh * 0.10);
+  orbs[1].SetX(cx - osz * 0.425 + Math.Cos(t * 0.27 + 1.5) * sw * 0.18 + sw * 0.10);
+  orbs[1].SetY(cy - osz * 0.425 + Math.Sin(t * 0.33 + 0.7) * sh * 0.12);
+  orbs[2].SetX(cx - osz * 0.3 + Math.Sin(t * 0.45 + 3.0) * sw * 0.12);
+  orbs[2].SetY(cy - osz * 0.3 + Math.Cos(t * 0.40 + 2.0) * sh * 0.16 + sh * 0.06);
+  for (i = 0; i < 3; i++) orbs[i].SetOpacity(of * (0.55 + 0.15 * Math.Sin(t * 0.8 + i * 2)));
 
-  # Respiración lenta (periodo ~3,2 s) y brillo plata sutil
-  breath = (Math.Sin(t * 2.0) + 1) / 2;
-  glow.SetOpacity(fade * (0.55 + 0.45 * breath));
-  logo.SetOpacity(fade * (0.90 + 0.10 * breath));
-  shine.SetOpacity(fade * 0.30 * breath);
+  # Logo: aparece creciendo (0,3 s → 1,5 s) con curva suave
+  lf = smooth((t - 0.3) / 1.2);
+  si = Math.Int(lf * 12);
+  img = logo_steps[si];
+  logo.SetImage(img);
+  logo.SetX(cx - img.GetWidth() / 2);
+  logo.SetY(cy - img.GetHeight() / 2);
+  breath = (Math.Sin((t - 1.5) * 1.6) + 1) / 2;
+  if (t < 1.5) breath = 1;
+  logo.SetOpacity(lf * (0.92 + 0.08 * breath));
+  glow.SetOpacity(lf * (0.35 + 0.30 * breath));
 
-  # Barra: aparece tras 0,6 s y avanza suave hacia el progreso real
-  bar_fade = (t - 0.6) / 0.8;
-  if (bar_fade < 0) bar_fade = 0;
-  if (bar_fade > 1) bar_fade = 1;
+  # Destello: recorre el logo a los 1,6 s y luego cada 4 s
+  st = t - 1.6;
+  if (st > 0) {
+    ph = st - Math.Int(st / 4.0) * 4.0;
+    if (ph < 0.9) {
+      shine.SetImage(shine_imgs[Math.Int(ph / 0.9 * 23)]);
+      shine.SetOpacity(0.85);
+    } else shine.SetOpacity(0);
+  }
+
+  # Barra: aparece tras 1,2 s y avanza suave hacia el progreso real
+  bar_fade = smooth((t - 1.2) / 0.8);
   track.SetOpacity(bar_fade);
   progress_now = progress_now + (progress_target - progress_now) * 0.08;
   w = Math.Int(bar_w * progress_now);
-  if (w < 4) w = 4;
+  if (w < 5) w = 5;
   if (w != last_w) {
     fill.SetImage(fill_src.Scale(w, bar_h));
     last_w = w;

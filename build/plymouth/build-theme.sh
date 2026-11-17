@@ -33,6 +33,29 @@ def pill(color, name):
     im.resize((W, H), Image.LANCZOS).save(f"{out}/{name}")
 pill((255, 255, 255, 38), "bar-track.png")
 pill((245, 245, 247, 255), "bar-fill.png")   # como macOS: barra blanca sobre pista gris
+# Orbes de color difusos (azul y violeta) que se mueven despacio tras el logo
+for name, col in (("orbe-azul.png", (47, 123, 255)), ("orbe-violeta.png", (139, 92, 246)), ("orbe-cian.png", (34, 211, 238))):
+    S = 384; o = Image.new("RGBA", (S, S)); q = o.load(); c = (S - 1) / 2
+    for y in range(S):
+        for x in range(S):
+            d = (((x - c) ** 2 + (y - c) ** 2) ** 0.5) / c
+            q[x, y] = col + (int(120 * max(0.0, 1 - d) ** 2.2),)
+    o.save(f"{out}/{name}")
+# Destello que recorre el logo (24 fotogramas): franja diagonal de luz recortada por la silueta del logo
+logo = Image.open(f"{out}/logo.png").convert("RGBA")
+Wl, Hl = logo.size
+alpha = logo.getchannel("A")
+for i in range(24):
+    band = Image.new("L", (Wl, Hl), 0); bp = band.load()
+    pos = -0.35 + 1.7 * i / 23
+    for y in range(Hl):
+        for x in range(Wl):
+            u = x / Wl + 0.35 * (y / Hl) - pos
+            bp[x, y] = int(255 * max(0.0, 1 - abs(u) / 0.12) ** 1.5)
+    from PIL import ImageChops
+    m = ImageChops.multiply(band, alpha)
+    fr = Image.new("RGBA", (Wl, Hl), (255, 255, 255, 0)); fr.putalpha(m)
+    fr.save(f"{out}/brillo-{i:02d}.png")
 # Punto para la entrada de contraseña
 d = Image.new("RGBA", (40, 40), (0, 0, 0, 0))
 ImageDraw.Draw(d).ellipse([10, 10, 29, 29], fill=(245, 245, 247, 255))
