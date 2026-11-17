@@ -3,35 +3,37 @@ import QtQuick
 import BCShell
 
 QtObject {
+    // Fundido de colores al cambiar de aspecto (desactivado con «Reducir movimiento»)
+    readonly property bool colorFade: !(AppConfig.reducedMotion || Settings.reducedMotion)
     id: t
     // Paleta de marca (assets/branding)
-    readonly property color midnight: "#04111F"
-    readonly property color white: "#F5F5F7"
-    readonly property color silverLight: "#F6F8FC"
-    readonly property color silverMid: "#D5DCE8"
-    readonly property color silverDark: "#A1ADC0"
+    property color midnight: "#04111F"
+    property color white: "#F5F5F7"
+    property color silverLight: "#F6F8FC"
+    property color silverMid: "#D5DCE8"
+    property color silverDark: "#A1ADC0"
 
     // Acento y semánticos
-    readonly property color accent: AppConfig.accent
-    readonly property color accentSelected: Qt.darker(AppConfig.accent, 1.18)
-    readonly property color close: "#FF5F57"
-    readonly property color minimize: "#FEBC2E"
-    readonly property color zoom: "#28C840"
+    property color accent: AppConfig.accent
+    property color accentSelected: Qt.darker(AppConfig.accent, 1.18)
+    property color close: "#FF5F57"
+    property color minimize: "#FEBC2E"
+    property color zoom: "#28C840"
 
     // Superficies (cristal ligero, sin desenfoque por CPU)
     // «Medianoche refinado»: azul noche más apagado y sobrio, con un solo acento
-    readonly property color panelFill: lightUi ? Qt.rgba(0.97, 0.97, 0.98, 0.92) : Qt.rgba(0.06, 0.09, 0.16, 0.86)
-    readonly property color panelFillSoft: lightUi ? Qt.rgba(1, 1, 1, 0.6) : Qt.rgba(0.09, 0.12, 0.20, 0.55)
-    readonly property color sidebarFill: gg ? sidebarBg : Qt.rgba(0.02, 0.04, 0.09, 0.45)
-    readonly property color barFill: Qt.rgba(0.03, 0.05, 0.10, 0.72)
-    readonly property color popupFill: gg ? (dark ? Qt.rgba(0.13, 0.13, 0.15, 0.98) : Qt.rgba(0.97, 0.97, 0.98, 0.98)) : Qt.rgba(0.06, 0.09, 0.16, 0.97)    // menús, lanzador, Centro de control
-    readonly property color windowFill: gg ? windowBg : Qt.rgba(0.05, 0.08, 0.14, 0.92)   // marco de las apps de BC
-    readonly property color widgetFill: Qt.rgba(0.04, 0.07, 0.13, 0.62)
-    readonly property color scrim: Qt.rgba(0.01, 0.03, 0.07, 0.55)        // velo bajo los diálogos
-    readonly property color tileFill: lightUi ? Qt.rgba(0, 0, 0, 0.05) : Qt.rgba(1, 1, 1, 0.06)
-    readonly property color hairline: lightUi ? Qt.rgba(0, 0, 0, 0.10) : Qt.rgba(1, 1, 1, 0.10)
-    readonly property color textPrimary: lightUi ? "#1D1D1F" : white
-    readonly property color textSecondary: lightUi ? Qt.rgba(0, 0, 0, 0.55) : Qt.rgba(1, 1, 1, 0.60)
+    property color panelFill: lightUi ? Qt.rgba(0.97, 0.97, 0.98, 0.92) : Qt.rgba(0.06, 0.09, 0.16, 0.86)
+    property color panelFillSoft: lightUi ? Qt.rgba(1, 1, 1, 0.6) : Qt.rgba(0.09, 0.12, 0.20, 0.55)
+    property color sidebarFill: gg ? sidebarBg : Qt.rgba(0.02, 0.04, 0.09, 0.45)
+    property color barFill: Qt.rgba(0.03, 0.05, 0.10, 0.72)
+    property color popupFill: gg ? (dark ? Qt.rgba(0.13, 0.13, 0.15, 0.98) : Qt.rgba(0.97, 0.97, 0.98, 0.98)) : Qt.rgba(0.06, 0.09, 0.16, 0.97)    // menús, lanzador, Centro de control
+    property color windowFill: gg ? windowBg : Qt.rgba(0.05, 0.08, 0.14, 0.92)   // marco de las apps de BC
+    property color widgetFill: Qt.rgba(0.04, 0.07, 0.13, 0.62)
+    property color scrim: Qt.rgba(0.01, 0.03, 0.07, 0.55)        // velo bajo los diálogos
+    property color tileFill: lightUi ? Qt.rgba(0, 0, 0, 0.05) : Qt.rgba(1, 1, 1, 0.06)
+    property color hairline: lightUi ? Qt.rgba(0, 0, 0, 0.10) : Qt.rgba(1, 1, 1, 0.10)
+    property color textPrimary: lightUi ? "#1D1D1F" : white
+    property color textSecondary: lightUi ? Qt.rgba(0, 0, 0, 0.55) : Qt.rgba(1, 1, 1, 0.60)
 
     // Radios
     readonly property int radiusWindow: gg ? windowRadius : 22
@@ -134,35 +136,35 @@ QtObject {
     readonly property real letterSpacing: -0.15
 
     // ---- Colores -------------------------------------------------------------------------
-    readonly property color label: dark ? "#FFFFFF" : "#1D1D1F"
-    readonly property color labelSecondary: dark ? Qt.rgba(1, 1, 1, 0.62) : Qt.rgba(0, 0, 0, 0.55)
-    readonly property color labelTertiary: dark ? Qt.rgba(1, 1, 1, 0.38) : Qt.rgba(0, 0, 0, 0.32)
-    readonly property color separator: dark ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(0, 0, 0, 0.10)
-    readonly property color fill: dark ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(0, 0, 0, 0.06)
-    readonly property color fillHover: dark ? Qt.rgba(1, 1, 1, 0.16) : Qt.rgba(0, 0, 0, 0.10)
-    readonly property color selection: AppConfig.accent
-    readonly property color barText: "#FFFFFF"    // la barra transparente va sobre el fondo oscuro: texto blanco
-    readonly property color windowBg: dark ? "#1E1E22" : "#F5F5F7"
-    readonly property color windowBgInactive: dark ? "#26262A" : "#ECECEE"
-    readonly property color sidebarBg: dark ? "#232328" : "#E8E8EC"
-    readonly property color sidebarBgActive: dark ? "#1B1B20" : "#E1E1E6"  // Golden Gate: barra lateral más oscura en la ventana activa
-    readonly property color controlBg: dark ? Qt.rgba(1, 1, 1, 0.08) : "#FFFFFF"
-    readonly property color trafficInactive: dark ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(0, 0, 0, 0.18)
+    property color label: dark ? "#FFFFFF" : "#1D1D1F"
+    property color labelSecondary: dark ? Qt.rgba(1, 1, 1, 0.62) : Qt.rgba(0, 0, 0, 0.55)
+    property color labelTertiary: dark ? Qt.rgba(1, 1, 1, 0.38) : Qt.rgba(0, 0, 0, 0.32)
+    property color separator: dark ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(0, 0, 0, 0.10)
+    property color fill: dark ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(0, 0, 0, 0.06)
+    property color fillHover: dark ? Qt.rgba(1, 1, 1, 0.16) : Qt.rgba(0, 0, 0, 0.10)
+    property color selection: AppConfig.accent
+    property color barText: "#FFFFFF"    // la barra transparente va sobre el fondo oscuro: texto blanco
+    property color windowBg: dark ? "#1E1E22" : "#F5F5F7"
+    property color windowBgInactive: dark ? "#26262A" : "#ECECEE"
+    property color sidebarBg: dark ? "#232328" : "#E8E8EC"
+    property color sidebarBgActive: dark ? "#1B1B20" : "#E1E1E6"  // Golden Gate: barra lateral más oscura en la ventana activa
+    property color controlBg: dark ? Qt.rgba(1, 1, 1, 0.08) : "#FFFFFF"
+    property color trafficInactive: dark ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(0, 0, 0, 0.18)
 
     // ---- Liquid Glass --------------------------------------------------------------------
     // Material = fondo desenfocado (capa precalculada del fondo) + tinte + reflejo de borde + sombra.
     readonly property real glassBlur: 48                       // radio de desenfoque del fondo (px a 1080p)
     // Tinte ambiental: el cristal toma un poco del color del fondo de pantalla (como macOS)
-    readonly property color ambient: typeof Quick !== "undefined" ? Quick.wallpaperAverage(Settings.wallpaper) : "#808080"   // el login no tiene Quick
-    readonly property color glassTintColor: dark ? Qt.tint(Qt.rgba(0.035, 0.04, 0.11, 1), Qt.rgba(ambient.r, ambient.g, ambient.b, 0.10))
+    property color ambient: typeof Quick !== "undefined" ? Quick.wallpaperAverage(Settings.wallpaper) : "#808080"   // el login no tiene Quick
+    property color glassTintColor: dark ? Qt.tint(Qt.rgba(0.035, 0.04, 0.11, 1), Qt.rgba(ambient.r, ambient.g, ambient.b, 0.10))
                                                  : Qt.tint(Qt.rgba(0.97, 0.97, 0.99, 1), Qt.rgba(ambient.r, ambient.g, ambient.b, 0.07))
     readonly property real glassTintMin: dark ? 0.12 : 0.30    // ultratransparente (claro: suelo más alto para que el texto oscuro se lea sobre fondos oscuros)
     readonly property real glassTintMax: dark ? 0.86 : 0.94    // totalmente tintado
     readonly property real glassOpacity: glassTintMin + (glassTintMax - glassTintMin) * tint
-    readonly property color glassRim: dark ? Qt.rgba(1, 1, 1, 0.20) : Qt.rgba(1, 1, 1, 0.75)       // borde fino luminoso (captura)
-    readonly property color glassRimLow: dark ? Qt.rgba(1, 1, 1, 0.05) : Qt.rgba(1, 1, 1, 0.30)
+    property color glassRim: dark ? Qt.rgba(1, 1, 1, 0.20) : Qt.rgba(1, 1, 1, 0.75)       // borde fino luminoso (captura)
+    property color glassRimLow: dark ? Qt.rgba(1, 1, 1, 0.05) : Qt.rgba(1, 1, 1, 0.30)
     readonly property real glassSpecular: dark ? 0.10 : 0.25   // reflejo superior (refracción uniforme Golden Gate)
-    readonly property color shadow: Qt.rgba(0, 0, 0, dark ? 0.45 : 0.18)
+    property color shadow: Qt.rgba(0, 0, 0, dark ? 0.45 : 0.18)
 
     // ---- Movimiento: duraciones (ms) y curvas ---------------------------------------------
     // Ninguna duración de Golden Gate está publicada: todas «sin confirmar», medidas a ojo sobre vídeos.
@@ -203,4 +205,45 @@ QtObject {
     readonly property int easeInOut: Easing.InOutCubic
     readonly property int easeSpring: Easing.OutBack
     readonly property real springOvershoot: 0.9
+
+    // Cambio claro ↔ oscuro suave (como macOS): los colores del tema se funden en lugar de saltar
+    Behavior on midnight { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on white { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on silverLight { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on silverMid { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on silverDark { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on accentSelected { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on close { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on minimize { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on zoom { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on panelFill { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on panelFillSoft { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on sidebarFill { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on barFill { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on popupFill { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on windowFill { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on widgetFill { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on scrim { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on tileFill { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on hairline { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on textPrimary { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on textSecondary { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on label { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on labelSecondary { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on labelTertiary { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on separator { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on fill { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on fillHover { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on selection { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on barText { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on windowBg { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on windowBgInactive { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on sidebarBg { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on sidebarBgActive { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on controlBg { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on trafficInactive { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on glassTintColor { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on glassRim { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on glassRimLow { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
+    Behavior on shadow { enabled: colorFade; ColorAnimation { duration: 420; easing.type: Easing.InOutQuad } }
 }

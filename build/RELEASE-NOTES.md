@@ -12,3 +12,4 @@
 - **Mission Control**: soltar una ventana en «+» crea un escritorio nuevo con ella.
 - **Accesibilidad** (Ajustes ▸ Aspecto): «Reducir transparencia» (cristal opaco) y «Aumentar contraste» (bordes marcados).
 - **Captura de zona** como macOS: pantalla oscurecida, zona elegida iluminada y con sus medidas.
+- **Claro ↔ oscuro con fundido suave** de los colores, como macOS.

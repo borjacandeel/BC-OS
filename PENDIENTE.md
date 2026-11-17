@@ -119,7 +119,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 15. Atenuación suave del brillo de la ventana madre al abrir una hoja de diálogo
 - [ ] 16. Reflexión difusa de elementos brillantes detrás de menús contextuales
 - [ ] 17. Gradientes sutiles en barras de herramientas para simular volumen físico
-- [ ] 18. Transición suave de luz y color al cambiar entre Modo Claro y Modo Oscuro
+- [x] 18. Transición suave de luz y color al cambiar entre Modo Claro y Modo Oscuro
 - [x] 19. Desenfoque gaussiano en tiempo real detrás del Dock
 - [x] 20. Borde exterior fino y semitransparente que separa ventanas superpuestas en modo oscuro
 - [ ] 21. Efecto de profundidad atmosférica en Mission Control al oscurecer el escritorio
@@ -273,7 +273,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 169. Indicador de micrófono o cámara activa (punto naranja o verde) en la barra
 - [x] 170. Botón de borrar (x circular gris) en todos los campos de búsqueda
 - [~] 171. Atenuación de elementos deshabilitados
-- [~] 172. Cambio de tema sincronizado al instante en todas las ventanas
+- [x] 172. Cambio de tema sincronizado al instante en todas las ventanas
 - [ ] 173. Microvibración visual de botones al pulsar
 - [ ] 174. Insignia verde (+) al arrastrar para copiar archivos
 - [ ] 175. Vista previa semitransparente de lo que se arrastra
