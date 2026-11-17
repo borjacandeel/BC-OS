@@ -10,6 +10,95 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - Cada cambio (nuevo o corregido) se refleja SIEMPRE en: README.md, build/RELEASE-NOTES.md (el workflow «Notas de versión» actualiza solo la página del último release) y la web https://borjacandeel.github.io/bcos/ (repo borjacandeel/borjacandeel.github.io, `bcos/index.html`; permiso del creador 2026-11-17).
 - ARM64 únicamente. Base Arch Linux ARM.
 
+## Pendiente del creador 2026-11-17 (tarde)
+- [ ] Recordatorios: con más de 2 se salen del widget (limitar filas al alto o «y N más»).
+- [ ] Ajustes ▸ General: «Buscar actualizaciones» → minimenú con versión actual, novedades y botón Actualizar.
+- [ ] Escritorio: clic derecho en iconos → Obtener información, Renombrar, Copiar, Pegar (como Finder).
+- [ ] Arrastrar archivos (escritorio/Archivos) a la Papelera del Dock.
+- [ ] Menú de la Papelera (Vaciar…): aspecto raro y esquinas poco redondeadas → rehacer menús contextuales.
+- [ ] Iconos que se ven mal al 200 % → SVG/sourceSize según devicePixelRatio en todos los iconos.
+- [ ] Animaciones de cerrar y agrandar como macOS.
+- [ ] Doble clic en la barra de título → ocupar la pantalla; otra vez → tamaño original (ahora va a pantalla completa).
+- [ ] Log: «for_window [shell=xdg_shell] … doesn't support client side decorations» → excluir bc-* de la regla CSD.
+- [x] Dock: arrastrar iconos como macOS, «Quitar del Dock», minimizadas con miniatura; fish con colores; bc-actualizar sin conflictos.
+
+## Animaciones de macOS a replicar (lista del creador, 73). Estado: [x] hecho · [~] parcial · [ ] falta
+### Principales y de navegación
+- [x] 1 Genio (minimizar en curva al Dock)
+- [~] 2 Efecto escala (minimizar lineal) — existía; hoy el genio es el único efecto (falta elegir en Ajustes)
+- [~] 3 Abrir y cerrar ventanas (zoom y desvanecimiento) — BC sí; externas solo con Hyprland
+- [ ] 4 Transición a pantalla completa (expansión y ocultar barras)
+- [ ] 5 Organizador Visual / Stage Manager
+- [ ] 6 Ajuste en mosaico con marco translúcido al encajar en bordes
+- [ ] 7 Mostrar escritorio / Exposé (ventanas hacia fuera)
+- [~] 8 Liquid Glass interactivo (brillos especulares y refracción dinámica) — lente fija; falta dinámico
+- [x] 9 Rebote al abrir apps en el Dock
+- [ ] 10 Rebote de notificación (app que requiere atención)
+- [x] 11 Ampliación del Dock
+- [~] 12 Ocultación automática del Dock (opción existe; revisar animación)
+- [~] 13 Abrir/cerrar Launchpad (zoom; falta desenfoque)
+- [ ] 14 Paginación en Launchpad
+- [x] 15 Abrir Centro de Control
+- [~] 16 Mission Control (elevación y agrupación)
+- [ ] 17 Exposé de aplicación
+- [~] 18 Cambio de escritorios (deslizamiento; fluido solo con Hyprland)
+- [x] 19 Selector de apps (Alt+Tab)
+- [~] 20 Spotlight (expansión; falta resplandor) / app Siri
+- [ ] 21 Resplandor perimetral de Siri
+- [ ] 22 Visual Intelligence
+- [ ] 23 Herramientas de escritura con IA
+- [ ] 24 Borrador generativo en Fotos
+- [ ] 25 Fondos animados Golden Gate (bloqueo/login)
+- [ ] 26 Salvapantallas aéreos
+- [x] 27 Notificaciones y widgets deslizándose
+- [ ] 28 Reacciones en videollamadas
+- [ ] 29 Duplicación del iPhone
+- [ ] 30 Captura de pantalla → miniatura flotante abajo a la derecha
+- [x] 31 Hojas de diálogo (Sheets)
+- [~] 32 Vista rápida (zoom de expansión)
+- [ ] 33 Desplazamiento en columnas del Finder
+- [~] 34 Galería / Cover Flow en Archivos
+- [ ] 35 Vuelo de archivos al Dock o carpetas
+- [ ] 36 Carpetas en Launchpad
+- [~] 37 Pilas del Dock (abanico/cuadrícula)
+- [ ] 38 Nube de humo «poof» al sacar un icono del Dock
+- [ ] 39 Smart Zoom con doble toque
+- [ ] 40 Deslizar historial atrás/adelante (navegador)
+- [ ] 41 Vista general de pestañas (navegador)
+- [ ] 42 Transición lateral entre paneles de Ajustes
+- [ ] 43 Recuerdos animados en Fotos
+### Microtransiciones y efectos de interfaz
+- [~] 44 Semáforo (reacción al pasar/pulsar)
+- [ ] 45 Accesorios de barra de título
+- [x] 46 Iconos ocultos en la barra de menús (flecha)
+- [ ] 47 Deslizar para actualizar
+- [ ] 48 Rebote elástico al desplazar (rubberbanding)
+- [x] 49 HUD de volumen y brillo
+- [~] 50 Menús contextuales (aparición/desvanecimiento; rehacer aspecto)
+- [~] 51 Popovers con flecha
+- [ ] 52 Temblor de iconos en Launchpad (reorganizar/borrar)
+- [ ] 53 Agitar el ratón para agrandar el cursor
+- [ ] 54 Cursor de texto con parpadeo suave
+- [ ] 55 Barra de pestañas compacta (navegador)
+- [x] 56 Interruptores con movimiento
+- [~] 57 Barras de progreso y anillos fluidos
+- [~] 58 Indicadores giratorios
+- [ ] 59 Cursor de espera (beachball propio)
+- [x] 60 Sacudida al fallar la contraseña
+- [ ] 61 Lupa del selector de color
+- [ ] 62 Lupa/definición (diccionario)
+- [ ] 63 AirDrop (ondas y progreso)
+- [ ] 64 Ventana tipo Touch ID (huella y verificación)
+- [ ] 65 Texto en vivo (Live Text)
+- [ ] 66 Elevación de sujeto en fotos
+- [ ] 67 Efectos de mensajes
+- [~] 68 Vaciar Papelera / copiar archivos (progreso fluido + sonido)
+- [~] 69 Microtransiciones de controles (hover, hundirse al clic, listas)
+- [ ] 70 Texto y selección (tiradores, sugerencias, brillo al buscar)
+- [ ] 71 Barras de desplazamiento overlay (aparecer, ensanchar, desvanecer)
+- [ ] 72 Detalles de apps (reloj del Dock con manecillas, calendario con fecha)
+- [~] 73 Cursor dinámico (mano, texto, redimensionar en bordes)
+
 ## En curso
 - [x] 2026-11-17 (creador): 10 fondos «Bosques», arranque Plymouth animado, resolución en la bienvenida (VM), Ajustes General/Pantallas rehechos, CaskaydiaCove Nerd Font solo en terminales, login solo BC OS + Dotfiles. Pendiente: hypr-genie (plugin Hyprland) a valorar; verificar Plymouth en QEMU.
 - [x] 2026-11-17 Firefox con semáforo (bc-firefox.css por autoconfig) y esquinas 12 px; todas las apps Wayland con CSD (sway border csd, Qt adwaita); resolución recordada (bc-display); aviso de actualizaciones al arrancar → clic abre Terminal con sudo bc-actualizar (pacman -Syy + -Su); genio de macOS en dos fases también por software; barra lateral de Archivos desplazable.
