@@ -37,15 +37,35 @@ if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
   # Frecuencia elegida sin resolución elegida: la resolución actual del monitor a esa frecuencia
   actual() { hyprctl monitors -j 2>/dev/null | jq -r '.[0] | "\(.width)x\(.height)"'; }
   case "${1:-auto}" in
-    set) case "$2" in [0-9]*x[0-9]*) mkdir -p "$(dirname "$G")"; echo "$2" > "$G"; para_login; hmode "$2@$R" ;; *) exit 2 ;; esac ;;
-    auto) [ "${2:-}" = olvidar ] && rm -f "$G"; w="$(cat "$G" 2>/dev/null)"; case "$w" in [0-9]*x[0-9]*) hmode "$w@$R" ;; *) if [ -n "$fhz" ]; then hmode "$(actual)@$fhz"; else hmode highrr; fi ;; esac ;;
-    inicio|watch) w="$(cat "$G" 2>/dev/null)"
-      case "$w" in [0-9]*x[0-9]*) hmode "$w@$R" ;;
-        # Sin resolución elegida: la nativa a su frecuencia más alta (solo modos de esa misma resolución)
-        *) nat="$(hyprctl monitors -j 2>/dev/null | jq -r '.[0] | "\(.width)x\(.height)"')"
-           best="$(hyprctl monitors -j 2>/dev/null | jq -r --arg n "$nat" '[.[0].availableModes[] | select(startswith($n + "@")) | sub(".*@"; "") | sub("Hz"; "") | tonumber] | max // 60')"
-           hmode "$nat@${fhz:-$best}" ;;
-      esac ;;
+    set) case "$2" in [0-9]*x[0-9]*) mkdir -p "$(dirname "$G")"; echo "$2" > "$G"; para_login; exec "$0" inicio ;; *) exit 2 ;; esac ;;
+    auto) [ "${2:-}" = olvidar ] && { rm -f "$G"; para_login; }; exec "$0" inicio ;;
+    inicio|watch)
+      # Cada pantalla a su resolución nativa (la primera que anuncia) y su frecuencia más alta; la principal (digital
+      # más grande: HDMI/DP/eDP antes que VGA/DVI, o ~/.config/bc/pantalla-principal) a la izquierda en 0,0 y con el
+      # foco, para que la barra, los widgets y las ventanas nuevas (el instalador) salgan ahí y no en la secundaria
+      w="$(cat "$G" 2>/dev/null)"; case "$w" in [0-9]*x[0-9]*) ;; *) w= ;; esac
+      pri="$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/bc/pantalla-principal" 2>/dev/null)"
+      x=0; first=
+      for n in $(hyprctl monitors all -j 2>/dev/null | jq -r --arg p "$pri" 'sort_by((if .name == $p then 0 else 1 end),
+            (if (.name | test("^(VGA|DVI-A)"; "i")) then 1 else 0 end), -(.width * .height)) | .[].name'); do
+        m="$(hyprctl monitors all -j 2>/dev/null | jq -c --arg n "$n" '.[] | select(.name == $n)')"
+        nat="$(echo "$m" | jq -r '(.availableModes[0] // "") | sub("@.*"; "")')"
+        [ -n "$nat" ] || nat="$(echo "$m" | jq -r '"\(.width)x\(.height)"')"
+        res="$nat"; [ -z "$first" ] && [ -n "$w" ] && res="$w"
+        best="$(echo "$m" | jq -r --arg r "$res" '[.availableModes[] | select(startswith($r + "@")) | sub(".*@"; "") | sub("Hz"; "") | tonumber] | max // 60')"
+        hz="${fhz:-$best}"
+        hyprctl eval "hl.monitor({ output = \"$n\", mode = \"$res@$hz\", position = \"${x}x0\", scale = \"$HE\" })" >/dev/null 2>&1
+        x=$(awk -v a="$x" -v w="${res%x*}" -v e="$HE" 'BEGIN { printf "%d", a + w / e }')
+        [ -n "$first" ] || first="$n"
+      done
+      [ -n "$first" ] && hyprctl eval "hl.dispatch(hl.dsp.focus({ monitor = \"$first\" }))" >/dev/null 2>&1
+      [ "$1" = watch ] || exit 0
+      # Pantallas que se conectan o cambian después: se vuelve a ordenar
+      antes="$(hyprctl monitors all -j 2>/dev/null | jq -r '[.[].name] | join(" ")')"
+      udevadm monitor --udev --subsystem-match=drm 2>/dev/null | while read -r _; do
+        sleep 1; ahora="$(hyprctl monitors all -j 2>/dev/null | jq -r '[.[].name] | join(" ")')"
+        [ "$ahora" = "$antes" ] && continue; antes="$ahora"; "$0" inicio
+      done ;;
     seguir) hmode preferred ;;
     list) hyprctl monitors -j 2>/dev/null | jq -r '.[0].availableModes[]' | sed 's/@.*//' | sort -u -t x -k1,1nr -k2,2nr ;;
     hz) hyprctl monitors -j 2>/dev/null | jq -r '.[0] as $m | $m.availableModes[] | select(startswith("\($m.width)x\($m.height)@"))

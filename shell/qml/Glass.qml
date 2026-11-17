@@ -85,7 +85,7 @@ Item {
     Item {
         anchors.fill: parent; clip: g.leftOnly
     Rectangle { width: parent.width + (g.leftOnly ? g.radius : 0); height: parent.height; radius: g.radius; color: g.tintColor
-                opacity: Math.min(0.97, (Quick.realBlur ? 0.75 : 1) * (Theme.glassOpacity + g.tintBoost)) }
+                opacity: Math.min(0.97, Quick.realBlur ? Math.max(Theme.dark ? 0.32 : 0.5, 0.75 * (Theme.glassOpacity + g.tintBoost)) : Theme.glassOpacity + g.tintBoost) }
     // Reflejo superior: refracción uniforme de Golden Gate
     Rectangle {
         width: parent.width + (g.leftOnly ? g.radius : 0); height: parent.height; radius: g.radius
