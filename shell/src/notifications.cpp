@@ -1,4 +1,5 @@
 #include "notifications.h"
+#include <QProcess>
 #include <QDBusConnection>
 #include <QDateTime>
 #include <QDebug>
@@ -9,6 +10,7 @@ NotificationQueue::NotificationQueue(QObject *parent) : QObject(parent) {
 }
 
 void NotificationQueue::push(const QString &app, const QString &title, const QString &body, const QString &icon, int timeoutMs) {
+    m_action.clear();
     QVariantMap h{{"app", app}, {"title", title}, {"body", body}, {"icon", icon},
                   {"time", QDateTime::currentDateTime().toString(Qt::ISODate)}};
     m_history.prepend(h);
@@ -60,4 +62,13 @@ QString NotificationServer::GetServerInformation(QString &vendor, QString &versi
     version = "0.2";
     spec_version = "1.2";
     return "BC Shell";
+}
+
+bool NotificationQueue::activate() {
+    if (m_action.isEmpty()) return false;
+    const QStringList cmd = m_action;
+    m_action.clear();
+    QProcess::startDetached(cmd.first(), cmd.mid(1));
+    dismiss();
+    return true;
 }

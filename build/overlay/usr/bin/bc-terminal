@@ -6,6 +6,12 @@ RT="${XDG_RUNTIME_DIR:-/tmp}"
 CFG="${XDG_CONFIG_HOME:-$HOME/.config}"
 PREF="$(cat "$CFG/bc/terminal" 2>/dev/null)"
 case "$PREF" in ghostty|alacritty|foot) ;; *) [ -x /usr/lib/bc/bc-terminal-app ] && exec /usr/lib/bc/bc-terminal-app "$@" ;; esac
+# --actualizar (aviso de actualizaciones) en las otras terminales: ejecutar la actualización y quedarse en la shell
+if [ "$1" = --actualizar ]; then
+  shift
+  case "$PREF" in foot) exec foot sh -c 'sudo bc-actualizar; exec "${SHELL:-fish}"' ;; esac
+  set -- -e sh -c 'sudo bc-actualizar; exec "${SHELL:-fish}"'
+fi
 [ "$PREF" = foot ] && exec foot "$@"
 [ "$PREF" = alacritty ] && : > "$RT/bc-no-ghostty"
 if command -v ghostty >/dev/null 2>&1 && [ ! -f "$RT/bc-no-ghostty" ]; then

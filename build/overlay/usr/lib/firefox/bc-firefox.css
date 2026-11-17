@@ -1,0 +1,21 @@
+/* BC OS: ventana de Firefox como en macOS. Solo afecta a la interfaz del navegador (documento chrome). */
+@-moz-document url("chrome://browser/content/browser.xhtml") {
+  /* Semáforo: rojo, amarillo y verde, 12 px, a la izquierda (orden de gtk «close,minimize,maximize:») */
+  .titlebar-buttonbox { appearance: none !important; gap: 8px !important; padding-inline: 12px 6px !important; align-items: center !important; }
+  .titlebar-button { appearance: none !important; padding: 0 !important; margin: 0 !important; background: none !important;
+                     min-width: 0 !important; width: 12px !important; height: 12px !important; border: 0 !important; }
+  .titlebar-button > .toolbarbutton-icon { appearance: none !important; width: 12px !important; height: 12px !important;
+                     border-radius: 50% !important; list-style-image: none !important; background-image: none !important;
+                     box-shadow: inset 0 0 0 0.5px rgba(0,0,0,.18) !important; padding: 0 !important; margin: 0 !important;
+                     -moz-context-properties: none !important; fill: transparent !important; stroke: transparent !important; }
+  .titlebar-close > .toolbarbutton-icon { background-color: #FF5F57 !important; }
+  .titlebar-min > .toolbarbutton-icon { background-color: #FEBC2E !important; }
+  .titlebar-max > .toolbarbutton-icon, .titlebar-restore > .toolbarbutton-icon { background-color: #28C840 !important; }
+  /* Ventana inactiva: semáforo gris, como macOS */
+  :root:-moz-window-inactive .titlebar-button > .toolbarbutton-icon { background-color: rgba(128,128,128,.45) !important; }
+  .titlebar-button:hover > .toolbarbutton-icon { filter: brightness(.88) !important; }
+  .titlebar-button:active > .toolbarbutton-icon { filter: brightness(.7) !important; }
+  /* Esquinas redondeadas de la ventana (CSD de Firefox; como las ventanas de BC) */
+  :root[sizemode="normal"] { border-radius: 12px !important; overflow: clip !important; }
+  :root[sizemode="normal"] #navigator-toolbox { border-top-left-radius: 12px !important; border-top-right-radius: 12px !important; }
+}

@@ -6,7 +6,7 @@ UpdateChecker::UpdateChecker(QObject *parent) : QObject(parent) {
     m_timer.setInterval(6 * 3600 * 1000);
     connect(&m_timer, &QTimer::timeout, this, &UpdateChecker::check);
     m_timer.start();
-    QTimer::singleShot(120 * 1000, this, &UpdateChecker::check);   // primera comprobación tras iniciar sesión
+    QTimer::singleShot(25 * 1000, this, &UpdateChecker::check);   // primera comprobación al poco de iniciar sesión
 }
 
 int UpdateChecker::parseCount(const QString &out) {

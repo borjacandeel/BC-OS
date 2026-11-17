@@ -28,6 +28,9 @@ public:
     // timeoutMs <= 0: 5 s por defecto. Con No molestar solo se guarda en el historial.
     Q_INVOKABLE void push(const QString &app, const QString &title, const QString &body, const QString &icon, int timeoutMs = 5000);
     Q_INVOKABLE void dismiss();
+    // Orden que se ejecuta al pulsar la notificación activa (p. ej. actualizar el sistema); vacía = abrir el Centro
+    void setAction(const QStringList &command) { m_action = command; }
+    Q_INVOKABLE bool activate();
     Q_INVOKABLE void clearHistory() { m_history.clear(); emit changed(); }
     Q_INVOKABLE void removeAt(int i) { if (i >= 0 && i < m_history.size()) { m_history.removeAt(i); emit changed(); } }
 signals:
@@ -38,6 +41,7 @@ private:
     QTimer m_timer;
     bool m_visible = false, m_dnd = false;
     QString m_app, m_title, m_body, m_icon;
+    QStringList m_action;
     QVariantList m_history;
 };
 

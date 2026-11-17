@@ -163,8 +163,14 @@ AppWindow {
             color: Theme.gg ? "transparent" : Theme.sidebarFill
             SidebarGlass { anchors.fill: parent; active: win.active; z: -1 }
             Rectangle { anchors.right: parent.right; width: 1; height: parent.height; color: Theme.hairline }
+            // Desplazable y recortada por encima de la esquina inferior: nada asoma por la esquina redondeada
+            Flickable {
+                id: sideFlick
+                y: win.titlebarHeight + 4; width: parent.width; height: parent.height - y - Theme.radiusWindow * 0.6
+                clip: true; contentHeight: sideCol.height + 8; boundsBehavior: Flickable.StopAtBounds
             Column {
-                y: win.titlebarHeight + 4; width: parent.width
+                id: sideCol
+                width: parent.width
                 Head { text: qsTr("Favoritos") }
                 Place { icon: "document-open-symbolic"; label: qsTr("Recientes"); on: win.recents; fill: false
                         onHit: { win.recents = true; win.recentList = Quick.recentFiles() } }
@@ -190,6 +196,7 @@ AppWindow {
                                     onClicked: { win.tagFilter = win.tagFilter === modelData ? "" : modelData; Files.setTagFilter(win.tagFilter) } }
                     }
                 }
+            }
             }
         }
 

@@ -117,7 +117,10 @@ allowed_users=anybody
 needs_root_rights=auto
 XW
 install -d -m1777 "$R/var/lib/bc-greeter"      # elección de entorno por usuario (la escribe cada usuario; la lee el login)
-install -D -m644 "$HERE/overlay/usr/lib/firefox/distribution/policies.json" "$R/usr/lib/firefox/distribution/policies.json"   # Firefox usa la barra de título del sistema (semáforo a la izquierda)
+install -D -m644 "$HERE/overlay/usr/lib/firefox/distribution/policies.json" "$R/usr/lib/firefox/distribution/policies.json"
+# Firefox como macOS: semáforo y esquinas (autoconfig carga bc-firefox.css en la interfaz)
+install -D -m644 "$HERE/overlay/usr/lib/firefox/defaults/pref/bc-autoconfig.js" "$R/usr/lib/firefox/defaults/pref/bc-autoconfig.js"
+install -m644 "$HERE/overlay/usr/lib/firefox/bc.cfg" "$HERE/overlay/usr/lib/firefox/bc-firefox.css" "$R/usr/lib/firefox/"   # Firefox usa la barra de título del sistema (semáforo a la izquierda)
 install -D -m644 "$HERE/overlay/etc/fonts/local.conf" "$R/etc/fonts/local.conf"
 install -D -m644 "$HERE/overlay/etc/sysctl.d/90-bcos.conf" "$R/etc/sysctl.d/90-bcos.conf"
 install -D -m644 "$HERE/overlay/etc/udev/rules.d/60-bcos-ioscheduler.rules" "$R/etc/udev/rules.d/60-bcos-ioscheduler.rules"

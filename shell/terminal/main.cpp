@@ -236,15 +236,19 @@ int main(int argc, char **argv) {
     app.setApplicationName(QStringLiteral("bc-terminal"));
     app.setDesktopFileName(QStringLiteral("bc-terminal"));   // app_id en sway: «bc-…» = sin marco del compositor
     if (QIcon::themeName().isEmpty()) QIcon::setThemeName(QStringLiteral("MacOS-Like-Dark"));
-    QString dir;
+    QString dir, run;
     const QStringList a = app.arguments();
     for (int i = 1; i < a.size(); ++i) {
         if (a[i] == QLatin1String("--working-directory") && i + 1 < a.size()) dir = a[++i];
+        // Aviso «Actualizaciones disponibles»: la Terminal se abre con la actualización completa ya escrita y en
+        // marcha (pacman -Syyu desde el repositorio firmado de BC y Arch); solo hay que poner la contraseña
+        else if (a[i] == QLatin1String("--actualizar")) run = QStringLiteral("sudo bc-actualizar");
         else if (QFileInfo(a[i]).isDir()) dir = a[i];
     }
     if (dir.isEmpty()) dir = QDir::homePath();
     TerminalWindow w(dir);
     w.show();
+    if (!run.isEmpty()) QTimer::singleShot(400, &w, [&w, run] { w.term->sendText(run + QLatin1Char('\r')); });
     // Pruebas: BC_TERMINAL_SHOT=<png> guarda una captura a los 2,5 s y sale
     if (const QString shot = qEnvironmentVariable("BC_TERMINAL_SHOT"); !shot.isEmpty())
         QTimer::singleShot(2500, &app, [&w, shot] { w.grab().save(shot); QCoreApplication::exit(0); });

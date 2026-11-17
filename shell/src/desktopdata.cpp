@@ -532,7 +532,7 @@ void QuickTools::listDisplayModes() {
 }
 void QuickTools::setDisplayMode(const QString &mode) {
     static const QRegularExpression ok("^[0-9]{3,5}x[0-9]{3,5}$");
-    if (mode == "auto") run("bc-display", {"auto"}, [](int, const QString &) {});
+    if (mode == "auto") run("bc-display", {"auto", "olvidar"}, [](int, const QString &) {});
     else if (ok.match(mode).hasMatch()) run("bc-display", {"set", mode}, [](int, const QString &) {});
 }
 static QString kbFile() { return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/bc/keyboard-layout"; }

@@ -10,6 +10,8 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - ARM64 únicamente. Base Arch Linux ARM.
 
 ## En curso
+- [ ] 2026-11-17 (creador): 10 fondos minimal (5 claros, 5 oscuros, bosques), arranque animado precioso, en VM preguntar resolución en la bienvenida y aplicarla siempre, Ajustes más bonitos, «cascakdia» (¿Cascadia?) en todo el SO; hypr-genie (plugin Hyprland) a valorar.
+- [x] 2026-11-17 Firefox con semáforo (bc-firefox.css por autoconfig) y esquinas 12 px; todas las apps Wayland con CSD (sway border csd, Qt adwaita); resolución recordada (bc-display); aviso de actualizaciones al arrancar → clic abre Terminal con sudo bc-actualizar (pacman -Syy + -Su); genio de macOS en dos fases también por software; barra lateral de Archivos desplazable.
 - [x] 2026-11-16 PC del padre (HP, GT 710, USB 2.0): esquinas en Firefox y apps externas → swayfx por GPU de serie si hay GPU real (nouveau incluida), Firefox con barra propia (CSD, pestañas en la barra); entrada de arranque «cargar en RAM» (copytoram). RGT1352 = monitor VGA secundario (HDMI principal) → pantalla principal digital (QML + bc-display). Foco solo al hacer clic (sway focus_follows_mouse no, Hyprland follow_mouse 2). Barra/Dock duplicados en la principal: Qt reasignaba la pantalla por posición (0,0) → x/y = virtualX/Y (verificado sway headless 2 salidas ARM). Con GPU real, Qt por OpenGL (CPU libre). Cristal de barras laterales fluido al arrastrar (IPC sway persistente a 60 Hz + fondo desplazado). Falta: probar en el PC real.
 - [ ] 2026-11-16 noche — probado 0.9.6 en VirtualBox ARM por el creador. HACER YA:
   - [x] Clave GPG del repo [bc] (actualizaciones firmadas): guiar al creador, secreto BC_REPO_GPG_KEY, clave pública en la imagen, SigLevel Required.

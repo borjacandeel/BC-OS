@@ -163,7 +163,10 @@ int main(int argc, char *argv[]) {
         qmlRegisterSingletonInstance("BCShell", 1, 0, "Clipboard", &clipboard);
         qmlRegisterSingletonInstance("BCShell", 1, 0, "WidgetHost", &widgetHost);
         if (updates) QObject::connect(updates.get(), &UpdateChecker::updatesFound, &notifications, [&notifications](int n) {
-            notifications.push("BC OS", QObject::tr("Actualizaciones disponibles"), QObject::tr("%1 paquetes pueden actualizarse desde la Tienda").arg(n), "", 8000);
+            // Al pulsarla se abre la Terminal con la actualización completa; solo hay que escribir la contraseña
+            notifications.push("BC OS", QObject::tr("Actualizaciones disponibles"),
+                               QObject::tr("%n paquete(s) por actualizar. Pulsa para actualizar ahora.", "", n), "", 15000);
+            notifications.setAction({"bc-terminal", "--actualizar"});
         });
         qmlRegisterSingletonInstance("BCShell", 1, 0, "AppActions", &actions);
         if (!(p.isSet(oShot) || p.isSet(oCheck))) { notifServer.start(); shell.start(); }
@@ -249,6 +252,8 @@ int main(int argc, char *argv[]) {
             // «mover»: seguir la ventana como al arrastrarla (con un sway simulado que la desplaza)
             const QString js = prop == "aviso" ? QStringLiteral("Notifications.push(\"BC OS\", \"Aviso de prueba\", \"Entra, espera y sale\", \"\", 500)")
                              : prop == "mover" ? QStringLiteral("Quick.followWindowMove()")
+                             // «genio»: minimizar una ventana de prueba (el fondo de pantalla) hacia el Dock
+                             : prop == "genio" ? QStringLiteral("genieWin.shown = true; genie.run(\"qrc:/BCShell/assets/wallpaper-default.png\", Qt.rect(UiState.sw * 0.2, UiState.sh * 0.12, UiState.sw * 0.55, UiState.sh * 0.55), Qt.point(UiState.sw * 0.62, UiState.sh - 40), 48, false)")
                                                : "UiState." + prop + " = true";
             QQmlExpression ex(QQmlEngine::contextForObject(win), win, js);
             ex.evaluate();

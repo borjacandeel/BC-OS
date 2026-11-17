@@ -44,5 +44,5 @@ Item {
         Icon { anchors.centerIn: parent; name: Icons.closeX; size: 18; }
         MouseArea { anchors.fill: parent; onClicked: card.dismissed() }
     }
-    MouseArea { id: hov; anchors.fill: parent; hoverEnabled: true; z: -1; onClicked: if (!UiState.classic) { card.dismissed(); UiState.toggleNotifCenter() } }
+    MouseArea { id: hov; anchors.fill: parent; hoverEnabled: true; z: -1; onClicked: { if (Notifications.activate()) return; if (!UiState.classic) { card.dismissed(); UiState.toggleNotifCenter() } } }
 }

@@ -6,15 +6,23 @@ cmd="${1:-auto}"
 # Hyprland adapta solo la resolución (monitor «preferred»)
 [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ] && [ "${1:-}" = watch ] && exit 0
 outs() { swaymsg -t get_outputs -r 2>/dev/null; }
+# Resolución elegida por el usuario (Ajustes ▸ Pantallas): se recuerda y se vuelve a aplicar al iniciar sesión
+GUARDADA="${XDG_CONFIG_HOME:-$HOME/.config}/bc/resolucion"
 case "$cmd" in
   list) outs | jq -r '.[] | select(.active) | .modes[] | "\(.width)x\(.height)"' | sort -u -t x -k1,1nr -k2,2nr ;;
   set)
     case "$2" in [0-9]*x[0-9]*) ;; *) echo "uso: bc-display set 1920x1080" >&2; exit 2 ;; esac
+    mkdir -p "$(dirname "$GUARDADA")"; echo "$2" > "$GUARDADA"
     outs | jq -r '.[] | select(.active) | .name' | while read -r n; do swaymsg "output $n mode $2" >/dev/null; done ;;
-  auto)
+  auto|inicio)
+    # «auto» desde Ajustes olvida la resolución guardada; al iniciar sesión («inicio», watch) se respeta
+    [ "$cmd" = auto ] && [ "${2:-}" = olvidar ] && rm -f "$GUARDADA"
+    want="$(cat "$GUARDADA" 2>/dev/null)"; case "$want" in [0-9]*x[0-9]*) ;; *) want= ;; esac
+    ww="${want%x*}"; wh="${want#*x}"; [ -n "$want" ] || { ww=0; wh=0; }
     # Resolución nativa (la del primer modo) a la frecuencia MÁS ALTA que admita el monitor (60, 100, 120, 144 Hz…):
     # el compositor y las animaciones de BC van a esa frecuencia
-    outs | jq -r '.[] | select(.active) | . as $o | ($o.modes[0]) as $m0
+    outs | jq -r --argjson ww "${ww:-0}" --argjson wh "${wh:-0}" '.[] | select(.active) | . as $o
+      | ([$o.modes[] | select(.width == $ww and .height == $wh)] | if length > 0 then .[0] else $o.modes[0] end) as $m0
       | ([$o.modes[] | select(.width == $m0.width and .height == $m0.height) | .refresh] | max) as $r
       | "\($o.name) \($m0.width) \($m0.height) \($r) \($o.current_mode.width) \($o.current_mode.height) \($o.current_mode.refresh)"' |
     while read -r n w h r cw ch cr; do
@@ -41,9 +49,9 @@ case "$cmd" in
         swaymsg "output $n position $x 0" >/dev/null; x=$((x + w)); [ -n "$first" ] || first=$n
       done; [ "$x" -gt 0 ] && [ -n "$first" ] && swaymsg "focus output $first" >/dev/null; } ;;
   watch)
-    bc-display auto
+    bc-display inicio
     udevadm monitor --udev --subsystem-match=drm 2>/dev/null | while read -r _; do
-      sleep 1; bc-display auto
+      sleep 1; bc-display inicio
     done ;;
   *) echo "uso: bc-display auto|list|set <AnchoxAlto>|watch" >&2; exit 2 ;;
 esac
