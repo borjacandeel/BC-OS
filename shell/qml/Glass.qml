@@ -24,7 +24,7 @@ Item {
     property point gp: Qt.point(0, 0)
     function sync() { const p = g.mapToItem(null, 0, 0); gp = Qt.point(Math.round(p.x + originX), Math.round(p.y + originY)) }
     onXChanged: sync(); onYChanged: sync(); onWidthChanged: sync(); onHeightChanged: sync()
-    Component.onCompleted: sync()
+    Component.onCompleted: { sync(); bufA.asynchronous = false; bufA.source = want; asked = want; bufA.asynchronous = true }
     // Los padres pueden moverse o escalarse (animaciones de entrada): se vuelve a calcular al aparecer y al asentarse
     onVisibleChanged: if (visible) { sync(); settle.restart() }
     Timer { id: settle; interval: 450; onTriggered: g.sync() }
@@ -40,37 +40,44 @@ Item {
         visible: g.shadow; anchors.fill: parent; anchors.margins: -6; anchors.topMargin: 2; anchors.bottomMargin: -14
         radius: g.radius + 8; color: Theme.shadow; opacity: 0.12
     }
-    // En movimiento (arrastrar la ventana) se desliza el fondo desenfocado entero bajo el cristal: va a la
-    // frecuencia del monitor sin recalcular nada. Al detenerse vuelve el recorte con lente y esquinas.
+    // En movimiento (arrastrar la ventana): recortes rápidos sin lente (con sus esquinas redondeadas) cada fotograma
+    // posible; al detenerse, el recorte completo con lente y luz en el borde.
     property bool moving: false
-    property bool usedFull: false
-    function _moved() { sync(); if (win && win.titlebarHeight !== undefined && blur.status === Image.Ready && blur.source != "") { usedFull = true; moving = true; still.restart() } }
+    function _moved() { sync(); if (win && win.titlebarHeight !== undefined) { moving = true; still.restart() } }
     onOriginXChanged: _moved()
     onOriginYChanged: _moved()
-    Timer { id: still; interval: 160; onTriggered: g.moving = false }
-    Item {
-        anchors.fill: parent; clip: true
-        visible: g.moving && !Quick.realBlur
-        Image {
-            x: -g.gp.x; y: -g.gp.y
-            cache: true; asynchronous: false; smooth: false
-            source: g.usedFull ? "image://glass/" + [0, 0, 1, 1, 0, Math.round(g.scrW), Math.round(g.scrH), g.version, "F"].join("_") : ""
-        }
+    Timer { id: still; interval: 180; onTriggered: g.moving = false }
+    // Fondo desenfocado recortado (GlassProvider). Doble búfer con carga en segundo plano: el recorte nuevo se
+    // calcula en otro hilo y solo se muestra cuando está listo, así las animaciones (paneles que aparecen, Dock que se
+    // amplía, ventanas que se mueven) no se frenan esperando al recorte. Como mucho uno cada 70 ms (16 ms moviendo).
+    readonly property string want: !Quick.realBlur && g.width > 2 && g.height > 2
+        ? "image://glass/" + [g.gp.x, g.gp.y, Math.round(g.width), Math.round(g.height), Math.round(g.radius), Math.round(g.scrW), Math.round(g.scrH), g.version].join("_") + (g.leftOnly ? "_L" : "_R") + (g.moving ? "_M" : "")
+        : ""
+    property int front: 0
+    property string asked: ""
+    function request(u) {
+        if (u === asked) return
+        asked = u
+        const back = front === 0 ? bufB : bufA
+        if (back.source == u && back.status === Image.Ready) { front = 1 - front; return }
+        back.source = u
+    }
+    onWantChanged: { if (!throttle.running) { request(want); throttle.restart() } else throttle.pending = true }
+    Timer { id: throttle; interval: g.moving ? 16 : 70; property bool pending: false
+            onTriggered: if (pending) { pending = false; g.request(g.want); restart() } }
+    Image {
+        id: bufA
+        visible: !Quick.realBlur && g.front === 0
+        anchors.fill: parent
+        cache: false; asynchronous: true; smooth: false
+        onStatusChanged: if (status === Image.Ready && source == g.asked) g.front = 0
     }
     Image {
-        id: blur
-        visible: !Quick.realBlur && !g.moving
+        id: bufB
+        visible: !Quick.realBlur && g.front === 1
         anchors.fill: parent
-        cache: false; asynchronous: false; smooth: false
-        // Durante animaciones de tamaño (Dock, paneles) no se recorta el fondo en cada fotograma: como mucho cada 70 ms
-        // (entretanto la imagen anterior se estira). Así la ampliación del Dock va fluida con render por software.
-        readonly property string want: !Quick.realBlur && g.width > 2 && g.height > 2
-            ? "image://glass/" + [g.gp.x, g.gp.y, Math.round(g.width), Math.round(g.height), Math.round(g.radius), Math.round(g.scrW), Math.round(g.scrH), g.version].join("_") + (g.leftOnly ? "_L" : "")
-            : ""
-        onWantChanged: { if (source == "" || !throttle.running) { source = want; throttle.restart() } else throttle.pending = true }
-        Component.onCompleted: source = want
-        Timer { id: throttle; interval: 70; property bool pending: false
-                onTriggered: if (pending) { pending = false; blur.source = blur.want; restart() } }
+        cache: false; asynchronous: true; smooth: false
+        onStatusChanged: if (status === Image.Ready && source == g.asked) g.front = 1
     }
     // Tinte (deslizador ultratransparente ↔ tintado)
     // Con desenfoque real (Hyprland) el tinte es algo más ligero para que se vea lo de detrás, como Liquid Glass

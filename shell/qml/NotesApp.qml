@@ -79,7 +79,7 @@ AppWindow {
                     width: parent.width; height: 30; radius: 7
                     color: win.folder === modelData.k ? Theme.tileFill : (fm.containsMouse ? Qt.rgba(0.5, 0.5, 0.5, 0.08) : "transparent")
                     Icon { x: 9; anchors.verticalCenter: parent.verticalCenter; name: modelData.i; size: 16; color: win.active ? win.amber : Theme.textSecondary }
-                    Text { x: 34; anchors.verticalCenter: parent.verticalCenter; text: modelData.t; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 13; width: parent.width - 70; elide: Text.ElideRight }
+                    Text { x: 34; anchors.verticalCenter: parent.verticalCenter; text: modelData.t; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 13; width: parent.width - 58; elide: Text.ElideRight }
                     Text { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter; text: modelData.n; color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 12 }
                     MouseArea { id: fm; anchors.fill: parent; hoverEnabled: true; onClicked: { win.saveNow(); win.folder = modelData.k; win.current = ""; editor.text = ""; if (win.list.length) win.open(win.list[0].id) } }
                 }

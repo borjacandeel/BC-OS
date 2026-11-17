@@ -538,6 +538,15 @@ void QuickTools::setRefreshRate(const QString &hz) {
     static const QRegularExpression ok("^[0-9]{2,3}$");
     if (hz == "auto" || ok.match(hz).hasMatch()) run("bc-display", {"hz-set", hz}, [](int, const QString &) {});
 }
+void QuickTools::setUiScale(const QString &s) {
+    static const QStringList ok{"1", "1.25", "1.5", "1.75", "2", "auto"};
+    if (ok.contains(s)) run("bc-display", {"escala", s}, [](int, const QString &) {});
+}
+QString QuickTools::savedUiScale() const {
+    QFile f(QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/bc/escala");
+    const QString v = f.open(QIODevice::ReadOnly) ? QString::fromUtf8(f.readAll()).trimmed() : QString();
+    return QStringList{"1", "1.25", "1.5", "1.75", "2"}.contains(v) ? v : QStringLiteral("auto");
+}
 QString QuickTools::savedRefreshRate() const {
     QFile f(QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/bc/frecuencia");
     if (!f.open(QIODevice::ReadOnly)) return QStringLiteral("auto");

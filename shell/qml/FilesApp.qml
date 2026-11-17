@@ -98,7 +98,8 @@ AppWindow {
                 }
             }
             Text { anchors.verticalCenter: parent.verticalCenter; leftPadding: 8; text: win.recents ? qsTr("Recientes") : Files.inTrash ? qsTr("Papelera") : (Files.crumbs.length ? Files.crumbs[Files.crumbs.length - 1].name || qsTr("Inicio") : "")
-                   color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 15; font.weight: Font.Bold; width: 200; elide: Text.ElideRight }
+                   color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 15; font.weight: Font.Bold; elide: Text.ElideRight
+                   width: Math.max(60, Math.min(200, win.width - 2 * win.sh - win.sideW - 72 - 26 - 4 * 38 - 8 - 40 - 30 - Math.max(30, Math.min(220, win.width - 2 * win.sh - win.sideW - 470)) - 40)) }
         },
         Row {
             anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter; spacing: 10
@@ -126,9 +127,10 @@ AppWindow {
                       Repeater { model: ["#FF453A", "#FFD60A", "#0A84FF"]; Rectangle { required property string modelData; width: 9; height: 9; radius: 4.5; color: modelData; border.width: 1; border.color: Theme.windowFill } } }
                 MouseArea { id: tg; anchors.fill: parent; hoverEnabled: true; enabled: win.current >= 0; onClicked: tagMenu.open = !tagMenu.open }
             }
-            // Búsqueda
+            // Búsqueda (en ventanas estrechas se encoge hasta quedarse en la lupa, como en el Finder)
             Rectangle {
-                width: 220; height: 28; radius: 8; color: Theme.tileFill
+                width: Math.max(30, Math.min(220, win.width - 2 * win.sh - win.sideW - 470)); height: 28; radius: 8; color: Theme.tileFill
+                clip: true
                 Icon { x: 8; anchors.verticalCenter: parent.verticalCenter; name: Icons.search; size: 14; color: Theme.textSecondary }
                 TextInput {
                     id: search

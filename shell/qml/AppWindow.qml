@@ -23,7 +23,7 @@ Window {
     visible: true
     color: "transparent"
     flags: Qt.FramelessWindowHint
-    minimumWidth: 480 + 2 * sh
+    minimumWidth: Math.max(480, sidebarWidth + 460) + 2 * sh
     minimumHeight: 320 + 2 * sh
 
     onClosing: (c) => { c.accepted = false; win.closeRequested() }

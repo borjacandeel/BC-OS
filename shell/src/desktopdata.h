@@ -125,6 +125,8 @@ public:
     Q_INVOKABLE QString savedDisplayMode() const;              // la recordada por bc-display o «auto»
     Q_INVOKABLE void setRefreshRate(const QString &hz);        // «60», «144»… o «auto» (la más alta)
     Q_INVOKABLE QString savedRefreshRate() const;
+    Q_INVOKABLE void setUiScale(const QString &s);             // «1», «1.25», «1.5», «2» o «auto» (según los ppp)
+    Q_INVOKABLE QString savedUiScale() const;
     Q_INVOKABLE bool setKeyboardLayout(const QString &code);   // es, us, gb, fr, de, it, pt, latam
     Q_INVOKABLE static QString keyboardLayout();
     // Datos JSON de las apps (Calendario…): ~/.local/share/bc/<nombre>.json (nombre: letras minúsculas y guiones)

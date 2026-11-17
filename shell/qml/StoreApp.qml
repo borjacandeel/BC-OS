@@ -196,12 +196,14 @@ AppWindow {
                 }
                 Text { text: qsTr("Imprescindibles"); color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 18; font.weight: Font.Bold }
                 Grid {
-                    columns: 3; columnSpacing: 18; rowSpacing: 4; width: parent.width
+                    id: featGrid
+                    // Columnas según el ancho (cada ficha necesita ~280 px para que el nombre no se corte)
+                    columns: Math.max(1, Math.min(3, Math.floor((disc.width + 18) / 298))); columnSpacing: 18; rowSpacing: 4; width: parent.width
                     Repeater {
                         model: win.featured
                         Item {
                             required property var modelData
-                            width: (disc.width - 36) / 3; height: 76
+                            width: (disc.width - 18 * (featGrid.columns - 1)) / featGrid.columns; height: 76
                             AppTile { anchors.verticalCenter: parent.verticalCenter; letter: modelData.name.charAt(0); tint: modelData.c; icon: modelData.icon || modelData.id }
                             Column {
                                 x: 68; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 68 - 84

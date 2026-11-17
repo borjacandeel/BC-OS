@@ -13,7 +13,7 @@ Item {
     property real iconSize: 46
     property real p: 0                  // 0 = ventana, 1 = dentro del Dock
     property bool reverse: false
-    readonly property int strips: Quick.softwareRender ? 24 : 48   // menos franjas por software (CPU)
+    readonly property int strips: Quick.softwareRender ? 32 : 56   // menos franjas por software (CPU)
     signal finished()
 
     function run(src, rect, dockPoint, icon, back) {
@@ -44,23 +44,31 @@ Item {
     function rowT(v) { const h = from.height / dist; return Math.min(1, v * h + slide * (1 + h) * 1.0) }
     function halfW(t) { return from.width / 2 + (iconSize / 2 - from.width / 2) * bend * smooth(t) }
     function centerX(t) { const cx = from.x + from.width / 2; return cx + (target.x - cx) * bend * smooth(t) }
+    // Cada franja es un recorte (clip) de la MISMA imagen: se decodifica una sola vez (antes, una por franja) y el
+    // primer fotograma sale al instante; luego solo cambian posiciones y tamaños (barato también por software)
     Repeater {
         model: g.source !== "" ? g.strips : 0
-        delegate: Image {
+        delegate: Item {
             required property int index
             readonly property real tt: g.rowT(index / g.strips)
             readonly property real tb: g.rowT((index + 1) / g.strips)
             readonly property real tm: (tt + tb) / 2
             readonly property real bandH: g.from.height / g.strips
-            source: g.source
-            cache: true; smooth: true; asynchronous: false
-            sourceClipRect: Qt.rect(0, index * bandH, g.from.width, Math.ceil(bandH) + 1)
+            readonly property real k: height / Math.max(0.01, bandH)          // compresión vertical de la franja
             visible: tt < 0.999
+            clip: true
             width: 2 * g.halfW(tm)
-            height: Math.max(0.5, (tb - tt) * g.dist) + 1
+            height: Math.max(0.5, (tb - tt) * g.dist) + 0.6
             x: g.centerX(tm) - width / 2
             y: g.y0 + tt * g.dist
             opacity: g.p > 0.96 && !g.reverse ? (1 - g.p) * 25 : 1
+            Image {
+                source: g.source
+                cache: true; smooth: true; asynchronous: false
+                width: parent.width
+                height: g.from.height * parent.k
+                y: -parent.index * parent.bandH * parent.k
+            }
         }
     }
 }

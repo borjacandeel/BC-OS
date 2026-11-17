@@ -1,11 +1,18 @@
 #!/bin/sh
-# Resolución de pantalla de BC OS. Uso: bc-display auto | list | set <AnchoxAlto> | hz | hz-set <Hz|auto> | watch
+# Resolución de pantalla de BC OS. Uso: bc-display auto | list | set <AnchoxAlto> | hz | hz-set <Hz|auto> | escala <1…2|auto> | watch
 #  auto  : aplica el modo preferido (el que anuncia el monitor o la ventana de la máquina virtual)
 #  watch : vigila cambios de pantalla (DRM) y aplica «auto»; así la ventana de VirtualBox/QEMU se adapta al redimensionarla
 cmd="${1:-auto}"
 # Frecuencia elegida por el usuario (Ajustes ▸ Pantallas); sin ella, la más alta que admita el monitor
 GHZ="${XDG_CONFIG_HOME:-$HOME/.config}/bc/frecuencia"
 fhz="$(cat "$GHZ" 2>/dev/null)"; case "$fhz" in [0-9][0-9]|[0-9][0-9][0-9]) ;; *) fhz= ;; esac
+# Escala de la interfaz (Ajustes ▸ Pantallas ▸ Tamaño): 1, 1.25, 1.5, 1.75 o 2; sin elegir, automática según los ppp
+GESC="${XDG_CONFIG_HOME:-$HOME/.config}/bc/escala"
+if [ "$cmd" = escala ]; then
+  mkdir -p "$(dirname "$GESC")"
+  case "$2" in 1|1.25|1.5|1.75|2) echo "$2" > "$GESC" ;; *) rm -f "$GESC" ;; esac
+  exec "$0" inicio
+fi
 if [ "$cmd" = hz-set ]; then
   mkdir -p "$(dirname "$GHZ")"
   case "$2" in [0-9][0-9]|[0-9][0-9][0-9]) echo "$2" > "$GHZ" ;; *) rm -f "$GHZ" ;; esac
@@ -14,7 +21,8 @@ fi
 # Hyprland: la frecuencia más alta la pone su configuración («highrr»); aquí solo la resolución elegida por el usuario
 if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
   G="${XDG_CONFIG_HOME:-$HOME/.config}/bc/resolucion"
-  hmode() { hyprctl eval "hl.monitor({ output = \"\", mode = \"$1\", position = \"auto\", scale = \"auto\" })" >/dev/null 2>&1; }
+  HE="$(cat "$GESC" 2>/dev/null)"; case "$HE" in 1|1.25|1.5|1.75|2) ;; *) HE=auto ;; esac
+  hmode() { hyprctl eval "hl.monitor({ output = \"\", mode = \"$1\", position = \"auto\", scale = \"$HE\" })" >/dev/null 2>&1; }
   R="${fhz:-60}"
   # Frecuencia elegida sin resolución elegida: la resolución actual del monitor a esa frecuencia
   actual() { hyprctl monitors -j 2>/dev/null | jq -r '.[0] | "\(.width)x\(.height)"'; }
@@ -56,17 +64,22 @@ case "$cmd" in
       | ([$o.modes[] | select(.width == $m0.width and .height == $m0.height) | .refresh]) as $rs
       | (if $hz > 0 then ([$rs[] | select(((. / 1000) - $hz | fabs) < 1.5)] | max) else null end) as $rq
       | ($rq // ($rs | max) // 60000) as $r
-      | "\($o.name) \($m0.width) \($m0.height) \($r) \($o.current_mode.width) \($o.current_mode.height) \($o.current_mode.refresh)"' |
-    while read -r n w h r cw ch cr; do
+      | "\($o.name) \($m0.width) \($m0.height) \($r) \($o.current_mode.width) \($o.current_mode.height) \($o.current_mode.refresh) \($o.physical_width // 0)"' |
+    while read -r n w h r cw ch cr pw; do
       [ -n "$w" ] && [ "$w" != "null" ] || continue
       if [ "$w" != "$cw" ] || [ "$h" != "$ch" ] || [ "$r" != "$cr" ]; then
         hz=$(awk -v r="$r" 'BEGIN { printf "%.3f", r/1000 }')
         swaymsg "output $n mode ${w}x${h}@${hz}Hz" >/dev/null 2>&1 || swaymsg "output $n mode --custom ${w}x${h}@${hz}Hz" >/dev/null 2>&1
       fi
-      # Retina/HiDPI (p. ej. VirtualBox en Mac con «salida HiDPI sin escalar»): escala 2 para texto e iconos nítidos.
-      # ~/.config/bc/escala fija otra (1, 1.5, 2…).
-      esc="$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/bc/escala" 2>/dev/null)"
-      [ -n "$esc" ] || { [ "$w" -ge 2400 ] && esc=2 || esc=1; }
+      # Escala: la elegida en Ajustes; si no, según los puntos por pulgada reales del monitor (tamaño físico en mm)
+      # como macOS: ~110 ppp → 1, ~140 → 1.25, ~180 → 1.5, Retina (≥ 215) → 2. Sin tamaño físico (máquinas
+      # virtuales), 2 desde 2400 px de ancho (Retina/HiDPI) y 1 por debajo.
+      esc="$(cat "$GESC" 2>/dev/null)"
+      if [ -z "$esc" ]; then
+        if [ "${pw:-0}" -gt 0 ] 2>/dev/null; then
+          esc=$(awk -v w="$w" -v mm="$pw" 'BEGIN { d = w * 25.4 / mm; if (d < 135) print 1; else if (d < 175) print 1.25; else if (d < 215) print 1.5; else print 2 }')
+        elif [ "$w" -ge 2400 ]; then esc=2; else esc=1; fi
+      fi
       case "$esc" in *[!0-9.]*) esc=1 ;; esac
       swaymsg "output $n scale $esc" >/dev/null
     done

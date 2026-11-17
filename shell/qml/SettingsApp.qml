@@ -569,6 +569,7 @@ AppWindow {
             visible: win.page === 12; width: parent.width; spacing: 10
             property string chosen: Quick.savedDisplayMode()
             property string hz: Quick.savedRefreshRate()
+            property string esc: Quick.savedUiScale()
             onVisibleChanged: if (visible) { Quick.listDisplayModes(); chosen = Quick.savedDisplayMode(); hz = Quick.savedRefreshRate() }
             Label { visible: !Theme.gg; text: qsTr("Pantallas"); font.pixelSize: 20; font.weight: Font.Bold }
             Item {
@@ -618,6 +619,20 @@ AppWindow {
                     }
                 }
             }
+            Section { text: qsTr("Tamaño de la interfaz") }
+            Group {
+                Row2 {
+                    label: qsTr("Texto e iconos"); value: ""
+                    PillSeg {
+                        anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                        readonly property var vals: ["auto", "1", "1.25", "1.5", "2"]
+                        options: [qsTr("Auto"), "100 %", "125 %", "150 %", "200 %"]
+                        current: Math.max(0, vals.indexOf(dispPage.esc))
+                        onPicked: (i) => { dispPage.esc = vals[i]; Quick.setUiScale(vals[i]) }
+                    }
+                }
+            }
+            Hint { width: parent.width; text: qsTr("«Auto» elige el tamaño según la densidad real de la pantalla (como macOS en una Retina); más grande, más legible; más pequeño, más espacio.") }
             Section { text: qsTr("Frecuencia de actualización") }
             Group {
                 Row2 {
