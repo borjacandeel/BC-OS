@@ -92,7 +92,7 @@ Item {
                     Image {
                         id: ic; anchors.horizontalCenter: parent.horizontalCenter; y: px(6)
                         width: px(62); height: width; sourceSize: Qt.size(128, 128); smooth: true; mipmap: true; asynchronous: true
-                        source: modelData.iconPath ? "file://" + modelData.iconPath : "qrc:/BCShell/apps/system-file-manager.svg"
+                        source: modelData.iconPath ? "file://" + modelData.iconPath : (Quick.iconPath("application-x-executable") !== "" ? "file://" + Quick.iconPath("application-x-executable") : "qrc:/BCShell/apps/text-x-script.svg")
                         scale: am.pressed ? 0.9 : (am.containsMouse ? 1.04 : 1)
                         Behavior on scale { NumberAnimation { duration: Theme.d(Theme.durHover); easing.type: Theme.easeStandard } }
                     }

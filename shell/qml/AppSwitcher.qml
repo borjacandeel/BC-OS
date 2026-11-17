@@ -66,7 +66,7 @@ Item {
                 Rectangle { x: (parent.width - width) / 2; y: px(6); width: px(124); height: px(124); radius: px(26); color: Qt.rgba(0, 0, 0, Theme.dark ? 0.30 : 0.16); visible: index === sw.index }
                 AppIcon { visible: modelData.kind !== ""; kind: modelData.kind; size: px(104); anchors.horizontalCenter: parent.horizontalCenter; y: px(16) }
                 Image { visible: modelData.kind === ""; width: px(104); height: width; anchors.horizontalCenter: parent.horizontalCenter; y: px(16)
-                        source: modelData.icon ? "file://" + modelData.icon : "qrc:/BCShell/apps/system-file-manager.svg"; sourceSize: Qt.size(208, 208); smooth: true; mipmap: true }
+                        source: modelData.icon ? "file://" + modelData.icon : (Quick.iconPath("application-x-executable") !== "" ? "file://" + Quick.iconPath("application-x-executable") : "qrc:/BCShell/apps/text-x-script.svg"); sourceSize: Qt.size(208, 208); smooth: true; mipmap: true }
                 Text { visible: index === sw.index; anchors.horizontalCenter: parent.horizontalCenter; y: px(134); width: parent.width - px(4)
                        horizontalAlignment: Text.AlignHCenter; elide: Text.ElideRight; text: modelData.name; color: Theme.label
                        font.family: Theme.font; font.pixelSize: px(13); font.weight: Font.DemiBold }

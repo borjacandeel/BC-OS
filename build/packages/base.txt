@@ -55,6 +55,8 @@ wl-clipboard
 libnotify
 fastfetch
 jq
+git
+base-devel
 htop
 fish
 fzf

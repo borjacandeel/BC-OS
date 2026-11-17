@@ -275,7 +275,7 @@ Item {
                       full: cell.trash && trashModel.count > 0 }
             Image { visible: cell.kind === "" && !cell.stack && !thumbImg.visible; anchors.fill: parent; smooth: true; fillMode: Image.PreserveAspectFit
                     sourceSize: Qt.size(Math.ceil(dock.maxIcon * Screen.devicePixelRatio / 16) * 16, Math.ceil(dock.maxIcon * Screen.devicePixelRatio / 16) * 16); mipmap: true
-                    source: cell.icon !== "" ? "file://" + cell.icon : "qrc:/BCShell/apps/system-file-manager.svg" }
+                    source: cell.icon !== "" ? "file://" + cell.icon : (Quick.iconPath("application-x-executable") !== "" ? "file://" + Quick.iconPath("application-x-executable") : "qrc:/BCShell/apps/text-x-script.svg") }
             // Pila de documentos: tres hojas apiladas con el archivo más reciente arriba
             Item {
                 visible: cell.stack; anchors.fill: parent

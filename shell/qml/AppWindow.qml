@@ -30,7 +30,7 @@ Window {
     onCloseRequested: { if (!canClose) { Sounds.play("error"); return } if (Theme.reducedMotion) Qt.quit(); else closeAnim.start() }
     ParallelAnimation {
         id: closeAnim
-        NumberAnimation { target: frame; property: "scale"; to: Quick.softwareRender ? 1 : (Theme.gg ? 0.92 : 0.94); duration: Theme.gg ? Theme.durWindowClose : 140; easing.type: Easing.InCubic }
+        NumberAnimation { target: frame; property: "scale"; to: Quick.softwareRender ? 0.96 : (Theme.gg ? 0.92 : 0.94); duration: Theme.gg ? Theme.durWindowClose : 140; easing.type: Easing.InCubic }
         NumberAnimation { target: frame; property: "opacity"; to: 0; duration: Theme.gg ? Theme.durWindowClose : 140 }
         onFinished: Qt.quit()
     }
@@ -44,7 +44,7 @@ Window {
     }
     ParallelAnimation {
         id: expandAnim
-        NumberAnimation { target: frame; property: "scale"; from: Quick.softwareRender ? 1 : 0.96; to: 1; duration: Theme.durFullscreen * 0.55; easing.type: Easing.OutCubic }
+        NumberAnimation { target: frame; property: "scale"; from: Quick.softwareRender ? 0.985 : 0.96; to: 1; duration: Theme.durFullscreen * 0.55; easing.type: Easing.OutCubic }
         NumberAnimation { target: frame; property: "opacity"; from: 0.82; to: 1; duration: Theme.durFullscreen * 0.4; easing.type: Easing.OutQuad }
     }
 
@@ -90,10 +90,12 @@ Window {
         if (zoomBack) {
             const b = zoomBack; zoomBack = null
             WindowControl.setGeometry(b.x, b.y, b.w, b.h)
+            if (!Theme.reducedMotion) expandAnim.restart()
         } else {
             zoomBack = { x: Quick.windowPos.x, y: Quick.windowPos.y, w: win.width, h: win.height }
             // La sombra va por fuera del marco: la ventana se coloca de modo que el marco quede justo bajo la barra
             WindowControl.setGeometry(-win.sh, bar - win.sh, (s ? s.width : 1280) + 2 * win.sh, (s ? s.height : 800) - bar + 2 * win.sh)
+            if (!Theme.reducedMotion) expandAnim.restart()
         }
     }
     property bool lifting: false

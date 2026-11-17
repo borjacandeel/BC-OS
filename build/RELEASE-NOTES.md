@@ -11,7 +11,12 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
 
-### Novedades de 0.9.17
+### Novedades de 0.9.17 (sin publicar aún)
+- **yay** instalado (AUR) con git y base-devel; se actualiza con BC OS.
+- Ajustes ▸ General ▸ **Actualizaciones**: versión, buscar actualizaciones, lista de paquetes y «Actualizar ahora».
+- Escritorio: **Obtener información, Renombrar, Copiar y Pegar**; arrastrar un icono a la **Papelera** del Dock.
+- **Zoom** con doble clic en la barra de título o el botón verde (vuelve al tamaño anterior), con animación.
+- Recordatorios que caben en el widget («y N más»), menús más redondeados, iconos de apps a mayor resolución.
 - **PC con NVIDIA (nouveau)**: vuelve a sway con esquinas por GPU (Hyprland iba a saltos sin control de frecuencias).
 - **Resolución nativa a la primera** también con Hyprland (antes podía elegir otra resolución y escala ×1,5–2).
 - **Esquinas redondeadas en todas las ventanas siempre de serie** (también en máquinas virtuales, por software).

@@ -67,6 +67,9 @@ for pair in bc-files:system-file-manager bc-settings:preferences-system bc-monit
   [ -f "$src" ] && install -m644 "$src" "$E2/usr/share/icons/hicolor/scalable/apps/${pair%%:*}.svg"
 done
 
+# --- yay (asistente del AUR, binario oficial) ---------------------------------------------------
+source "$HERE/lib/yay.sh"; bc_yay "$ST/yay" "${BC_ARCH:-aarch64}" || true
+
 # --- PKGBUILDs --------------------------------------------------------------------------------
 source "$HERE/lib/rootfs.sh"
 BASE="$(bc_packages "${BC_ARCH:-aarch64}" | tr ' ' '\n' | grep -v '^$' | sed "s/.*/'&'/" | tr '\n' ' ')"
@@ -91,9 +94,10 @@ A="${BC_ARCH:-aarch64}"
 mk bc-shell "$A" "BC Shell: escritorio Golden Gate y apps de BC OS" "'qt6-declarative' 'layer-shell-qt' 'qtermwidget'"
 mk bc-core "$A" "BC Core: servicios del sistema de BC OS" ""
 mk bc-escritorio any "Sesión, configuración, fondos y sonidos de BC OS" "'bc-shell' 'sway'"
-mk bc-os any "BC OS: metapaquete del sistema completo" "'bc-shell' 'bc-core' 'bc-escritorio' $BASE"
+mk yay "$A" "yay: asistente del AUR (binario oficial de Jguer/yay, GPL-3.0)" "'pacman' 'git' 'base-devel'"
+mk bc-os any "BC OS: metapaquete del sistema completo" "'bc-shell' 'bc-core' 'bc-escritorio' 'yay' $BASE"
 sh "id builder >/dev/null 2>&1 || useradd -m builder; chown -R builder /tmp/bcrepo/pkg"
-for n in bc-shell bc-core bc-escritorio bc-os; do
+for n in bc-shell bc-core bc-escritorio yay bc-os; do
   sh "cd /tmp/bcrepo/pkg/$n && su builder -c 'PKGEXT=.pkg.tar.zst makepkg -f --nodeps --noconfirm'"
 done
 cp "$W"/pkg/*/*.pkg.tar.zst "$OUT/"

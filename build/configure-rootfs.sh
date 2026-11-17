@@ -183,8 +183,10 @@ fi
 sh "pacman -Q labwc >/dev/null 2>&1 && pacman -Rns --noconfirm --disable-sandbox labwc || true"
 source "$HERE/lib/rootfs.sh"
 PKS="$(bc_packages "${BC_ARCH:-aarch64}")"
+# yay: instalar del AUR como en Arch (necesita git y base-devel, ya en la lista base)
+source "$HERE/lib/yay.sh"; bc_yay "$R" "${BC_ARCH:-aarch64}" || echo "Aviso: no se pudo instalar yay"
 sh "pacman -S --needed --noconfirm --disable-sandbox $PKS" || for p in $PKS; do sh "pacman -S --needed --noconfirm --disable-sandbox $p" || echo "AVISO: falta $p"; done
-sh "pacman -Q gcc >/dev/null 2>&1 && pacman -Rdd --noconfirm --disable-sandbox gcc || true"
+# gcc se queda: base-devel lo necesita para compilar paquetes del AUR con yay
 find "$R/usr/share/locale" -mindepth 1 -maxdepth 1 ! -name 'es*' ! -name 'en*' ! -name 'locale.alias' -exec rm -rf {} + 2>/dev/null || true
 rm -rf "$R/usr/share/doc" "$R/usr/share/man" "$R/usr/share/info" "$R/usr/share/gtk-doc" "$R/usr/share/help" 2>/dev/null || true
 

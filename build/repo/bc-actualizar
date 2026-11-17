@@ -17,7 +17,7 @@ pacman -Syy --noconfirm
 # Todos los archivos que traen los paquetes de BC (lista del repositorio [bc]) se pueden sobrescribir: así un archivo
 # que la imagen puso a mano y ahora llega en un paquete nunca bloquea la actualización (solo rutas de BC, nunca otras)
 pacman -Fy >/dev/null 2>&1 || true
-for f in $(pacman -Flq bc-os bc-shell bc-core bc-escritorio 2>/dev/null | grep -v '/$'); do OV="$OV --overwrite /$f"; done
+for f in $(pacman -Flq bc-os bc-shell bc-core bc-escritorio yay 2>/dev/null | grep -v '/$'); do OV="$OV --overwrite /$f"; done
 if pacman -Qq bc-os >/dev/null 2>&1; then pacman -Su --noconfirm $OV "$@"
 else pacman -S --noconfirm --needed $OV bc-os "$@" && pacman -Su --noconfirm "$@"; fi
 systemd-tmpfiles --create /usr/lib/tmpfiles.d/bc-greeter.conf 2>/dev/null || true
