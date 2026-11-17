@@ -154,8 +154,8 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 50. Ventanas de inspección flotantes (HUD) con barra de título ultradelgada
 - [ ] 51. Paneles divididos (Split Views) con línea divisoria interactiva de 1 píxel
 - [~] 52. Barras laterales de ancho ajustable con colapso fluido
-- [ ] 53. Encabezados de tabla limpios con flechas minimalistas de ordenación
-- [ ] 54. Filas alternas con coloración sutil en listas de datos y tablas del sistema
+- [x] 53. Encabezados de tabla limpios con flechas minimalistas de ordenación
+- [x] 54. Filas alternas con coloración sutil en listas de datos y tablas del sistema
 - [ ] 55. Cuadros de alerta centrados con icono de la aplicación a la izquierda o arriba
 - [ ] 56. Botón de acción principal destacado en color de énfasis en cuadros de diálogo
 - [x] 57. Espaciado estándar (rejilla de 8 puntos) en toda la interfaz
@@ -189,7 +189,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 85. Icono de candado en archivos protegidos
 - [ ] 86. Renderizado y suavizado de fuentes optimizado para pantallas HiDPI
 - [x] 87. Jerarquía tipográfica clara entre títulos, subtítulos y texto secundario gris
-- [ ] 88. Truncado de nombres largos de archivo con puntos suspensivos en el medio
+- [x] 88. Truncado de nombres largos de archivo con puntos suspensivos en el medio
 - [ ] 89. Iconos multicolor o jerárquicos en barras laterales
 - [ ] 90. Símbolos de teclas modificadoras (⌘, ⌥, ⇧, ⌃) dibujados con precisión
 - [x] 91. Icono de batería en la barra de menús con relleno dinámico y rayo de carga
@@ -208,7 +208,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 104. Punto indicador debajo de cada aplicación abierta en el Dock
 - [x] 105. Miniaturas en vivo de ventanas minimizadas en la parte derecha del Dock
 - [~] 106. Pilas (Stacks) que se despliegan en abanico o cuadrícula
-- [ ] 107. Botón de agrupación para ocultar iconos sobrantes en la barra de menús
+- [x] 107. Botón de agrupación para ocultar iconos sobrantes en la barra de menús
 - [~] 108. Menús desplegables redondeados y separados de la barra superior
 - [x] 109. Atajos de teclado alineados a la derecha en gris tenue en cada menú
 - [~] 110. Resaltado en color de énfasis redondeado al navegar por menús
@@ -237,7 +237,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 133. Fondo desenfocado detrás de cada escritorio en Mission Control
 - [ ] 134. Etiquetas con el nombre de cada ventana al pasar el cursor en Mission Control
 - [ ] 135. Arrastrar una ventana al borde superior en Mission Control crea un escritorio
-- [ ] 136. Puntero negro con borde blanco nítido y sombra sutil
+- [x] 136. Puntero negro con borde blanco nítido y sombra sutil
 - [ ] 137. Aumento temporal del puntero al agitarlo
 - [x] 138. Barras de desplazamiento ocultas que aparecen al desplazar
 - [x] 139. Ensanchamiento de la barra de desplazamiento al acercar el cursor
