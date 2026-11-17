@@ -1,3 +1,6 @@
+#include <QVector>
+#include <QPainterPath>
+#include <cmath>
 #include "glassprovider.h"
 #include <cmath>
 #include <QFile>
@@ -102,46 +105,76 @@ QImage GlassProvider::requestImage(const QString &id, QSize *size, const QSize &
 // separación de colores) y la luz cae desde arriba a la izquierda (borde brillante en esa cara, más oscuro en la
 // opuesta). Solo se recalcula una franja junto al borde, así que es barato también sin GPU.
 void GlassProvider::refract(QImage &img, int radius, bool leftOnly) {
+    // Liquid Glass portado de liquid-glass-react (rdev, MIT), modo «shader», a C++ sin GPU:
+    //  1) mapa de desplazamiento: SDF de rectángulo redondeado en coordenadas normalizadas → el fondo se curva hacia el
+    //     centro cerca de los bordes (lente);
+    //  2) aberración cromática: el desplazamiento se aplica con escala distinta a R, G y B (70, 63, 56 px);
+    //  3) saturación del fondo al 140 %;
+    //  4) brillo especular en el filo: anillo de 1,5 px con degradado a 135° (pantalla + superposición).
     const int w = img.width(), h = img.height();
     if (w < 8 || h < 8) return;
-    const qreal band = qBound<qreal>(4, qMin(w, h) * 0.22, 22);
     const QImage src = img.copy();
-    const qreal rw = leftOnly ? w + radius : w;          // en barras laterales el borde derecho no cuenta
-    const qreal hx = rw / 2.0, hy = h / 2.0, rad = qMin<qreal>(radius, qMin(hx, hy));
-    auto sdf = [&](qreal x, qreal y) {                    // distancia con signo a la caja redondeada (negativa dentro)
-        const qreal qx = qAbs(x - hx) - (hx - rad), qy = qAbs(y - hy) - (hy - rad);
-        const qreal ox = qMax<qreal>(qx, 0), oy = qMax<qreal>(qy, 0);
-        return std::sqrt(ox * ox + oy * oy) + qMin<qreal>(qMax(qx, qy), 0) - rad;
+    const int rw = leftOnly ? w + qMax(radius, 1) : w;   // barras laterales: el borde derecho no es filo
+    auto smoothStep = [](qreal a, qreal b, qreal t) { t = qBound<qreal>(0, (t - a) / (b - a), 1); return t * t * (3 - 2 * t); };
+    auto rrSdf = [](qreal x, qreal y, qreal ww, qreal hh, qreal r) {
+        const qreal qx = qAbs(x) - ww + r, qy = qAbs(y) - hh + r;
+        return qMin<qreal>(qMax(qx, qy), 0) + std::hypot(qMax<qreal>(qx, 0), qMax<qreal>(qy, 0)) - r;
     };
-    auto sample = [&](qreal x, qreal y, int ch) {
-        const int ix = qBound(0, int(x + 0.5), w - 1), iy = qBound(0, int(y + 0.5), h - 1);
-        const QRgb c = reinterpret_cast<const QRgb *>(src.constScanLine(iy))[ix];
-        return ch == 0 ? qRed(c) : ch == 1 ? qGreen(c) : qBlue(c);
+    // Mapa: desplazamiento (dx, dy) en píxeles por píxel, normalizado por el máximo
+    QVector<float> mx(w * h), my(w * h);
+    qreal maxScale = 1;
+    for (int y = 0; y < h; ++y) for (int x = 0; x < w; ++x) {
+        const qreal ux = (x + 0.5) / rw - 0.5, uy = (y + 0.5) / h - 0.5;
+        const qreal dist = rrSdf(ux, uy, 0.3, 0.2, 0.6);
+        const qreal disp = smoothStep(0.8, 0, dist - 0.15);
+        const qreal sc = smoothStep(0, 1, disp);
+        const qreal dx = (ux * sc + 0.5) * rw - (x + 0.5), dy = (uy * sc + 0.5) * h - (y + 0.5);
+        const qreal edge = qMin<qreal>(1, qMin(qMin<qreal>(x, y), qMin<qreal>(rw - x - 1, h - y - 1)) / 2.0);
+        mx[y * w + x] = float(dx * edge); my[y * w + x] = float(dy * edge);
+        maxScale = qMax(maxScale, qMax(qAbs(dx), qAbs(dy)));
+    }
+    // Escala del efecto: 70 px en una pastilla de ~70 px de alto; proporcional en piezas pequeñas
+    const qreal S = qMin<qreal>(70, 0.9 * qMin(rw, h));
+    const qreal kR = S / maxScale, kG = S * 0.9 / maxScale, kB = S * 0.8 / maxScale;
+    auto px = [&](qreal x, qreal y) -> QRgb {
+        const int ix = qBound(0, int(x), w - 1), iy = qBound(0, int(y), h - 1);
+        return reinterpret_cast<const QRgb *>(src.constScanLine(iy))[ix];
     };
-    const qreal lx = -0.6, ly = -0.8;                     // dirección de la luz (arriba a la izquierda)
     for (int y = 0; y < h; ++y) {
         QRgb *row = reinterpret_cast<QRgb *>(img.scanLine(y));
         for (int x = 0; x < w; ++x) {
-            const qreal d = -sdf(x + 0.5, y + 0.5);       // distancia al borde hacia dentro
-            if (d < 0 || d > band) { if (x > band && x < w - band - 1 && y > band && y < h - band) x = int(w - band - 1); continue; }
             const QRgb o = row[x];
-            if (qAlpha(o) == 0) continue;
-            // Normal hacia fuera (gradiente de la distancia)
-            qreal nx = sdf(x + 1.5, y + 0.5) - sdf(x - 0.5, y + 0.5), ny = sdf(x + 0.5, y + 1.5) - sdf(x + 0.5, y - 0.5);
-            const qreal nl = std::sqrt(nx * nx + ny * ny); if (nl < 1e-6) continue; nx /= nl; ny /= nl;
-            const qreal t = 1.0 - d / band;               // 1 en el borde, 0 al final de la franja
-            const qreal bend = t * t * band * 0.85;       // cuánto se curva el fondo hacia dentro
-            const qreal sx = x - nx * bend, sy = y - ny * bend;
-            const qreal ca = t * t * 1.6;                 // aberración cromática leve en el filo
-            int rr = sample(sx - nx * ca, sy - ny * ca, 0), gg = sample(sx, sy, 1), bb = sample(sx + nx * ca, sy + ny * ca, 2);
-            // Luz: realce en la cara iluminada y sombra suave en la opuesta, más intensa en el filo
-            const qreal lit = -(nx * lx + ny * ly);       // >0 de cara a la luz
-            const qreal k = std::pow(t, 3.0);
-            const qreal add = k * (lit > 0 ? 70 * lit : 0) + std::pow(t, 6.0) * 40;
-            const qreal mul = 1.0 - k * (lit < 0 ? 0.18 * -lit : 0);
-            rr = qBound(0, int(rr * mul + add), 255); gg = qBound(0, int(gg * mul + add), 255); bb = qBound(0, int(bb * mul + add), 255);
-            const int a = qAlpha(o);                      // conservar el antialias del recorte (premultiplicado)
-            row[x] = qRgba(rr * a / 255, gg * a / 255, bb * a / 255, a);
+            const int a = qAlpha(o);
+            if (a == 0) continue;
+            const qreal ddx = mx[y * w + x], ddy = my[y * w + x];
+            int r = qRed(px(x + ddx * kR, y + ddy * kR)), g = qGreen(px(x + ddx * kG, y + ddy * kG)), b = qBlue(px(x + ddx * kB, y + ddy * kB));
+            // Saturación 140 % (matriz de luminancia de feColorMatrix «saturate»)
+            const qreal l = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+            r = qBound(0, int(l + (r - l) * 1.4), 255); g = qBound(0, int(l + (g - l) * 1.4), 255); b = qBound(0, int(l + (b - l) * 1.4), 255);
+            row[x] = qRgba(r * a / 255, g * a / 255, b * a / 255, a);
         }
     }
+    // Brillo especular del filo (anillo de 1,5 px, degradado a 135°): transparente → 0,32 al 33 % → 0,6 al 66 % → transparente
+    QPainter pa(&img);
+    pa.setRenderHint(QPainter::Antialiasing);
+    const qreal rr = qMin<qreal>(radius, qMin(rw, h) / 2.0);
+    QPainterPath ring;
+    ring.addRoundedRect(QRectF(0.75, 0.75, rw - 1.5, h - 1.5), qMax<qreal>(0, rr - 0.75), qMax<qreal>(0, rr - 0.75));
+    QLinearGradient gr(QPointF(0, 0), QPointF(rw, h));   // 135°: de arriba a la izquierda a abajo a la derecha
+    gr.setColorAt(0.0, QColor(255, 255, 255, 0));
+    gr.setColorAt(0.33, QColor(255, 255, 255, int(255 * 0.34)));
+    gr.setColorAt(0.66, QColor(255, 255, 255, int(255 * 0.62)));
+    gr.setColorAt(1.0, QColor(255, 255, 255, 0));
+    pa.setCompositionMode(QPainter::CompositionMode_Screen);
+    pa.setPen(QPen(QBrush(gr), 1.5));
+    pa.setBrush(Qt::NoBrush);
+    if (leftOnly) pa.setClipRect(0, 0, w, h);
+    pa.drawPath(ring);
+    // Brillo interior suave arriba (inset 0 1px 3px blanco 0,25)
+    QLinearGradient top(QPointF(0, 0), QPointF(0, qMin<qreal>(8, h / 3.0)));
+    top.setColorAt(0, QColor(255, 255, 255, 50)); top.setColorAt(1, QColor(255, 255, 255, 0));
+    pa.setPen(Qt::NoPen);
+    pa.setBrush(top);
+    QPainterPath inner; inner.addRoundedRect(QRectF(0, 0, rw, h), rr, rr);
+    pa.drawPath(inner);
 }

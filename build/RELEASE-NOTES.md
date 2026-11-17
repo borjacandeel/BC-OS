@@ -11,6 +11,15 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
 
+### Novedades de 0.9.15
+- **Liquid Glass nuevo** en todo el sistema (Dock, widgets, menús, paneles, barras laterales): refracción con mapa de
+  desplazamiento, aberración cromática por canal, saturación al 140 % y anillo especular, portado a C++ de
+  liquid-glass-react (MIT); también sin GPU.
+- **Dock**: arrastrar iconos como macOS (los demás se apartan; soltar fuera lo quita), «Quitar del Dock» directo y
+  ventanas minimizadas con su miniatura real y entrada suave.
+- **fish** con prompt de colores e iconos (usuario, carpeta, rama de git y cambios).
+- **bc-actualizar** sin conflictos de archivos: todo lo que traen los paquetes de BC se puede actualizar.
+
 ### Actualizaciones
 - Con `sudo bc-actualizar` (o pulsando el aviso de actualizaciones) llega TODO lo nuevo: escritorio, apps, ajustes,
   fondos, sonidos, sesiones del login y el arranque animado (si cambia, se rehace el initramfs solo). Las novedades del

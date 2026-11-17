@@ -387,6 +387,8 @@ En GitHub: **Actions → Imagen ARM64 → Run workflow** (opción *publicar* cre
 
 BC OS **no copia recursos de Apple** (iconos, fondos, sonidos, fuentes ni código): el fondo «Ondas», los sonidos, los logos y el pack de iconos BC son propios, y lo demás procede de proyectos libres:
 
+- **Liquid Glass**: el método de refracción (mapa de desplazamiento por SDF, aberración cromática R/G/B, saturación y anillo especular) está portado a C++ de [liquid-glass-react](https://github.com/rdev/liquid-glass-react) (rdev, MIT).
+
 | Recurso | Autor | Licencia |
 |---|---|---|
 | Iconos **MacOS-Like** (tema por defecto, sobre MacTahoe) | Scrimas | GPL-3.0 |

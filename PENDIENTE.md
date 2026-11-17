@@ -99,6 +99,208 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 72 Detalles de apps (reloj del Dock con manecillas, calendario con fecha)
 - [~] 73 Cursor dinámico (mano, texto, redimensionar en bordes)
 
+## Detalles visuales de macOS (lista del creador, 200). Estado estimado: [x] hecho · [~] parcial · [ ] falta
+- [x] 1. Efecto Liquid Glass con refracción de luz en los bordes
+- [x] 2. Desenfoque dinámico de fondo (Vibrancy y acrílico)
+- [ ] 3. Tinte ambiental que absorbe el color del fondo de pantalla
+- [~] 4. Brillos especulares dinámicos en los bordes de ventanas
+- [~] 5. Sombras paralelas de múltiples capas según profundidad
+- [~] 6. Sombra más intensa y amplia en la ventana activa frente a las inactivas
+- [x] 7. Barra de menús global translúcida y fusionada con el escritorio
+- [x] 8. Contraste automático del texto de la barra superior según la luz del fondo
+- [x] 9. Modo Oscuro con grises profundos en lugar de negro puro
+- [~] 10. Bordes interiores luminosos de 1 píxel (inner glow) en paneles oscuros
+- [x] 11. Transparencia adaptativa en barras laterales del Finder y paneles
+- [x] 12. Efecto cristal esmerilado en el Centro de Control y notificaciones
+- [~] 13. Difuminado progresivo detrás de ventanas modales y alertas
+- [~] 14. Efecto de vidrio líquido en botones flotantes y cápsulas de acción
+- [ ] 15. Atenuación suave del brillo de la ventana madre al abrir una hoja de diálogo
+- [ ] 16. Reflexión difusa de elementos brillantes detrás de menús contextuales
+- [ ] 17. Gradientes sutiles en barras de herramientas para simular volumen físico
+- [ ] 18. Transición suave de luz y color al cambiar entre Modo Claro y Modo Oscuro
+- [x] 19. Desenfoque gaussiano en tiempo real detrás del Dock
+- [ ] 20. Borde exterior fino y semitransparente que separa ventanas superpuestas en modo oscuro
+- [ ] 21. Efecto de profundidad atmosférica en Mission Control al oscurecer el escritorio
+- [~] 22. Capa translúcida con desenfoque de fondo al abrir Launchpad
+- [~] 23. Iluminación sutil en botones al pasar el cursor por encima (hover)
+- [~] 24. Sombras internas suaves dentro de campos de texto y barras de búsqueda
+- [ ] 25. Contraste elevado automático en bordes cuando se activa Aumentar Contraste
+- [~] 26. Reducción de transparencia limpia que convierte el cristal en tonos sólidos mate
+- [x] 27. Degradado imperceptible en el fondo de las barras laterales activas
+- [ ] 28. Efecto de capa de papel iluminado en vistas de lectura y documentos
+- [ ] 29. Sombras proyectadas dinámicas en los iconos del escritorio sobre el wallpaper
+- [ ] 30. Brillo especular en el borde superior de las tarjetas del Centro de Notificaciones
+- [x] 31. Esquinas redondeadas continuas (Squircles) en todas las ventanas y paneles
+- [x] 32. Botones semáforo (rojo, amarillo y verde) en la esquina superior izquierda
+- [~] 33. Símbolos internos de los botones semáforo ocultos hasta acercar el cursor
+- [x] 34. Botones semáforo que se vuelven grises cuando la ventana pierde el foco
+- [x] 35. Barra de título unificada con la barra de herramientas
+- [x] 36. Ausencia de bordes laterales e inferiores gruesos en las ventanas
+- [x] 37. Hojas de diálogo (Sheets) que emergen desde debajo de la barra de título
+- [ ] 38. Ventanas emergentes (Popovers) con flecha triangular apuntando al botón origen
+- [x] 39. Redimensionado de ventanas desde cualquier borde sin tiradores visibles
+- [~] 40. Guías visuales translúcidas al acoplar ventanas en mosaico (Window Tiling)
+- [ ] 41. Vista en perspectiva 3D de grupos de ventanas en Organizador Visual (Stage Manager)
+- [ ] 42. Jerarquía visual limpia basada en espacios en blanco y alineación estricta
+- [x] 43. Separadores sutiles de 1 píxel con baja opacidad entre secciones
+- [x] 44. Contenedores agrupados con esquinas redondeadas dentro de Ajustes del Sistema
+- [~] 45. Cabeceras de sección flotantes y translúcidas al hacer scroll en listas largas
+- [ ] 46. Márgenes interiores generosos y simétricos en todos los cuadros de diálogo
+- [ ] 47. Alineación vertical perfecta entre el título de la ventana y los botones semáforo
+- [ ] 48. Espaciado uniforme entre botones de acción dentro de la barra de herramientas
+- [~] 49. Redondeo proporcional de esquinas internas respecto al radio de la ventana exterior
+- [ ] 50. Ventanas de inspección flotantes (HUD) con barra de título ultradelgada
+- [ ] 51. Paneles divididos (Split Views) con línea divisoria interactiva de 1 píxel
+- [~] 52. Barras laterales de ancho ajustable con colapso fluido
+- [ ] 53. Encabezados de tabla limpios con flechas minimalistas de ordenación
+- [ ] 54. Filas alternas con coloración sutil en listas de datos y tablas del sistema
+- [ ] 55. Cuadros de alerta centrados con icono de la aplicación a la izquierda o arriba
+- [ ] 56. Botón de acción principal destacado en color de énfasis en cuadros de diálogo
+- [x] 57. Espaciado estándar (rejilla de 8 puntos) en toda la interfaz
+- [x] 58. Pestañas segmentadas (Segmented Controls) con indicador deslizante redondeado
+- [ ] 59. Ventanas sin barra de título visible donde el contenido llega hasta el borde superior
+- [ ] 60. Controles de ventana flotantes superpuestos directamente sobre contenido multimedia
+- [ ] 61. Proporción y equilibrio visual en la distribución de paneles de Ajustes
+- [~] 62. Ocultación automática de la barra de herramientas en modo pantalla completa
+- [ ] 63. Transición limpia al separar una pestaña para convertirla en ventana independiente
+- [ ] 64. Barra de pestañas nativa con botón de añadir (+) alineado a la derecha
+- [ ] 65. Efecto de apilamiento ordenado de ventanas en cascada
+- [x] 66. Iconos de apps en cuadrados con esquinas continuas uniformes (Squircle)
+- [ ] 67. Volumen 3D, sombras suaves y texturas realistas dentro de los iconos de apps
+- [~] 68. Iconos vectoriales simbólicos alineados al peso del texto (estilo SF Symbols, propios)
+- [~] 69. Tipografía del sistema con ajuste óptico automático (Inter)
+- [ ] 70. Espaciado dinámico entre letras (tracking) según el tamaño de la fuente
+- [~] 71. Números tabulares monoespaciados en relojes, contadores y tablas
+- [ ] 72. Icono de Archivos con la cara sonriente bicolor (propio, sin copiar el de Apple)
+- [x] 73. Icono de Papelera que cambia visualmente entre vacía y llena
+- [x] 74. Iconos monocromáticos minimalistas en la barra de menús superior
+- [ ] 75. Badges (globos rojos) de notificación en esquinas de iconos
+- [x] 76. Etiquetas de colores circulares (Tags) para organizar archivos
+- [x] 77. Miniaturas de vista previa en tiempo real del contenido de documentos e imágenes
+- [~] 78. Iconos de carpetas en azul degradado con relieve sutil del tipo de contenido
+- [ ] 79. Efecto de brillo metálico o reflejo en iconos de utilidades del sistema
+- [ ] 80. Iconos de discos externos diferenciados (USB, red, imagen de disco)
+- [ ] 81. Icono de carpeta de usuario con silueta personalizada en azul
+- [x] 82. Iconos de documentos genéricos con esquina superior derecha doblada
+- [ ] 83. Insignia de extensión de archivo impresa con nitidez en los iconos de documentos
+- [ ] 84. Icono de alias con flecha curvada en la esquina inferior izquierda
+- [ ] 85. Icono de candado en archivos protegidos
+- [ ] 86. Renderizado y suavizado de fuentes optimizado para pantallas HiDPI
+- [x] 87. Jerarquía tipográfica clara entre títulos, subtítulos y texto secundario gris
+- [ ] 88. Truncado de nombres largos de archivo con puntos suspensivos en el medio
+- [ ] 89. Iconos multicolor o jerárquicos en barras laterales
+- [ ] 90. Símbolos de teclas modificadoras (⌘, ⌥, ⇧, ⌃) dibujados con precisión
+- [x] 91. Icono de batería en la barra de menús con relleno dinámico y rayo de carga
+- [~] 92. Icono de Wi-Fi con arcos que reflejan la intensidad real de señal
+- [~] 93. Icono de sonido con ondas según el volumen
+- [ ] 94. Iconos de dispositivos Bluetooth específicos (auriculares, ratón, teclado, mando)
+- [ ] 95. Icono de instantáneas (copias) con reloj y flecha circular
+- [ ] 96. Icono de Vista previa con lupa sobre fotografías
+- [x] 97. Icono de Terminal con recuadro negro y prompt (>_)
+- [x] 98. Icono de Monitor de Actividad con gráfica de pulso verde
+- [ ] 99. Icono de Ajustes con engranajes en relieve
+- [ ] 100. Consistencia de grosor de trazo entre todos los iconos del sistema
+- [x] 101. Dock flotante separado del borde inferior de la pantalla
+- [x] 102. Línea divisoria vertical en el Dock entre apps fijas, recientes y carpetas
+- [x] 103. Aumento en onda (Magnification) al pasar el puntero por el Dock
+- [x] 104. Punto indicador debajo de cada aplicación abierta en el Dock
+- [x] 105. Miniaturas en vivo de ventanas minimizadas en la parte derecha del Dock
+- [~] 106. Pilas (Stacks) que se despliegan en abanico o cuadrícula
+- [ ] 107. Botón de agrupación para ocultar iconos sobrantes en la barra de menús
+- [~] 108. Menús desplegables redondeados y separados de la barra superior
+- [ ] 109. Atajos de teclado alineados a la derecha en gris tenue en cada menú
+- [~] 110. Resaltado en color de énfasis redondeado al navegar por menús
+- [x] 111. Barra de búsqueda flotante centrada de Spotlight muy redondeada
+- [x] 112. Panel lateral derecho deslizante para el Centro de Notificaciones y Widgets
+- [~] 113. Widgets de escritorio que se vuelven monocromos/translúcidos al perder el foco
+- [ ] 114. Escritorio limpio por defecto con iconos alineados a la derecha
+- [ ] 115. Pilas automáticas en el escritorio que agrupan archivos por tipo
+- [ ] 116. Fondos dinámicos que cambian de luz según la hora del día
+- [ ] 117. Salvapantallas en movimiento lento que se congelan al iniciar sesión
+- [x] 118. Menú BC fijo en la esquina superior izquierda
+- [x] 119. Nombre de la aplicación activa en negrita junto al menú BC
+- [ ] 120. Flechas de submenú alineadas a la derecha en los menús
+- [x] 121. Marcas de verificación a la izquierda de opciones activas en menús
+- [x] 122. Separadores horizontales limpios en menús largos
+- [ ] 123. Búsqueda dentro del menú Ayuda que señala la opción en los menús
+- [~] 124. Previsualización enriquecida en el panel derecho de Spotlight
+- [ ] 125. Dock a la izquierda o derecha manteniendo su estética
+- [ ] 126. Nube de humo (Poof) al sacar un icono del Dock
+- [ ] 127. Progreso de descarga sobre el icono en el Dock
+- [~] 128. Marco de selección translúcido al arrastrar en el escritorio
+- [ ] 129. Nombres de archivo del escritorio con sombra para legibilidad
+- [ ] 130. Resaltado ovalado azul del nombre de un archivo seleccionado en el escritorio
+- [ ] 131. Espacio superior reservado para que las ventanas maximizadas no tapen la barra
+- [ ] 132. Escritorios numerados con miniaturas arriba en Mission Control
+- [ ] 133. Fondo desenfocado detrás de cada escritorio en Mission Control
+- [ ] 134. Etiquetas con el nombre de cada ventana al pasar el cursor en Mission Control
+- [ ] 135. Arrastrar una ventana al borde superior en Mission Control crea un escritorio
+- [ ] 136. Puntero negro con borde blanco nítido y sombra sutil
+- [ ] 137. Aumento temporal del puntero al agitarlo
+- [~] 138. Barras de desplazamiento ocultas que aparecen al desplazar
+- [ ] 139. Ensanchamiento de la barra de desplazamiento al acercar el cursor
+- [x] 140. Interruptores ovalados con sombra interior y deslizamiento elástico
+- [ ] 141. Radio buttons y casillas con brillo al activarse
+- [x] 142. Deslizadores de volumen y brillo con iconos dinámicos en el Centro de Control
+- [~] 143. Anillos de progreso y barras de carga con relleno fluido
+- [~] 144. Indicador giratorio de doce trazos (spinner)
+- [ ] 145. Cursor de espera giratorio multicolor (propio)
+- [x] 146. Colores de énfasis personalizables (azul, púrpura, rosa, rojo, naranja, amarillo, verde, grafito)
+- [ ] 147. Color de resaltado de texto independiente del color de énfasis
+- [ ] 148. Lupa circular con cuadrícula de píxeles en el selector de color
+- [ ] 149. Ventana flotante de definición (diccionario)
+- [x] 150. HUD translúcidos centrados para volumen y brillo
+- [ ] 151. Miniatura flotante abajo a la derecha tras una captura
+- [ ] 152. Selección de captura con zona iluminada y resto oscurecido
+- [~] 153. Anillo de enfoque alrededor de campos activos al navegar con Tab
+- [ ] 154. Animación de expansión del anillo de enfoque
+- [ ] 155. Cursor de texto fino con parpadeo suave
+- [ ] 156. Tiradores de selección de texto precisos
+- [~] 157. Botones píldora para acciones secundarias y filtros
+- [ ] 158. Steppers con flechas junto a campos numéricos
+- [ ] 159. Deslizadores con marcas de graduación
+- [ ] 160. Barras de progreso indeterminadas con franjas animadas
+- [~] 161. Tooltips con retraso suave al aparecer
+- [~] 162. Cursores contextuales (mano, mano cerrada, cruz, redimensionado)
+- [ ] 163. Rebote elástico (rubberbanding) al llegar al límite de un scroll
+- [ ] 164. Resaltado amarillo con salto al buscar texto (Ctrl+F)
+- [x] 165. Menú contextual con bordes redondeados y sombra profunda
+- [ ] 166. Selector de colores nativo (rueda, deslizadores, lápices)
+- [ ] 167. Selector de tipografías con previsualización
+- [ ] 168. Selector de emojis y símbolos con categorías
+- [ ] 169. Indicador de micrófono o cámara activa (punto naranja o verde) en la barra
+- [x] 170. Botón de borrar (x circular gris) en todos los campos de búsqueda
+- [~] 171. Atenuación de elementos deshabilitados
+- [~] 172. Cambio de tema sincronizado al instante en todas las ventanas
+- [ ] 173. Microvibración visual de botones al pulsar
+- [ ] 174. Insignia verde (+) al arrastrar para copiar archivos
+- [ ] 175. Vista previa semitransparente de lo que se arrastra
+- [x] 176. Reloj de bloqueo grande, fino y ligeramente translúcido
+- [x] 177. Avatar circular del usuario con sombra suave en el login
+- [ ] 178. Campo de contraseña tipo píldora translúcida con botón de pista (?)
+- [x] 179. Sacudida horizontal del campo de contraseña al fallar
+- [ ] 180. Indicador de huella pulsante (si hay lector)
+- [x] 181. Vista de galería en Archivos con miniaturas grandes y metadatos
+- [x] 182. Vista de columnas en Archivos con navegación jerárquica
+- [ ] 183. Vista de lista con carpetas desplegables (triángulos)
+- [x] 184. Vista de iconos con cuadrícula ajustable
+- [x] 185. Barra de ruta en la parte inferior de Archivos con iconos
+- [~] 186. Barra de estado con espacio disponible y elementos seleccionados
+- [x] 187. Vista rápida con marco flotante oscuro o claro
+- [ ] 188. Panel de vista previa lateral con metadatos EXIF y acciones rápidas
+- [ ] 189. Diálogos de Abrir y Guardar con columnas y barra lateral
+- [ ] 190. Varias etiquetas de color como puntos superpuestos junto al nombre
+- [ ] 191. Vista general de pestañas en cuadrícula
+- [~] 192. Abrir y cerrar carpetas con zoom desde su icono
+- [x] 193. Selector de apps centrado y translúcido (Alt+Tab)
+- [x] 194. Diálogo de apagado/reinicio centrado con cuenta atrás
+- [ ] 195. Ventana de Forzar salida compacta con la lista de procesos
+- [x] 196. Arranque minimalista con el logo blanco sobre negro
+- [x] 197. Barra de progreso fina bajo el logo al arrancar
+- [~] 198. Fundido suave entre el arranque y la pantalla de inicio de sesión
+- [x] 199. Night Shift (temperatura de color) con transición imperceptible
+- [ ] 200. Consistencia absoluta de proporciones, sombras y materiales en todo el sistema
+
 ## En curso
 - [x] 2026-11-17 (creador): 10 fondos «Bosques», arranque Plymouth animado, resolución en la bienvenida (VM), Ajustes General/Pantallas rehechos, CaskaydiaCove Nerd Font solo en terminales, login solo BC OS + Dotfiles. Pendiente: hypr-genie (plugin Hyprland) a valorar; verificar Plymouth en QEMU.
 - [x] 2026-11-17 Firefox con semáforo (bc-firefox.css por autoconfig) y esquinas 12 px; todas las apps Wayland con CSD (sway border csd, Qt adwaita); resolución recordada (bc-display); aviso de actualizaciones al arrancar → clic abre Terminal con sudo bc-actualizar (pacman -Syy + -Su); genio de macOS en dos fases también por software; barra lateral de Archivos desplazable.
