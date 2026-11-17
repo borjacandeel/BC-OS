@@ -271,7 +271,7 @@ En el login solo aparecen **BC OS** y **Dotfiles**. La sesión por defecto tambi
 
 ## Descargar y probar
 
-Imágenes publicadas: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Cada release incluye `BC-OS-<versión>-ARM64.vdi.zip`, `BC-OS-<versión>-x86_64.vdi.zip`, las ISO live y `SHA256SUMS`. Última: **0.9.17-beta**.
+Imágenes publicadas: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Desde 0.9.17 cada release incluye solo las **ISO live** (`BC-OS-<versión>-x86_64.iso` y `-ARM64.iso`, para grabar en USB o usar en una máquina virtual) y `SHA256SUMS`; hasta 0.9.16 también había discos `.vdi.zip`. Última: **0.9.17-beta**.
 
 **Instalar en un disco (como macOS):** arranca la **ISO live** → se abre **Instalar BC OS** → elige el disco, tu cuenta y la
 región → **Instalar** → **Reiniciar**. También desde Terminal: `sudo bc-install`.
@@ -321,7 +321,7 @@ BC OS se actualiza desde su propio repositorio pacman, publicado en GitHub Relea
 ## Descargas: ARM64 y x86_64, disco o ISO live
 
 Cada versión trae, para **ARM64** (Mac Apple Silicon, Raspberry Pi…) y **x86_64** (PC; Arch Linux normal):
-`BC-OS-<versión>-<arq>.vdi.zip` (disco para VirtualBox) y `BC-OS-<versión>-<arq>.iso` (live UEFI, con el instalador).
+`BC-OS-<versión>-<arq>.iso` (live UEFI y BIOS, con el instalador; desde 0.9.17 ya no se genera el disco `.vdi.zip`).
 En VirtualBox hay que **activar EFI**. Instalar: `sudo bc-install` (opciones `--bootloader grub` y `--secure-boot`).
 
 ## Sistema

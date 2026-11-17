@@ -46,6 +46,8 @@ jobs:
     env:
       BC_ARCH: ${{ matrix.arch }}
       BC_ISO: "1"
+      # Solo ISO live (instalador), sin disco VDI: lo que pide el creador desde 0.9.17
+      BC_SOLO_ISO: "1"
     outputs:
       version: ${{ steps.v.outputs.version }}
       publicar: ${{ steps.v.outputs.publicar }}
@@ -107,11 +109,11 @@ jobs:
           VERSION: ${{ steps.v.outputs.version }}
         run: sudo -E build/build-all.sh "$VERSION" "$RUNNER_TEMP/bcwork"
       - name: Verificar integridad
-        # Comprueba la suma SHA256 del zip y que existan los ficheros que se van a publicar.
+        # Comprueba la suma SHA256 de la ISO y que existan los ficheros que se van a publicar.
         run: |
           cd build/out
           ls -lh
-          ls ./*.zip >/dev/null
+          ls ./*.iso >/dev/null
           sha256sum --check SHA256SUMS-*
       - name: Limpiar montajes huérfanos
         if: always()

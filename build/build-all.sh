@@ -34,6 +34,13 @@ bash "$HERE/build-swayfx.sh" "$R"
 sed -i "s/^PRETTY_NAME=.*/PRETTY_NAME=\"BC OS $VER\"/; s/^VERSION=.*/VERSION=\"$VER\"/; s/^VERSION_ID=.*/VERSION_ID=\"$VER\"/" "$HERE/overlay/etc/os-release"
 bash "$HERE/configure-rootfs.sh" "$R"
 
+# Solo ISO (BC_SOLO_ISO=1, por defecto en CI desde 0.9.17): sin disco VDI; si la ISO falla, la construcción falla
+if [ "${BC_SOLO_ISO:-0}" = 1 ]; then
+  bash "$HERE/mkiso.sh" "$R" "$OUT/BC-OS-$VER-$SUF.iso"
+  if grep -q " $(realpath "$R")/" /proc/self/mountinfo; then echo "Aviso: quedan montajes en $R; no se borra"; else rm -rf --one-file-system "$R"; fi
+  (cd "$OUT" && sha256sum "BC-OS-$VER-$SUF.iso" > "SHA256SUMS-$SUF" && cat "SHA256SUMS-$SUF")
+  exit 0
+fi
 IMG="$OUT/BC-OS-$VER-$SUF.img"
 bash "$HERE/mkimage.sh" "$R" "$IMG" 6144
 # ISO live (BC_ISO=1): mismo sistema, arranca desde squashfs con el instalador; si falla, solo se avisa

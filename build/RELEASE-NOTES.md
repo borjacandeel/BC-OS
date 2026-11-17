@@ -1,15 +1,12 @@
-## BC OS @VERSION@ — beta (prerrelease), para probar en máquinas virtuales
+## BC OS @VERSION@ — beta (prerrelease)
 
-Imágenes de disco arrancables (UEFI) para **ARM64** (Mac con Apple Silicon) y **x86_64** (PC Intel/AMD).
-También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
+**ISO live** (UEFI y BIOS) para **x86_64** (PC Intel/AMD) y **ARM64**, con el instalador (`sudo bc-install`, se abre solo).
 
-### Probar en VirtualBox
-1. Descomprime `BC-OS-@VERSION@-ARM64.vdi.zip` (Mac Apple Silicon) o `BC-OS-@VERSION@-x86_64.vdi.zip` (PC).
-2. VirtualBox → Nueva: Linux / Arch Linux (**ARM 64-bit** o **64-bit**), ≥ 4 GB RAM, 2-4 CPU.
-   **Sistema → Habilitar EFI (obligatorio, también en x86_64).** Pantalla: VMSVGA, 128 MB.
-3. Disco: usar el `.vdi`. SSH opcional: Red → Avanzado → Reenvío de puertos TCP 2222 → 22 (`ssh -p 2222 bc@127.0.0.1`).
-4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
-5. En la bienvenida elige **Máquina virtual** (se detecta sola).
+### Grabar en un USB e instalar
+1. Descarga `BC-OS-@VERSION@-x86_64.iso` (PC) o `BC-OS-@VERSION@-ARM64.iso` (ARM).
+2. Grábala en un USB con balenaEtcher, Rufus (modo DD) o `sudo dd if=BC-OS-@VERSION@-x86_64.iso of=/dev/sdX bs=4M status=progress`.
+3. Arranca desde el USB: se abre «Instalar BC OS». También sirve en VirtualBox/QEMU como unidad óptica (EFI activado).
+4. Comprueba la descarga con `SHA256SUMS`.
 
 ### Novedades de 0.9.17 (sin publicar aún)
 - **yay** instalado (AUR) con git y base-devel; se actualiza con BC OS.
