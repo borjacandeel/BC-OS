@@ -6,7 +6,7 @@ name: Repositorio [bc]
 on:
   push:
     branches: [main]
-    paths: ['shell/**', 'core/**', 'build/overlay/**', 'build/repo/**', 'assets/**', 'build/packages/**']
+    paths: ['shell/**', 'core/**', 'build/overlay/**', 'build/overlay-dotfiles/**', 'build/plymouth/**', 'build/repo/**', 'assets/**', 'build/packages/**']
   workflow_dispatch:
 
 permissions:

@@ -11,6 +11,11 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
 
+### Actualizaciones
+- Con `sudo bc-actualizar` (o pulsando el aviso de actualizaciones) llega TODO lo nuevo: escritorio, apps, ajustes,
+  fondos, sonidos, sesiones del login y el arranque animado (si cambia, se rehace el initramfs solo). Las novedades del
+  escritorio se ven al cerrar sesión o reiniciar. Solo una imagen nueva cambia el instalador de la ISO live.
+
 ### Novedades de 0.9.14
 - **Login rehecho como macOS**: tu fondo de pantalla desenfocado, avatar grande, campo de contraseña de vidrio, Reposo /
   Reiniciar / Apagar abajo y el entorno (BC OS o Dotfiles) en una pastilla discreta.

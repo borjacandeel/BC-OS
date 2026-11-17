@@ -50,6 +50,11 @@ install -m644 "$O/usr/lib/firefox/bc.cfg" "$O/usr/lib/firefox/bc-firefox.css" "$
 install -m644 "$O"/usr/share/applications/bc-*.desktop "$E2/usr/share/applications/"
 install -m644 "$TOP"/assets/wallpapers/*.jpg "$E2/usr/share/bc/wallpapers/"
 install -m644 "$TOP"/assets/sounds/*.wav "$E2/usr/share/sounds/bc/"
+# También llegan con las actualizaciones: el arranque animado (Plymouth), las sesiones del login y su carpeta compartida
+install -d "$E2/usr/share/plymouth/themes/bcos" "$E2/usr/share/bc/sessions"
+install -m644 "$HERE"/plymouth/bcos/* "$E2/usr/share/plymouth/themes/bcos/"
+install -m644 "$HERE"/overlay-dotfiles/usr/share/bc/sessions/*.desktop "$E2/usr/share/bc/sessions/"
+install -D -m644 "$O/usr/lib/tmpfiles.d/bc-greeter.conf" "$E2/usr/lib/tmpfiles.d/bc-greeter.conf"
 for pair in bc-files:system-file-manager bc-settings:preferences-system bc-monitor:utilities-system-monitor bc-store:gnome-software \
             bc-terminal:com.mitchellh.ghostty bc-calculator:accessories-calculator bc-notes:accessories-notes bc-preview:multimedia-photo-viewer \
             bc-calendar:bc-calendar bc-reminders:bc-reminders bc-music:multimedia-audio-player; do

@@ -8,10 +8,18 @@ grep -q '^\[bc\]' /etc/pacman.conf || { echo "Falta el repositorio [bc] en /etc/
 OV="--overwrite /usr/bin/bc-* --overwrite /usr/share/bc/* --overwrite /usr/share/applications/bc-* --overwrite /etc/bc/*"
 OV="$OV --overwrite /usr/share/icons/hicolor/scalable/apps/bc-* --overwrite /usr/share/sounds/bc/* --overwrite /usr/lib/systemd/user/bc-*"
 OV="$OV --overwrite /etc/systemd/user/default.target.wants/bc-* --overwrite /usr/lib/bc/* --overwrite /usr/share/libalpm/hooks/00-bc-* --overwrite /usr/share/polkit-1/actions/org.bcos.* --overwrite /etc/polkit-1/rules.d/50-bcos-*"
+OV="$OV --overwrite /usr/share/plymouth/themes/bcos/* --overwrite /usr/lib/tmpfiles.d/bc-*"
 OV="$OV --overwrite /usr/lib/firefox/distribution/policies.json --overwrite /usr/lib/firefox/defaults/pref/bc-* --overwrite /usr/lib/firefox/bc*"
+# Huella del tema de arranque antes de actualizar: si cambia, se rehace el initramfs (el arranque animado va en él)
+ply0="$(cat /usr/share/plymouth/themes/bcos/* 2>/dev/null | md5sum)"
 pacman -Syy --noconfirm
 if pacman -Qq bc-os >/dev/null 2>&1; then pacman -Su --noconfirm $OV "$@"
 else pacman -S --noconfirm --needed $OV bc-os "$@" && pacman -Su --noconfirm "$@"; fi
+systemd-tmpfiles --create /usr/lib/tmpfiles.d/bc-greeter.conf 2>/dev/null || true
+if [ "$(cat /usr/share/plymouth/themes/bcos/* 2>/dev/null | md5sum)" != "$ply0" ] && command -v mkinitcpio >/dev/null 2>&1; then
+  echo "Actualizando el arranque animado…"; plymouth-set-default-theme bcos 2>/dev/null; mkinitcpio -P >/dev/null 2>&1 || true
+fi
+echo "Cierra sesión (o reinicia) para usar las novedades del escritorio."
 # En el login solo BC OS y Dotfiles
 rm -f /usr/share/bc/sessions/bc-clasico.desktop
 gtk-update-icon-cache -q -f /usr/share/icons/hicolor 2>/dev/null || true
