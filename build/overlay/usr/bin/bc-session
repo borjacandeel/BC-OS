@@ -40,9 +40,8 @@ acelerado() {
   r="$(timeout 5 eglinfo -B 2>/dev/null | grep -m1 -i 'renderer')"
   [ -n "$r" ] || return 1
   echo "$r" | grep -qiE 'llvmpipe|softpipe|swrast|software' && return 1
-  # NVIDIA con el controlador libre (nouveau): Hyprland suele fallar o ir a tirones; sway ligero es estable
-  echo "$r" | grep -qiE 'nouveau|NV[0-9A-F]{2}|GK[0-9]|GM[0-9]|GF[0-9]' && return 1
-  lsmod 2>/dev/null | grep -q '^nouveau' && ! lsmod | grep -q '^nvidia' && return 1
+  # Cualquier GPU de verdad (dedicada o integrada; también NVIDIA con nouveau): Hyprland. Si no arranca o muere
+  # enseguida, la sesión pasa sola a sway (más abajo). ~/.config/bc/compositor = sway lo desactiva.
   return 0
 }
 # GPU de verdad (incluida NVIDIA con nouveau), no OpenGL por software: para las esquinas de swayfx

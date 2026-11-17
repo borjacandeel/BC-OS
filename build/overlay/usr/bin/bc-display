@@ -3,8 +3,18 @@
 #  auto  : aplica el modo preferido (el que anuncia el monitor o la ventana de la máquina virtual)
 #  watch : vigila cambios de pantalla (DRM) y aplica «auto»; así la ventana de VirtualBox/QEMU se adapta al redimensionarla
 cmd="${1:-auto}"
-# Hyprland adapta solo la resolución (monitor «preferred»)
-[ -n "$HYPRLAND_INSTANCE_SIGNATURE" ] && [ "${1:-}" = watch ] && exit 0
+# Hyprland: la frecuencia más alta la pone su configuración («highrr»); aquí solo la resolución elegida por el usuario
+if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
+  G="${XDG_CONFIG_HOME:-$HOME/.config}/bc/resolucion"
+  hmode() { hyprctl eval "hl.monitor({ output = \"\", mode = \"$1\", position = \"auto\", scale = \"auto\" })" >/dev/null 2>&1; }
+  case "${1:-auto}" in
+    set) case "$2" in [0-9]*x[0-9]*) mkdir -p "$(dirname "$G")"; echo "$2" > "$G"; hmode "$2@60" ;; *) exit 2 ;; esac ;;
+    auto) [ "${2:-}" = olvidar ] && rm -f "$G"; w="$(cat "$G" 2>/dev/null)"; case "$w" in [0-9]*x[0-9]*) hmode "$w@60" ;; *) hmode highrr ;; esac ;;
+    inicio|watch) w="$(cat "$G" 2>/dev/null)"; case "$w" in [0-9]*x[0-9]*) hmode "$w@60" ;; esac ;;
+    list) hyprctl monitors -j 2>/dev/null | jq -r '.[0].availableModes[]' | sed 's/@.*//' | sort -u -t x -k1,1nr -k2,2nr ;;
+  esac
+  exit 0
+fi
 outs() { swaymsg -t get_outputs -r 2>/dev/null; }
 # Resolución elegida por el usuario (Ajustes ▸ Pantallas): se recuerda y se vuelve a aplicar al iniciar sesión
 GUARDADA="${XDG_CONFIG_HOME:-$HOME/.config}/bc/resolucion"
