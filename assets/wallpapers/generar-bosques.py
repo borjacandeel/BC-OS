@@ -227,7 +227,7 @@ COLECCION = {
     "bosque-niebla": (niebla_matinal, ("abajo-der", 0.04)),
     "pinar-alba":    (pinar_alba, ("abajo-der", 0.04)),
     "lago-claro":    (lago_claro, ("centro-bajo", 0.045)),
-    "nieve":         (nieve, ("arriba-izq", 0.04)),
+    "nieve":         (nieve, ("abajo-der", 0.04)),
     "salvia":        (salvia, ("abajo-der", 0.04)),
     "bosque-noche":  (bosque_noche, ("abajo-der", 0.04)),
     "aurora-boreal": (aurora, ("abajo-der", 0.04)),

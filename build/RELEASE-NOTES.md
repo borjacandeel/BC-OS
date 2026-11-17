@@ -11,6 +11,12 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
 
+### Novedades de 0.9.10
+- **Pantalla completa en máquinas virtuales**: al poner la ventana de VirtualBox/UTM en pantalla completa (o cambiar su
+  tamaño) el escritorio se adapta a ella aunque se haya elegido una resolución; la elegida se vuelve a aplicar al iniciar.
+- **Modo claro**: el resalte de los iconos de la barra de menús se ve sobre fondos claros (antes era blanco sobre blanco).
+- Fondo «Nieve» con el logo abajo a la derecha (ya no asoma detrás de los widgets).
+
 ### Novedades de 0.9.9
 - **Arranque animado** nuevo: orbes de color que flotan, logo que crece con destello y barra fina como macOS.
 - **10 fondos «Bosques»** 4K (5 claros y 5 oscuros), los primeros en Ajustes y en la bienvenida.

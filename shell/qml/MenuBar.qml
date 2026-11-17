@@ -39,7 +39,10 @@ Item {
         Rectangle {
             anchors.fill: parent; anchors.topMargin: Math.round(3 * bar.s); anchors.bottomMargin: Math.round(3 * bar.s)
             radius: Theme.barHoverRadius * bar.s
-            color: Qt.rgba(1, 1, 1, bi.open ? 0.22 : (ma.containsMouse ? 0.12 : 0))
+            // Resalte con el color de la tinta: blanco sobre fondos oscuros, negro sobre fondos claros (como macOS)
+            readonly property bool lightBg: bar.ink.hslLightness < 0.5
+            color: lightBg ? Qt.rgba(0, 0, 0, bi.open ? 0.12 : (ma.containsMouse ? 0.07 : 0))
+                           : Qt.rgba(1, 1, 1, bi.open ? 0.22 : (ma.containsMouse ? 0.12 : 0))
             Behavior on color { ColorAnimation { duration: Theme.d(Theme.durHover) } }
         }
         MouseArea { id: ma; anchors.fill: parent; hoverEnabled: true; onClicked: bi.clicked(bi.mapToItem(bar, 0, 0).x) }

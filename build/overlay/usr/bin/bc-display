@@ -11,6 +11,7 @@ if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
     set) case "$2" in [0-9]*x[0-9]*) mkdir -p "$(dirname "$G")"; echo "$2" > "$G"; hmode "$2@60" ;; *) exit 2 ;; esac ;;
     auto) [ "${2:-}" = olvidar ] && rm -f "$G"; w="$(cat "$G" 2>/dev/null)"; case "$w" in [0-9]*x[0-9]*) hmode "$w@60" ;; *) hmode highrr ;; esac ;;
     inicio|watch) w="$(cat "$G" 2>/dev/null)"; case "$w" in [0-9]*x[0-9]*) hmode "$w@60" ;; esac ;;
+    seguir) hmode preferred ;;
     list) hyprctl monitors -j 2>/dev/null | jq -r '.[0].availableModes[]' | sed 's/@.*//' | sort -u -t x -k1,1nr -k2,2nr ;;
   esac
   exit 0
@@ -27,10 +28,11 @@ case "$cmd" in
     outs | jq -r '.[] | select(.active) | .name' | while read -r n; do
       swaymsg "output $n mode $2" >/dev/null 2>&1 || swaymsg "output $n mode --custom $2" >/dev/null 2>&1
     done ;;
-  auto|inicio)
-    # «auto» desde Ajustes olvida la resolución guardada; al iniciar sesión («inicio», watch) se respeta
+  auto|inicio|seguir)
+    # «auto» desde Ajustes olvida la resolución guardada; al iniciar sesión («inicio») se respeta.
+    # «seguir»: la ventana de la máquina virtual cambió de tamaño (pantalla completa, redimensionar): se adapta a ella
     [ "$cmd" = auto ] && [ "${2:-}" = olvidar ] && rm -f "$GUARDADA"
-    want="$(cat "$GUARDADA" 2>/dev/null)"; case "$want" in [0-9]*x[0-9]*) ;; *) want= ;; esac
+    want="$(cat "$GUARDADA" 2>/dev/null)"; [ "$cmd" = seguir ] && want=; case "$want" in [0-9]*x[0-9]*) ;; *) want= ;; esac
     ww="${want%x*}"; wh="${want#*x}"; [ -n "$want" ] || { ww=0; wh=0; }
     # Resolución nativa (la del primer modo) a la frecuencia MÁS ALTA que admita el monitor (60, 100, 120, 144 Hz…):
     # el compositor y las animaciones de BC van a esa frecuencia
@@ -64,8 +66,15 @@ case "$cmd" in
       done; [ "$x" -gt 0 ] && [ -n "$first" ] && swaymsg "focus output $first" >/dev/null; } ;;
   watch)
     bc-display inicio
+    # En máquina virtual, al cambiar el tamaño de su ventana (pantalla completa) se sigue a la ventana, como macOS en
+    # una VM; en equipo físico (monitor conectado), se vuelve a aplicar la resolución elegida
+    # (solo si cambia el tamaño preferido que anuncia la pantalla: los cambios de modo propios no cuentan)
+    vm=0; [ "${BC_EQUIPO:-}" = vm ] && vm=1
+    pref() { outs | jq -r '[.[] | select(.active) | "\(.name):\(.modes[0].width)x\(.modes[0].height)"] | join(" ")'; }
+    antes="$(pref)"
     udevadm monitor --udev --subsystem-match=drm 2>/dev/null | while read -r _; do
-      sleep 1; bc-display inicio
+      sleep 1; ahora="$(pref)"; [ "$ahora" = "$antes" ] && continue; antes="$ahora"
+      if [ $vm = 1 ]; then bc-display seguir; else bc-display inicio; fi
     done ;;
   *) echo "uso: bc-display auto|list|set <AnchoxAlto>|watch" >&2; exit 2 ;;
 esac
