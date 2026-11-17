@@ -11,6 +11,10 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
 
+### Novedades de 0.9.16
+- **Liquid Glass como en liquid-glass-react**: desenfoque ligero (se ve el fondo curvado por la lente), tinte mínimo
+  de serie (Ajustes ▸ Aspecto lo sube si quieres más contraste) y anillo especular.
+
 ### Novedades de 0.9.15
 - **Liquid Glass nuevo** en todo el sistema (Dock, widgets, menús, paneles, barras laterales): refracción con mapa de
   desplazamiento, aberración cromática por canal, saturación al 140 % y anillo especular, portado a C++ de

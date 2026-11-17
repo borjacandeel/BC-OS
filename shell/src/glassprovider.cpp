@@ -52,7 +52,7 @@ QImage GlassProvider::requestImage(const QString &id, QSize *size, const QSize &
             // Igual que sway («fill»): cubrir la pantalla recortando el sobrante centrado
             src = src.scaled(sw, sh, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
             src = src.copy((src.width() - sw) / 2, (src.height() - sh) / 2, sw, sh);
-            m_blur.insert(key, blurred(src, qMax(12, sh / 22)));
+            m_blur.insert(key, blurred(src, qMax(6, sh / 110)));   // desenfoque ligero (~6–10 px) como liquid-glass-react: se ve el fondo curvado
         }
         blur = m_blur.value(key);
     }
