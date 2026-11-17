@@ -1,11 +1,9 @@
 name: Notas de versión
 
 # Actualiza el texto de un release ya publicado con build/RELEASE-NOTES.md (sin reconstruir las imágenes).
-# Se lanza a mano (workflow_dispatch) o solo al cambiar las notas en main (aplica a la última versión publicada).
+# Solo a mano (workflow_dispatch): las notas en main son las de la PRÓXIMA versión (solo sus novedades) y no deben
+# pisar las del último release publicado.
 on:
-  push:
-    branches: [main]
-    paths: ['build/RELEASE-NOTES.md']
   workflow_dispatch:
     inputs:
       version:
