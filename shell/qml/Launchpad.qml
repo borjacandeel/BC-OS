@@ -7,7 +7,8 @@ import BCShell
 Item {
     id: lp
     anchors.fill: parent
-    readonly property real s: Theme.s
+    // Escala de la interfaz, reducida si la pantalla es pequeña (que el panel quepa entero sin tapar el Dock)
+    readonly property real s: Math.min(Theme.s, (width - 40) / 842, (height - 190) / 618)
     function px(v) { return Math.round(v * s) }
     property var all: []
     property string cat: ""

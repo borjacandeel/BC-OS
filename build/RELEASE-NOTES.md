@@ -11,6 +11,14 @@ También hay **ISO live** (UEFI) con el instalador (`sudo bc-install`).
 4. Arranca: **BC OS** o **BC OS (modo seguro)**. Login: usuario `bc`, contraseña `bcos` (cámbiala con `passwd`).
 5. En la bienvenida elige **Máquina virtual** (se detecta sola).
 
+### Novedades de 0.9.11
+- **Resoluciones de MacBook**: Air 13″ (1470 × 956), Pro 14″ (1512 × 982), Air 15″ (1710 × 1112) y Pro 16″
+  (1728 × 1117) en Ajustes ▸ Pantallas y en la bienvenida; en máquina virtual se crean al vuelo.
+- **Frecuencia elegible** (60, 75, 120, 144 Hz… o «Máxima») en Ajustes ▸ Pantallas; se recuerda en cada inicio,
+  también con Hyprland.
+- Arreglado: «Aplicaciones» se salía de la pantalla en monitores pequeños (ahora se ajusta sin tapar el Dock).
+- `htop` incluido.
+
 ### Novedades de 0.9.10
 - **Pantalla completa en máquinas virtuales**: al poner la ventana de VirtualBox/UTM en pantalla completa (o cambiar su
   tamaño) el escritorio se adapta a ella aunque se haya elegido una resolución; la elegida se vuelve a aplicar al iniciar.

@@ -568,7 +568,8 @@ AppWindow {
             id: dispPage
             visible: win.page === 12; width: parent.width; spacing: 10
             property string chosen: Quick.savedDisplayMode()
-            onVisibleChanged: if (visible) { Quick.listDisplayModes(); chosen = Quick.savedDisplayMode() }
+            property string hz: Quick.savedRefreshRate()
+            onVisibleChanged: if (visible) { Quick.listDisplayModes(); chosen = Quick.savedDisplayMode(); hz = Quick.savedRefreshRate() }
             Label { visible: !Theme.gg; text: qsTr("Pantallas"); font.pixelSize: 20; font.weight: Font.Bold }
             Item {
                 width: parent.width; height: 196
@@ -594,11 +595,44 @@ AppWindow {
                         Text { anchors.right: parent.right; anchors.rightMargin: 14; anchors.verticalCenter: parent.verticalCenter
                                visible: dispPage.chosen === modelData; text: "✓"; color: Theme.accent; font.pixelSize: 14; font.weight: Font.Bold }
                         MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor
-                                    onClicked: { Quick.setDisplayMode(modelData); dispPage.chosen = modelData } }
+                                    onClicked: { Quick.setDisplayMode(modelData); dispPage.chosen = modelData; hzTimer.restart() } }
                     }
                 }
             }
-            Hint { width: parent.width; text: qsTr("La resolución elegida se recuerda y se aplica en cada inicio. «Automática» usa la nativa del monitor (o el tamaño de la ventana de la máquina virtual) a su frecuencia más alta.") }
+            // Las de los MacBook (el tamaño «aparente» por defecto de macOS); en máquina virtual se crean al vuelo
+            Section { text: qsTr("Como en un MacBook") }
+            Group {
+                Repeater {
+                    model: [ { m: "1470x956", t: qsTr("MacBook Air 13″") }, { m: "1512x982", t: qsTr("MacBook Pro 14″") },
+                             { m: "1710x1112", t: qsTr("MacBook Air 15″") }, { m: "1728x1117", t: qsTr("MacBook Pro 16″") } ]
+                    delegate: Row2 {
+                        required property var modelData
+                        label: modelData.t
+                        value: ""
+                        Text { anchors.right: parent.right; anchors.rightMargin: dispPage.chosen === modelData.m ? 36 : 14; anchors.verticalCenter: parent.verticalCenter
+                               text: modelData.m.replace("x", " × "); color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 12 }
+                        Text { anchors.right: parent.right; anchors.rightMargin: 14; anchors.verticalCenter: parent.verticalCenter
+                               visible: dispPage.chosen === modelData.m; text: "✓"; color: Theme.accent; font.pixelSize: 14; font.weight: Font.Bold }
+                        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor
+                                    onClicked: { Quick.setDisplayMode(modelData.m); dispPage.chosen = modelData.m; hzTimer.restart() } }
+                    }
+                }
+            }
+            Section { text: qsTr("Frecuencia de actualización") }
+            Group {
+                Row2 {
+                    label: qsTr("Frecuencia"); value: ""
+                    PillSeg {
+                        anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                        readonly property var rates: ["auto"].concat(Quick.refreshRates.slice(0, 5))
+                        options: rates.map(r => r === "auto" ? qsTr("Máxima") : r + " Hz")
+                        current: Math.max(0, rates.indexOf(dispPage.hz))
+                        onPicked: (i) => { dispPage.hz = rates[i]; Quick.setRefreshRate(rates[i]) }
+                    }
+                }
+            }
+            Timer { id: hzTimer; interval: 1500; onTriggered: Quick.listDisplayModes() }
+            Hint { width: parent.width; text: qsTr("La resolución y la frecuencia elegidas se recuerdan y se aplican en cada inicio. «Automática» usa la nativa del monitor (o el tamaño de la ventana de la máquina virtual); «Máxima», la frecuencia más alta que admita.") }
         }
 
         // 13 Teclado

@@ -176,7 +176,7 @@ Item {
                 Row {
                     anchors.horizontalCenter: parent.horizontalCenter; spacing: 8
                     Repeater {
-                        model: ["auto", "1280x800", "1440x900", "1600x900", "1920x1080", "2560x1440"]
+                        model: ["auto", "1280x800", "1440x900", "1470x956", "1512x982", "1710x1112", "1920x1080", "2560x1440"]
                         Rectangle {
                             required property string modelData
                             readonly property bool on: root.resolution === modelData
@@ -184,7 +184,8 @@ Item {
                             color: on ? Theme.accent : root.wash(rhov.containsMouse ? 0.16 : 0.1)
                             border.width: on ? 0 : 1; border.color: root.wash(0.16)
                             Behavior on color { ColorAnimation { duration: Theme.dur(160) } }
-                            Text { id: rtxt; anchors.centerIn: parent; text: modelData === "auto" ? qsTr("Automática") : modelData.replace("x", " × ")
+                            readonly property var mac: ({ "1470x956": "Air 13″", "1512x982": "Pro 14″", "1710x1112": "Air 15″" })
+                            Text { id: rtxt; anchors.centerIn: parent; text: modelData === "auto" ? qsTr("Automática") : (parent.mac[modelData] ? parent.mac[modelData] : modelData.replace("x", " × "))
                                    color: parent.on ? Theme.white : root.ink; font.family: Theme.fontFamily; font.pixelSize: 12; font.weight: Font.Medium }
                             MouseArea { id: rhov; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                                         onClicked: { root.resolution = modelData; Quick.setDisplayMode(modelData) } }

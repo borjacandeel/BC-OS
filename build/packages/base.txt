@@ -54,6 +54,7 @@ wl-clipboard
 libnotify
 fastfetch
 jq
+htop
 fish
 fzf
 zoxide

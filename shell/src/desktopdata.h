@@ -80,6 +80,7 @@ class QuickTools : public QObject {
     Q_PROPERTY(bool busy READ busy NOTIFY busyChanged)
     Q_PROPERTY(QVariantList fileResults READ fileResults NOTIFY filesChanged)
     Q_PROPERTY(QStringList displayModes READ displayModes NOTIFY displayModesChanged)
+    Q_PROPERTY(QStringList refreshRates READ refreshRates NOTIFY displayModesChanged)
     // Posición de la ventana de esta app en la pantalla (para el cristal de las barras laterales); se sigue con sway
     Q_PROPERTY(QPoint windowPos READ windowPos NOTIFY windowPosChanged)
     Q_PROPERTY(bool trackWindow READ trackWindow WRITE setTrackWindow NOTIFY windowPosChanged)
@@ -99,6 +100,7 @@ public:
     QVariantMap media() const { return m_media; }
     QVariantList fileResults() const { return m_files; }
     QStringList displayModes() const { return m_modes; }
+    QStringList refreshRates() const { return m_rates; }
     QPoint windowPos() const { return m_winPos; }
     bool trackWindow() const { return m_winTimer.isActive(); }
     void setTrackWindow(bool on);
@@ -121,6 +123,8 @@ public:
     Q_INVOKABLE void listDisplayModes();                       // → displayModes
     Q_INVOKABLE void setDisplayMode(const QString &mode);      // «1920x1080» o «auto»
     Q_INVOKABLE QString savedDisplayMode() const;              // la recordada por bc-display o «auto»
+    Q_INVOKABLE void setRefreshRate(const QString &hz);        // «60», «144»… o «auto» (la más alta)
+    Q_INVOKABLE QString savedRefreshRate() const;
     Q_INVOKABLE bool setKeyboardLayout(const QString &code);   // es, us, gb, fr, de, it, pt, latam
     Q_INVOKABLE static QString keyboardLayout();
     // Datos JSON de las apps (Calendario…): ~/.local/share/bc/<nombre>.json (nombre: letras minúsculas y guiones)
@@ -164,6 +168,7 @@ private:
     void run(const QString &prog, const QStringList &args, std::function<void(int, const QString &)> done);
     QVariantList m_networks, m_bt, m_files;
     QStringList m_modes;
+    QStringList m_rates;
     QPoint m_winPos;
     QTimer m_winTimer;
     QTimer m_fastTimer;

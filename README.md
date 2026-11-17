@@ -8,7 +8,7 @@
 Sistema operativo Linux (ARM64 y x86_64) creado por <b>Borja Candel</b>, en español por defecto.</p>
 
 <p align="center">
-  <img alt="Versión" src="https://img.shields.io/badge/versi%C3%B3n-0.9.10--beta%20(prerelease)-2F7BFF">
+  <img alt="Versión" src="https://img.shields.io/badge/versi%C3%B3n-0.9.11--beta%20(prerelease)-2F7BFF">
   <img alt="Arquitectura" src="https://img.shields.io/badge/arquitectura-ARM64%20%7C%20x86__64-04111F">
   <img alt="Base" src="https://img.shields.io/badge/base-Arch%20Linux%20%2F%20ARM-1793D1">
   <img alt="Idioma" src="https://img.shields.io/badge/idioma-espa%C3%B1ol%20(es__ES)-C60B1E">
@@ -22,7 +22,7 @@ BC OS es un Linux ligero y en español para **ARM64** (sobre **Arch Linux ARM**)
   <br><sub>Escritorio Golden Gate: barra de menús, widgets de vidrio, iconos en el escritorio, aviso y Dock. Captura del shell en el anfitrión de desarrollo.</sub>
 </p>
 
-> **Estado honesto:** beta experimental. La **0.9.10-beta** sale para ARM64 y x86_64 (disco VDI e ISO live UEFI y BIOS) con **Hyprland** si hay cualquier GPU real y sway si no; la ISO x86_64 ya arranca en un PC real (BIOS, NVIDIA GT 710). Muchas piezas están compiladas y vistas en capturas, pero **pendientes de prueba real**. Ver [estado y pendientes](#estado-honesto-de-golden-gate).
+> **Estado honesto:** beta experimental. La **0.9.11-beta** sale para ARM64 y x86_64 (disco VDI e ISO live UEFI y BIOS) con **Hyprland** si hay cualquier GPU real y sway si no; la ISO x86_64 ya arranca en un PC real (BIOS, NVIDIA GT 710). Muchas piezas están compiladas y vistas en capturas, pero **pendientes de prueba real**. Ver [estado y pendientes](#estado-honesto-de-golden-gate).
 
 ---
 
@@ -271,7 +271,7 @@ En el login solo aparecen **BC OS** y **Dotfiles**. La sesión por defecto tambi
 
 ## Descargar y probar
 
-Imágenes publicadas: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Cada release incluye `BC-OS-<versión>-ARM64.vdi.zip`, `BC-OS-<versión>-x86_64.vdi.zip`, las ISO live y `SHA256SUMS`. Última: **0.9.10-beta**.
+Imágenes publicadas: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Cada release incluye `BC-OS-<versión>-ARM64.vdi.zip`, `BC-OS-<versión>-x86_64.vdi.zip`, las ISO live y `SHA256SUMS`. Última: **0.9.11-beta**.
 
 **Instalar en un disco (como macOS):** arranca la **ISO live** → se abre **Instalar BC OS** → elige el disco, tu cuenta y la
 región → **Instalar** → **Reiniciar**. También desde Terminal: `sudo bc-install`.
@@ -293,6 +293,7 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 | `0.3.x-alpha` | publicadas | **sway** (mosaico/flotante), menús globales por app, Dock con ventanas reales, Alacritty, animación de minimizar y swayfx experimental. |
 | `0.4.0-beta` / `0.4.1-beta` | publicadas (prerrelease) | Asistente de bienvenida, estilos, widgets, Modos, Flathub, fish, servicio de antivirus; resolución adaptable (`bc-display`), iconos Qogir, portapapeles (Súper+V). |
 | `0.5.0-beta` | prerrelease, en pruebas | Entorno **Dotfiles (bspwm)** elegible en el login. Verificado en QEMU; sin probar en VirtualBox. |
+| `0.9.11-beta` | prerelease | Resoluciones de MacBook (13″, 14″, 15″, 16″), frecuencia (Hz) elegible, «Aplicaciones» ajustada a pantallas pequeñas, htop. |
 | `0.9.10-beta` | prerelease | Pantalla completa en VM que se adapta sola, resalte de la barra de menús en modo claro, fondo «Nieve» corregido. |
 | `0.9.9-beta` | prerelease | Arranque animado, 10 fondos «Bosques», semáforo y esquinas en todas las apps (Firefox incluido), **Hyprland con cualquier GPU**, genio en dos fases, resolución recordada, aviso de actualizaciones que actualiza al pulsar, Ajustes rehechos, login solo BC OS y Dotfiles. |
 | `0.9.8-beta` | prerelease | Multimonitor (barra y Dock por pantalla), foco al hacer clic, cristal fluido al mover ventanas, arranque «cargar en RAM». |

@@ -529,6 +529,21 @@ void QuickTools::listDisplayModes() {
         const QStringList m = code == 0 ? o.split('\n', Qt::SkipEmptyParts) : QStringList();
         if (m != m_modes) { m_modes = m; emit displayModesChanged(); }
     });
+    run("bc-display", {"hz"}, [this](int code, const QString &o) {
+        const QStringList r = code == 0 ? o.split('\n', Qt::SkipEmptyParts) : QStringList();
+        if (r != m_rates) { m_rates = r; emit displayModesChanged(); }
+    });
+}
+void QuickTools::setRefreshRate(const QString &hz) {
+    static const QRegularExpression ok("^[0-9]{2,3}$");
+    if (hz == "auto" || ok.match(hz).hasMatch()) run("bc-display", {"hz-set", hz}, [](int, const QString &) {});
+}
+QString QuickTools::savedRefreshRate() const {
+    QFile f(QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/bc/frecuencia");
+    if (!f.open(QIODevice::ReadOnly)) return QStringLiteral("auto");
+    const QString v = QString::fromUtf8(f.readAll()).trimmed();
+    static const QRegularExpression ok("^[0-9]{2,3}$");
+    return ok.match(v).hasMatch() ? v : QStringLiteral("auto");
 }
 void QuickTools::setDisplayMode(const QString &mode) {
     static const QRegularExpression ok("^[0-9]{3,5}x[0-9]{3,5}$");
