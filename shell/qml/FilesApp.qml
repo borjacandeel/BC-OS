@@ -217,7 +217,7 @@ AppWindow {
                     Rectangle {
                         required property string modelData
                         required property int index
-                        width: body.width / win.tabs.length; height: 30
+                        width: (body.width - 30) / win.tabs.length; height: 30
                         color: index === win.tab ? "transparent" : Theme.tileFill
                         border.width: index === win.tab ? 0 : 1; border.color: Theme.hairline
                         Text { anchors.centerIn: parent; text: modelData.split("/").pop() || "/"; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 12; width: parent.width - 40; elide: Text.ElideMiddle; horizontalAlignment: Text.AlignHCenter }
@@ -225,6 +225,13 @@ AppWindow {
                                MouseArea { anchors.fill: parent; anchors.margins: -4; onClicked: win.closeTab(index) } }
                         MouseArea { id: tabHov; anchors.fill: parent; hoverEnabled: true; z: -1; onClicked: win.goTab(index) }
                     }
+                }
+                // «+» alineado a la derecha: pestaña nueva (como Finder)
+                Rectangle {
+                    width: 30; height: 30; color: addTab.containsMouse ? Qt.rgba(Theme.textPrimary.r, Theme.textPrimary.g, Theme.textPrimary.b, 0.12) : Theme.tileFill
+                    border.width: 1; border.color: Theme.hairline
+                    Text { anchors.centerIn: parent; text: "+"; color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 17 }
+                    MouseArea { id: addTab; anchors.fill: parent; hoverEnabled: true; onClicked: win.newTab() }
                 }
             }
             // Ámbito de búsqueda
@@ -278,7 +285,7 @@ AppWindow {
                             width: Math.min(parent.width - 8, nm.implicitWidth + (cell.tags.length ? 16 : 8)); height: nm.height + 2; radius: 4
                             color: win.current === cell.index ? Theme.accent : "transparent"
                             Row { visible: cell.tags.length > 0; x: 4; anchors.verticalCenter: parent.verticalCenter; spacing: -3
-                                  Repeater { model: cell.tags; Rectangle { required property string modelData; width: 8; height: 8; radius: 4; color: win.tagColors[modelData] || "gray" } } }
+                                  Repeater { model: cell.tags; Rectangle { required property string modelData; width: 9; height: 9; radius: 4.5; color: win.tagColors[modelData] || "gray"; border.width: 1; border.color: Theme.windowBg } } }
                             Text { id: nm; x: cell.tags.length ? 14 : 4; width: Math.min(implicitWidth, grid.cellWidth - 24); text: cell.name; elide: Text.ElideMiddle
                                    color: win.current === cell.index ? "white" : Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 12 }
                         }
@@ -325,7 +332,7 @@ AppWindow {
                                        FileGlyph { x: 6; anchors.verticalCenter: parent.verticalCenter; kind: lr.kind; path: lr.name; width: 18; height: 16 }
                                        Text { x: 30; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 50; text: lr.name; elide: Text.ElideMiddle; color: lr.ink; font.family: Theme.fontFamily; font.pixelSize: 12 }
                                        Row { anchors.right: parent.right; anchors.rightMargin: 4; anchors.verticalCenter: parent.verticalCenter; spacing: -3
-                                             Repeater { model: lr.tags; Rectangle { required property string modelData; width: 8; height: 8; radius: 4; color: win.tagColors[modelData] || "gray" } } } }
+                                             Repeater { model: lr.tags; Rectangle { required property string modelData; width: 9; height: 9; radius: 4.5; color: win.tagColors[modelData] || "gray"; border.width: 1; border.color: Theme.windowBg } } } }
                                 Text { width: hdr.width * 0.26; leftPadding: 8; text: lr.modifiedText; color: win.current === lr.index ? "white" : Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 12; elide: Text.ElideRight }
                                 Text { width: hdr.width * 0.12; leftPadding: 8; text: lr.sizeText; color: win.current === lr.index ? "white" : Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 12 }
                                 Text { width: hdr.width * 0.18; leftPadding: 8; text: lr.mime; color: win.current === lr.index ? "white" : Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 12; elide: Text.ElideRight }

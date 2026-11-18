@@ -167,7 +167,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 61. Proporción y equilibrio visual en la distribución de paneles de Ajustes
 - [~] 62. Ocultación automática de la barra de herramientas en modo pantalla completa
 - [ ] 63. Transición limpia al separar una pestaña para convertirla en ventana independiente
-- [ ] 64. Barra de pestañas nativa con botón de añadir (+) alineado a la derecha
+- [x] 64. Barra de pestañas nativa con botón de añadir (+) alineado a la derecha
 - [ ] 65. Efecto de apilamiento ordenado de ventanas en cascada
 - [x] 66. Iconos de apps en cuadrados con esquinas continuas uniformes (Squircle)
 - [ ] 67. Volumen 3D, sombras suaves y texturas realistas dentro de los iconos de apps
@@ -293,7 +293,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 187. Vista rápida con marco flotante oscuro o claro
 - [ ] 188. Panel de vista previa lateral con metadatos EXIF y acciones rápidas
 - [ ] 189. Diálogos de Abrir y Guardar con columnas y barra lateral
-- [ ] 190. Varias etiquetas de color como puntos superpuestos junto al nombre
+- [x] 190. Varias etiquetas de color como puntos superpuestos junto al nombre
 - [ ] 191. Vista general de pestañas en cuadrícula
 - [~] 192. Abrir y cerrar carpetas con zoom desde su icono
 - [x] 193. Selector de apps centrado y translúcido (Alt+Tab)
