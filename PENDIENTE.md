@@ -244,13 +244,13 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 138. Barras de desplazamiento ocultas que aparecen al desplazar
 - [x] 139. Ensanchamiento de la barra de desplazamiento al acercar el cursor
 - [x] 140. Interruptores ovalados con sombra interior y deslizamiento elástico
-- [ ] 141. Radio buttons y casillas con brillo al activarse
+- [x] 141. Radio buttons y casillas con brillo al activarse
 - [x] 142. Deslizadores de volumen y brillo con iconos dinámicos en el Centro de Control
 - [~] 143. Anillos de progreso y barras de carga con relleno fluido
 - [~] 144. Indicador giratorio de doce trazos (spinner)
 - [ ] 145. Cursor de espera giratorio multicolor (propio)
 - [x] 146. Colores de énfasis personalizables (azul, púrpura, rosa, rojo, naranja, amarillo, verde, grafito)
-- [ ] 147. Color de resaltado de texto independiente del color de énfasis
+- [x] 147. Color de resaltado de texto independiente del color de énfasis
 - [ ] 148. Lupa circular con cuadrícula de píxeles en el selector de color
 - [ ] 149. Ventana flotante de definición (diccionario)
 - [x] 150. HUD translúcidos centrados para volumen y brillo
@@ -262,7 +262,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 156. Tiradores de selección de texto precisos
 - [~] 157. Botones píldora para acciones secundarias y filtros
 - [ ] 158. Steppers con flechas junto a campos numéricos
-- [ ] 159. Deslizadores con marcas de graduación
+- [x] 159. Deslizadores con marcas de graduación
 - [ ] 160. Barras de progreso indeterminadas con franjas animadas
 - [~] 161. Tooltips con retraso suave al aparecer
 - [~] 162. Cursores contextuales (mano, mano cerrada, cruz, redimensionado)

@@ -114,7 +114,7 @@ Item {
                 color: desk.isSel(ic.name) ? Theme.selection : "transparent"
                 TextInput {
                     id: ren; visible: desk.renaming === ic.index; anchors.centerIn: parent; width: desk.cellW - px(8)
-                    horizontalAlignment: Text.AlignHCenter; color: "white"; selectionColor: Theme.accent; selectByMouse: true
+                    horizontalAlignment: Text.AlignHCenter; color: "white"; selectionColor: Theme.textSelection; selectByMouse: true
                     font.family: Theme.font; font.pixelSize: px(12); font.weight: Font.Medium; clip: true
                     onVisibleChanged: if (visible) { text = ic.name; forceActiveFocus(); const d = text.lastIndexOf("."); select(0, d > 0 ? d : text.length) }
                     onAccepted: { if (text !== "" && text !== ic.name) fm.renameAt(ic.index, text); desk.renaming = -1; fm.reload() }

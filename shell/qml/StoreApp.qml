@@ -91,7 +91,7 @@ AppWindow {
                 Icon { x: 8; anchors.verticalCenter: parent.verticalCenter; name: Icons.search; size: 14; color: Theme.textSecondary }
                 TextInput {
                     id: field; x: 28; width: parent.width - 34; anchors.verticalCenter: parent.verticalCenter
-                    color: Theme.textPrimary; selectionColor: Theme.accent; font.family: Theme.fontFamily; font.pixelSize: 13; clip: true
+                    color: Theme.textPrimary; selectionColor: Theme.textSelection; font.family: Theme.fontFamily; font.pixelSize: 13; clip: true
                     onAccepted: if (text !== "") win.go("search")
                     Text { visible: !parent.text; text: qsTr("Buscar"); color: Theme.textSecondary; font: parent.font }
                 }
@@ -296,7 +296,7 @@ AppWindow {
                     id: pwInput
                     anchors.fill: parent; anchors.margins: 9
                     echoMode: TextInput.Password; passwordCharacter: "•"
-                    color: Theme.textPrimary; selectionColor: Theme.accent
+                    color: Theme.textPrimary; selectionColor: Theme.textSelection
                     font.family: Theme.fontFamily; font.pixelSize: 16
                     onAccepted: { if (text !== "") { win.password = text; pwDialog.open = false; win.run() } }
                     Keys.onEscapePressed: { pwDialog.open = false; win.pending = null }

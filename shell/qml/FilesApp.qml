@@ -138,7 +138,7 @@ AppWindow {
                     text: Files.filter
                     onTextEdited: { Files.filter = text; if (win.searchAll) Quick.searchFiles(text) }
                     color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 13
-                    selectionColor: Theme.accent; clip: true
+                    selectionColor: Theme.textSelection; clip: true
                     Keys.onEscapePressed: { Files.filter = ""; win.searchAll = false; focus = false }
                     Text { visible: !search.text && !search.activeFocus; text: qsTr("Buscar"); color: Theme.textSecondary; font: search.font }
                 }
@@ -704,7 +704,7 @@ AppWindow {
                     TextInput {
                         id: nameInput
                         anchors.fill: parent; anchors.margins: 7
-                        color: Theme.textPrimary; selectionColor: Theme.accent
+                        color: Theme.textPrimary; selectionColor: Theme.textSelection
                         font.family: Theme.fontFamily; font.pixelSize: 13
                         onAccepted: fx.acceptName()
                         Keys.onEscapePressed: { nameDialog.open = false; fx.forceActiveFocus() }

@@ -197,7 +197,7 @@ AppWindow {
             id: findIn
             x: 12; width: parent.width - 80; anchors.verticalCenter: parent.verticalCenter
             color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 13; clip: true
-            selectionColor: Theme.accent; selectByMouse: true
+            selectionColor: Theme.textSelection; selectByMouse: true
             onTextChanged: { find.query = text; find.update() }
             Keys.onReturnPressed: (e) => find.step((e.modifiers & Qt.ShiftModifier) ? -1 : 1)
             Keys.onEscapePressed: { find.open = false; find.query = ""; find.matches = []; editor.forceActiveFocus() }

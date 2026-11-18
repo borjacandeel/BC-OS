@@ -107,14 +107,27 @@ AppWindow {
         Rectangle { y: 2; x: sw.on ? sw.width - width - 2 : 2; width: sw.height - 4; height: width; radius: width / 2; color: "white"
                     border.width: Theme.lightUi ? 0.5 : 0; border.color: Qt.rgba(0, 0, 0, 0.15)
                     Behavior on x { NumberAnimation { duration: Theme.dur(160); easing.type: Theme.easing } } }
+        // Brillo breve al activarse (como las casillas y conmutadores de macOS)
+        Rectangle { anchors.fill: parent; anchors.margins: -3; radius: height / 2; color: "transparent"; border.width: 3
+                    border.color: Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.45); opacity: 0
+                    SequentialAnimation on opacity { id: glow; running: false
+                        NumberAnimation { to: 1; duration: Theme.d(90) } NumberAnimation { to: 0; duration: Theme.d(320); easing.type: Easing.OutQuad } } }
+        onOnChanged: if (on) glow.restart()
         MouseArea { anchors.fill: parent; onClicked: sw.toggled(!sw.on) }
     }
     // Deslizador como el de macOS 27: pista fina y tirador en cápsula blanca con sombra
     component GSlider: Item {
         id: gs
         property real value: 0
+        property int ticks: 0          // marcas de graduación bajo la pista (como macOS); con marcas, el valor encaja en ellas
         signal moved(real v)
         height: 22
+        Repeater {
+            model: gs.ticks
+            Rectangle { required property int index
+                        x: 11 + index * (gs.width - 22) / Math.max(1, gs.ticks - 1) - 0.5; y: gs.height / 2 + 7; width: 1; height: 5
+                        color: Theme.lightUi ? Qt.rgba(0, 0, 0, 0.28) : Qt.rgba(1, 1, 1, 0.32) }
+        }
         Rectangle { id: gtr; anchors.verticalCenter: parent.verticalCenter; width: parent.width; height: 4; radius: 2
                     color: Theme.lightUi ? Qt.rgba(0, 0, 0, 0.10) : Qt.rgba(1, 1, 1, 0.16)
             Rectangle { width: Math.max(0, Math.min(1, gs.value)) * parent.width; height: parent.height; radius: 2; color: Theme.accent } }
@@ -122,7 +135,9 @@ AppWindow {
                     width: 22; height: 16; radius: 8; color: "white"; border.width: 0.5; border.color: Qt.rgba(0, 0, 0, 0.18)
                     Rectangle { z: -1; x: 0; y: 1; width: parent.width; height: parent.height; radius: 8; color: Qt.rgba(0, 0, 0, 0.12) } }
         MouseArea { anchors.fill: parent; anchors.margins: -6
-                    function upd(m) { gs.moved(Math.max(0, Math.min(1, (m.x - 6 - 11) / (gs.width - 22)))) }
+                    function upd(m) { let v = Math.max(0, Math.min(1, (m.x - 6 - 11) / (gs.width - 22)))
+                                      if (gs.ticks > 1) v = Math.round(v * (gs.ticks - 1)) / (gs.ticks - 1)
+                                      gs.moved(v) }
                     onPressed: (m) => upd(m); onPositionChanged: (m) => { if (pressed) upd(m) } }
     }
     // Botón emergente: valor y cápsula con flechas arriba/abajo (como en macOS)
@@ -411,7 +426,7 @@ AppWindow {
                 Item {
                     width: parent.width; height: 68
                     Label { x: 10; y: 10; text: qsTr("Tamaño") }
-                    GSlider { x: 10; y: 30; width: parent.width - 20; value: (Settings.dockSize - 32) / 64
+                    GSlider { x: 10; y: 30; width: parent.width - 20; value: (Settings.dockSize - 32) / 64; ticks: 9
                               onMoved: (v) => Settings.dockSize = Math.round(32 + 64 * v) }
                     Hint { x: 10; y: 50; text: qsTr("Pequeño"); font.pixelSize: 11 }
                     Hint { anchors.right: parent.right; anchors.rightMargin: 10; y: 50; text: qsTr("Grande"); font.pixelSize: 11 }
@@ -897,7 +912,7 @@ AppWindow {
                     TextInput {
                         id: hintIn; anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8; verticalAlignment: TextInput.AlignVCenter
                         color: Theme.label; font.family: Theme.fontFamily; font.pixelSize: 13; clip: true; maximumLength: 120
-                        selectByMouse: true; selectionColor: Theme.accent
+                        selectByMouse: true; selectionColor: Theme.textSelection
                         Component.onCompleted: text = Settings.passwordHint("")
                         onEditingFinished: Settings.setPasswordHint(text)
                         Text { visible: !hintIn.text && !hintIn.activeFocus; anchors.verticalCenter: parent.verticalCenter

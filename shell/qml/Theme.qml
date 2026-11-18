@@ -143,6 +143,8 @@ QtObject {
     property color fill: dark ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(0, 0, 0, 0.06)
     property color fillHover: dark ? Qt.rgba(1, 1, 1, 0.16) : Qt.rgba(0, 0, 0, 0.10)
     property color selection: AppConfig.accent
+    // Selección de texto: color propio, más claro que el de énfasis (como macOS), con el texto legible encima
+    readonly property color textSelection: Qt.rgba(AppConfig.accent.r, AppConfig.accent.g, AppConfig.accent.b, dark ? 0.45 : 0.32)
     property color barText: "#FFFFFF"    // la barra transparente va sobre el fondo oscuro: texto blanco
     property color windowBg: dark ? "#1E1E22" : "#F5F5F7"
     property color windowBgInactive: dark ? "#26262A" : "#ECECEE"

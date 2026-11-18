@@ -28,7 +28,7 @@ Rectangle {
             anchors.left: parent.left; anchors.right: parent.right
             anchors.leftMargin: 44; anchors.rightMargin: 14
             anchors.verticalCenter: parent.verticalCenter
-            color: Theme.white; selectionColor: Theme.accent
+            color: Theme.white; selectionColor: Theme.textSelection
             font.family: Theme.fontFamily; font.pixelSize: 17
             focus: true
             onTextChanged: card.results = card.searching ? Apps.search(text) : []
