@@ -16,3 +16,4 @@
 - **Sin tirones al cambiar ajustes**: el cristal solo se recalcula al cambiar el fondo de pantalla (antes con cualquier ajuste).
 - **Terminal**: el botón verde y el doble clic en la barra ocupan la pantalla y vuelven al tamaño anterior.
 - **Microcortes en VirtualBox**: el escritorio ya no se queda cada 2 s solo con el fondo y los widgets (sin ventanas, barra ni Dock); en VirtualBox/VMware se usa la API clásica de pantalla.
+- **Máquinas virtuales sin GPU**: sin lente del cristal ni genio/cierre animado (consumían la CPU que necesita el compositor y VirtualBox enseñaba fotogramas a medias al pasar por el Dock o minimizar).

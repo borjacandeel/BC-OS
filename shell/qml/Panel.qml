@@ -69,7 +69,9 @@ LayerWindow {
     function minimizeGenie(id) {
         if (id === undefined || id < 0 || isNaN(id)) id = Sway.focusedId
         const w = Sway.windows.find(x => x.id === id)
-        if (!w || UiState.classic || Theme.reduced || w.rectW <= 0) { if (w) Sway.minimizeWindow(w.id); return }
+        // Sin GPU (máquinas virtuales) sin genio: capturar la ventana y dibujar una capa a pantalla completa cuesta tanto
+        // que VirtualBox enseñaba fotogramas a medias (cortes). Se minimiza al instante, como «Reducir movimiento».
+        if (!w || UiState.classic || Theme.reduced || Quick.softwareRender || w.rectW <= 0) { if (w) Sway.minimizeWindow(w.id); return }
         geniePending = { id: w.id, rect: Qt.rect(w.decoX, w.decoY, w.rectW, w.rectH), back: false }
         Quick.capture("genie-" + w.id, w.decoX + "," + w.decoY + " " + w.rectW + "x" + w.rectH)
     }
@@ -111,13 +113,13 @@ LayerWindow {
         if (id === undefined || id < 0 || isNaN(id)) id = Sway.focusedId
         const w = Sway.windows.find(x => x.id === id)
         // Hyprland ya anima el cierre (encoger + desvanecer) en el compositor
-        if (!w || Sway.hyprland || UiState.classic || Theme.reduced || w.rectW <= 0 || w.minimized) { if (w) Sway.closeWindow(w.id); return }
+        if (!w || Sway.hyprland || UiState.classic || Theme.reduced || Quick.softwareRender || w.rectW <= 0 || w.minimized) { if (w) Sway.closeWindow(w.id); return }
         closePending = { id: w.id, rect: Qt.rect(w.decoX, w.decoY, w.rectW, w.rectH) }
         Quick.capture("close-" + w.id, w.decoX + "," + w.decoY + " " + w.rectW + "x" + w.rectH)
     }
     function restoreGenie(id) {
         const shot = genieShots[id]
-        if (!shot || UiState.classic || Theme.reduced) { Sway.command("[con_id=" + id + "] scratchpad show"); return }
+        if (!shot || UiState.classic || Theme.reduced || Quick.softwareRender) { Sway.command("[con_id=" + id + "] scratchpad show"); return }
         genieWin.shown = true
         geniePending = { id: id, rect: shot.rect, back: true }
         genie.run("file://" + shot.path, shot.rect, Qt.point(dockGG.minimizeTarget.x + dockWin.originX, dockGG.minimizeTarget.y + dockWin.originY), dockGG.bs, true)

@@ -24,6 +24,7 @@ Item {
     property point gp: Qt.point(0, 0)
     function sync() { const p = g.mapToItem(null, 0, 0); gp = Qt.point(Math.round(p.x + originX), Math.round(p.y + originY)) }
     onXChanged: sync(); onYChanged: sync()
+    // Sin GPU (máquinas virtuales) nunca se calcula la lente: cuesta CPU que el compositor necesita para dibujar
     // Cambiando de tamaño (Dock que se amplía, paneles que crecen): recortes rápidos sin lente mientras dura; la lente
     // solo al asentarse. Así la animación no satura la CPU recalculando la refracción cada 70 ms (iba a golpes en VM)
     property bool resizing: false
@@ -58,7 +59,7 @@ Item {
     // calcula en otro hilo y solo se muestra cuando está listo, así las animaciones (paneles que aparecen, Dock que se
     // amplía, ventanas que se mueven) no se frenan esperando al recorte. Como mucho uno cada 70 ms (16 ms moviendo).
     readonly property string want: !Quick.realBlur && g.width > 2 && g.height > 2
-        ? "image://glass/" + [g.gp.x, g.gp.y, Math.round(g.width), Math.round(g.height), Math.round(g.radius), Math.round(g.scrW), Math.round(g.scrH), g.version].join("_") + (g.leftOnly ? "_L" : "_R") + (g.moving || g.resizing ? "_M" : "")
+        ? "image://glass/" + [g.gp.x, g.gp.y, Math.round(g.width), Math.round(g.height), Math.round(g.radius), Math.round(g.scrW), Math.round(g.scrH), g.version].join("_") + (g.leftOnly ? "_L" : "_R") + (g.moving || g.resizing || Quick.softwareRender ? "_M" : "")
         : ""
     property int front: 0
     property string asked: ""
