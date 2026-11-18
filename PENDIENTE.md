@@ -267,7 +267,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [~] 161. Tooltips con retraso suave al aparecer
 - [~] 162. Cursores contextuales (mano, mano cerrada, cruz, redimensionado)
 - [x] 163. Rebote elástico (rubberbanding) al llegar al límite de un scroll
-- [ ] 164. Resaltado amarillo con salto al buscar texto (Ctrl+F)
+- [x] 164. Resaltado amarillo con salto al buscar texto (Ctrl+F)
 - [x] 165. Menú contextual con bordes redondeados y sombra profunda
 - [ ] 166. Selector de colores nativo (rueda, deslizadores, lápices)
 - [ ] 167. Selector de tipografías con previsualización

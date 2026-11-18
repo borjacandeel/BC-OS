@@ -30,7 +30,7 @@ AppWindow {
     property bool dirty: false
     function newNote() { folder = "notas"; open(Notes.create()); editor.forceActiveFocus() }
     Timer { id: autosave; interval: 700; onTriggered: win.saveNow() }
-    Component.onCompleted: { if (Notes.notes.length) open(Notes.notes[0].id) }
+    Component.onCompleted: { if (Notes.notes.length) open(Notes.notes[0].id); if (AppConfig.demo === "buscar") { find.open = true; findIn.text = "macOS" } }
     Component.onDestruction: saveNow()
 
     titlebarContent: [
@@ -143,7 +143,72 @@ AppWindow {
             onTextChanged: if (!win.loading && activeFocus) { win.dirty = true; autosave.restart() }
         }
         Text { visible: win.current === ""; anchors.centerIn: parent; text: qsTr("Ninguna nota seleccionada"); color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 14 }
+        // Resaltado amarillo de las coincidencias de la búsqueda (como macOS); la actual da un pequeño salto
+        Repeater {
+            model: find.matches
+            Rectangle {
+                required property var modelData
+                required property int index
+                readonly property rect a: { find.matches; editor.width; editor.contentHeight; editor.text; return editor.positionToRectangle(modelData) }
+                readonly property rect b: { find.matches; editor.width; editor.contentHeight; editor.text; return editor.positionToRectangle(modelData + find.query.length) }
+                x: editor.x + a.x - 2; y: editor.y + a.y - 1
+                width: (b.y === a.y ? b.x - a.x : editor.width - a.x) + 4; height: a.height + 2; radius: 4
+                z: -1
+                color: index === find.cur ? "#FFD60A" : Qt.rgba(1, 0.84, 0.04, 0.38)
+                scale: 1
+                SequentialAnimation on scale {
+                    running: index === find.cur
+                    NumberAnimation { to: 1.35; duration: Theme.d(90); easing.type: Easing.OutQuad }
+                    NumberAnimation { to: 1.0; duration: Theme.d(160); easing.type: Easing.OutBack }
+                }
+            }
+        }
     }
+
+    // ---- Buscar en la nota (Ctrl+F) ---------------------------------------------------------------
+    Rectangle {
+        id: find
+        property bool open: false
+        property string query: ""
+        property var matches: []
+        property int cur: 0
+        function update() {
+            const out = []
+            if (query.length > 0) {
+                // Posiciones del documento (no del texto plano: los saltos de párrafo del texto enriquecido no coinciden)
+                const q = query.toLowerCase(), n = q.length, L = editor.length
+                for (let i = 0; i + n <= L && out.length < 500; ++i)
+                    if (editor.getText(i, i + n).toLowerCase() === q) { out.push(i); i += n - 1 }
+            }
+            matches = out; cur = 0; reveal()
+        }
+        function reveal() {
+            if (!matches.length) return
+            const r = editor.positionToRectangle(matches[cur])
+            flick.contentY = Math.max(0, Math.min(flick.contentHeight - flick.height, editor.y + r.y - flick.height / 3))
+        }
+        function step(d) { if (!matches.length) return; cur = (cur + d + matches.length) % matches.length; reveal() }
+        visible: open && win.current !== ""
+        x: flick.x + flick.width - width - 14; y: 10; z: 20
+        width: 250; height: 30; radius: height / 2
+        color: Theme.dark ? Qt.rgba(0.17, 0.17, 0.19, 0.96) : Qt.rgba(1, 1, 1, 0.96)
+        border.width: 1; border.color: findIn.activeFocus ? Theme.accent : Theme.separator
+        TextInput {
+            id: findIn
+            x: 12; width: parent.width - 80; anchors.verticalCenter: parent.verticalCenter
+            color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 13; clip: true
+            selectionColor: Theme.accent; selectByMouse: true
+            onTextChanged: { find.query = text; find.update() }
+            Keys.onReturnPressed: (e) => find.step((e.modifiers & Qt.ShiftModifier) ? -1 : 1)
+            Keys.onEscapePressed: { find.open = false; find.query = ""; find.matches = []; editor.forceActiveFocus() }
+            Text { visible: !findIn.text; anchors.verticalCenter: parent.verticalCenter; text: qsTr("Buscar en la nota")
+                   color: Theme.textSecondary; font: findIn.font }
+        }
+        Text { anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
+               visible: find.query.length > 0; color: Theme.textSecondary; font.family: Theme.fontFamily; font.pixelSize: 11
+               text: find.matches.length ? (find.cur + 1) + " / " + find.matches.length : qsTr("0 resultados") }
+    }
+    Shortcut { sequence: "Ctrl+F"; onActivated: { find.open = true; findIn.forceActiveFocus(); findIn.selectAll() } }
 
     Shortcut { sequence: "Ctrl+N"; onActivated: win.newNote() }
     Connections {
