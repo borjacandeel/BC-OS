@@ -69,12 +69,13 @@ QtObject {
     property real menuX: 12
     property bool locked: false
     property string powerAction: ""
+    property bool forceQuitOpen: false   // «Forzar salida de las aplicaciones»
     readonly property bool popupOpen: !locked && (centerOpen || launcherOpen || startOpen || clipboardOpen || menu !== "" || powerAction !== ""
-                                                  || notifCenterOpen || spotlightOpen || stackOpen || widgetGalleryOpen || contextItems.length > 0 || tilePop !== null)
+                                                  || notifCenterOpen || spotlightOpen || stackOpen || widgetGalleryOpen || contextItems.length > 0 || tilePop !== null || forceQuitOpen)
     readonly property bool dim: launcherOpen || powerAction !== ""
 
     function closePopups() { centerOpen = false; centerPanel = ""; launcherOpen = false; startOpen = false; clipboardOpen = false; menu = ""; powerAction = ""
-                             notifCenterOpen = false; spotlightOpen = false; stackOpen = false; widgetGalleryOpen = false; contextItems = []; tilePop = null }
+                             notifCenterOpen = false; spotlightOpen = false; stackOpen = false; widgetGalleryOpen = false; contextItems = []; tilePop = null; forceQuitOpen = false }
     function toggleNotifCenter() { if (locked) return; const o = notifCenterOpen; closePopups(); notifCenterOpen = !o }
     function openCenterPanel(name) { if (locked) return; closePopups(); centerOpen = true; centerPanel = name }
     function toggleSpotlight() { if (locked) return; const o = spotlightOpen; closePopups(); spotlightOpen = !o }
@@ -106,6 +107,7 @@ QtObject {
             else if (arg === "spotlight") toggleSpotlight()
             else if (arg === "clipboard") toggleClipboard()
             else if (arg === "widgetGallery") { closePopups(); widgetGalleryOpen = true }
+            else if (arg === "forcequit") { closePopups(); forceQuitOpen = true }
             else if (arg.indexOf("power:") === 0) openPower(arg.substring(6))
             else command(kind, arg)
         } else command(kind, arg)

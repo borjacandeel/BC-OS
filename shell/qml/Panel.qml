@@ -243,6 +243,7 @@ LayerWindow {
             else if (name === "notifications") UiState.toggleNotifCenter()
             else if (name === "minimize") root.minimizeGenie(Sway.focusedId)
             else if (name === "close") root.closeAnimated(Sway.focusedId)
+            else if (name === "forcequit") UiState.run("bc:forcequit")
             else if (name.indexOf("thumb:") === 0) shotThumb.show(name.substring(6))
             else if (name === "appearance") Settings.appearance = Theme.dark ? "light" : "dark"
             else if (name === "desktop") {
@@ -807,6 +808,7 @@ LayerWindow {
                     onCloseRequested: UiState.closePopups()
                     Connections { target: UiState; function onStartOpenChanged() { if (UiState.startOpen) startMenu.reset() } }
                 }
+                ForceQuit { }
                 PowerDialog {
                     id: powerDialog
                     onCancelled: UiState.powerAction = ""
@@ -852,6 +854,7 @@ LayerWindow {
         else if (d === "widgets") UiState.widgetGalleryOpen = true
         else if (d === "menu") UiState.openMenu("system", 12)
         else if (d === "power") UiState.openPower("poweroff")
+        else if (d === "forzar") UiState.run("bc:forcequit")
         else if (d === "launcher") UiState.toggleLauncher()
         else if (d === "centro") UiState.centerOpen = true
         else if (d === "bienvenida" || d === "bienvenida-fondo") UiState.welcomeOpen = true

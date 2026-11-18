@@ -298,7 +298,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [~] 192. Abrir y cerrar carpetas con zoom desde su icono
 - [x] 193. Selector de apps centrado y translúcido (Alt+Tab)
 - [x] 194. Diálogo de apagado/reinicio centrado con cuenta atrás
-- [ ] 195. Ventana de Forzar salida compacta con la lista de procesos
+- [x] 195. Ventana de Forzar salida compacta con la lista de procesos
 - [x] 196. Arranque minimalista con el logo blanco sobre negro
 - [x] 197. Barra de progreso fina bajo el logo al arrancar
 - [~] 198. Fundido suave entre el arranque y la pantalla de inicio de sesión

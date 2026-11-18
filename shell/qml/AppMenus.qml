@@ -147,7 +147,7 @@ QtObject {
         { label: qsTr("Acerca de este equipo"), cmd: "bc:about" }, sep,
         { label: qsTr("Ajustes del Sistema…"), cmd: "sway:exec bc-shell --app settings" },
         { label: qsTr("Tienda…"), cmd: "sway:exec bc-shell --app store" }, sep,
-        { label: qsTr("Forzar salida…"), key: "Ctrl+Alt+Esc", cmd: "sway:kill" }, sep,
+        { label: qsTr("Forzar salida…"), key: "Ctrl+Alt+Esc", cmd: "bc:forcequit" }, sep,
         { label: qsTr("Reposo"), cmd: "bc:power:suspend" },
         { label: qsTr("Reiniciar…"), cmd: "bc:power:reboot" },
         { label: qsTr("Apagar…"), cmd: "bc:power:poweroff" }, sep,
