@@ -80,6 +80,9 @@ public:
     void setWelcomed(bool on);
     QString language() const { return m_language; }
     void setReducedMotion(bool on);
+    // Pista de la contraseña (botón «?» del login, como macOS): /var/lib/bc-greeter/pista-<usuario>, legible por el login
+    Q_INVOKABLE static QString passwordHint(const QString &user);
+    Q_INVOKABLE static bool setPasswordHint(const QString &hint);
     void setReduceTransparency(bool on);
     void setIncreaseContrast(bool on);
     void setLanguage(const QString &l);

@@ -137,6 +137,29 @@ void AppSettings::setReducedMotion(bool on) {
     emit changed();
 }
 
+static QString hintPath(const QString &user) {
+    static const QRegularExpression ok("^[a-z_][a-z0-9_-]{0,31}$");
+    return ok.match(user).hasMatch() ? QStringLiteral("/var/lib/bc-greeter/pista-") + user : QString();
+}
+QString AppSettings::passwordHint(const QString &user) {
+    QFile f(hintPath(user.isEmpty() ? QString::fromUtf8(qgetenv("USER")) : user));
+    if (f.fileName().isEmpty() || !f.open(QIODevice::ReadOnly)) return {};
+    return QString::fromUtf8(f.read(200)).trimmed();
+}
+bool AppSettings::setPasswordHint(const QString &hint) {
+    const QString p = hintPath(QString::fromUtf8(qgetenv("USER")));
+    if (p.isEmpty()) return false;
+    const QString t = hint.trimmed().left(120);
+    if (t.isEmpty()) { QFile::remove(p); return true; }
+    QFile::remove(p);
+    QFile f(p);
+    if (!f.open(QIODevice::WriteOnly)) return false;
+    f.write(t.toUtf8());
+    f.close();
+    QFile::setPermissions(p, QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup | QFileDevice::ReadOther);
+    return true;
+}
+
 void AppSettings::setReduceTransparency(bool on) {
     reload(); if (on == m_solid) return; m_solid = on; QSettings("BC-OS", "bc-shell").setValue("transparenciaReducida", on); emit changed();
 }

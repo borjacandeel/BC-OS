@@ -91,8 +91,10 @@ int main(int argc, char *argv[]) {
             // Reducción por mitades (promedia y quita el tramado) y ampliación suave: desenfoque gaussiano amplio
             QImage small = src.convertToFormat(QImage::Format_RGB32);
             while (small.width() > 48) small = small.scaled(small.width() / 2, small.height() / 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-            QImage mid = small.scaled(small.width() * 4, small.height() * 4, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-            QImage res = mid.scaled(src.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+            // Ampliación de 2 en 2 (cada paso bilineal suaviza el anterior): sin los bloques que dejaba ampliar ×10 de golpe
+            QImage res = small;
+            while (res.width() * 2 < src.width()) res = res.scaled(res.width() * 2, res.height() * 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+            res = res.scaled(src.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
             if (size) *size = res.size();
             return res;
         }

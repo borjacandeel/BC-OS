@@ -9,6 +9,10 @@ Item {
     property bool busy: false
     property string message: ""
     property string placeholder: qsTr("Introduce la contraseña")
+    // Pista de la contraseña (Ajustes ▸ Usuarios): botón «?» junto al campo, como macOS
+    readonly property string passwordHint: Settings.passwordHint(userName)
+    property bool showHint: false
+    onUserNameChanged: showHint = false
     signal submitted(string password)
     width: 320
     height: avatar.height + 18 + nameText.height + 18 + field.height + 36 + hint.height
@@ -62,6 +66,15 @@ Item {
 
         Rectangle {
             id: field
+            // «?» a la derecha del campo (fuera de él), como en macOS
+            Rectangle {
+                visible: root.passwordHint !== ""
+                anchors.left: parent.right; anchors.leftMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                width: 22; height: 22; radius: 11
+                color: Qt.rgba(1, 1, 1, qa.containsMouse || root.showHint ? 0.32 : 0.18)
+                Text { anchors.centerIn: parent; text: "?"; color: Theme.white; font.family: Theme.fontFamily; font.pixelSize: 13; font.weight: Font.Bold }
+                MouseArea { id: qa; anchors.fill: parent; hoverEnabled: true; onClicked: { root.showHint = !root.showHint; pw.forceActiveFocus() } }
+            }
             width: Theme.gg ? 240 : 280; height: Theme.gg ? 36 : 42; radius: height / 2
             anchors.horizontalCenter: parent.horizontalCenter
             color: Qt.rgba(1, 1, 1, pw.activeFocus ? 0.20 : 0.14)
@@ -129,11 +142,11 @@ Item {
             width: parent.width
             horizontalAlignment: Text.AlignHCenter
             height: 20
-            text: root.message
-            color: "#FF8D86"
+            text: root.message !== "" ? root.message : (root.showHint ? qsTr("Pista: %1").arg(root.passwordHint) : "")
+            color: root.message !== "" ? "#FF8D86" : Qt.rgba(1, 1, 1, 0.8)
             font.family: Theme.fontFamily
             font.pixelSize: 14
-            opacity: root.message !== "" ? 1 : 0
+            opacity: root.message !== "" || root.showHint ? 1 : 0
             Behavior on opacity { NumberAnimation { duration: Theme.dur(140) } }
         }
     }

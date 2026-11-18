@@ -886,6 +886,25 @@ AppWindow {
                     Hint { x: 60; y: 31; text: modelData.name }
                 }
             }
+            // Pista de la contraseña del usuario actual (se ve en el login con el botón «?»)
+            Rectangle {
+                width: parent.width; height: 56; radius: 12; color: Theme.tileFill
+                Label { x: 14; anchors.verticalCenter: parent.verticalCenter; text: qsTr("Pista de la contraseña") }
+                Rectangle {
+                    anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
+                    width: Math.min(260, parent.width * 0.5); height: 28; radius: 7; color: Theme.dark ? Qt.rgba(1, 1, 1, 0.08) : "white"
+                    border.width: 1; border.color: hintIn.activeFocus ? Theme.accent : Theme.separator
+                    TextInput {
+                        id: hintIn; anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8; verticalAlignment: TextInput.AlignVCenter
+                        color: Theme.label; font.family: Theme.fontFamily; font.pixelSize: 13; clip: true; maximumLength: 120
+                        selectByMouse: true; selectionColor: Theme.accent
+                        Component.onCompleted: text = Settings.passwordHint("")
+                        onEditingFinished: Settings.setPasswordHint(text)
+                        Text { visible: !hintIn.text && !hintIn.activeFocus; anchors.verticalCenter: parent.verticalCenter
+                               text: qsTr("Sin pista"); color: Theme.labelSecondary; font: hintIn.font }
+                    }
+                }
+            }
         }
 
         // 5 Acerca de

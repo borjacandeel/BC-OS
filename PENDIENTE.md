@@ -281,7 +281,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 175. Vista previa semitransparente de lo que se arrastra
 - [x] 176. Reloj de bloqueo grande, fino y ligeramente translúcido
 - [x] 177. Avatar circular del usuario con sombra suave en el login
-- [ ] 178. Campo de contraseña tipo píldora translúcida con botón de pista (?)
+- [x] 178. Campo de contraseña tipo píldora translúcida con botón de pista (?)
 - [x] 179. Sacudida horizontal del campo de contraseña al fallar
 - [ ] 180. Indicador de huella pulsante (si hay lector)
 - [x] 181. Vista de galería en Archivos con miniaturas grandes y metadatos
