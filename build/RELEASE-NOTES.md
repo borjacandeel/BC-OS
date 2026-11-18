@@ -6,3 +6,4 @@
 - **Controles**: deslizador del Dock con marcas de graduación (encaja en ellas), interruptores con brillo al activarse y color de selección de texto propio.
 - **Emoji y símbolos** (Ctrl+Súper+Espacio o Edición ▸ Emoji y símbolos): categorías, búsqueda en español y se escribe en la app; emoji en color (Noto Color Emoji).
 - **Archivos**: botón «+» de pestaña nueva a la derecha de las pestañas y puntos de etiqueta superpuestos con borde, como Finder.
+- **Tienda**: mientras instala, cápsula con barra de progreso indeterminada de franjas animadas.

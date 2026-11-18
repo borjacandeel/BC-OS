@@ -263,7 +263,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [~] 157. Botones píldora para acciones secundarias y filtros
 - [ ] 158. Steppers con flechas junto a campos numéricos
 - [x] 159. Deslizadores con marcas de graduación
-- [ ] 160. Barras de progreso indeterminadas con franjas animadas
+- [x] 160. Barras de progreso indeterminadas con franjas animadas
 - [~] 161. Tooltips con retraso suave al aparecer
 - [~] 162. Cursores contextuales (mano, mano cerrada, cruz, redimensionado)
 - [x] 163. Rebote elástico (rubberbanding) al llegar al límite de un scroll

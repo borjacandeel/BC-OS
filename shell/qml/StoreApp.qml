@@ -313,4 +313,28 @@ AppWindow {
             }
         }
     }
+
+    // Instalando o quitando: cápsula abajo con barra indeterminada de franjas animadas (como macOS)
+    Rectangle {
+        z: 40
+        visible: opacity > 0; opacity: Store.busy ? 1 : 0
+        Behavior on opacity { NumberAnimation { duration: Theme.d(180) } }
+        anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; anchors.bottomMargin: 18
+        width: 300; height: 52; radius: 14
+        color: Theme.popupFill; border.width: 1; border.color: Theme.hairline
+        Text { x: 16; y: 8; text: qsTr("Instalando o quitando software…"); color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 12 }
+        Rectangle {
+            id: stripes
+            x: 16; y: 30; width: parent.width - 32; height: 8; radius: 4; clip: true
+            color: Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.55)
+            property real shift: 0
+            NumberAnimation on shift { running: Store.busy; from: 0; to: 16; duration: 700; loops: Animation.Infinite }
+            Repeater {
+                model: Math.ceil(stripes.width / 16) + 3
+                Rectangle { required property int index
+                            x: index * 16 - 24 + stripes.shift; y: -6; width: 8; height: 20; rotation: 30
+                            color: Qt.rgba(1, 1, 1, 0.35) }
+            }
+        }
+    }
 }
