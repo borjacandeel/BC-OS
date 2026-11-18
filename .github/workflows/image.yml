@@ -114,6 +114,8 @@ jobs:
           cd build/out
           ls -lh
           ls ./*.iso >/dev/null
+          # GitHub Releases no admite archivos de 2 GiB o más: se avisa aquí, antes de publicar a medias
+          for f in ./*.iso; do s=$(stat -c %s "$f"); echo "$f: $s bytes"; [ "$s" -lt 2147483648 ] || { echo "::error::$f pasa de 2 GiB ($s bytes)"; exit 1; }; done
           sha256sum --check SHA256SUMS-*
       - name: Limpiar montajes huérfanos
         if: always()

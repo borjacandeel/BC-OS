@@ -41,7 +41,10 @@ printf '\n# bc-live\n[initial_session]\ncommand = "/usr/bin/bc-session --greetd"
 printf '# BC OS live: la raíz la monta archiso\n' > "$R/etc/fstab"
 # 2) raíz en squashfs (zstd), en la ruta que espera archiso: /arch/<arch>/airootfs.sfs
 mkdir -p "$T/iso/arch/$ARCH"
-mksquashfs "$R" "$T/iso/arch/$ARCH/airootfs.sfs" -comp zstd -Xcompression-level 15 -b 1M -noappend -quiet \
+# x86_64 con xz (+ filtro BCJ de x86): ~10-15 % más pequeña que zstd, para no pasar de 2 GiB (límite de GitHub) con el
+# firmware de gráficas de PC; ARM64 sigue con zstd (arranca algo más rápido)
+COMP="-comp zstd -Xcompression-level 15"; [ "$ARCH" = x86_64 ] && COMP="-comp xz -Xbcj x86"
+mksquashfs "$R" "$T/iso/arch/$ARCH/airootfs.sfs" $COMP -b 1M -noappend -quiet \
   -e proc sys dev run tmp var/cache/pacman/pkg
 sha512sum "$T/iso/arch/$ARCH/airootfs.sfs" | sed "s| .*/| |" > "$T/iso/arch/$ARCH/airootfs.sha512"
 

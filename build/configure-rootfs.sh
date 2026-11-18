@@ -194,6 +194,13 @@ PKS="$(bc_packages "${BC_ARCH:-aarch64}")"
 source "$HERE/lib/yay.sh"; bc_yay "$R" "${BC_ARCH:-aarch64}" || echo "Aviso: no se pudo instalar yay"
 sh "pacman -S --needed --noconfirm --disable-sandbox $PKS" || for p in $PKS; do sh "pacman -S --needed --noconfirm --disable-sandbox $p" || echo "AVISO: falta $p"; done
 # gcc se queda: base-devel lo necesita para compilar paquetes del AUR con yay
+# x86_64: firmware GSP de NVIDIA Turing y posteriores (cientos de MB, solo para nouveau en esas tarjetas, que suelen
+# usar el controlador propietario): fuera para que la ISO no pase de 2 GiB. Kepler, Maxwell y Pascal (p. ej. GT 710)
+# se quedan con el suyo. Una actualización del paquete los vuelve a poner en el sistema instalado.
+if [[ "${BC_KEEP_FIRMWARE:-0}" != "1" && "${BC_ARCH:-aarch64}" = x86_64 ]]; then
+  rm -rf "$R"/usr/lib/firmware/nvidia/{tu1*,ga1*,ad1*,gh1*,gb1*,gb2*}
+  du -sh "$R/usr/lib/firmware" || true
+fi
 find "$R/usr/share/locale" -mindepth 1 -maxdepth 1 ! -name 'es*' ! -name 'en*' ! -name 'locale.alias' -exec rm -rf {} + 2>/dev/null || true
 rm -rf "$R/usr/share/doc" "$R/usr/share/man" "$R/usr/share/info" "$R/usr/share/gtk-doc" "$R/usr/share/help" 2>/dev/null || true
 
