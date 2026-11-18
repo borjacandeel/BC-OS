@@ -126,6 +126,7 @@ public:
     Q_INVOKABLE QString savedDisplayMode() const;
     // Copiar y pegar archivos como en el Finder (portapapeles de Wayland con wl-copy / wl-paste, text/uri-list)
     Q_INVOKABLE void copyFiles(const QStringList &paths);
+    Q_INVOKABLE static void copyText(const QString &text);   // al portapapeles (wl-copy)
     // Ajustes ▸ General ▸ Actualizaciones: versión instalada y paquetes pendientes (checkupdates, sin root)
     Q_INVOKABLE QString systemVersion() const;
     Q_INVOKABLE void checkUpdates();

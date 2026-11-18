@@ -4,3 +4,4 @@
 - **Login**: botón «?» con la pista de la contraseña (se pone en Ajustes ▸ Usuarios) y fondo desenfocado sin bloques.
 - **Notas**: buscar en la nota con Ctrl+F; coincidencias resaltadas en amarillo y la actual da un salto, como macOS (Intro / Mayús+Intro para pasar).
 - **Controles**: deslizador del Dock con marcas de graduación (encaja en ellas), interruptores con brillo al activarse y color de selección de texto propio.
+- **Emoji y símbolos** (Ctrl+Súper+Espacio o Edición ▸ Emoji y símbolos): categorías, búsqueda en español y se escribe en la app; emoji en color (Noto Color Emoji).

@@ -850,6 +850,11 @@ bool QuickTools::roundedCorners() {
     // usa sway con pixman (fluido) y solo las ventanas que dibujan su marco (BC, Firefox, GTK) llevan esquinas
     return !qEnvironmentVariableIsEmpty("BC_FX") || !qEnvironmentVariableIsEmpty("HYPRLAND_INSTANCE_SIGNATURE");
 }
+void QuickTools::copyText(const QString &text) {
+    const QString exe = QStandardPaths::findExecutable("wl-copy");
+    if (exe.isEmpty() || text.isEmpty() || text.size() > 4096) return;
+    QProcess::startDetached(exe, {"--", text});
+}
 bool QuickTools::storeBusy() {
     return QFileInfo::exists(QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation) + "/bc-tienda-ocupada");
 }

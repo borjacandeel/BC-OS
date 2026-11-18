@@ -39,7 +39,8 @@ QtObject {
             { label: qsTr("Deshacer"), key: "Ctrl+Z", disabled: true }, { label: qsTr("Rehacer"), key: "Ctrl+Mayús+Z", disabled: true }, sep,
             { label: qsTr("Cortar"), key: "Ctrl+X", cmd: "app:cut" }, { label: qsTr("Copiar"), key: "Ctrl+C", cmd: "app:copy" },
             { label: qsTr("Pegar"), key: "Ctrl+V", cmd: "app:paste" }, { label: qsTr("Seleccionar todo"), key: "Ctrl+A", cmd: "app:selectAll" }, sep,
-            { label: qsTr("Historial del portapapeles"), key: "Súper+V", cmd: "bc:clipboard" } ] }
+            { label: qsTr("Historial del portapapeles"), key: "Súper+V", cmd: "bc:clipboard" },
+            { label: qsTr("Emoji y símbolos"), key: "Ctrl+Súper+Espacio", cmd: "bc:emoji" } ] }
         return { title: qsTr("Edición"), items: [
             { label: qsTr("Deshacer"), key: "Ctrl+Z", cmd: keys("-M ctrl z -m ctrl") },
             { label: qsTr("Rehacer"), key: "Ctrl+Mayús+Z", cmd: keys("-M ctrl -M shift z -m shift -m ctrl") }, sep,

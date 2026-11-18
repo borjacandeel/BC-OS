@@ -25,7 +25,7 @@ public slots:
     void SetOption(const QString &key, const QString &value);   // valida clave y valor antes de emitir
     // Golden Gate: spotlight, mission, switcher, switcher-back, launchpad, notifications, minimize, appearance
     void Action(const QString &name) {
-        static const QStringList ok{"spotlight", "mission", "switcher", "switcher-back", "launchpad", "notifications", "minimize", "close", "appearance", "desktop", "forcequit"};
+        static const QStringList ok{"spotlight", "mission", "switcher", "switcher-back", "launchpad", "notifications", "minimize", "close", "appearance", "desktop", "forcequit", "emoji"};
         if (ok.contains(name)) emit actionRequested(name);
         // «thumb:<ruta>»: miniatura de una captura recién hecha (solo PNG en la carpeta de imágenes del usuario)
         else if (name.startsWith("thumb:") && name.endsWith(".png") && !name.contains("..") && name.mid(6).startsWith(QDir::homePath() + "/"))

@@ -22,6 +22,8 @@ qtermwidget
 inter-font
 ttf-cascadia-code-nerd
 ttf-dejavu
+# Emoji en color (selector «Emoji y símbolos», Firefox, mensajes)
+noto-fonts-emoji
 xdg-user-dirs
 foot
 openssh

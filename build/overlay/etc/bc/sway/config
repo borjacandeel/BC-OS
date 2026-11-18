@@ -64,6 +64,8 @@ bindsym $mod+f fullscreen toggle
 bindsym $mod+m exec bc-ctl minimize
 # Forzar salida de las aplicaciones (⌥⌘⎋ en macOS)
 bindsym Ctrl+Alt+Escape exec bc-ctl forcequit
+# Emoji y símbolos (⌃⌘Espacio en macOS)
+bindsym Ctrl+$mod+space exec bc-ctl emoji
 bindsym $mod+Shift+m scratchpad show
 bindsym $mod+Shift+f floating toggle
 bindsym $mod+Shift+space exec bc-wm-mode toggle

@@ -244,6 +244,7 @@ LayerWindow {
             else if (name === "minimize") root.minimizeGenie(Sway.focusedId)
             else if (name === "close") root.closeAnimated(Sway.focusedId)
             else if (name === "forcequit") UiState.run("bc:forcequit")
+            else if (name === "emoji") UiState.run("bc:emoji")
             else if (name.indexOf("thumb:") === 0) shotThumb.show(name.substring(6))
             else if (name === "appearance") Settings.appearance = Theme.dark ? "light" : "dark"
             else if (name === "desktop") {
@@ -539,7 +540,7 @@ LayerWindow {
     LayerWindow {
         layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-popups"
         margins: [UiState.topInset, 0, UiState.win ? UiState.taskH : 0, 0]
-        keyboard: UiState.launcherOpen || UiState.clipboardOpen || UiState.startOpen || UiState.spotlightOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
+        keyboard: UiState.launcherOpen || UiState.clipboardOpen || UiState.startOpen || UiState.spotlightOpen || UiState.emojiOpen || UiState.forceQuitOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
         width: UiState.sw; height: UiState.sh
         // Al cerrar, la capa sigue visible un momento para que menús, Spotlight y paneles se desvanezcan
         shown: UiState.popupOpen || popHold.running
@@ -809,6 +810,7 @@ LayerWindow {
                     Connections { target: UiState; function onStartOpenChanged() { if (UiState.startOpen) startMenu.reset() } }
                 }
                 ForceQuit { }
+                EmojiPicker { }
                 PowerDialog {
                     id: powerDialog
                     onCancelled: UiState.powerAction = ""
@@ -855,6 +857,7 @@ LayerWindow {
         else if (d === "menu") UiState.openMenu("system", 12)
         else if (d === "power") UiState.openPower("poweroff")
         else if (d === "forzar") UiState.run("bc:forcequit")
+        else if (d === "emoji") UiState.run("bc:emoji")
         else if (d === "launcher") UiState.toggleLauncher()
         else if (d === "centro") UiState.centerOpen = true
         else if (d === "bienvenida" || d === "bienvenida-fondo") UiState.welcomeOpen = true
