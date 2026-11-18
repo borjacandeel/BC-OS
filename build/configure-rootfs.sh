@@ -177,6 +177,12 @@ CUR
 # Reducción de tamaño solo en ARM64 (máquinas virtuales; BC_KEEP_FIRMWARE=1 conserva todo el firmware): se quitan los
 # firmware de GPU/CPU x86 y se mantienen los de Wi-Fi/Bluetooth. En x86_64 se instala en PCs reales: sin el firmware
 # de amdgpu/radeon/nvidia/intel la GPU no acelera (AMD ni siquiera da imagen) y todo va lento y con fallos.
+# x86_64: se quita el firmware de servidores y SoC (Mellanox, Netronome, QLogic, LiquidIO, Qualcomm SoC y «other»):
+# con todo, la ISO pasaba de 2 GiB, el máximo de un archivo en GitHub Releases
+if [[ "${BC_KEEP_FIRMWARE:-0}" != "1" && "${BC_ARCH:-aarch64}" = x86_64 ]]; then
+  FW="$(sh "pacman -Qq | grep -E '^linux-firmware-(mellanox|nfp|qlogic|liquidio|qcom|other)$' | tr '\n' ' '")"
+  [[ -n "$FW" ]] && sh "pacman -Rdd --noconfirm --disable-sandbox $FW" || true
+fi
 if [[ "${BC_KEEP_FIRMWARE:-0}" != "1" && "${BC_ARCH:-aarch64}" != x86_64 ]]; then
   FW="$(sh "pacman -Qq | grep -E '^linux-firmware-(amd|amdgpu|intel|nvidia|radeon|cirrus|ti|other)$' | tr '\n' ' '")"
   [[ -n "$FW" ]] && sh "pacman -Rdd --noconfirm --disable-sandbox $FW" || true
