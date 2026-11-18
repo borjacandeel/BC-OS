@@ -11,6 +11,7 @@ Item {
     property rect from: Qt.rect(0, 0, 0, 0)
     property point target: Qt.point(0, 0)
     property real iconSize: 46
+    property point offset: Qt.point(0, 0)   // origen de la superficie (solo ocupa la zona del efecto, no toda la pantalla)
     property real p: 0                  // 0 = ventana, 1 = dentro del Dock
     property bool reverse: false
     signal finished()
@@ -60,8 +61,8 @@ Item {
         anchors.fill: parent
         visible: g.source !== ""
         source: g.source
-        from: g.from
-        target: g.target
+        from: Qt.rect(g.from.x - g.offset.x, g.from.y - g.offset.y, g.from.width, g.from.height)
+        target: Qt.point(g.target.x - g.offset.x, g.target.y - g.offset.y)
         iconSize: g.iconSize
         progress: g.p
     }

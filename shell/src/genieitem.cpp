@@ -50,6 +50,11 @@ QRect GenieItem::box() const {
 }
 
 void GenieItem::paint(QPainter *painter) {
+    // Repintado parcial: se limpia la zona sucia (si no, quedaban restos de fotogramas anteriores)
+    painter->save();
+    painter->setCompositionMode(QPainter::CompositionMode_Source);
+    painter->fillRect(painter->hasClipping() ? painter->clipBoundingRect() : QRectF(0, 0, width(), height()), Qt::transparent);
+    painter->restore();
     if (m_img.isNull() || m_from.width() < 2 || m_from.height() < 2) return;
     const qreal p = m_p;
     if (p >= 0.999) return;

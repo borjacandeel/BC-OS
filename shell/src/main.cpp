@@ -255,7 +255,7 @@ int main(int argc, char *argv[]) {
             const QString js = prop == "aviso" ? QStringLiteral("Notifications.push(\"BC OS\", \"Aviso de prueba\", \"Entra, espera y sale\", \"\", 500)")
                              : prop == "mover" ? QStringLiteral("Quick.followWindowMove()")
                              // «genio»: minimizar una ventana de prueba (el fondo de pantalla) hacia el Dock
-                             : prop == "genio" ? QStringLiteral("genieWin.shown = true; genie.run(\"qrc:/BCShell/assets/wallpaper-default.png\", Qt.rect(UiState.sw * 0.2, UiState.sh * 0.12, UiState.sw * 0.55, UiState.sh * 0.55), Qt.point(UiState.sw * 0.62, UiState.sh - 40), 48, false)")
+                             : prop == "genio" ? QStringLiteral("fxBox(Qt.rect(UiState.sw * 0.2, UiState.sh * 0.12, UiState.sw * 0.55, UiState.sh * 0.55), Qt.point(UiState.sw * 0.62, UiState.sh - 40), 48); genieWin.shown = true; genie.run(\"qrc:/BCShell/assets/wallpaper-default.png\", Qt.rect(UiState.sw * 0.2, UiState.sh * 0.12, UiState.sw * 0.55, UiState.sh * 0.55), Qt.point(UiState.sw * 0.62, UiState.sh - 40), 48, false)")
                                                : "UiState." + prop + " = true";
             QQmlExpression ex(QQmlEngine::contextForObject(win), win, js);
             ex.evaluate();

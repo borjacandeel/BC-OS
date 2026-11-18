@@ -120,8 +120,9 @@ LayerWindow {
     function restoreGenie(id) {
         const shot = genieShots[id]
         if (!shot || UiState.classic || Theme.reduced || Quick.softwareRender) { Sway.command("[con_id=" + id + "] scratchpad show"); return }
-        genieWin.shown = true
         geniePending = { id: id, rect: shot.rect, back: true }
+        fxBox(shot.rect, Qt.point(dockGG.minimizeTarget.x + dockWin.originX, dockGG.minimizeTarget.y + dockWin.originY), dockGG.bs)
+        genieWin.shown = true
         genie.run("file://" + shot.path, shot.rect, Qt.point(dockGG.minimizeTarget.x + dockWin.originX, dockGG.minimizeTarget.y + dockWin.originY), dockGG.bs, true)
     }
     Connections {
@@ -131,9 +132,10 @@ LayerWindow {
                 const cp = root.closePending; root.closePending = null
                 if (!ok) { Sway.closeWindow(cp.id); return }
                 closeLater.wid = cp.id; closeLater.restart()
+                fxBox(cp.rect, null, 0)
                 genieWin.shown = true
                 closeShot.source = ""; closeShot.source = "file://" + path
-                closeShot.x = cp.rect.x; closeShot.y = cp.rect.y; closeShot.width = cp.rect.width; closeShot.height = cp.rect.height
+                closeShot.x = cp.rect.x - genieWin.box.x; closeShot.y = cp.rect.y - genieWin.box.y; closeShot.width = cp.rect.width; closeShot.height = cp.rect.height
                 closeAnim.restart()
                 return
             }
@@ -143,16 +145,31 @@ LayerWindow {
             if (!ok) { Sway.minimizeWindow(g.id); root.geniePending = null; return }
             const s = Object.assign({}, root.genieShots); s[g.id] = { path: path, rect: g.rect }; root.genieShots = s
             const ms = Object.assign({}, UiState.minShots); ms[g.id] = "file://" + path; UiState.minShots = ms
+            fxBox(g.rect, Qt.point(dockGG.minimizeTarget.x + dockWin.originX, dockGG.minimizeTarget.y + dockWin.originY), dockGG.bs)
             genieWin.shown = true
             genie.run("file://" + path, g.rect, Qt.point(dockGG.minimizeTarget.x + dockWin.originX, dockGG.minimizeTarget.y + dockWin.originY), dockGG.bs, false)
         }
+    }
+    // Superficie del genio/cierre del tamaño justo (de la ventana al icono del Dock), no a pantalla completa: mucho menos
+    // que dibujar y componer en cada fotograma (el genio iba a tirones en equipos con poca GPU)
+    function fxBox(r, tgt, icon) {
+        const has = icon > 0
+        const x0 = Math.max(0, Math.floor(Math.min(r.x, has ? tgt.x - icon : r.x)) - 6)
+        const y0 = Math.max(0, Math.floor(r.y) - 6)
+        const x1 = Math.min(UiState.sw, Math.ceil(Math.max(r.x + r.width, has ? tgt.x + icon : 0)) + 6)
+        const y1 = Math.min(UiState.sh, Math.ceil(Math.max(r.y + r.height, has ? tgt.y + icon : 0)) + 6)
+        genieWin.box = Qt.rect(x0, y0, Math.max(8, x1 - x0), Math.max(8, y1 - y0))
+        genie.offset = Qt.point(x0, y0)
     }
     // Cerrar con animación: la ventana real se cierra cuando la captura ya la tapa (sin parpadeo)
     Timer { id: closeLater; interval: 70; property int wid: -1; onTriggered: Sway.closeWindow(wid) }
     LayerWindow {
         id: genieWin
-        layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-genie"; passthrough: true
-        width: UiState.sw; height: UiState.sh
+        layer: "overlay"; edges: ["top", "left"]; scope: "bc-genie"; passthrough: true; absolute: true
+        property rect box: Qt.rect(0, 0, UiState.sw, UiState.sh)
+        onBoxChanged: if (ready) Qt.callLater(apply)
+        margins: [box.y, 0, 0, box.x]
+        width: box.width; height: box.height
         shown: false
         Image {
             id: closeShot; visible: closeAnim.running; smooth: true; cache: false
