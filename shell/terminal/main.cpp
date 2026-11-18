@@ -5,6 +5,11 @@
 // El texto lo dibuja QTermWidget con la CPU (QPainter): rápido aunque no haya aceleración 3D.
 #include <qtermwidget.h>
 
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QScreen>
+#include <functional>
 #include <QApplication>
 #include <QContextMenuEvent>
 #include <QDir>
@@ -220,7 +225,38 @@ private:
         else if (i == 1) { if (!QProcess::startDetached(QStringLiteral("bc-ctl"), {QStringLiteral("minimize")})) showMinimized(); }
         else toggleZoom();
     }
-    void toggleZoom() { if (isMaximized()) showNormal(); else showMaximized(); }
+    // Zoom de macOS (botón verde o doble clic en la barra): sway ignora «maximizar» en ventanas flotantes, así que se
+    // pide al compositor que la ventana ocupe el área bajo la barra de menús y, otra vez, que vuelva a su sitio
+    QRect zoomBack;
+    void toggleZoom() {
+        const QString pid = QString::number(QCoreApplication::applicationPid());
+        if (!qEnvironmentVariableIsEmpty("HYPRLAND_INSTANCE_SIGNATURE")) { QProcess::startDetached("hyprctl", {"dispatch", "fullscreen", "1"}); return; }
+        if (qEnvironmentVariableIsEmpty("SWAYSOCK")) { if (isMaximized()) showNormal(); else showMaximized(); return; }
+        auto sway = [&](const QString &cmd) { QProcess::startDetached("swaymsg", {QString("[pid=%1] %2").arg(pid, cmd)}); };
+        if (zoomBack.isValid()) {
+            sway(QString("resize set %1 %2, move absolute position %3 %4").arg(zoomBack.width()).arg(zoomBack.height()).arg(zoomBack.x()).arg(zoomBack.y()));
+            zoomBack = QRect();
+            return;
+        }
+        // Posición actual (para volver): del árbol de sway
+        QProcess q; q.start("swaymsg", {"-t", "get_tree", "-r"}); q.waitForFinished(1500);
+        std::function<bool(const QJsonObject &)> find = [&](const QJsonObject &n) {
+            if (n.value("pid").toInt() == QCoreApplication::applicationPid()) {
+                const QJsonObject r = n.value("rect").toObject();
+                zoomBack = QRect(r.value("x").toInt(), r.value("y").toInt(), r.value("width").toInt(), r.value("height").toInt());
+                return true;
+            }
+            for (const char *k : {"nodes", "floating_nodes"})
+                for (const QJsonValue &c : n.value(k).toArray()) if (find(c.toObject())) return true;
+            return false;
+        };
+        find(QJsonDocument::fromJson(q.readAllStandardOutput()).object());
+        if (!zoomBack.isValid()) zoomBack = QRect(geometry());
+        const QRect sg = screen() ? screen()->geometry() : QRect(0, 0, 1280, 800);
+        const int bar = qRound(30 * qBound(0.7, sg.height() / 1080.0, 2.0));
+        sway(QString("resize set %1 %2, move absolute position %3 %4").arg(sg.width() + 2 * kShadow).arg(sg.height() - bar + 2 * kShadow)
+                 .arg(sg.x() - kShadow).arg(sg.y() + bar - kShadow));
+    }
     void applyAppearance() {
         const bool d = systemDark();
         if (d == dark && schemeSet) return;

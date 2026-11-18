@@ -34,7 +34,9 @@ Item {
     onVisibleChanged: if (visible) { sync(); settle.restart() }
     Timer { id: settle; interval: 450; onTriggered: g.sync() }
     property int version: 0
-    Connections { target: Settings; function onChanged() { g.version++ } }
+    // Solo al cambiar el fondo de pantalla (antes con cualquier ajuste: recalculaba todo el cristal y daba tirones)
+    readonly property string wallpaperNow: Settings.wallpaper
+    onWallpaperNowChanged: g.version++
 
     // Sombra difusa (dos capas suaves en lugar de un desenfoque costoso)
     Rectangle {

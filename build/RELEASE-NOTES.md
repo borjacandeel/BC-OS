@@ -13,3 +13,5 @@
 - **Accesibilidad** (Ajustes ▸ Aspecto): «Reducir transparencia» (cristal opaco) y «Aumentar contraste» (bordes marcados).
 - **Captura de zona** como macOS: pantalla oscurecida, zona elegida iluminada y con sus medidas.
 - **Claro ↔ oscuro con fundido suave** de los colores, como macOS.
+- **Sin tirones al cambiar ajustes**: el cristal solo se recalcula al cambiar el fondo de pantalla (antes con cualquier ajuste).
+- **Terminal**: el botón verde y el doble clic en la barra ocupan la pantalla y vuelven al tamaño anterior.
