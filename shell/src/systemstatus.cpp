@@ -124,7 +124,8 @@ void SystemStatus::readBattery() {
 }
 
 bool SystemStatus::cameraInUse() {
-    // ¿Algún proceso del usuario tiene abierta una cámara (/dev/video*)?
+    // ¿Algún proceso del usuario tiene abierta una cámara (/dev/video*)? Sin cámaras no se recorre nada
+    if (QDir("/dev").entryList({"video*"}, QDir::System).isEmpty()) return false;
     const QStringList pids = QDir("/proc").entryList(QDir::Dirs | QDir::NoDotAndDotDot);
     for (const QString &pid : pids) {
         if (pid.isEmpty() || !pid.at(0).isDigit()) continue;

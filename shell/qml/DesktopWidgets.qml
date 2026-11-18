@@ -12,7 +12,8 @@ Item {
     function px(v) { return Math.round(v * s) }
 
     Binding { target: Batteries; property: "active"; value: root.visible }
-    Binding { target: Monitor; property: "active"; value: root.visible && WidgetHost.widgets.length === 0; when: root.visible }
+    // Solo si el widget «Uso del equipo» está puesto: antes leía todos los procesos cada 2 s aunque no se viera (tirones)
+    Binding { target: Monitor; property: "active"; value: root.visible && root.isOn("app") && WidgetHost.widgets.length === 0 }
 
     // Posiciones guardadas { id: [x, y] } relativas a 1080p
     property var layout: { try { return JSON.parse(Settings.widgetLayout || "{}") } catch (e) { return {} } }

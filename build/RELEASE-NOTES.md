@@ -15,3 +15,4 @@
 - **Claro ↔ oscuro con fundido suave** de los colores, como macOS.
 - **Sin tirones al cambiar ajustes**: el cristal solo se recalcula al cambiar el fondo de pantalla (antes con cualquier ajuste).
 - **Terminal**: el botón verde y el doble clic en la barra ocupan la pantalla y vuelven al tamaño anterior.
+- **Microcortes en VirtualBox**: el escritorio ya no se queda cada 2 s solo con el fondo y los widgets (sin ventanas, barra ni Dock); en VirtualBox/VMware se usa la API clásica de pantalla.

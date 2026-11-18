@@ -98,6 +98,9 @@ sway_software() {
   fi
   export QT_QUICK_BACKEND=software
   export WLR_RENDERER=pixman
+  # VirtualBox/VMware (vmwgfx): con KMS atómico la pantalla virtual a veces enseña el fotograma a medio componer
+  # (solo fondo y widgets, sin ventanas, barra ni Dock: «microcortes»). Con la API clásica no pasa.
+  [ "$EQUIPO" = vm ] && lsmod 2>/dev/null | grep -q '^vmwgfx' && export WLR_DRM_NO_ATOMIC=1
   unset BC_FX WLR_RENDERER_ALLOW_SOFTWARE LIBGL_ALWAYS_SOFTWARE GALLIUM_DRIVER
   bc-wm-mode init >> "$LOG" 2>&1
   sway -c "${XDG_RUNTIME_DIR:-/tmp}/bc-sway.conf" >> "$LOG" 2>&1
