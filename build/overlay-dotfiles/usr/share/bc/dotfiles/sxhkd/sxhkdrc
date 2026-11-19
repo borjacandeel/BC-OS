@@ -98,9 +98,9 @@ super + {Left,Down,Up,Right}
 # aplicaciones
 #
 super + Return
-	bc-terminal
+	alacritty
 ctrl + Return
-	bc-terminal
+	alacritty
 super + d
 	rofi -show drun -theme ~/.config/rofi/config.rasi
 ctrl + space
@@ -118,7 +118,7 @@ super + x
 super + l
 	xsecurelock
 super + F1
-	bc-terminal -e less /etc/bc/atajos-dotfiles.txt
+	alacritty -e less /etc/bc/atajos-dotfiles.txt
 super + shift + r
 	bspc wm -r
 

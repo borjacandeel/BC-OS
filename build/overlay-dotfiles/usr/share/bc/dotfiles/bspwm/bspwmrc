@@ -13,12 +13,17 @@ set_wallpaper() {
   if [ -n "$_wp" ] && [ -f "$_wp" ]; then feh --bg-fill "$_wp"; else xsetroot -solid '#14222e' 2>/dev/null; fi
 }
 
+export SHELL="${SHELL:-/bin/sh}" SXHKD_SHELL=/bin/sh   # sin SHELL sxhkd se cerraba (y sin atajos solo se veía el fondo)
 run_once sxhkd sxhkd                                   # atajos
 have dunst && run_once dunst dunst                     # notificaciones
 have wmname && wmname LG3D                              # apps Java
 [ -x "$HOME/.config/bin/bc-xdisplay" ] || true
 have bc-xdisplay && run_once bc-xdisplay bc-xdisplay watch   # la pantalla sigue al tamaño de la ventana de la máquina virtual
-have picom && run_once picom picom --config "$HOME/.config/picom/picom.conf"
+# picom: con GPU de verdad (Intel/AMD/NVIDIA) backend glx con vsync (fluido y sin tearing); sin GPU (máquina virtual),
+# xrender, que no necesita OpenGL
+PICOM_EXTRA=""
+if have glxinfo && ! glxinfo -B 2>/dev/null | grep -qiE "llvmpipe|softpipe|swrast|software"; then PICOM_EXTRA="--backend glx --vsync"; fi
+have picom && run_once picom picom --config "$HOME/.config/picom/picom.conf" $PICOM_EXTRA
 set_wallpaper
 have xss-lock && have xsecurelock && run_once xss-lock xss-lock -l -- xsecurelock   # bloqueo al suspender / salvapantallas
 [ -x "$HOME/.config/polybar/launch.sh" ] && run_once polybar "$HOME/.config/polybar/launch.sh"

@@ -76,6 +76,8 @@ xorg-xsetroot
 xorg-xrdb
 xorg-setxkbmap
 xorg-xset
+xorg-xinput
+pciutils
 xf86-input-libinput
 xdotool
 xclip

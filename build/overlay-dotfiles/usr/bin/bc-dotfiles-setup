@@ -4,8 +4,18 @@
 SRC=/usr/share/bc/dotfiles
 CFG="${XDG_CONFIG_HOME:-$HOME/.config}"
 force=0; [ "$1" = "--reset" ] && force=1
+# Sumas de la última versión copiada: si el usuario no ha tocado un archivo, las actualizaciones lo renuevan (así los
+# arreglos de BC OS llegan); si lo ha cambiado, se respeta.
+SUMS="$CFG/bc/dotfiles.sums"; mkdir -p "$CFG/bc"; touch "$SUMS"
+sum() { sha256sum "$1" 2>/dev/null | cut -d' ' -f1; }
 put() { # origen destino
-  if [ ! -e "$2" ] || [ "$force" = 1 ]; then mkdir -p "$(dirname "$2")"; cp -f "$1" "$2"; fi
+  new="$(sum "$1")"; old="$(grep -F "  $2" "$SUMS" 2>/dev/null | tail -n1 | cut -d' ' -f1)"
+  if [ ! -e "$2" ] || [ "$force" = 1 ] || { [ -n "$old" ] && [ "$(sum "$2")" = "$old" ] && [ "$new" != "$old" ]; }; then
+    mkdir -p "$(dirname "$2")"; cp -f "$1" "$2"
+    grep -vF "  $2" "$SUMS" > "$SUMS.tmp" 2>/dev/null; echo "$new  $2" >> "$SUMS.tmp"; mv -f "$SUMS.tmp" "$SUMS"
+  elif [ -z "$old" ] && [ "$(sum "$2")" = "$new" ]; then
+    echo "$new  $2" >> "$SUMS"
+  fi
 }
 for d in bspwm sxhkd polybar picom rofi dunst alacritty; do
   for f in "$SRC/$d"/*; do [ -f "$f" ] && put "$f" "$CFG/$d/$(basename "$f")"; done

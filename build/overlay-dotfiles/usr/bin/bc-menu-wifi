@@ -9,7 +9,7 @@ pick=$(printf '%s\n%s\n󰒓  Ajustes de red avanzados\n' "$toggle" "$list" | $R 
 case $pick in
   *"Desactivar wifi") nmcli radio wifi off ;;
   *"Activar wifi") nmcli radio wifi on ;;
-  *"Ajustes de red"*) exec bc-terminal -e nmtui ;;
+  *"Ajustes de red"*) exec alacritty -e nmtui ;;
   *)
     ssid=$(printf '%s' "$pick" | sed 's/^. [0-9]*%  //; s/  $//')
     [ -n "$ssid" ] || exit 0

@@ -1,0 +1,12 @@
+[Unit]
+Description=BC OS: controladores del equipo (primer arranque con Internet)
+Wants=network-online.target
+After=network-online.target NetworkManager-wait-online.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bc-drivers
+TimeoutStartSec=30min
+
+[Install]
+WantedBy=multi-user.target

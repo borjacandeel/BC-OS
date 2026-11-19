@@ -1,0 +1,33 @@
+#!/bin/sh
+# Controladores al instalar BC OS en un equipo real (primer arranque con Internet; se desactiva al terminar):
+#  · Gráficas: Intel (VA-API, Vulkan), AMD (Vulkan) y NVIDIA (firmware completo de nouveau, también el GSP de las
+#    series 20 en adelante que la ISO no lleva por tamaño).
+#  · Wi-Fi/Bluetooth Qualcomm y el resto del firmware que se quitó de la ISO.
+#  · Portátiles: perfiles de energía y control térmico de Intel.
+# Registro en /var/log/bc-drivers.log. Uso manual: sudo bc-drivers
+LOG=/var/log/bc-drivers.log
+exec >>"$LOG" 2>&1
+echo "== $(date) =="
+[ "$(id -u)" = 0 ] || { echo "hace falta root"; exit 1; }
+systemd-detect-virt -q --vm 2>/dev/null && { echo "máquina virtual: nada que instalar"; systemctl disable bc-drivers.service 2>/dev/null; exit 0; }
+# Esperar a la red (hasta 2 min)
+for i in $(seq 60); do ping -c1 -W2 archlinux.org >/dev/null 2>&1 && break; sleep 2; done
+ping -c1 -W2 archlinux.org >/dev/null 2>&1 || { echo "sin Internet: se reintenta en el próximo arranque"; exit 0; }
+GPU="$(lspci -nn 2>/dev/null | grep -iE 'vga|3d|display')"
+echo "GPU: $GPU"
+PK="linux-firmware linux-firmware-qcom linux-firmware-other"
+REINST=""
+echo "$GPU" | grep -qi intel && PK="$PK mesa vulkan-intel intel-media-driver libva-utils"
+echo "$GPU" | grep -qiE 'amd|ati|radeon' && PK="$PK mesa vulkan-radeon libva-utils"
+echo "$GPU" | grep -qi nvidia && { PK="$PK mesa vulkan-nouveau"; REINST="linux-firmware-nvidia"; }
+grep -qi intel /proc/cpuinfo && PK="$PK intel-ucode thermald"
+grep -qi amd /proc/cpuinfo && PK="$PK amd-ucode"
+ls /sys/class/power_supply/BAT* >/dev/null 2>&1 && PK="$PK power-profiles-daemon"
+pacman -Sy --noconfirm --needed $PK || exit 0
+[ -n "$REINST" ] && pacman -S --noconfirm $REINST
+command -v thermald >/dev/null 2>&1 && systemctl enable --now thermald 2>/dev/null
+command -v powerprofilesctl >/dev/null 2>&1 && systemctl enable --now power-profiles-daemon 2>/dev/null
+# Microcódigo y firmware nuevos: initramfs al día
+mkinitcpio -P || true
+systemctl disable bc-drivers.service
+echo "hecho"

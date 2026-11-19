@@ -855,6 +855,22 @@ void QuickTools::copyText(const QString &text) {
     if (exe.isEmpty() || text.isEmpty() || text.size() > 4096) return;
     QProcess::startDetached(exe, {"--", text});
 }
+static QString compPath() { return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/bc/compositor"; }
+QString QuickTools::compositorPref() {
+    QFile f(compPath());
+    if (!f.open(QIODevice::ReadOnly)) return {};
+    const QString v = QString::fromUtf8(f.readAll()).trimmed();
+    return v == "hyprland" || v == "sway" ? v : QString();
+}
+bool QuickTools::setCompositorPref(const QString &c) {
+    if (c.isEmpty()) return QFile::remove(compPath()) || !QFileInfo::exists(compPath());
+    if (c != "hyprland" && c != "sway") return false;
+    QDir().mkpath(QFileInfo(compPath()).absolutePath());
+    QSaveFile f(compPath());
+    if (!f.open(QIODevice::WriteOnly)) return false;
+    f.write(c.toUtf8() + "\n");
+    return f.commit();
+}
 bool QuickTools::storeBusy() {
     return QFileInfo::exists(QStandardPaths::writableLocation(QStandardPaths::RuntimeLocation) + "/bc-tienda-ocupada");
 }

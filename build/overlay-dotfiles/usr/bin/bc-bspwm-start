@@ -6,7 +6,22 @@
 if [ -z "$DBUS_SESSION_BUS_ADDRESS" ] && [ -S "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/bus" ]; then
   export DBUS_SESSION_BUS_ADDRESS="unix:path=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/bus"
 fi
-setxkbmap es 2>/dev/null || setxkbmap us 2>/dev/null
+# sxhkd se cierra sin la variable SHELL (bajo greetd/xinit puede faltar): sin atajos solo se veía el fondo
+export SHELL="${SHELL:-/bin/bash}" SXHKD_SHELL=/bin/sh
+# Entorno X11 (la sesión puede heredar variables de Wayland del login): las apps Qt/GTK abren en X
+unset WAYLAND_DISPLAY
+export QT_QPA_PLATFORM=xcb GDK_BACKEND=x11 MOZ_ENABLE_WAYLAND=0 SDL_VIDEODRIVER=x11 TERMINAL=alacritty
+command -v dbus-update-activation-environment >/dev/null 2>&1 && dbus-update-activation-environment --systemd DISPLAY XAUTHORITY QT_QPA_PLATFORM GDK_BACKEND 2>/dev/null
+# Teclado del sistema (el elegido en el instalador o en Ajustes), si no español
+KL="$(cat "$HOME/.config/bc/keyboard-layout" 2>/dev/null)"; KL="${KL:-$(sed -n 's/^XKBLAYOUT=//p' /etc/vconsole.conf 2>/dev/null | head -1)}"
+setxkbmap "${KL:-es}" 2>/dev/null || setxkbmap es 2>/dev/null || setxkbmap us 2>/dev/null
+# Portátil: tocar para hacer clic y desplazamiento natural en el panel táctil (como macOS)
+if command -v xinput >/dev/null 2>&1; then
+  for id in $(xinput list --id-only 2>/dev/null); do
+    xinput list-props "$id" 2>/dev/null | grep -q "libinput Tapping Enabled (" && xinput set-prop "$id" "libinput Tapping Enabled" 1 2>/dev/null
+    xinput list-props "$id" 2>/dev/null | grep -q "Natural Scrolling Enabled (" && xinput list-props "$id" | grep -q "Tapping" && xinput set-prop "$id" "libinput Natural Scrolling Enabled" 1 2>/dev/null
+  done
+fi
 xsetroot -cursor_name left_ptr 2>/dev/null
 xset s 600 600 2>/dev/null          # salvapantallas a los 10 min; xss-lock lo bloquea
 wmname LG3D 2>/dev/null

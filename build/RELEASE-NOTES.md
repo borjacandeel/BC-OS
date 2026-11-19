@@ -7,3 +7,6 @@
 - **Emoji y símbolos** (Ctrl+Súper+Espacio o Edición ▸ Emoji y símbolos): categorías, búsqueda en español y se escribe en la app; emoji en color (Noto Color Emoji).
 - **Archivos**: botón «+» de pestaña nueva a la derecha de las pestañas y puntos de etiqueta superpuestos con borde, como Finder.
 - **Tienda**: mientras instala, cápsula con barra de progreso indeterminada de franjas animadas.
+- **bspwm (Dotfiles)**: arreglado el arranque que solo enseñaba el fondo (sxhkd se cerraba sin la variable SHELL: sin atajos); terminal Alacritty (Súper+Intro), apps en X11 aunque el login sea Wayland, teclado del sistema, panel táctil con toque y desplazamiento natural, picom por GPU (glx + vsync) si hay gráfica; los dotfiles no tocados se actualizan solos.
+- **Equipos reales**: al instalar se activa `bc-drivers`, que en el primer arranque con Internet instala lo que toca según el hardware (Intel: VA-API, Vulkan, microcódigo y thermald; AMD; NVIDIA con todo su firmware; Wi-Fi Qualcomm; perfiles de energía en portátiles).
+- **Ajustes ▸ General ▸ Motor gráfico**: Automático, Hyprland o sway.

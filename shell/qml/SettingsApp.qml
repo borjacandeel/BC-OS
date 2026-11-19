@@ -784,6 +784,13 @@ AppWindow {
                        PillSeg { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
                                  options: [qsTr("Máquina virtual"), qsTr("Equipo físico")]; current: eqRow.kind === "vm" ? 0 : 1
                                  onPicked: (i) => { const k = i === 0 ? "vm" : "fisico"; if (Quick.setMachineKind(k)) eqRow.kind = k } } }
+                // Motor gráfico: Hyprland (animaciones y desenfoque reales, necesita GPU) o sway (ligero, el de las VM)
+                Row2 { id: compRow; label: qsTr("Motor gráfico"); value: ""
+                       property string cur: Quick.compositorPref()
+                       PillSeg { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                                 options: [qsTr("Automático"), qsTr("Hyprland"), qsTr("sway")]
+                                 current: compRow.cur === "hyprland" ? 1 : (compRow.cur === "sway" ? 2 : 0)
+                                 onPicked: (i) => { const v = ["", "hyprland", "sway"][i]; if (Quick.setCompositorPref(v)) compRow.cur = v } } }
                 Row2 { id: cornersRow; label: qsTr("Esquinas redondeadas en todas las ventanas"); value: ""
                        property bool on: Quick.roundedCorners()
                        Switch { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter

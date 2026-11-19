@@ -4,7 +4,7 @@ configuration {
     font: "CaskaydiaCove Nerd Font 12";
     show-icons: true;
     icon-theme: "MacOS-Like-Dark";
-    terminal: "bc-terminal";
+    terminal: "alacritty";
     drun-display-format: "{name}";
     display-drun: "  Apps ";
     display-run: "  Ejecutar ";

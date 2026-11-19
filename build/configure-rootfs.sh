@@ -215,6 +215,8 @@ install -m755 "$HERE/overlay/usr/bin/bc-greeter-session" "$R/usr/bin/bc-greeter-
 install -D -m644 "$HERE/overlay/usr/lib/tmpfiles.d/bc-greeter.conf" "$R/usr/lib/tmpfiles.d/bc-greeter.conf"
 install -m644 "$HERE/overlay/etc/pam.d/bc-lock" "$R/etc/pam.d/bc-lock"
 install -m644 "$HERE/overlay/etc/systemd/system/bc-login-fallback.path" "$HERE/overlay/etc/systemd/system/bc-login-fallback.service" "$R/etc/systemd/system/"
+install -m755 "$HERE/overlay/usr/bin/bc-drivers" "$R/usr/bin/bc-drivers"
+install -m644 "$HERE/overlay/etc/systemd/system/bc-drivers.service" "$R/etc/systemd/system/bc-drivers.service"
 sh "systemctl enable greetd.service bc-login-fallback.path && systemctl set-default graphical.target"
 sh "systemctl --global enable pipewire.socket pipewire-pulse.socket wireplumber.service"
 

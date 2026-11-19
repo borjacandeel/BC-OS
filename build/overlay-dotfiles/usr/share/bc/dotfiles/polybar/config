@@ -87,7 +87,7 @@ type = custom/script
 exec = bc-bar-net
 interval = 5
 click-left = bc-menu-wifi &
-click-right = bc-terminal -e nmtui &
+click-right = alacritty -e nmtui &
 
 [module/bluetooth]
 type = custom/script

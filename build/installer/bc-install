@@ -377,6 +377,8 @@ do_config() {
   printf 'input type:keyboard {\n    xkb_layout %s\n}\n' "$(xkb_layout "$KEYMAP")" | put "$TARGET/etc/bc/sway/keyboard.conf"
   run ln -sf "/usr/share/zoneinfo/$TZONE" "$TARGET/etc/localtime"
   crun systemctl enable NetworkManager systemd-timesyncd systemd-resolved nftables
+  # Controladores del equipo (gráfica, firmware, energía) en el primer arranque con Internet
+  crun systemctl enable bc-drivers.service
   # Sesión gráfica igual que la imagen: greetd (bc-greeter) → bc-session (sway); respaldo en tty1 si el login gráfico falla
   if ((DRY)) || [[ -e "$TARGET/usr/lib/systemd/system/greetd.service" && -e "$TARGET/etc/greetd/config.toml" ]]; then
     crun systemctl enable greetd.service bc-login-fallback.path

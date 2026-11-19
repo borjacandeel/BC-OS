@@ -158,6 +158,9 @@ public:
     // Color medio del fondo (algo saturado): tinte ambiental del cristal, como macOS
     Q_INVOKABLE static QColor wallpaperAverage(const QString &path);
     Q_INVOKABLE static bool setRoundedCorners(bool on);
+    // Motor gráfico (~/.config/bc/compositor): "" automático, "hyprland" o "sway"
+    Q_INVOKABLE static QString compositorPref();
+    Q_INVOKABLE static bool setCompositorPref(const QString &c);
     // Bloqueo a prueba de fallos: marca en $XDG_RUNTIME_DIR/bc-bloqueado mientras la pantalla está bloqueada.
     // Si el panel se cae bloqueado, la sesión lanza swaylock y el panel, al volver, se vuelve a bloquear.
     Q_INVOKABLE static void setLockFlag(bool on);
