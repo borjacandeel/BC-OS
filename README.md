@@ -229,6 +229,8 @@ Colección «Formas» (20 fondos 4K de formas minimalistas al estilo macOS, con 
 | `Súper+M` | Minimizar al Dock (`Súper+Mayús+M`: restaurar) |
 | `Ctrl+Súper+Q` | Bloquear pantalla |
 | `Ctrl+Intro` · `Ctrl+B` · `Súper+E` | Terminal · Firefox · Archivos |
+| `Súper+W` · `Súper+Intro` · `Súper+B` | Cerrar ventana · Terminal · Firefox (iguales en BC OS y Dotfiles/bspwm) |
+| `Súper+1…9` / `Súper+Mayús+1…9` | Ir al escritorio N / llevar la ventana (iguales en todos los entornos) |
 | `Súper+F1` | Lista completa de atajos |
 
 Lista completa: [`build/overlay/etc/bc/atajos.txt`](build/overlay/etc/bc/atajos.txt) (en el sistema, `/etc/bc/atajos.txt`). Personalización en `~/.config/bc/sway-user.conf`.

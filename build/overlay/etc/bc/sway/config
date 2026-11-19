@@ -59,6 +59,8 @@ bindsym $mod+F1 exec mousepad /etc/bc/atajos.txt
 # --- Ventanas ---
 # Cerrar con la animación de macOS (el panel captura, cierra y desvanece)
 bindsym $mod+q exec bc-ctl close
+# Mismos atajos en todos los entornos (Hyprland, sway y bspwm): Súper+W cierra, Súper+Intro Terminal, Súper+B Firefox
+bindsym $mod+w exec bc-ctl close
 bindsym Ctrl+q exec bc-ctl close
 bindsym $mod+f fullscreen toggle
 bindsym $mod+m exec bc-ctl minimize
@@ -125,6 +127,16 @@ bindsym $mod+Shift+1 move container to workspace number 1
 bindsym $mod+Shift+2 move container to workspace number 2
 bindsym $mod+Shift+3 move container to workspace number 3
 bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+5 workspace number 5
+bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+6 workspace number 6
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+7 workspace number 7
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+8 workspace number 8
+bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+9 workspace number 9
+bindsym $mod+Shift+9 move container to workspace number 9
 bindsym $mod+Ctrl+Right workspace next
 bindsym $mod+Ctrl+Left workspace prev
 

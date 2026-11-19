@@ -108,7 +108,13 @@ sway_software() {
 if [ "$COMP" = hyprland ]; then
   export BC_COMPOSITOR=hyprland
   t0=$(date +%s)
-  Hyprland -c /etc/bc/hypr/hyprland.lua >> "$LOG" 2>&1
+  # Hyprland ≥ 0.53 avisa en pantalla si no se arranca con su lanzador «start-hyprland» y si XDG_CURRENT_DESKTOP
+  # viene puesta de fuera: se usa el lanzador y la variable la pone la propia configuración (hl.env, «BC»)
+  if command -v start-hyprland >/dev/null 2>&1; then
+    env -u XDG_CURRENT_DESKTOP start-hyprland -- -c /etc/bc/hypr/hyprland.lua >> "$LOG" 2>&1
+  else
+    env -u XDG_CURRENT_DESKTOP Hyprland -c /etc/bc/hypr/hyprland.lua >> "$LOG" 2>&1
+  fi
   rc=$?
   # Si muere enseguida (sin GPU utilizable), se vuelve a intentar con sway por software: nunca de vuelta al login
   if [ $rc -ne 0 ] && [ $(( $(date +%s) - t0 )) -lt 15 ]; then

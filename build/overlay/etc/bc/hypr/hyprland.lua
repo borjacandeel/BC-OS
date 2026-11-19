@@ -146,6 +146,7 @@ b(mod .. " + SHIFT + E", sh("bc-ctl power logout"))
 b(mod .. " + F1", sh("mousepad /etc/bc/atajos.txt"))
 -- Ventanas (Hyprland anima el cierre por sí mismo)
 b(mod .. " + Q", hl.dsp.window.close())
+b(mod .. " + W", hl.dsp.window.close())   -- mismos atajos en todos los entornos (también bspwm): Súper+W cierra
 b("CTRL + Q", hl.dsp.window.close())
 b(mod .. " + F", hl.dsp.window.fullscreen({ action = "toggle" }))
 b(mod .. " + M", sh("bc-ctl minimize"))
