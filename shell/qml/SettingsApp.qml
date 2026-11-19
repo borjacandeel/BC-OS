@@ -791,7 +791,7 @@ AppWindow {
                        SmallBtn { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
                                   text: qsTr("Ver…"); onClicked: Quick.open("https://github.com/borjacandeel/BC-OS/releases/latest") } }
             }
-            Hint { width: parent.width; text: qsTr("Las actualizaciones llegan firmadas desde el repositorio de BC OS: escritorio, apps, ajustes y sistema. Al terminar, cierra sesión para ver las novedades.") }
+            Hint { width: parent.width; text: qsTr("Las actualizaciones llegan firmadas desde el repositorio de BC OS: escritorio, apps, ajustes y sistema. Al terminar, reinicia el ordenador para que se aplique todo.") }
 
             Section { text: qsTr("Rendimiento") }
             Group {

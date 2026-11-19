@@ -85,8 +85,9 @@ Window {
     Row {
         visible: win.userList.length > 1
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.top: panel.bottom
-        anchors.topMargin: 8 * panel.scale
+        // Encima del avatar (el panel está escalado desde arriba: su «bottom» no coincide con lo que se ve y la fila
+        // acababa encima de los botones de Reposo/Reiniciar)
+        y: panel.y - height - 18
         spacing: 12
         opacity: win.enter
         Repeater {

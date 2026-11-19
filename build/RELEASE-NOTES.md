@@ -22,3 +22,4 @@
 - **Volumen de polybar**: elige el nivel exacto (de 10 en 10, con barra), silencio, salida de audio y mezclador.
 - **Actualizar lo aplica todo**: `bc-actualizar` entrega también el entorno bspwm, el servicio de controladores y el tema de iconos; recarga servicios, iconos y fuentes, instala los controladores del equipo si faltan, renueva los dotfiles no tocados de cada usuario y al final pide reiniciar (y Ajustes ▸ General lo recuerda con un botón «Reiniciar» hasta que se haga).
 - **De serie**: modo oscuro y fondo «Dunas de noche» (también en el login y en bspwm, que ahora usa el mismo fondo que BC OS).
+- **Login con varios usuarios**: los avatares para cambiar de usuario van encima del tuyo (antes tapaban los botones de Reposo y Reiniciar).

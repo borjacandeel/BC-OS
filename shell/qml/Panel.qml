@@ -23,7 +23,8 @@ LayerWindow {
     readonly property string notifTitle: qsTr("Actualizaciones")
 
     // Bajo sway el fondo lo pinta swaybg con la misma imagen (sin parpadeos); aquí solo en modo ventana (pruebas).
-    Wallpaper { id: wall; anchors.fill: parent; visible: !Layer.supported }
+    Wallpaper { id: wall; anchors.fill: parent; visible: !Layer.supported
+                source: Settings.wallpaper !== "" ? "file://" + Settings.wallpaper : "file:///usr/share/bc/wallpapers/dunas-noche.jpg" }
     Loader {
         id: brand
         scale: root.u
