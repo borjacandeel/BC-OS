@@ -165,6 +165,11 @@ AppWindow {
         property var options: []
         property int current: 0
         signal picked(int i)
+        // Nunca más ancho que lo que deja la etiqueta de la fila: primero se reduce el relleno y luego se recorta el texto
+        readonly property real maxW: parent ? parent.width * 0.64 : 100000
+        readonly property real natural: { let w = 0; for (const o of options) w += fm.advanceWidth(o) + 22; return w + 4 }
+        readonly property real pad: natural <= maxW ? 22 : Math.max(8, 22 - (natural - maxW) / Math.max(1, options.length))
+        FontMetrics { id: fm; font.family: Theme.fontFamily; font.pixelSize: 12; font.weight: Font.DemiBold }
         width: psRow.width + 4; height: 26; radius: 7
         color: Theme.lightUi ? Qt.rgba(0, 0, 0, 0.06) : Qt.rgba(1, 1, 1, 0.08)
         Row {
@@ -174,11 +179,11 @@ AppWindow {
                 Rectangle {
                     required property int index
                     required property string modelData
-                    width: psT.implicitWidth + 22; height: 22; radius: 5
+                    width: Math.min(psT.implicitWidth + ps.pad, ps.pad <= 8 ? (ps.maxW - 4) / Math.max(1, ps.options.length) : 100000); height: 22; radius: 5
                     color: index === ps.current ? (Theme.lightUi ? "white" : Qt.rgba(1, 1, 1, 0.22)) : "transparent"
                     border.width: index === ps.current && Theme.lightUi ? 0.5 : 0; border.color: Qt.rgba(0, 0, 0, 0.12)
                     Behavior on color { ColorAnimation { duration: Theme.dur(140) } }
-                    Text { id: psT; anchors.centerIn: parent; text: modelData; color: Theme.textPrimary
+                    Text { id: psT; anchors.centerIn: parent; width: Math.min(implicitWidth, parent.width - 6); elide: Text.ElideRight; text: modelData; color: Theme.textPrimary
                            font.family: Theme.fontFamily; font.pixelSize: 12; font.weight: index === ps.current ? Font.DemiBold : Font.Normal }
                     MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: ps.picked(index) }
                 }
@@ -322,16 +327,20 @@ AppWindow {
                                     Rectangle {
                                         anchors.fill: parent; anchors.margins: parent.parent.sel ? 4 : 0; radius: parent.parent.sel ? 6 : 9; clip: true
                                         color: modelData.v === "dark" ? "#1C2440" : "#B9D3F2"
-                                        gradient: Gradient {
+                                        // «Automático»: mitad clara y mitad oscura en el MISMO rectángulo redondeado (antes la mitad
+                                        // oscura era un recorte cuadrado y la esquina derecha se veía cortada)
+                                        gradient: modelData.v === "auto" ? autoGrad : plainGrad
+                                        Gradient { id: plainGrad
                                             GradientStop { position: 0; color: modelData.v === "dark" ? "#27305A" : "#CFE3FA" }
                                             GradientStop { position: 1; color: modelData.v === "dark" ? "#141A30" : "#8DB6E6" } }
+                                        Gradient { id: autoGrad; orientation: Gradient.Horizontal
+                                            GradientStop { position: 0; color: "#CFE3FA" } GradientStop { position: 0.499; color: "#A9C9EE" }
+                                            GradientStop { position: 0.5; color: "#27305A" } GradientStop { position: 1; color: "#141A30" } }
                                         Rectangle { x: 6; y: 5; width: parent.width * 0.62; height: parent.height - 10; radius: 4
                                                     color: modelData.v === "dark" ? "#2C2C31" : "#FFFFFF"; opacity: 0.95
                                             Row { x: 4; y: 4; spacing: 2; Repeater { model: [Theme.close, Theme.minimize, Theme.zoom]
                                                   Rectangle { required property color modelData; width: 4; height: 4; radius: 2; color: modelData } } } }
                                         Item { visible: modelData.v === "auto"; x: parent.width / 2; width: parent.width / 2; height: parent.height; clip: true
-                                               Rectangle { x: -parent.x; width: parent.parent.width; height: parent.height
-                                                           gradient: Gradient { GradientStop { position: 0; color: "#27305A" } GradientStop { position: 1; color: "#141A30" } } }
                                                Rectangle { x: 6 - parent.x; y: 5; width: parent.parent.width * 0.62; height: parent.parent.height - 10; radius: 4; color: "#2C2C31" } }
                                     }
                                     MouseArea { anchors.fill: parent; onClicked: Settings.appearance = modelData.v }
@@ -399,12 +408,32 @@ AppWindow {
                         }
                     }
                 }
-                Row2 { label: qsTr("Color de resaltado del texto"); value: ""
-                       PillSeg { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
-                                 readonly property var cols: ["", "#0A84FF", "#BF5AF2", "#FF375F", "#30D158", "#8E8E93"]
-                                 options: [qsTr("Automático"), qsTr("Azul"), qsTr("Morado"), qsTr("Rosa"), qsTr("Verde"), qsTr("Grafito")]
-                                 current: Math.max(0, cols.indexOf(Settings.highlight.toUpperCase() === "" ? "" : Settings.highlight.toUpperCase()))
-                                 onPicked: (i) => Settings.highlight = cols[i] } }
+                // Muestras de color como la fila «Color» (antes, seis pastillas de texto que no cabían y pisaban la etiqueta)
+                Item {
+                    width: parent.width; height: 58
+                    Label { x: 10; y: 11; width: parent.width - hlRow.width - 30; elide: Text.ElideRight; text: qsTr("Color de resaltado") }
+                    Row {
+                        id: hlRow
+                        anchors.right: parent.right; anchors.rightMargin: 10; y: 6; spacing: 10
+                        Repeater {
+                            model: [ { c: "", n: qsTr("Automático") }, { c: "#0A84FF", n: qsTr("Azul") }, { c: "#BF5AF2", n: qsTr("Morado") },
+                                     { c: "#FF375F", n: qsTr("Rosa") }, { c: "#30D158", n: qsTr("Verde") }, { c: "#8E8E93", n: qsTr("Grafito") } ]
+                            Item {
+                                required property var modelData
+                                readonly property bool sel: Settings.highlight.toUpperCase() === modelData.c
+                                readonly property color col: modelData.c === "" ? Theme.accent : modelData.c
+                                width: 26; height: 46
+                                Rectangle { y: 0; width: 26; height: 26; radius: 13; color: "transparent"; border.width: parent.sel ? 2 : 0; border.color: parent.col
+                                            Rectangle { anchors.centerIn: parent; width: parent.parent.sel ? 18 : 24; height: width; radius: width / 2
+                                                        color: Qt.rgba(parent.parent.col.r, parent.parent.col.g, parent.parent.col.b, 0.45)
+                                                        border.width: modelData.c === "" ? 1.5 : 0.5; border.color: modelData.c === "" ? parent.parent.col : Qt.rgba(0, 0, 0, 0.12) } }
+                                Text { visible: parent.sel; anchors.horizontalCenter: parent.horizontalCenter; y: 30; text: modelData.n; color: Theme.textSecondary
+                                       font.family: Theme.fontFamily; font.pixelSize: 11 }
+                                MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: Settings.highlight = modelData.c }
+                            }
+                        }
+                    }
+                }
                 Row2 { label: qsTr("Estilo de los widgets"); value: ""
                        PillSeg { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
                                  readonly property var vals: ["", "oscuro", "traslucido", "tintado"]
