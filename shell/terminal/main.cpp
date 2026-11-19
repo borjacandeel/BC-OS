@@ -31,7 +31,9 @@
 #include <QWindow>
 
 namespace {
-constexpr int kShadow = 18;      // margen transparente para la sombra (sway por software no dibuja sombras)
+// Margen transparente para la sombra propia (sway por software no dibuja sombras). Con Hyprland, 0: el compositor ya
+// pone sombra y desenfoque a toda la ventana, y el margen se veía como un halo/doble borde alrededor.
+static const int kShadow = qEnvironmentVariableIsEmpty("HYPRLAND_INSTANCE_SIGNATURE") && qEnvironmentVariable("BC_COMPOSITOR") != "hyprland" ? 18 : 0;
 constexpr int kRadius = 12;      // radio de la ventana del Terminal de macOS
 constexpr int kTitleH = 28;      // barra de título del Terminal de macOS
 constexpr int kGrip = 6;

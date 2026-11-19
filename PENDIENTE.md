@@ -17,8 +17,8 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 ## Pendiente del creador 2026-11-19 (prueba en equipo físico, 0.9.22-beta, portátil con Hyprland)
 - [x] Hyprland muestra dos avisos fijos en pantalla (bienvenida y escritorio): «Hyprland was started without start-hyprland» → arrancar con `start-hyprland` desde bc-session; y «XDG_CURRENT_DESKTOP parece gestionarse externamente; su valor actual es BC» → no exportarla antes de Hyprland (o que la ponga la propia config) / silenciar el aviso.
 - [x] Wi-Fi: no deja conectarse; el menú de Wi-Fi falla (bug). Revisar menú de redes de la barra y Centro de control con NetworkManager real (contraseña, WPA, red oculta).
-- [ ] Barra de menús: icono de batería cargando con franja roja rara a la izquierda; icono de Wi-Fi tachado aunque haya red → revisar.
-- [ ] Terminal con Hyprland: doble borde/halo alrededor de la ventana (marco de cristal + sombra/esquinas del compositor) → un solo borde.
+- [x] Barra de menús: batería roja = 14 % (correcto, batería baja); Wi-Fi tachado = sin conexión (era el fallo del Wi-Fi).
+- [x] Terminal con Hyprland: doble borde/halo alrededor de la ventana (marco de cristal + sombra/esquinas del compositor) → un solo borde.
 - [x] Mismos atajos en los dos entornos (BC OS con Hyprland/sway y Dotfiles bspwm):
   - Súper(⌘)+W → cerrar ventana
   - Súper+Intro → Terminal
