@@ -399,6 +399,18 @@ AppWindow {
                         }
                     }
                 }
+                Row2 { label: qsTr("Color de resaltado del texto"); value: ""
+                       PillSeg { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                                 readonly property var cols: ["", "#0A84FF", "#BF5AF2", "#FF375F", "#30D158", "#8E8E93"]
+                                 options: [qsTr("Automático"), qsTr("Azul"), qsTr("Morado"), qsTr("Rosa"), qsTr("Verde"), qsTr("Grafito")]
+                                 current: Math.max(0, cols.indexOf(Settings.highlight.toUpperCase() === "" ? "" : Settings.highlight.toUpperCase()))
+                                 onPicked: (i) => Settings.highlight = cols[i] } }
+                Row2 { label: qsTr("Estilo de los widgets"); value: ""
+                       PillSeg { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                                 readonly property var vals: ["", "oscuro", "traslucido", "tintado"]
+                                 options: [qsTr("Por omisión"), qsTr("Oscuro"), qsTr("Traslúcido"), qsTr("Tintado")]
+                                 current: Math.max(0, vals.indexOf(Settings.widgetStyle))
+                                 onPicked: (i) => Settings.widgetStyle = vals[i] } }
             }
             Group {
                 Row2 { label: qsTr("Reducir movimiento"); value: ""

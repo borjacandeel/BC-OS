@@ -144,7 +144,8 @@ QtObject {
     property color fillHover: dark ? Qt.rgba(1, 1, 1, 0.16) : Qt.rgba(0, 0, 0, 0.10)
     property color selection: AppConfig.accent
     // Selección de texto: color propio, más claro que el de énfasis (como macOS), con el texto legible encima
-    readonly property color textSelection: Qt.rgba(AppConfig.accent.r, AppConfig.accent.g, AppConfig.accent.b, dark ? 0.45 : 0.32)
+    readonly property color _hl: typeof Settings !== "undefined" && Settings.highlight ? Settings.highlight : AppConfig.accent
+    readonly property color textSelection: Qt.rgba(_hl.r, _hl.g, _hl.b, dark ? 0.45 : 0.32)
     property color barText: "#FFFFFF"    // la barra transparente va sobre el fondo oscuro: texto blanco
     property color windowBg: dark ? "#1E1E22" : "#F5F5F7"
     property color windowBgInactive: dark ? "#26262A" : "#ECECEE"
@@ -158,11 +159,14 @@ QtObject {
     readonly property real glassBlur: 48                       // radio de desenfoque del fondo (px a 1080p)
     // Tinte ambiental: el cristal toma un poco del color del fondo de pantalla (como macOS)
     property color ambient: typeof Quick !== "undefined" ? Quick.wallpaperAverage(Settings.wallpaper) : "#808080"   // el login no tiene Quick
-    property color glassTintColor: dark ? Qt.tint(Qt.rgba(0.035, 0.04, 0.11, 1), Qt.rgba(ambient.r, ambient.g, ambient.b, 0.10))
-                                                 : Qt.tint(Qt.rgba(0.97, 0.97, 0.99, 1), Qt.rgba(ambient.r, ambient.g, ambient.b, 0.07))
-    readonly property real glassTintMin: dark ? 0.42 : 0.55    // ultratransparente (claro: suelo más alto para que el texto oscuro se lea sobre fondos oscuros)
+    property color glassTintColor: widgetStyle === "tintado"
+                                   ? Qt.tint(dark ? Qt.rgba(0.035, 0.04, 0.11, 1) : Qt.rgba(0.97, 0.97, 0.99, 1), Qt.rgba(AppConfig.accent.r, AppConfig.accent.g, AppConfig.accent.b, 0.32))
+                                   : dark ? Qt.tint(Qt.rgba(0.035, 0.04, 0.11, 1), Qt.rgba(ambient.r, ambient.g, ambient.b, 0.10))
+                                          : Qt.tint(Qt.rgba(0.97, 0.97, 0.99, 1), Qt.rgba(ambient.r, ambient.g, ambient.b, 0.07))
+    readonly property real glassTintMin: dark ? 0.10 : 0.25    // ultratransparente (claro: suelo más alto para que el texto oscuro se lea sobre fondos oscuros)
     readonly property real glassTintMax: dark ? 0.86 : 0.94    // totalmente tintado
-    readonly property real glassOpacity: glassTintMin + (glassTintMax - glassTintMin) * tint
+    readonly property string widgetStyle: typeof Settings !== "undefined" && Settings.widgetStyle !== undefined ? Settings.widgetStyle : ""
+    readonly property real glassOpacity: (glassTintMin + (glassTintMax - glassTintMin) * tint) * (widgetStyle === "traslucido" ? 0.45 : 1) + (widgetStyle === "oscuro" && dark ? 0.2 : 0)
     property color glassRim: dark ? Qt.rgba(1, 1, 1, 0.13) : Qt.rgba(1, 1, 1, 0.75)       // borde fino luminoso (captura)
     property color glassRimLow: dark ? Qt.rgba(1, 1, 1, 0.05) : Qt.rgba(1, 1, 1, 0.30)
     readonly property real glassSpecular: dark ? 0.04 : 0.18   // reflejo superior (refracción uniforme Golden Gate)

@@ -114,7 +114,10 @@ void AppSettings::reload() {
     m_widgets = s.value("widgets", true).toBool();
     m_mode = s.value("modo", "").toString();
     m_appearance = s.value("aspecto", "dark").toString();
-    m_glass = qBound(0.0, s.value("cristal", 0.0).toDouble(), 1.0);
+    // De serie a 0,4: cristal oscuro y difuminado como los widgets de macOS (0 = casi transparente, 1 = opaco)
+    m_glass = qBound(0.0, s.value("cristal", 0.4).toDouble(), 1.0);
+    m_highlight = s.value("resaltado", "").toString();
+    m_widgetStyle = s.value("estiloWidgets", "").toString();
     m_dockAutohide = s.value("dockOcultar", false).toBool();
     m_dockMagnify = s.value("dockAmpliar", true).toBool();
     m_dockSize = qBound(32, s.value("dockTamano", 49).toInt(), 96);
@@ -158,6 +161,17 @@ bool AppSettings::setPasswordHint(const QString &hint) {
     f.close();
     QFile::setPermissions(p, QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ReadGroup | QFileDevice::ReadOther);
     return true;
+}
+
+void AppSettings::setHighlight(const QString &c) {
+    static const QRegularExpression ok("^(#[0-9A-Fa-f]{6})?$");
+    if (!ok.match(c).hasMatch() || c == m_highlight) return;
+    m_highlight = c; store("resaltado", c);
+}
+void AppSettings::setWidgetStyle(const QString &st) {
+    const QString v = (st == "oscuro" || st == "traslucido" || st == "tintado") ? st : QString();
+    if (v == m_widgetStyle) return;
+    m_widgetStyle = v; store("estiloWidgets", v);
 }
 
 void AppSettings::setReduceTransparency(bool on) {

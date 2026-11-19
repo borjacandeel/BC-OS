@@ -22,6 +22,9 @@ class AppSettings : public QObject {
     // Aspecto efectivo: «Automático» es claro de 8:00 a 20:00 y oscuro el resto (se revisa cada minuto)
     Q_PROPERTY(bool darkNow READ darkNow NOTIFY changed)
     Q_PROPERTY(double glassTint READ glassTint WRITE setGlassTint NOTIFY changed)
+    // Como macOS ▸ Aspecto: color de resaltado del texto ("" = automático, el de énfasis) y estilo de widgets/iconos
+    Q_PROPERTY(QString highlight READ highlight WRITE setHighlight NOTIFY changed)
+    Q_PROPERTY(QString widgetStyle READ widgetStyle WRITE setWidgetStyle NOTIFY changed)
     Q_PROPERTY(bool dockAutohide READ dockAutohide WRITE setDockAutohide NOTIFY changed)
     Q_PROPERTY(bool dockMagnify READ dockMagnify WRITE setDockMagnify NOTIFY changed)
     Q_PROPERTY(int dockSize READ dockSize WRITE setDockSize NOTIFY changed)
@@ -39,6 +42,10 @@ public:
     bool darkNow() const;
     void setAppearance(const QString &a);
     double glassTint() const { return m_glass; }
+    QString highlight() const { return m_highlight; }
+    void setHighlight(const QString &c);
+    QString widgetStyle() const { return m_widgetStyle; }
+    void setWidgetStyle(const QString &s);
     void setGlassTint(double v);
     bool dockAutohide() const { return m_dockAutohide; }
     void setDockAutohide(bool on);
@@ -96,7 +103,7 @@ private:
     QString m_language = "es_ES";
     QString m_style = "mac";
     bool m_widgets = true, m_welcomed = false;
-    QString m_wallpaper, m_accent = "#2F7BF5";
+    QString m_wallpaper, m_accent = "#2F7BF5", m_highlight, m_widgetStyle;
     QString m_mode;
     QString m_appearance = "dark", m_widgetLayout, m_ccModules;
     double m_glass = 0.35;

@@ -15,3 +15,4 @@
 - **Liquid Glass**: la lente solo curva el fondo en el filo; el interior coincide exactamente con lo que hay detrás (antes se desplazaba y no casaba).
 - **Polybar mejorada**: la Wi-Fi muestra el nombre de la red; el menú indica a qué estás conectado, señal y candado por red, desconectar y volver a buscar; el volumen cambia de icono según el nivel; el calendario muestra la fecha completa, hoy resaltado y se mueve entre meses.
 - **Liquid Glass como macOS**: fondo muy difuminado (~30 px), tinte oscuro de serie en modo oscuro, filo luminoso fino y lente casi imperceptible; con Hyprland (GPU) el desenfoque es del compositor y va en tiempo real al mover ventanas.
+- **Ajustes ▸ Aspecto** como macOS: deslizador de Liquid Glass de casi transparente a opaco (de serie como los widgets de macOS), color de resaltado del texto y estilo de los widgets (por omisión, oscuro, traslúcido o tintado con el color de énfasis).
