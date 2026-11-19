@@ -50,12 +50,12 @@ QString RenderEngine::configureBackend() {
     QString want = qEnvironmentVariable("BC_RENDER_BACKEND").trimmed().toLower();
     const QString qtb = qEnvironmentVariable("QT_QUICK_BACKEND");
     if (want.isEmpty() && (qtb == QLatin1String("software") || qtb == QLatin1String("softwarecontext"))) want = QStringLiteral("software");
-    if (want.isEmpty()) {
+    QJsonObject cached;
+    {
         QFile f(cachePath());
-        if (f.open(QIODevice::ReadOnly))
-            want = QJsonDocument::fromJson(f.readAll()).object().value(QLatin1String("parametros")).toObject()
-                       .value(QLatin1String("backend")).toString();
+        if (f.open(QIODevice::ReadOnly)) cached = QJsonDocument::fromJson(f.readAll()).object();
     }
+    if (want.isEmpty()) want = cached.value(QLatin1String("parametros")).toObject().value(QLatin1String("backend")).toString();
     if (want.isEmpty()) want = QStringLiteral("auto");
     // Cadena de reserva: vulkan → opengl → software, según lo que haya de verdad
     const QString platform = qEnvironmentVariable("QT_QPA_PLATFORM");
@@ -67,7 +67,17 @@ QString RenderEngine::configureBackend() {
     if ((b == QLatin1String("opengl") || b == QLatin1String("rhi")) && !gpu) b = QStringLiteral("software");
     if (b != QLatin1String("vulkan") && b != QLatin1String("opengl") && b != QLatin1String("software")) b = gpu ? QStringLiteral("opengl") : QStringLiteral("software");
     if (b == QLatin1String("vulkan")) QQuickWindow::setGraphicsApi(QSGRendererInterface::Vulkan);
-    else if (b == QLatin1String("opengl")) QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+    else if (b == QLatin1String("opengl")) {
+        QQuickWindow::setGraphicsApi(QSGRendererInterface::OpenGL);
+        // El panel tiene muchas superficies (barra, Dock, widgets, capas emergentes…): con el bucle «threaded» de Qt
+        // cada una lleva su hilo, su contexto OpenGL y sus búferes. En un equipo real con nouveau eran 25 hilos y
+        // 456 MB. Con GPU lenta (nouveau) o nivel bajo, bucle «basic»: un solo contexto compartido por todas.
+        const QString nivel = cached.value(QLatin1String("nivel")).toString();
+        const QJsonArray g = cached.value(QLatin1String("gpus")).toArray();
+        const bool nouveau = !g.isEmpty() && g.first().toObject().value(QLatin1String("controlador")).toString() == QLatin1String("nouveau");
+        if (!qEnvironmentVariableIsSet("QSG_RENDER_LOOP") && (nouveau || nivel == QLatin1String("eficiente") || nivel == QLatin1String("minimo")))
+            qputenv("QSG_RENDER_LOOP", "basic");
+    }
     else {
         QQuickWindow::setGraphicsApi(QSGRendererInterface::Software);
         // Las ventanas hijas y procesos que lancen lo heredan; el resto del código lo consulta así
