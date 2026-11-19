@@ -1,0 +1,34 @@
+#!/bin/sh
+# BC Compositor Integration: aplica al compositor en marcha la configuración gráfica del nivel de BC Adaptive
+# Renderer (desenfoque, sombras y animaciones). Sin plugins: IPC de Hyprland (hyprctl eval) o de swayfx (swaymsg).
+# sway sin efectos y bspwm (X11) no tienen nada que ajustar. Lo llaman el inicio de sesión y Ajustes ▸ Calidad.
+# Uso: bc-render-apply [--dry-run]
+DRY=0; [ "$1" = "--dry-run" ] && DRY=1
+CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/bc/render-profile.json"
+# Perfil: de BC Core por D-Bus (recalculado) o, si no está, de la caché o del propio servicio sin D-Bus
+P="$(busctl --user call org.bcos.Hardware /org/bcos/Hardware org.bcos.Hardware1 PerfilRender --json=short 2>/dev/null | jq -r '.data[0]' 2>/dev/null)"
+[ -n "$P" ] && [ "$P" != null ] || P="$(cat "$CACHE" 2>/dev/null)"
+[ -n "$P" ] || P="$(bc-hardware-service --perfil 2>/dev/null)"
+[ -n "$P" ] || { echo "bc-render-apply: sin perfil gráfico" >&2; exit 1; }
+NIVEL=$(printf '%s' "$P" | jq -r .nivel)
+# Misma tabla que BC Core (render.rs, parametros): se toma del nivel, así vale aunque el servicio no vea el compositor
+case "$NIVEL" in
+  ultra) BS=10 BP=3 SH=true AN=true ;;
+  alto) BS=8 BP=3 SH=true AN=true ;;
+  equilibrado) BS=6 BP=2 SH=true AN=true ;;
+  eficiente) BS=4 BP=1 SH=true AN=true ;;
+  *) BS=0 BP=0 SH=false AN=false ;;
+esac
+run() { if [ $DRY = 1 ]; then echo "$*"; else "$@" >/dev/null 2>&1; fi; }
+
+if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ] || pgrep -x Hyprland >/dev/null 2>&1; then
+  if [ "$BS" -gt 0 ] 2>/dev/null; then BL="enabled = true, size = $BS, passes = $BP"; else BL="enabled = false"; fi
+  run hyprctl eval "hl.config({ decoration = { blur = { $BL }, shadow = { enabled = $SH } }, animations = { enabled = $AN } })"
+  echo "bc-render-apply: Hyprland → $NIVEL (desenfoque $BS×$BP, sombras $SH, animaciones $AN)"
+elif [ -n "$SWAYSOCK" ] && swaymsg -t get_version 2>/dev/null | grep -qi swayfx; then
+  if [ "$BS" -gt 0 ] 2>/dev/null; then run swaymsg "blur enable; blur_radius $BS; blur_passes $BP"; else run swaymsg "blur disable"; fi
+  [ "$SH" = true ] && run swaymsg "shadows enable" || run swaymsg "shadows disable"
+  echo "bc-render-apply: swayfx → $NIVEL (desenfoque $BS×$BP, sombras $SH)"
+else
+  echo "bc-render-apply: $NIVEL (compositor sin efectos que ajustar)"
+fi

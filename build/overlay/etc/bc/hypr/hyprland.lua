@@ -197,6 +197,7 @@ hl.on("hyprland.start", function()
     local fondo = leer(home .. "/.config/bc/wallpaper") or "/usr/share/bc/wallpapers/dunas-noche.jpg"
     hl.exec_cmd("swaybg -m fill -i '" .. fondo:gsub("'", "") .. "'")
     hl.exec_cmd("bc-display watch")
+    hl.exec_cmd("sh -c 'sleep 2; bc-render-apply'")   -- BC Adaptive Renderer: efectos del compositor según el nivel
     hl.exec_cmd("sh -c 'command -v VBoxClient >/dev/null && systemd-detect-virt -q --vm && VBoxClient --clipboard'")
     hl.exec_cmd("wl-paste --type text --watch cliphist store")
     hl.exec_cmd("wl-paste --type image --watch cliphist store")

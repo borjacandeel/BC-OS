@@ -171,6 +171,7 @@ for_window [window_type="dialog"] floating enable
 
 # Pantalla: se adapta sola al tamaño de la ventana de la máquina virtual o al monitor
 exec bc-display watch
+exec sh -c 'sleep 2; bc-render-apply'
 # VirtualBox: portapapeles compartido con el anfitrión (si las Guest Additions están instaladas)
 exec sh -c 'command -v VBoxClient >/dev/null && systemd-detect-virt -q --vm && VBoxClient --clipboard'
 
