@@ -11,3 +11,4 @@
 - **Equipos reales**: al instalar se activa `bc-drivers`, que en el primer arranque con Internet instala lo que toca según el hardware (Intel: VA-API, Vulkan, microcódigo y thermald; AMD; NVIDIA con todo su firmware; Wi-Fi Qualcomm; perfiles de energía en portátiles).
 - **Ajustes ▸ General ▸ Motor gráfico**: Automático, Hyprland o sway.
 - **Barra de bspwm (polybar)**: cada módulo abre su menú con el tema de la barra (panel compacto bajo ella): Wi-Fi (redes, contraseña), Bluetooth (dispositivos), sonido (nivel, silencio, salida de audio y mezclador), batería y modo de energía, calendario en el reloj.
+- **Iconos nuevos** (propios, estilo macOS): alias y candado como emblemas sobre los archivos, discos ópticos y de red, imagen de disco, documento genérico, mando y altavoz Bluetooth, carpeta de usuario con silueta e icono de Instantáneas (nueva app en el Launchpad).

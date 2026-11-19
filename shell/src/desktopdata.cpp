@@ -453,6 +453,13 @@ bool Processes::quit(int pid, bool force) {
 }
 
 #include "appindex.h"
+QString QuickTools::fileEmblem(const QString &path) {
+    if (path.isEmpty()) return {};
+    const QFileInfo fi(path);
+    if (fi.isSymLink()) return QStringLiteral("alias");
+    if (fi.exists() && !fi.isWritable()) return QStringLiteral("lock");
+    return {};
+}
 QString QuickTools::iconPath(const QString &name) {
     static const QRegularExpression ok("^[A-Za-z0-9._-]{1,80}$");
     if (!ok.match(name).hasMatch()) return {};

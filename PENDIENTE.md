@@ -175,7 +175,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [~] 69. Tipografía del sistema con ajuste óptico automático (Inter)
 - [ ] 70. Espaciado dinámico entre letras (tracking) según el tamaño de la fuente
 - [~] 71. Números tabulares monoespaciados en relojes, contadores y tablas
-- [ ] 72. Icono de Archivos con la cara sonriente bicolor (propio, sin copiar el de Apple)
+- [x] 72. Icono de Archivos con la cara sonriente bicolor (propio, sin copiar el de Apple)
 - [x] 73. Icono de Papelera que cambia visualmente entre vacía y llena
 - [x] 74. Iconos monocromáticos minimalistas en la barra de menús superior
 - [x] 75. Badges (globos rojos) de notificación en esquinas de iconos
@@ -198,12 +198,12 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [~] 92. Icono de Wi-Fi con arcos que reflejan la intensidad real de señal
 - [~] 93. Icono de sonido con ondas según el volumen
 - [x] 94. Iconos de dispositivos Bluetooth específicos (auriculares, ratón, teclado, mando)
-- [ ] 95. Icono de instantáneas (copias) con reloj y flecha circular
+- [x] 95. Icono de instantáneas (copias) con reloj y flecha circular
 - [ ] 96. Icono de Vista previa con lupa sobre fotografías
 - [x] 97. Icono de Terminal con recuadro negro y prompt (>_)
 - [x] 98. Icono de Monitor de Actividad con gráfica de pulso verde
 - [ ] 99. Icono de Ajustes con engranajes en relieve
-- [ ] 100. Consistencia de grosor de trazo entre todos los iconos del sistema
+- [x] 100. Consistencia de grosor de trazo entre todos los iconos del sistema
 - [x] 101. Dock flotante separado del borde inferior de la pantalla
 - [x] 102. Línea divisoria vertical en el Dock entre apps fijas, recientes y carpetas
 - [x] 103. Aumento en onda (Magnification) al pasar el puntero por el Dock

@@ -120,6 +120,8 @@ public:
     Q_INVOKABLE static QString calculate(const QString &expr);   // «2+2*3» → «8»; vacío si no es una operación
     Q_INVOKABLE void open(const QString &path);              // xdg-open
     Q_INVOKABLE static QString iconPath(const QString &name); // ruta del icono del tema (vacía si no existe)
+    // Emblema de un archivo (como Finder): "alias" si es un enlace, "lock" si no se puede modificar, "" si nada
+    Q_INVOKABLE static QString fileEmblem(const QString &path);
     // Ajustes del Sistema ▸ Pantallas y Teclado
     Q_INVOKABLE void listDisplayModes();                       // → displayModes
     Q_INVOKABLE void setDisplayMode(const QString &mode);      // «1920x1080» o «auto»

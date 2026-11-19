@@ -55,4 +55,15 @@ Item {
         smooth: true
         mipmap: true
     }
+    // Emblemas de Finder: alias (flecha, abajo a la izquierda) y candado (archivo protegido, abajo a la derecha)
+    readonly property string emblem: path !== "" && root.width >= 24 ? Quick.fileEmblem(path) : ""
+    Image {
+        visible: root.emblem !== ""
+        width: Math.max(10, root.height * 0.34); height: width
+        x: root.emblem === "alias" ? root.width / 2 - root.height / 2 + root.height * 0.04 : root.width / 2 + root.height / 2 - width - root.height * 0.04
+        y: root.height - height - root.height * 0.04
+        source: root.emblem === "alias" ? "qrc:/BCShell/apps/emblem-symbolic-link.svg" : root.emblem === "lock" ? "qrc:/BCShell/apps/emblem-readonly.svg" : ""
+        sourceSize: Qt.size(Math.ceil(width * root.dpr), Math.ceil(width * root.dpr))
+        smooth: true
+    }
 }

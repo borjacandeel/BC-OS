@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Instantáneas
+Comment=Vuelve el sistema a como estaba antes de una actualización
+Exec=alacritty -e sh -c 'bc-restaurar; echo; echo "Para restaurar: sudo bc-restaurar <fecha>"; exec fish'
+Terminal=false
+Icon=bc-restore
+Categories=System;
+StartupNotify=false
