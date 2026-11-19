@@ -1,6 +1,6 @@
 #!/bin/sh
 # Menú wifi (rofi + nmcli): activar/desactivar y conectarse a una red
-R="rofi -dmenu -i -theme $HOME/.config/rofi/config.rasi"
+R="rofi -dmenu -i -theme $HOME/.config/rofi/menu.rasi"
 state=$(nmcli -t radio wifi 2>/dev/null)
 if [ "$state" = enabled ]; then toggle="󰖪  Desactivar wifi"; else toggle="󰖩  Activar wifi"; fi
 list=$(nmcli -t -f IN-USE,SIGNAL,SECURITY,SSID dev wifi list --rescan auto 2>/dev/null |
@@ -15,7 +15,7 @@ case $pick in
     [ -n "$ssid" ] || exit 0
     if nmcli -t -f NAME connection show | grep -qx "$ssid"; then nmcli connection up id "$ssid" >/dev/null 2>&1
     else
-      pass=$(printf '' | rofi -dmenu -password -p "Contraseña de «$ssid»" -theme "$HOME/.config/rofi/config.rasi") || exit 0
+      pass=$(printf '' | rofi -dmenu -password -p "Contraseña de «$ssid»" -theme "$HOME/.config/rofi/menu.rasi") || exit 0
       if [ -n "$pass" ]; then nmcli dev wifi connect "$ssid" password "$pass" >/dev/null 2>&1; else nmcli dev wifi connect "$ssid" >/dev/null 2>&1; fi
     fi
     if [ $? -eq 0 ]; then notify-send "Wifi" "Conectado a $ssid"; else notify-send -u critical "Wifi" "No se pudo conectar a $ssid"; fi ;;

@@ -68,6 +68,7 @@ bspc rule -a Steam state=floating center=true
 bspc rule -a zoom state=floating
 bspc rule -a TelegramDesktop state=floating center=true
 bspc rule -a Pavucontrol state=floating center=true
+bspc rule -a Nmtui state=floating center=true rectangle=760x520+0+0
 bspc rule -a Lxappearance state=floating center=true
 bspc rule -a Alacritty state=tiled
 bspc rule -a Firefox desktop='^2'

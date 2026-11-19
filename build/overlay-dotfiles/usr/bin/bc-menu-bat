@@ -1,0 +1,21 @@
+#!/bin/sh
+# Menú de batería y energía (rofi): carga, estado y modo de energía (power-profiles-daemon)
+M="$HOME/.config/rofi/menu.rasi"
+for b in /sys/class/power_supply/BAT*; do [ -r "$b/capacity" ] && break; done
+if [ -r "$b/capacity" ]; then
+  c=$(cat "$b/capacity"); s=$(cat "$b/status")
+  case $s in Charging) s="cargando";; Discharging) s="con batería";; Full) s="cargada";; *) s="enchufado";; esac
+  msg="󰁹  $c %  ·  $s"
+else msg="󰚥  Sin batería (enchufado)"; fi
+opts=""
+if command -v powerprofilesctl >/dev/null 2>&1; then
+  cur=$(powerprofilesctl get 2>/dev/null)
+  for p in power-saver balanced performance; do
+    n=$(case $p in power-saver) echo "Ahorro de energía";; balanced) echo "Equilibrado";; performance) echo "Rendimiento";; esac)
+    mark="  "; [ "$p" = "$cur" ] && mark="✓ "
+    opts="$opts$mark$n|$p\n"
+  done
+fi
+pick=$(printf "$opts" | cut -d'|' -f1 | sed '/^$/d' | rofi -dmenu -i -no-custom -p "Energía" -mesg "$msg" -theme "$M") || exit 0
+p=$(printf "$opts" | grep -F "$pick|" | cut -d'|' -f2)
+[ -n "$p" ] && powerprofilesctl set "$p" && notify-send "Energía" "Modo: $(printf '%s' "$pick" | sed 's/^[✓ ]*//')"

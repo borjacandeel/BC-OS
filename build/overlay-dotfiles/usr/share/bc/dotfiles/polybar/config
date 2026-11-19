@@ -33,8 +33,8 @@ cursor-scroll = ns-resize
 
 [module/launcher]
 type = custom/text
-content = "󰄾"
-content-padding = 1
+format = "󰄾"
+format-padding = 1
 click-left = rofi -show drun -theme ~/.config/rofi/config.rasi
 click-right = bc-powermenu
 
@@ -68,7 +68,9 @@ click-middle = playerctl previous
 
 [module/pulseaudio]
 type = internal/pulseaudio
-format-volume = <label-volume>
+; Clic izquierdo: menú de sonido (nivel, silencio, salida); rueda: subir/bajar; clic central: silenciar
+format-volume = %{A1:bc-menu-vol &:}<label-volume>%{A}
+format-muted = %{A1:bc-menu-vol &:}<label-muted>%{A}
 label-volume = 󰕾 %percentage%%
 label-muted = 󰖁 muted
 label-muted-foreground = ${colors.dim}
@@ -81,13 +83,15 @@ interval = 10
 time = %H:%M
 date = %d %b
 label = %time% | %date%
+; Clic: calendario del mes
+format = %{A1:bc-menu-cal &:}<label>%{A}
 
 [module/net]
 type = custom/script
 exec = bc-bar-net
 interval = 5
 click-left = bc-menu-wifi &
-click-right = alacritty -e nmtui &
+click-right = alacritty --class Nmtui -e nmtui &
 
 [module/bluetooth]
 type = custom/script
@@ -100,6 +104,8 @@ click-right = bluetoothctl power toggle >/dev/null 2>&1 || true
 type = custom/script
 exec = bc-bar-bat
 interval = 30
+; Clic: batería y modo de energía
+click-left = bc-menu-bat &
 
 ; --- Módulos extra (actívalos añadiéndolos a modules-right) ---
 [module/temperature]

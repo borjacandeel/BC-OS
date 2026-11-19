@@ -1,0 +1,6 @@
+#!/bin/sh
+# Calendario del mes bajo el reloj (rofi), con hoy marcado
+M="$HOME/.config/rofi/menu.rasi"
+today=$(date +%-d)
+c=$(LC_ALL=es_ES.UTF-8 cal 2>/dev/null | sed "s/\(^\| \)\($today\)\( \|$\)/\1<b><span foreground='#8FC3D4'>\2<\/span><\/b>\3/")
+rofi -e "<tt>$c</tt>" -markup -theme "$M" -theme-str 'window {width: 260px;}' >/dev/null 2>&1

@@ -1,0 +1,20 @@
+/* Menús de la barra (wifi, Bluetooth, volumen, batería, calendario): panel compacto bajo la barra, a la derecha,
+   con la misma paleta que polybar y el lanzador */
+@import "config.rasi"
+window {
+    location: northeast;
+    anchor: northeast;
+    x-offset: -10px;
+    y-offset: 36px;
+    width: 340px;
+    border: 1px;
+    border-radius: 14px;
+    padding: 12px;
+}
+mainbox { children: [inputbar, message, listview]; spacing: 10px; }
+inputbar { padding: 8px 12px; }
+message { background-color: @bg-alt; border-radius: 8px; padding: 8px 12px; }
+textbox { text-color: @fg; }
+listview { lines: 10; scrollbar: false; }
+element { padding: 7px 10px; }
+element-icon { size: 0px; }

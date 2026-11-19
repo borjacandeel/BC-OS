@@ -1,6 +1,6 @@
 #!/bin/sh
 # Menú Bluetooth (rofi + bluetoothctl): encender/apagar, conectar y desconectar
-R="rofi -dmenu -i -theme $HOME/.config/rofi/config.rasi"
+R="rofi -dmenu -i -theme $HOME/.config/rofi/menu.rasi"
 bluetoothctl show >/dev/null 2>&1 || { notify-send "Bluetooth" "No hay adaptador Bluetooth"; exit 0; }
 if bluetoothctl show | grep -q "Powered: yes"; then on=1; toggle="󰂲  Apagar Bluetooth"; else on=0; toggle="󰂯  Encender Bluetooth"; fi
 devs=""
