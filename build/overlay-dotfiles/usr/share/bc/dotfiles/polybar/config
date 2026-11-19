@@ -69,10 +69,14 @@ click-middle = playerctl previous
 [module/pulseaudio]
 type = internal/pulseaudio
 ; Clic izquierdo: menú de sonido (nivel, silencio, salida); rueda: subir/bajar; clic central: silenciar
-format-volume = %{A1:bc-menu-vol &:}<label-volume>%{A}
+format-volume = %{A1:bc-menu-vol &:}<ramp-volume> <label-volume>%{A}
 format-muted = %{A1:bc-menu-vol &:}<label-muted>%{A}
-label-volume = 󰕾 %percentage%%
-label-muted = 󰖁 muted
+label-volume = %percentage%%
+ramp-volume-0 = 󰕿
+ramp-volume-1 = 󰖀
+ramp-volume-2 = 󰕾
+interval = 2
+label-muted = 󰖁 silencio
 label-muted-foreground = ${colors.dim}
 use-ui-max = false
 click-right = pavucontrol &
@@ -81,8 +85,8 @@ click-right = pavucontrol &
 type = internal/date
 interval = 10
 time = %H:%M
-date = %d %b
-label = %time% | %date%
+date = %a %d %b
+label = 󰃭 %date%  %time%
 ; Clic: calendario del mes
 format = %{A1:bc-menu-cal &:}<label>%{A}
 

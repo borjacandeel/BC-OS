@@ -1,6 +1,21 @@
 #!/bin/sh
-# Calendario del mes bajo el reloj (rofi), con hoy marcado
+# Calendario bajo el reloj de la barra (rofi): mes con hoy resaltado y flechas para ir al mes anterior/siguiente
 M="$HOME/.config/rofi/menu.rasi"
-today=$(date +%-d)
-c=$(LC_ALL=es_ES.UTF-8 cal 2>/dev/null | sed "s/\(^\| \)\($today\)\( \|$\)/\1<b><span foreground='#8FC3D4'>\2<\/span><\/b>\3/")
-rofi -e "<tt>$c</tt>" -markup -theme "$M" -theme-str 'window {width: 260px;}' >/dev/null 2>&1
+export LC_ALL="${LANG:-es_ES.UTF-8}"
+y=$(date +%Y); m=$(date +%-m); ty=$y; tm=$m; td=$(date +%-d)
+while :; do
+  title=$(date -d "$y-$m-01" +"%B %Y" | sed 's/./\U&/')
+  grid=$(cal -m "$m" "$y" 2>/dev/null | sed '1d' | sed 's/[[:space:]]*$//')
+  if [ "$y" = "$ty" ] && [ "$m" = "$tm" ]; then
+    grid=$(printf '%s\n' "$grid" | sed "2,\$s/\(^\| \)\($td\)\( \|\$\)/\1<span background='#8FC3D4' foreground='#0E1B26'><b>\2<\/b><\/span>\3/")
+    head="$(date +'%A, %-d de %B' | sed 's/./\U&/')"
+  else head="$title"; fi
+  pick=$(printf '󰅁  Mes anterior\n󰃭  Hoy\n󰅂  Mes siguiente\n' |
+    rofi -dmenu -i -no-custom -markup-rows -p "$title" -mesg "<b>$head</b>
+<tt>$grid</tt>" -theme "$M" -theme-str 'window {width: 300px;} listview {lines: 3;} inputbar {enabled: false;}') || exit 0
+  case $pick in
+    *anterior) m=$((m - 1)); [ $m -lt 1 ] && { m=12; y=$((y - 1)); } ;;
+    *siguiente) m=$((m + 1)); [ $m -gt 12 ] && { m=1; y=$((y + 1)); } ;;
+    *Hoy) y=$ty; m=$tm ;;
+  esac
+done
