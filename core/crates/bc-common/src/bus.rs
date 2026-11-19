@@ -22,24 +22,35 @@ impl BusKind {
     }
 }
 
+/// Publica `iface` en `ruta` con el nombre `nombre` y devuelve la conexión (para emitir señales o tareas propias).
+pub async fn conectar<I: Interface>(
+    nombre: &'static str,
+    ruta: &'static str,
+    iface: I,
+) -> Result<zbus::Connection> {
+    let builder = match BusKind::from_env() {
+        BusKind::Session => Builder::session()?,
+        BusKind::System => Builder::system()?,
+    };
+    let conexion = builder.name(nombre)?.serve_at(ruta, iface)?.build().await?;
+    tracing::info!(nombre, ruta, "publicado en D-Bus");
+    Ok(conexion)
+}
+
 /// Publica `iface` en `ruta` con el nombre `nombre` y espera a SIGTERM/SIGINT.
 pub async fn servir<I: Interface>(
     nombre: &'static str,
     ruta: &'static str,
     iface: I,
 ) -> Result<()> {
-    let builder = match BusKind::from_env() {
-        BusKind::Session => Builder::session()?,
-        BusKind::System => Builder::system()?,
-    };
-    let _conexion = builder.name(nombre)?.serve_at(ruta, iface)?.build().await?;
-    tracing::info!(nombre, ruta, "publicado en D-Bus");
+    let _conexion = conectar(nombre, ruta, iface).await?;
     esperar_senal().await;
     tracing::info!(nombre, "parando");
     Ok(())
 }
 
-async fn esperar_senal() {
+/// Espera a SIGTERM o SIGINT.
+pub async fn esperar_senal() {
     use tokio::signal::unix::{signal, SignalKind};
     let mut term = signal(SignalKind::terminate()).expect("señal SIGTERM");
     tokio::select! {

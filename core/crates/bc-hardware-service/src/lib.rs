@@ -2,6 +2,9 @@
 
 use bc_common::{BcError, Result};
 use std::path::Path;
+use std::sync::{Arc, Mutex};
+
+pub mod render;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Cpu {
@@ -92,10 +95,69 @@ pub fn cpu() -> Result<Cpu> {
     Ok(parse_cpuinfo(&t))
 }
 
-pub struct Hardware;
+/// Servicio de hardware. Guarda el estado de BC Hardware Intelligence (perfil y nivel gráfico).
+#[derive(Clone)]
+pub struct Hardware {
+    pub render: Arc<Mutex<render::Estado>>,
+}
+
+impl Hardware {
+    pub fn nuevo() -> Self {
+        Hardware { render: Arc::new(Mutex::new(render::Estado::nuevo("/".into()))) }
+    }
+}
 
 #[zbus::interface(name = "org.bcos.Hardware1")]
 impl Hardware {
+    /// Perfil del equipo, nivel de calidad y parámetros por efecto (JSON).
+    fn perfil_render(&self) -> String {
+        self.render.lock().map(|e| e.json.clone()).unwrap_or_default()
+    }
+
+    /// Nivel de calidad vigente: ultra, alto, equilibrado, eficiente o minimo.
+    fn nivel_render(&self) -> String {
+        self.render.lock().map(|e| e.nivel.como_str().to_string()).unwrap_or_default()
+    }
+
+    /// Vuelve a sondear (p. ej. tras cambiar la calidad en Ajustes) y avisa si el nivel cambia.
+    async fn reevaluar_render(
+        &self,
+        #[zbus(signal_emitter)] em: zbus::object_server::SignalEmitter<'_>,
+    ) -> String {
+        let (cambio, nivel, json) = match self.render.lock() {
+            Ok(mut e) => (e.reevaluar(), e.nivel.como_str().to_string(), e.json.clone()),
+            Err(_) => return String::new(),
+        };
+        if cambio {
+            let _ = Self::nivel_render_cambiado(&em, &nivel, &json).await;
+        }
+        nivel
+    }
+
+    /// Informe de rendimiento de una app (media de ms por fotograma y % de fotogramas perdidos).
+    async fn reportar_fotogramas(
+        &self,
+        media_ms: f64,
+        perdidos_pct: f64,
+        #[zbus(signal_emitter)] em: zbus::object_server::SignalEmitter<'_>,
+    ) {
+        let r = match self.render.lock() {
+            Ok(mut e) => e.reportar(media_ms, perdidos_pct).then(|| (e.nivel.como_str().to_string(), e.json.clone())),
+            Err(_) => None,
+        };
+        if let Some((nivel, json)) = r {
+            let _ = Self::nivel_render_cambiado(&em, &nivel, &json).await;
+        }
+    }
+
+    /// El nivel de calidad gráfica ha cambiado (energía, temperatura, rendimiento o Ajustes).
+    #[zbus(signal)]
+    pub async fn nivel_render_cambiado(
+        em: &zbus::object_server::SignalEmitter<'_>,
+        nivel: &str,
+        perfil: &str,
+    ) -> zbus::Result<()>;
+
     /// (modelo, número de núcleos)
     fn cpu(&self) -> zbus::fdo::Result<(String, u32)> {
         let c = cpu()?;
