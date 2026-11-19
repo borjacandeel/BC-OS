@@ -14,6 +14,10 @@ add_library(bccommon STATIC src/appconfig.h src/appconfig.cpp src/appsettings.h 
     src/userlist.h src/userlist.cpp)
 target_link_libraries(bccommon PUBLIC Qt6::Core Qt6::Gui)
 
+# BC Adaptive Renderer (lado Qt): backend de Qt Quick, nivel de calidad y medida de fotogramas en cada proceso BC
+add_library(bcrender STATIC src/renderengine.h src/renderengine.cpp)
+target_link_libraries(bcrender PUBLIC Qt6::Core Qt6::Gui Qt6::Quick Qt6::DBus)
+
 qt_add_executable(bc-shell src/main.cpp src/launcher.h src/launcher.cpp src/filebrowser.h src/filebrowser.cpp
     src/pamauth.h src/pamauth.cpp src/systemstatus.h src/systemstatus.cpp
     src/notifications.h src/notifications.cpp src/sysmonitor.h src/sysmonitor.cpp src/appindex.h src/appindex.cpp src/packagestore.h src/packagestore.cpp
@@ -54,7 +58,7 @@ file(GLOB BC_ICON_FILES CONFIGURE_DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/assets/ico
 qt_add_resources(bc-shell bcicons PREFIX /BCShell/icons BASE ${CMAKE_CURRENT_SOURCE_DIR}/assets/icons FILES ${BC_ICON_FILES})
 qt_add_resources(bc-shell bcappicons PREFIX /BCShell/apps BASE ${CMAKE_CURRENT_SOURCE_DIR}/assets/apps FILES ${BC_APPICON_FILES})
 
-target_link_libraries(bc-shell PRIVATE bccommon Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::DBus Qt6::Network ${PAM_LIBRARY})
+target_link_libraries(bc-shell PRIVATE bccommon bcrender Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::DBus Qt6::Network ${PAM_LIBRARY})
 if(LayerShellQt_FOUND)
     target_link_libraries(bc-shell PRIVATE LayerShellQt::Interface)
     target_compile_definitions(bc-shell PRIVATE BC_HAVE_LAYERSHELL)
@@ -77,7 +81,7 @@ qt_add_translations(bc-greeter
     RESOURCE_PREFIX /i18n
 )
 qt_add_resources(bc-greeter bcicons_g PREFIX /BCShell/icons BASE ${CMAKE_CURRENT_SOURCE_DIR}/assets/icons FILES ${BC_ICON_FILES})
-target_link_libraries(bc-greeter PRIVATE bccommon Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::Network)
+target_link_libraries(bc-greeter PRIVATE bccommon bcrender Qt6::Core Qt6::Gui Qt6::Qml Qt6::Quick Qt6::Network)
 install(TARGETS bc-shell bc-greeter RUNTIME DESTINATION bin)
 
 # Terminal de BC (como el Terminal de macOS): solo si está QTermWidget (paquete «qtermwidget»)
@@ -114,6 +118,9 @@ add_test(NAME greeter_login_clave_mala COMMAND ${CMAKE_CURRENT_SOURCE_DIR}/tests
 add_test(NAME greeter_captura COMMAND bc-greeter --check --size 1280x800 --lang es_ES
          --screenshot ${CMAKE_BINARY_DIR}/captura-greeter.png)
 set_tests_properties(greeter_captura PROPERTIES ENVIRONMENT "${BC_ENV}")
+qt_add_executable(tst_render tests/tst_render.cpp)
+target_link_libraries(tst_render PRIVATE bcrender Qt6::Test)
+add_test(NAME motor_render COMMAND tst_render)
 qt_add_executable(tst_notif tests/tst_notif.cpp src/notifications.h src/notifications.cpp)
 target_link_libraries(tst_notif PRIVATE Qt6::Core Qt6::Gui Qt6::DBus Qt6::Test)
 find_program(BC_DBUS_RUN_SESSION dbus-run-session)

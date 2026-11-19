@@ -16,6 +16,7 @@
 #include "powercontrol.h"
 #include "sessionlist.h"
 #include "userlist.h"
+#include "renderengine.h"
 
 static int g_warnings = 0;
 static QtMessageHandler g_prev = nullptr;
@@ -26,6 +27,8 @@ static void countingHandler(QtMsgType t, const QMessageLogContext &c, const QStr
 
 int main(int argc, char *argv[]) {
     qputenv("QML_XHR_ALLOW_FILE_READ", "1");
+    // El login no tiene sesión D-Bus del usuario: nivel desde la caché del sistema o valores seguros
+    RenderEngine::configureBackend();
     QGuiApplication app(argc, argv);
     app.setApplicationName("bc-greeter");
     app.setOrganizationName("BC-OS");
@@ -65,6 +68,7 @@ int main(int argc, char *argv[]) {
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Users", &users);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Settings", &appSettings);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Sessions", &sessions);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Render", RenderEngine::instance());
     auto applySession = [&] { greetd.setSession(sessions.currentCommand(), sessions.currentEnv()); };
     QObject::connect(&sessions, &SessionList::currentChanged, &app, applySession);
     applySession();
@@ -105,6 +109,7 @@ int main(int argc, char *argv[]) {
     engine.load(QUrl("qrc:/BCShell/Greeter.qml"));
     if (engine.rootObjects().isEmpty()) return 2;
     auto *win = qobject_cast<QQuickWindow *>(engine.rootObjects().first());
+    RenderEngine::instance()->watch(win);
     if (!win) return 2;
 
     if (p.isSet(oSize)) {

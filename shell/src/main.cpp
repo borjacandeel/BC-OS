@@ -34,6 +34,7 @@
 #include "glassprovider.h"
 #include "genieitem.h"
 #include "desktopdata.h"
+#include "renderengine.h"
 
 static int g_warnings = 0;
 static QtMessageHandler g_prev = nullptr;
@@ -51,6 +52,8 @@ int main(int argc, char *argv[]) {
     // Se quita solo para este proceso y se devuelve al entorno para que lo hereden las apps que abre.
     const QByteArray platformTheme = qgetenv("QT_QPA_PLATFORMTHEME");
     qunsetenv("QT_QPA_PLATFORMTHEME");
+    // BC Adaptive Renderer: backend de Qt Quick (vulkan → opengl → software) antes de crear ventanas
+    RenderEngine::configureBackend();
     QGuiApplication app(argc, argv);
     if (!platformTheme.isEmpty()) qputenv("QT_QPA_PLATFORMTHEME", platformTheme);
     app.setApplicationName("bc-shell");
@@ -152,7 +155,8 @@ int main(int argc, char *argv[]) {
     // Solo de las apps
     NotificationClient notifClient;
     AppActions actions(appName);
-    qmlRegisterSingletonInstance("BCShell", 1, 0, "Quick", &quickTools);   // también en las apps (Archivos: búsqueda, abrir)
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Quick", &quickTools);
+    qmlRegisterSingletonInstance("BCShell", 1, 0, "Render", RenderEngine::instance());   // también en las apps (Archivos: búsqueda, abrir)
     if (!appMode) {
         notifications.setDnd(status.dnd());
         QObject::connect(&status, &SystemStatus::changed, &notifications, [&] { notifications.setDnd(status.dnd()); });
@@ -193,6 +197,7 @@ int main(int argc, char *argv[]) {
     }
     if (engine.rootObjects().isEmpty()) return 2;
     auto *win = qobject_cast<QQuickWindow *>(engine.rootObjects().first());
+    RenderEngine::instance()->watch(win);
     if (!win) return 2;
 
     if (p.isSet(oSize)) {
