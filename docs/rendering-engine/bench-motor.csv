@@ -1,0 +1,8 @@
+escenario,rep,arranque_ms,cpu_ms,rss_mb,frames,media_ms,p95_ms,p99_ms,perdidos
+arranque-frio,1,2556,1123,197,3,7.0,12,12,0
+arranque-cache,1,2305,1004,197,3,7.3,13,13,0
+genio,1,16254,14810,197,5,7.4,14,14,0
+dock,1,13191,11967,197,125,3.4,5,17,2
+spotlight,1,16302,14873,197,48,2.0,5,16,0
+arranque-frio,2,2461,1084,197,3,11.7,18,18,1
+arranque-cache,2,2434,1023,197,4,7.8,13,13,0

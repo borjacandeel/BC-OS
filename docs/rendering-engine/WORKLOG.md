@@ -7,12 +7,12 @@ Rama: `feature/bc-rendering-engine` · Etiqueta de recuperación: `bc-baseline-p
 | Fase | Estado |
 |---|---|
 | 1 Auditoría y línea base | verificado |
-| 2 Arquitectura | en curso |
-| 3 Módulos | pendiente |
-| 4 Integración | pendiente |
-| 5 Benchmarks | pendiente |
-| 6 Pruebas | pendiente |
-| 7 Docs, versión, ISO | pendiente |
+| 2 Arquitectura | verificado (ARCHITECTURE.md) |
+| 3 Módulos | hecho: Hardware Intelligence + política (Rust), RenderEngine (Qt), recursos (caché disco, decodificación escalada), compositor (bc-render-apply). Geometry/Materials con shaders: no (sin qsb) |
+| 4 Integración | hecho: panel, apps, login (Theme, Glass, Genio, AppWindow, SlideIn, LayerWindow), Ajustes ▸ Calidad gráfica |
+| 5 Benchmarks | ver BENCHMARKS.md |
+| 6 Pruebas | cargo test 80/80 + clippy limpio; ctest 12/12 (tst_render nuevo) |
+| 7 Docs, versión, ISO | README, CHANGELOG, RELEASE-NOTES, WEB-VERSIONES; ISO por CI (image.yml) a petición del creador |
 
 ## Entorno (comandos que funcionan aquí)
 - Anfitrión x86_64 Ubuntu (no Arch), Qt 6.4 del sistema, sin `qsb`/Qt Shader Tools, sin `/usr/bin/time`.
@@ -43,4 +43,8 @@ sin GPU, desenfoque sin bloques.
   no en un servicio nuevo. Los procesos Qt leen D-Bus con tiempo límite corto o la caché en disco.
 
 ## Limitaciones externas
+- Sin `qsb` (Qt Shader Tools) en el anfitrión: no hay materiales RHI ni nodos SDF; el backend software de Qt Quick tampoco los admite.
+- Sin GPU en el entorno: Vulkan/OpenGL solo verificados por la cadena de reserva (offscreen → software), no en hardware.
+- No se puede descargar artefactos de CI aquí: la ISO se construye en GitHub Actions; arranque en QEMU de la ISO no verificado localmente.
+- La web está en otro repositorio: texto preparado en WEB-VERSIONES.md.
 (se rellenan con evidencias)

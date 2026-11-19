@@ -8,7 +8,7 @@
 Sistema operativo Linux (ARM64 y x86_64) creado por <b>Borja Candel</b>, en español por defecto.</p>
 
 <p align="center">
-  <img alt="Versión" src="https://img.shields.io/badge/versi%C3%B3n-0.9.19--beta%20(prerelease)-2F7BFF">
+  <img alt="Versión" src="https://img.shields.io/badge/versi%C3%B3n-0.9.20--beta%20(prerelease)-2F7BFF">
   <img alt="Arquitectura" src="https://img.shields.io/badge/arquitectura-ARM64%20%7C%20x86__64-04111F">
   <img alt="Base" src="https://img.shields.io/badge/base-Arch%20Linux%20%2F%20ARM-1793D1">
   <img alt="Idioma" src="https://img.shields.io/badge/idioma-espa%C3%B1ol%20(es__ES)-C60B1E">
@@ -22,7 +22,7 @@ BC OS es un Linux ligero y en español para **ARM64** (sobre **Arch Linux ARM**)
   <br><sub>Escritorio Golden Gate: barra de menús, widgets de vidrio, iconos en el escritorio, aviso y Dock. Captura del shell en el anfitrión de desarrollo.</sub>
 </p>
 
-> **Estado honesto:** beta experimental. La **0.9.19-beta** sale para ARM64 y x86_64 (disco VDI e ISO live UEFI y BIOS) con **Hyprland** si hay cualquier GPU real y sway si no; la ISO x86_64 ya arranca en un PC real (BIOS, NVIDIA GT 710). Muchas piezas están compiladas y vistas en capturas, pero **pendientes de prueba real**. Ver [estado y pendientes](#estado-honesto-de-golden-gate).
+> **Estado honesto:** beta experimental. La **0.9.20-beta** sale para ARM64 y x86_64 (disco VDI e ISO live UEFI y BIOS) con **Hyprland** si hay cualquier GPU real y sway si no; la ISO x86_64 ya arranca en un PC real (BIOS, NVIDIA GT 710). Muchas piezas están compiladas y vistas en capturas, pero **pendientes de prueba real**. Ver [estado y pendientes](#estado-honesto-de-golden-gate).
 
 ---
 
@@ -286,7 +286,7 @@ En el login solo aparecen **BC OS** y **Dotfiles**. La sesión por defecto tambi
 
 ## Descargar y probar
 
-Imágenes publicadas: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Desde 0.9.17 cada release incluye solo las **ISO live** (`BC-OS-<versión>-x86_64.iso` y `-ARM64.iso`, para grabar en USB o usar en una máquina virtual) y `SHA256SUMS`; hasta 0.9.16 también había discos `.vdi.zip`. Última: **0.9.19-beta**.
+Imágenes publicadas: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Desde 0.9.17 cada release incluye solo las **ISO live** (`BC-OS-<versión>-x86_64.iso` y `-ARM64.iso`, para grabar en USB o usar en una máquina virtual) y `SHA256SUMS`; hasta 0.9.16 también había discos `.vdi.zip`. Última: **0.9.20-beta**.
 
 **Instalar en un disco (como macOS):** arranca la **ISO live** → se abre **Instalar BC OS** → elige el disco, tu cuenta y la
 región → **Instalar** → **Reiniciar**. También desde Terminal: `sudo bc-install`.
@@ -308,6 +308,7 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 | `0.3.x-alpha` | publicadas | **sway** (mosaico/flotante), menús globales por app, Dock con ventanas reales, Alacritty, animación de minimizar y swayfx experimental. |
 | `0.4.0-beta` / `0.4.1-beta` | publicadas (prerrelease) | Asistente de bienvenida, estilos, widgets, Modos, Flathub, fish, servicio de antivirus; resolución adaptable (`bc-display`), iconos Qogir, portapapeles (Súper+V). |
 | `0.5.0-beta` | prerrelease, en pruebas | Entorno **Dotfiles (bspwm)** elegible en el login. Verificado en QEMU; sin probar en VirtualBox. |
+| `0.9.20-beta` | prerelease (solo ISO) | **BC Rendering Engine**: calidad gráfica automática para todo el sistema (BC Core detecta GPU, VM, batería y temperatura y elige Ultra/Alto/Equilibrado/Eficiente/Mínimo), baja sola si se pierden fotogramas, Ajustes ▸ Pantallas ▸ Calidad gráfica, efectos de Hyprland/swayfx según el nivel, desenfoque guardado en disco y fondo decodificado a tamaño de pantalla. |
 | `0.9.19-beta` | prerelease (solo ISO) | Genio más ligero (capa del tamaño justo), Forzar salida (Ctrl+Alt+Esc), pista de la contraseña en el login, buscar en Notas con resaltado amarillo, controles más fieles (marcas, brillo, selección), selector de emoji, pestañas con «+» en Archivos, barra de franjas en la Tienda, bspwm arreglado (Alacritty, menús de Wi-Fi, sonido, Bluetooth, batería y calendario en la barra; Wi-Fi con nombre, volumen siempre visible y con nivel exacto, calendario con meses; misma resolución que BC OS), controladores al instalar, elegir motor gráfico, iconos nuevos (alias, candado, discos, Bluetooth, carpeta de usuario, Instantáneas), cristal como macOS (muy difuminado, tinte oscuro, filo fino, en tiempo real con Hyprland; cristal ajustable, color de resaltado y estilo de widgets en Ajustes ▸ Aspecto).; al actualizar se aplica todo y pide reiniciar.; de serie modo oscuro y fondo Dunas de noche.; selector de usuarios del login sin solaparse. |
 | `0.9.18-beta` | prerelease (solo ISO) | Sin microcortes en VirtualBox (cortes cada 2 s, cristal que se recalculaba con cualquier ajuste, sin lente ni genio sin GPU), Terminal que maximiza, más fluido en máquinas virtuales (sway ligero, genio 4× más barato), firmware de gráficas en PCs reales, cristal con tinte del fondo, fondos de día y noche, claro/oscuro con fundido, globos y progreso en el Dock, punto de micrófono/cámara, Reducir transparencia y Aumentar contraste, Mission Control crea escritorios. |
 | `0.9.17-beta` | prerelease | Liquid Glass nuevo (liquid-glass-react), esquinas siempre, Dock reordenable, miniaturas de minimizadas, fish con colores, Tienda que instala, NVIDIA/nouveau con sway, resolución nativa con Hyprland, yay, zoom, menús del escritorio, nube «poof», miniatura de captura, barras de desplazamiento y rebote como macOS, Firefox con amarillo y verde en sway, Hyprland con varias pantallas. |
@@ -348,6 +349,35 @@ En VirtualBox hay que **activar EFI**. Instalar: `sudo bc-install` (opciones `--
 - **Tienda sin contraseña** para administradores con sesión activa (polkit, ayudante restringido `bc-paquetes`).
 - **Bloqueo a prueba de fallos**: si el panel se cae con la pantalla bloqueada, swaylock la protege al instante.
 - **Programas x86_64 en ARM** con box64 (se abren solos). **`bc-rendimiento`**: informe de arranque, memoria y CPU.
+
+## BC Rendering Engine: calidad gráfica adaptable
+
+*Adaptive. Native. Efficient.* BC Core (`bc-hardware-service`) detecta:
+
+- la CPU y sus extensiones SIMD;
+- la memoria;
+- la GPU y su controlador, y si hay nodo de render;
+- si es una máquina virtual;
+- la batería, la temperatura y el perfil de energía.
+
+Con eso elige **un nivel para todo el sistema**: **Ultra**, **Alto**, **Equilibrado**, **Eficiente** o **Mínimo**. El panel, las apps, el login y el compositor lo aplican:
+
+- lente y aberración del cristal;
+- radio del desenfoque;
+- sombras;
+- duración de las animaciones;
+- genio;
+- desenfoque y animaciones de Hyprland/swayfx.
+
+Cuándo cambia de nivel:
+
+- Baja un nivel con batería baja o calor, y también si se pierden fotogramas de forma continuada.
+- Vuelve al nivel anterior cuando todo se normaliza, sin oscilar.
+- Sin aceleración 3D nunca pasa de «Eficiente».
+
+Se elige en **Ajustes ▸ Pantallas ▸ Calidad gráfica** («Automática» o un nivel fijo), o con `BC_RENDER_TIER` / `BC_RENDER_BACKEND`. Detalles: [`docs/rendering-engine/ARCHITECTURE.md`](docs/rendering-engine/ARCHITECTURE.md) y medidas en [`BENCHMARKS.md`](docs/rendering-engine/BENCHMARKS.md).
+
+<p align="center"><img src="docs/escritorio/capturas/calidad-grafica.png" width="520" alt="Ajustes ▸ Pantallas ▸ Calidad gráfica"></p>
 
 ## Animaciones fluidas: Hyprland
 
