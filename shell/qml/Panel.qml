@@ -364,6 +364,14 @@ LayerWindow {
     }
     Timer { id: demoQ; interval: 300; onTriggered: spotlightRef.setText("a") }
     property var spotlightRef: null
+    // Resultado de conectarse a una red Wi-Fi (antes no se avisaba: si fallaba, no se sabía por qué)
+    Connections {
+        target: Quick
+        function onWifiResult(ok, ssid) {
+            if (ok) Notifications.push("BC OS", qsTr("Wi-Fi"), qsTr("Conectado a «%1»").arg(ssid), "", 4000)
+            else Notifications.push("BC OS", qsTr("Wi-Fi"), qsTr("No se pudo conectar a «%1». Revisa la contraseña.").arg(ssid), "", 8000)
+        }
+    }
     property var ccRef: null
     Timer { id: welcomeTimer; interval: 700; onTriggered: if (!UiState.locked) UiState.welcomeOpen = true }
 
@@ -541,7 +549,7 @@ LayerWindow {
     LayerWindow {
         layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-popups"
         margins: [UiState.topInset, 0, UiState.win ? UiState.taskH : 0, 0]
-        keyboard: UiState.launcherOpen || UiState.clipboardOpen || UiState.startOpen || UiState.spotlightOpen || UiState.emojiOpen || UiState.forceQuitOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
+        keyboard: (UiState.centerOpen && UiState.centerPanel === "wifi") || UiState.launcherOpen || UiState.clipboardOpen || UiState.startOpen || UiState.spotlightOpen || UiState.emojiOpen || UiState.forceQuitOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
         width: UiState.sw; height: UiState.sh
         // Al cerrar, la capa sigue visible un momento para que menús, Spotlight y paneles se desvanezcan
         shown: UiState.popupOpen || popHold.running

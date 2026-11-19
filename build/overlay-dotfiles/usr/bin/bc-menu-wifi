@@ -27,10 +27,17 @@ case $pick in
   *)
     ssid=$(printf '%s' "$pick" | sed 's/^[^ ]*  //; s/^󰌾 //; s/^  //; s/  ✓$//')
     [ -n "$ssid" ] || exit 0
-    if nmcli -t -f NAME connection show | grep -qx "$ssid"; then nmcli connection up id "$ssid" >/dev/null 2>&1
-    else
+    ok=1
+    # Red guardada: se usa; si falla (contraseña cambiada o perfil roto de un intento fallido), se borra y se pide
+    if nmcli -t -f NAME connection show | grep -qx "$ssid"; then
+      nmcli connection up id "$ssid" >/dev/null 2>&1 && ok=0 || nmcli connection delete id "$ssid" >/dev/null 2>&1
+    fi
+    if [ $ok -ne 0 ]; then
       pass=$(printf '' | rofi -dmenu -password -p "Contraseña" -mesg "Red «$ssid»" -theme "$M") || exit 0
       if [ -n "$pass" ]; then nmcli dev wifi connect "$ssid" password "$pass" >/dev/null 2>&1; else nmcli dev wifi connect "$ssid" >/dev/null 2>&1; fi
+      ok=$?
+      # Si falla, no dejar un perfil roto que bloquee el siguiente intento
+      [ $ok -ne 0 ] && nmcli connection delete id "$ssid" >/dev/null 2>&1
     fi
-    if [ $? -eq 0 ]; then notify-send "Wi-Fi" "Conectado a $ssid"; else notify-send -u critical "Wi-Fi" "No se pudo conectar a $ssid"; fi ;;
+    if [ $ok -eq 0 ]; then notify-send "Wi-Fi" "Conectado a $ssid"; else notify-send -u critical "Wi-Fi" "No se pudo conectar a $ssid"; fi ;;
 esac

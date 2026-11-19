@@ -305,13 +305,25 @@ Item {
             clip: true
             Column {
                 id: wifiCol; x: px(6); y: px(6); width: parent.width - px(12)
+                // Contraseña ARRIBA de la lista: al final quedaba fuera del panel (alto máximo) con muchas redes y no
+                // se podía escribir. Esc la cierra; Intro conecta.
+                Item {
+                    id: pw; visible: false; property string ssid
+                    width: wifiCol.width; height: px(40)
+                    Rectangle { anchors.fill: parent; anchors.margins: px(4); radius: px(8); color: Theme.controlBg; border.width: 1; border.color: Theme.selection
+                        TextInput { id: pwIn; anchors.fill: parent; anchors.leftMargin: px(10); verticalAlignment: TextInput.AlignVCenter; echoMode: TextInput.Password
+                                    color: Theme.label; font.family: Theme.font; font.pixelSize: px(13)
+                                    onAccepted: { Quick.connectWifi(pw.ssid, text); text = ""; pw.visible = false }
+                                    Keys.onEscapePressed: { text = ""; pw.visible = false }
+                                    Text { visible: !parent.text; anchors.verticalCenter: parent.verticalCenter; text: qsTr("Contraseña de «%1»").arg(pw.ssid); color: Theme.labelTertiary; font: parent.font } } }
+                }
                 Text { visible: Quick.networks.length === 0; padding: px(10); color: Theme.labelSecondary; font.family: Theme.font; font.pixelSize: px(12)
                        text: Quick.busy ? qsTr("Buscando redes…") : qsTr("No se encontraron redes") }
                 Repeater {
-                    model: Quick.networks.slice(0, 9)
+                    model: Quick.networks.slice(0, pw.visible ? 7 : 9)
                     delegate: Rectangle {
                         required property var modelData
-                        width: wifiCol.width; height: px(34); radius: px(8); color: wma.containsMouse ? Theme.fillHover : "transparent"
+                        width: wifiCol.width; height: px(34); radius: px(8); color: pw.visible && pw.ssid === modelData.ssid ? Theme.fillHover : wma.containsMouse ? Theme.fillHover : "transparent"
                         Icon { x: px(8); anchors.verticalCenter: parent.verticalCenter; size: px(15); color: modelData.active ? Theme.selection : Theme.label
                                name: Icons.networkIcon(true, false, SystemStatus.signalBars(modelData.signal)) }
                         Text { x: px(32); anchors.verticalCenter: parent.verticalCenter; text: modelData.ssid; color: Theme.label; font.family: Theme.font
@@ -321,15 +333,6 @@ Item {
                         MouseArea { id: wma; anchors.fill: parent; hoverEnabled: true
                                     onClicked: { if (modelData.active) return; if (modelData.secure) { pw.ssid = modelData.ssid; pw.visible = true; pwIn.forceActiveFocus() } else Quick.connectWifi(modelData.ssid) } }
                     }
-                }
-                Item {
-                    id: pw; visible: false; property string ssid
-                    width: wifiCol.width; height: px(40)
-                    Rectangle { anchors.fill: parent; anchors.margins: px(4); radius: px(8); color: Theme.controlBg; border.width: 1; border.color: Theme.selection
-                        TextInput { id: pwIn; anchors.fill: parent; anchors.leftMargin: px(10); verticalAlignment: TextInput.AlignVCenter; echoMode: TextInput.Password
-                                    color: Theme.label; font.family: Theme.font; font.pixelSize: px(13)
-                                    onAccepted: { Quick.connectWifi(pw.ssid, text); text = ""; pw.visible = false }
-                                    Text { visible: !parent.text; anchors.verticalCenter: parent.verticalCenter; text: qsTr("Contraseña de «%1»").arg(pw.ssid); color: Theme.labelTertiary; font: parent.font } } }
                 }
             }
         }

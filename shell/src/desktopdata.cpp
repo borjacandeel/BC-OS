@@ -233,9 +233,19 @@ void QuickTools::scanWifi() {
     });
 }
 void QuickTools::connectWifi(const QString &ssid, const QString &pw) {
-    QStringList a{"dev", "wifi", "connect", ssid};
-    if (!pw.isEmpty()) a << "password" << pw;
-    run("nmcli", a, [this, ssid](int code, const QString &) { emit wifiResult(code == 0, ssid); scanWifi(); });
+    // Un perfil guardado con una contraseña mala (intento anterior fallido) hace fallar «dev wifi connect» una y otra
+    // vez: con contraseña nueva se borra antes; si el intento falla, también, para que el siguiente empiece limpio.
+    auto attempt = [this, ssid, pw] {
+        QStringList a{"dev", "wifi", "connect", ssid};
+        if (!pw.isEmpty()) a << "password" << pw;
+        run("nmcli", a, [this, ssid](int code, const QString &) {
+            if (code != 0) QProcess::startDetached("nmcli", {"connection", "delete", "id", ssid});
+            emit wifiResult(code == 0, ssid);
+            scanWifi();
+        });
+    };
+    if (pw.isEmpty()) attempt();
+    else run("nmcli", {"connection", "delete", "id", ssid}, [attempt](int, const QString &) { attempt(); });
 }
 QVariantList QuickTools::parseBluetooth(const QString &devs, const QString &conn) {
     QVariantList out;
