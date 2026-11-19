@@ -37,7 +37,8 @@ hl.config({
     },
     decoration = {
         rounding = 20,               -- radio de ventana Golden Gate
-        rounding_power = 4,          -- esquina continua (squircle) como en macOS
+        rounding_power = 2,          -- arco circular: el MISMO que dibujan las apps BC y la Terminal (con 4, squircle,
+                                     -- el recorte no coincidía con su filo y las esquinas se veían cortadas y con halo)
         active_opacity = 1.0,
         inactive_opacity = 1.0,
         dim_inactive = false,
