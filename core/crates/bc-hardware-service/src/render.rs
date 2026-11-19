@@ -317,8 +317,9 @@ pub fn nivel_base(p: &Perfil) -> Nivel {
                     Nivel::Alto
                 }
             }
-            // nouveau sin reloj de la GPU va al mínimo de frecuencias: mejor sin las capas más caras
-            TipoGpu::Dedicada if g.controlador == "nouveau" => Nivel::Equilibrado,
+            // nouveau no sube el reloj de la GPU (Kepler y posteriores se quedan en el mínimo: una GT 710 va más
+            // lenta que muchas integradas). Probado en equipo físico: con lente, genio y sombras dobles iba a tirones
+            TipoGpu::Dedicada if g.controlador == "nouveau" => Nivel::Eficiente,
             TipoGpu::Dedicada => {
                 if p.ram_mb < 6000 {
                     Nivel::Alto
@@ -376,7 +377,10 @@ pub fn nivel(p: &Perfil, r: Rebaja, forzado: Option<Nivel>) -> Nivel {
     let n = base.bajar(r.bateria as u8 + r.calor + r.fotogramas as u8);
     match forzado {
         // El usuario puede pedir menos que el equipo siempre; más, solo si hay GPU de verdad
-        Some(f) if f <= base || (p.nodo_render && p.gpu_principal().is_some_and(|g| matches!(g.tipo, TipoGpu::Integrada | TipoGpu::Dedicada))) => f.min(Nivel::Ultra),
+        // (con nouveau, como mucho «Equilibrado»: más arriba la GPU sin reloj no da los fotogramas)
+        Some(f) if f <= base || (p.nodo_render && p.gpu_principal().is_some_and(|g| matches!(g.tipo, TipoGpu::Integrada | TipoGpu::Dedicada))) => {
+            if p.gpu_principal().is_some_and(|g| g.controlador == "nouveau") { f.min(Nivel::Equilibrado) } else { f }
+        }
         _ => n,
     }
 }
@@ -632,10 +636,14 @@ mod tests {
     }
 
     #[test]
-    fn nvidia_nouveau_equilibrado() {
+    fn nvidia_nouveau_eficiente_y_techo() {
         let m = Maquina::nueva("nouveau");
         m.cpu(4, X86).ram(8000).render().gpu("card0", "0x10de", "nouveau", true);
-        assert_eq!(m.eval().0, Nivel::Equilibrado);
+        assert_eq!(m.eval().0, Nivel::Eficiente);
+        let p = sondear(&m.0);
+        // Forzar «Ultra» en Ajustes con nouveau se queda en «Equilibrado»
+        assert_eq!(nivel(&p, Rebaja::default(), Some(Nivel::Ultra)), Nivel::Equilibrado);
+        assert_eq!(nivel(&p, Rebaja::default(), Some(Nivel::Minimo)), Nivel::Minimo);
     }
 
     #[test]

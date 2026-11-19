@@ -66,7 +66,7 @@
 **Nivel del hardware** (`nivel_base`):
 
 - GPU dedicada: Ultra (Alto con menos de 6 GB).
-- nouveau: Equilibrado.
+- nouveau: Eficiente (no sube el reloj de la GPU; forzado, como mucho Equilibrado).
 - Integrada: Alto (Equilibrado en Raspberry Pi o con menos de 6 GB).
 - Virtual o por software: Eficiente (Mínimo con 2 núcleos o menos o con menos de 3,5 GB).
 - Sin nodo de render: igual que por software.
