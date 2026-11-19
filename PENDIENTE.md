@@ -8,7 +8,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - Skill `0-palabras` siempre.
 - Todo se sube siempre a `main` (sin force-push).
 - Cada cambio (nuevo o corregido) se refleja SIEMPRE en: README.md, build/RELEASE-NOTES.md (el workflow «Notas de versión» actualiza solo la página del último release) y la web https://borjacandeel.github.io/bcos/ (repo borjacandeel/borjacandeel.github.io, `bcos/index.html`; permiso del creador 2026-11-17).
-- Imágenes (image.yml) solo cuando el creador lo pida. 0.9.19-beta publicada (ISO) 2026-11-19.
+- Imágenes (image.yml) solo cuando el creador lo pida. 0.9.19-beta publicada (ISO) 2026-11-19. 0.9.20-beta (BC Rendering Engine, rama feature/bc-rendering-engine) en CI 2026-11-19.
 - Releases (creador 2026-11-17): SOLO ISO (ARM64 y x86_64). build/RELEASE-NOTES.md = SOLO las novedades de esa versión, nada más (al empezar la siguiente, se vacía y se empieza de cero).
 - REGLA DE ORO (creador 2026-11-18): si se está generando una imagen y hay que lanzar otra, cancelar la anterior y lanzar la nueva con todo.
 - REGLA DE ORO (creador 2026-11-18): CADA cambio se documenta en README.md, build/RELEASE-NOTES.md y la web (bcos/index.html) en el mismo momento. Con capturas NUEVAS de lo nuevo (docs/escritorio/capturas y assets/projects/bcos de la web), sin dejar las viejas.
