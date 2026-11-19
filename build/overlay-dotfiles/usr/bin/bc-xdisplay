@@ -1,14 +1,46 @@
 #!/bin/sh
-# Resolución en X: aplica el modo preferido del monitor (o de la ventana de la máquina virtual) cuando cambia. Uso: bc-xdisplay auto|watch
-auto() {
-  xrandr 2>/dev/null | awk '
-    /^[^ ]+ connected/ { out=$1; next }
-    out && /^ +[0-9]+x[0-9]+/ { if (!(out in pref)) { pref[out]=$1 } if ($0 ~ /\*/) cur[out]=$1 }
-    END { for (o in pref) if (cur[o] != pref[o]) print o, pref[o] }' |
-  while read -r o m; do xrandr --output "$o" --mode "$m" 2>/dev/null; done
+# Resolución en X (sesión bspwm): la MISMA que en BC OS (Ajustes ▸ Pantallas → ~/.config/bc/resolucion, frecuencia y
+# escala). Sin resolución elegida, la preferida del monitor o de la ventana de la máquina virtual (y la sigue si cambia).
+# Uso: bc-xdisplay auto|watch
+CFG="${XDG_CONFIG_HOME:-$HOME/.config}/bc"
+want() { w="$(cat "$CFG/resolucion" 2>/dev/null)"; case "$w" in [0-9]*x[0-9]*) echo "$w" ;; esac; }
+hz() { h="$(cat "$CFG/frecuencia" 2>/dev/null)"; case "$h" in [0-9][0-9]|[0-9][0-9][0-9]) echo "$h" ;; esac; }
+# Pantalla principal: la elegida en ~/.config/bc/pantalla-principal, si no la digital (HDMI/DP/eDP) antes que VGA/DVI
+primary() {
+  p="$(cat "$CFG/pantalla-principal" 2>/dev/null)"
+  outs="$(xrandr 2>/dev/null | awk '/ connected/ {print $1}')"
+  [ -n "$p" ] && echo "$outs" | grep -qx "$p" && { echo "$p"; return; }
+  echo "$outs" | grep -viE '^(VGA|DVI-A)' | head -n1 | grep . || echo "$outs" | head -n1
 }
+apply() {
+  P="$(primary)"; [ -n "$P" ] || return
+  W="$(want)"; H="$(hz)"
+  x=0
+  for o in "$P" $(xrandr 2>/dev/null | awk '/ connected/ {print $1}' | grep -vx "$P"); do
+    pref="$(xrandr 2>/dev/null | awk -v o="$o" '$1==o {f=1; next} f && /^ +[0-9]+x[0-9]+/ {print $1; exit} f && /^[^ ]/ {exit}')"
+    mode="$pref"; [ "$o" = "$P" ] && [ -n "$W" ] && mode="$W"
+    [ -n "$mode" ] || continue
+    # Modo que el monitor (o la pantalla virtual) no anuncia: se crea con cvt, como «--custom» en sway
+    if ! xrandr 2>/dev/null | awk -v o="$o" '$1==o {f=1; next} f && /^[^ ]/ {exit} f {print $1}' | grep -qx "$mode"; then
+      mw="${mode%x*}"; mh="${mode#*x}"
+      ml="$(cvt "$mw" "$mh" "${H:-60}" 2>/dev/null | sed -n 's/^Modeline //p')"
+      if [ -n "$ml" ]; then nm="$(echo "$ml" | awk '{print $1}' | tr -d '"')"
+        eval "xrandr --newmode $ml" 2>/dev/null; xrandr --addmode "$o" "$nm" 2>/dev/null; mode="$nm"; fi
+    fi
+    if [ -n "$H" ] && [ "$o" = "$P" ]; then xrandr --output "$o" --mode "$mode" --rate "$H" --pos "${x}x0" 2>/dev/null || xrandr --output "$o" --mode "$mode" --pos "${x}x0" 2>/dev/null
+    else xrandr --output "$o" --mode "$mode" --pos "${x}x0" 2>/dev/null; fi
+    [ "$o" = "$P" ] && xrandr --output "$o" --primary 2>/dev/null
+    x=$((x + ${mode%%x*}))
+  done
+  # Escala de la interfaz de BC OS → ppp de X (1 = 96, 1,25 = 120, 1,5 = 144, 2 = 192)
+  esc="$(cat "$CFG/escala" 2>/dev/null)"; case "$esc" in 1|1.25|1.5|1.75|2) ;; *) esc=1 ;; esac
+  dpi=$(awk -v e="$esc" 'BEGIN{printf "%d", 96*e}')
+  echo "Xft.dpi: $dpi" | xrdb -merge 2>/dev/null
+}
+sig() { xrandr 2>/dev/null | awk '/ connected/ {o=$1; getline; print o, $1}' | tr '\n' ' '; cat "$CFG/resolucion" "$CFG/frecuencia" "$CFG/escala" 2>/dev/null | tr '\n' ' '; }
 case "${1:-auto}" in
-  auto) auto ;;
-  watch) while :; do auto; sleep 2; done ;;
+  auto) apply ;;
+  watch) apply; last="$(sig)"
+         while sleep 3; do now="$(sig)"; [ "$now" = "$last" ] && continue; last="$now"; apply; last="$(sig)"; done ;;
   *) echo "uso: bc-xdisplay auto|watch" >&2; exit 2 ;;
 esac

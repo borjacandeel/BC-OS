@@ -8,16 +8,14 @@ bar=$(awk -v p="${pct:-0}" 'BEGIN{n=int(p/10); s=""; for(i=0;i<10;i++) s=s (i<n?
 if [ $muted = 1 ]; then st="󰖁  Silenciado"; tg="󰕾  Activar sonido"; else st="󰕾  ${pct}%  $bar"; tg="󰖁  Silenciar"; fi
 outs=$(wpctl status 2>/dev/null | awk '/Audio/{a=1} a&&/Sinks:/{s=1;next} s&&/Sources:|Filters:|Streams:/{exit} s&&/[0-9]+\./{d=($0~/\*/)?"󰓃 ✓ ":"󰓃   "; sub(/.*[0-9]+\. /,""); sub(/ \[vol:.*/,""); id=$0; print d $0}')
 ids=$(wpctl status 2>/dev/null | awk '/Audio/{a=1} a&&/Sinks:/{s=1;next} s&&/Sources:|Filters:|Streams:/{exit} s&&/[0-9]+\./{match($0,/[0-9]+\./); print substr($0,RSTART,RLENGTH-1)}')
-pick=$(printf '%s\n󰝝  Subir 10 %%\n󰝞  Bajar 10 %%\n󰕿  25 %%\n󰖀  50 %%\n󰕾  75 %%\n󰕾  100 %%\n%s\n󰓃  Mezclador de audio\n' "$tg" "$outs" |
-  rofi -dmenu -i -no-custom -p "Sonido" -mesg "$st" -theme "$M") || exit 0
+# Niveles de 10 en 10 con una barra cada uno (elige el volumen exacto); el actual marcado
+levels=$(awk -v p="${pct:-0}" 'BEGIN{for(l=100;l>=0;l-=10){n=l/10; s=""; for(i=0;i<10;i++) s=s (i<n?"━":"┄"); m=(p>=l-4&&p<=l+5)?" ✓":""; printf "%s  %3d %%  %s%s\n", (l>=66?"󰕾":(l>=33?"󰖀":(l>0?"󰕿":"󰝟"))), l, s, m}}')
+[ -n "$v" ] || st="󰖁  Sin salida de audio"
+pick=$(printf '%s\n%s\n%s\n󰓃  Mezclador de audio\n' "$tg" "$levels" "$outs" | sed '/^$/d' |
+  rofi -dmenu -i -no-custom -p "Sonido" -theme-str "listview {lines: 14;}" -mesg "$st" -theme "$M") || exit 0
 case $pick in
   *Silenciar|*"Activar sonido") wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle ;;
-  *"Subir 10"*) wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 10%+ ;;
-  *"Bajar 10"*) wpctl set-volume @DEFAULT_AUDIO_SINK@ 10%- ;;
-  *"25 %") wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.25 ;;
-  *"50 %") wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.50 ;;
-  *"75 %") wpctl set-volume @DEFAULT_AUDIO_SINK@ 0.75 ;;
-  *"100 %") wpctl set-volume @DEFAULT_AUDIO_SINK@ 1.0 ;;
+  *" %  "*) l=$(printf '%s' "$pick" | awk '{print $2}'); wpctl set-mute @DEFAULT_AUDIO_SINK@ 0; wpctl set-volume @DEFAULT_AUDIO_SINK@ "$(awk -v l="$l" 'BEGIN{printf "%.2f", l/100}')" ;;
   *Mezclador*) exec pavucontrol ;;
   "󰓃"*)
     n=$(printf '%s\n' "$outs" | grep -nxF "$pick" | cut -d: -f1)

@@ -25,4 +25,6 @@ fi
 xsetroot -cursor_name left_ptr 2>/dev/null
 xset s 600 600 2>/dev/null          # salvapantallas a los 10 min; xss-lock lo bloquea
 wmname LG3D 2>/dev/null
+# Misma resolución, frecuencia y escala que en BC OS (Ajustes ▸ Pantallas) antes de arrancar la barra
+command -v bc-xdisplay >/dev/null 2>&1 && bc-xdisplay auto
 exec bspwm

@@ -18,3 +18,5 @@
 - **Ajustes ▸ Aspecto** como macOS: deslizador de Liquid Glass de casi transparente a opaco (de serie como los widgets de macOS), color de resaltado del texto y estilo de los widgets (por omisión, oscuro, traslúcido o tintado con el color de énfasis).
 - **Cristal sin pixelado**: el fondo difuminado de barras laterales, paneles y widgets se amplía de 2 en 2 (antes se veía a bloques en Ajustes y demás apps).
 - **Polybar**: el volumen ya se ve siempre (con PipeWire/wpctl): icono por nivel, porcentaje, clic para el menú, rueda para subir y bajar.
+- **bspwm usa la misma resolución, frecuencia y escala que BC OS** (Ajustes ▸ Pantallas), también los modos que el monitor no anuncia; la pantalla principal va primero.
+- **Volumen de polybar**: elige el nivel exacto (de 10 en 10, con barra), silencio, salida de audio y mezclador.
