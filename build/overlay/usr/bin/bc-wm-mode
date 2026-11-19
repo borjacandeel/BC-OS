@@ -29,11 +29,11 @@ OUT="${XDG_RUNTIME_DIR:?sin XDG_RUNTIME_DIR}/bc-sway.conf"
   elif [ -n "$BC_FX" ] && [ -f /etc/bc/sway/efectos.conf ]; then cat /etc/bc/sway/efectos.conf; fi
   # Equipo físico con GPU: desenfoque real detrás de las ventanas (Liquid Glass de verdad)
   [ -n "$BC_FX" ] && [ "$BC_FX" != ligero ] && [ "${BC_EQUIPO:-}" = fisico ] && printf 'blur enable\nblur_passes 3\nblur_radius 6\n'
-  WP=/usr/share/bc/wallpapers/ondas.jpg
+  WP=/usr/share/bc/wallpapers/dunas-noche.jpg
   [ -f "$D/wallpaper" ] && w=$(head -n1 "$D/wallpaper") && [ -f "$w" ] && WP=$w
-  case $WP in *\"*|*\\*|*\$*|*\;*|*,*|*\'*|*\`*) WP=/usr/share/bc/wallpapers/ondas.jpg ;; esac
+  case $WP in *\"*|*\\*|*\$*|*\;*|*,*|*\'*|*\`*) WP=/usr/share/bc/wallpapers/dunas-noche.jpg ;; esac
   case $WP in *"
-"*) WP=/usr/share/bc/wallpapers/ondas.jpg ;; esac
+"*) WP=/usr/share/bc/wallpapers/dunas-noche.jpg ;; esac
   printf 'output * bg "%s" fill #04111F\n' "$WP"
   cat "$D/sway-mode.conf"
   [ "$(cat "$D/appearance" 2>/dev/null)" = light ] && cat /etc/bc/sway/claro.conf 2>/dev/null

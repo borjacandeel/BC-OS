@@ -321,7 +321,7 @@ LayerWindow {
             else if (key === "mode") UiState.mode = value === "-" ? "" : value
             else if (key === "accent") AppConfig.setAccent(value)
             else if (key === "wallpaper") {
-                const p = value === "-" ? "/usr/share/bc/wallpapers/ondas.jpg" : value
+                const p = value === "-" ? "/usr/share/bc/wallpapers/dunas-noche.jpg" : value
                 if (/^[^"\\$;,\n'`]+$/.test(p)) Sway.command("output * bg \"" + p + "\" fill #04111F")
             }
         }

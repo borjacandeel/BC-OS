@@ -85,6 +85,7 @@ int main(int argc, char *argv[]) {
         QImage requestImage(const QString &id, QSize *size, const QSize &req) override {
             QString path = QUrl::fromPercentEncoding(id.toUtf8());
             QImage src(path);
+            if (src.isNull()) src = QImage("/usr/share/bc/wallpapers/dunas-noche.jpg");   // fondo de serie de BC OS
             if (src.isNull()) src = QImage(":/BCShell/assets/wallpaper-default.png");
             const QSize out = req.isValid() ? req : QSize(1920, 1080);
             src = src.scaled(out, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);

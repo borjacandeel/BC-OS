@@ -15,7 +15,7 @@ Item {
     readonly property string wallDir: "/usr/share/bc/wallpapers/"
     readonly property var wallpapers: [
         { f: "bosque-niebla.jpg", n: qsTr("Bosque en la niebla") }, { f: "pinar-alba.jpg", n: qsTr("Pinar al alba") }, { f: "lago-claro.jpg", n: qsTr("Lago") },
-        { f: "nieve.jpg", n: qsTr("Nieve") }, { f: "salvia.jpg", n: qsTr("Salvia") }, { f: "ondas.jpg", n: qsTr("Ondas") },
+        { f: "nieve.jpg", n: qsTr("Nieve") }, { f: "salvia.jpg", n: qsTr("Salvia") }, { f: "dunas-noche.jpg", n: qsTr("Dunas de noche") },
         { f: "bosque-noche.jpg", n: qsTr("Bosque de noche") }, { f: "aurora-boreal.jpg", n: qsTr("Aurora boreal") }, { f: "lago-noche.jpg", n: qsTr("Lago de noche") },
         { f: "bruma-verde.jpg", n: qsTr("Bruma verde") }, { f: "luna.jpg", n: qsTr("Luna") }, { f: "eclipse.jpg", n: qsTr("Eclipse") }]
     // Solo los colores base de BC OS (los del semáforo y los de las tarjetas del Monitor)
@@ -269,7 +269,7 @@ Item {
                     model: root.wallpapers
                     delegate: Column {
                         required property var modelData
-                        readonly property bool sel: Settings.wallpaper === root.wallDir + modelData.f || (Settings.wallpaper === "" && modelData.f === "ondas.jpg")
+                        readonly property bool sel: Settings.wallpaper === root.wallDir + modelData.f || (Settings.wallpaper === "" && modelData.f === "dunas-noche.jpg")
                         spacing: 5
                         Rectangle {
                             width: 132; height: 80; radius: 10; color: "transparent"

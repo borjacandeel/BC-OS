@@ -509,9 +509,9 @@ AppWindow {
                         required property string modelData
                         readonly property string path: "/usr/share/bc/wallpapers/" + modelData
                         width: wallGrid.cellW; height: Math.round(width * 9 / 16); radius: 10; clip: true; color: Theme.tileFill
-                        border.width: (Settings.wallpaper === path || (Settings.wallpaper === "" && modelData === "ondas.jpg")) ? 3 : 0; border.color: Theme.accent
+                        border.width: (Settings.wallpaper === path || (Settings.wallpaper === "" && modelData === "dunas-noche.jpg")) ? 3 : 0; border.color: Theme.accent
                         Image { anchors.fill: parent; anchors.margins: parent.border.width; source: win.page === 8 ? "file://" + parent.path : ""; sourceSize: Qt.size(340, 192); fillMode: Image.PreserveAspectCrop; asynchronous: true }
-                        MouseArea { anchors.fill: parent; onClicked: Settings.wallpaper = (modelData === "ondas.jpg" ? "" : parent.path) }
+                        MouseArea { anchors.fill: parent; onClicked: Settings.wallpaper = (modelData === "dunas-noche.jpg" ? "" : parent.path) }
                     }
                 }
             }

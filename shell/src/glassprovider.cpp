@@ -17,7 +17,7 @@ QString GlassProvider::wallpaperPath() {
         const QString p = QString::fromUtf8(f.readLine()).trimmed();
         if (!p.isEmpty() && QFileInfo(p).isFile()) return p;
     }
-    for (const QString &p : {QStringLiteral("/usr/share/bc/wallpapers/ondas.jpg")})
+    for (const QString &p : {QStringLiteral("/usr/share/bc/wallpapers/dunas-noche.jpg")})
         if (QFileInfo(p).isFile()) return p;
     return QStringLiteral(":/BCShell/assets/wallpaper-default.png");
 }

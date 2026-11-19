@@ -194,7 +194,7 @@ b("ALT + Print", sh("bc-screenshot ventana"))
 
 ---------------- Arranque de la sesión ----------------
 hl.on("hyprland.start", function()
-    local fondo = leer(home .. "/.config/bc/wallpaper") or "/usr/share/bc/wallpapers/ondas.jpg"
+    local fondo = leer(home .. "/.config/bc/wallpaper") or "/usr/share/bc/wallpapers/dunas-noche.jpg"
     hl.exec_cmd("swaybg -m fill -i '" .. fondo:gsub("'", "") .. "'")
     hl.exec_cmd("bc-display watch")
     hl.exec_cmd("sh -c 'command -v VBoxClient >/dev/null && systemd-detect-virt -q --vm && VBoxClient --clipboard'")
