@@ -101,7 +101,7 @@ P
 A="${BC_ARCH:-aarch64}"
 mk bc-shell "$A" "BC Shell: escritorio Golden Gate y apps de BC OS" "'qt6-declarative' 'layer-shell-qt' 'qtermwidget'"
 mk bc-core "$A" "BC Core: servicios del sistema de BC OS" ""
-mk bc-escritorio any "Sesión, configuración, fondos y sonidos de BC OS" "'bc-shell' 'sway'"
+mk bc-escritorio any "Sesión, configuración, fondos y sonidos de BC OS" "'bc-shell' 'sway' 'jq'"
 mk yay "$A" "yay: asistente del AUR (binario oficial de Jguer/yay, GPL-3.0)" "'pacman' 'git' 'base-devel'"
 mk bc-os any "BC OS: metapaquete del sistema completo" "'bc-shell' 'bc-core' 'bc-escritorio' 'yay' $BASE"
 sh "id builder >/dev/null 2>&1 || useradd -m builder; chown -R builder /tmp/bcrepo/pkg"
