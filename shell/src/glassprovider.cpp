@@ -2,12 +2,17 @@
 #include <QPainterPath>
 #include <cmath>
 #include "glassprovider.h"
+#include "renderengine.h"
 #include <cmath>
 #include <QFile>
 #include <QFileInfo>
 #include <QPainter>
 #include <QPainterPath>
 #include <QStandardPaths>
+#include <QCryptographicHash>
+#include <QDir>
+#include <QImageReader>
+#include <QtMath>
 
 GlassProvider::GlassProvider() : QQuickImageProvider(QQuickImageProvider::Image) {}
 
@@ -22,20 +27,63 @@ QString GlassProvider::wallpaperPath() {
     return QStringLiteral(":/BCShell/assets/wallpaper-default.png");
 }
 
-QImage GlassProvider::blurred(const QImage &src, int r) {
+// Reducción a mitades sucesivas (cada paso promedia 2×2: elimina el tramado y el ruido): el resultado pequeño es todo
+// lo que hace falta guardar del desenfoque (unos pocos KB), la ampliación suave se rehace al cargar.
+QImage GlassProvider::blurSmall(const QImage &src, int r) {
     if (src.isNull()) return src;
-    // Reducir mucho y volver a ampliar con filtrado suave dos veces ≈ desenfoque gaussiano, en milisegundos
-    // Reducción a mitades sucesivas (cada paso promedia 2×2: elimina el tramado y el ruido), luego ampliación
-    // suave en dos pasos: equivale a un desenfoque gaussiano amplio y cuesta milisegundos.
-    const QSize full = src.size();
-    const int target = qMax(8, full.height() / qMax(2, r / 2));
+    const int target = qMax(8, src.height() / qMax(2, r / 2));
     QImage small = src.convertToFormat(QImage::Format_RGB32);
     while (small.height() / 2 >= target) small = small.scaled(small.width() / 2, small.height() / 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    // Ampliación de 2 en 2 (cada paso bilineal suaviza el anterior): sin los bloques/pixelado que dejaba ampliar ×8
-    // de golpe en las barras laterales y paneles
+    return small;
+}
+
+// Ampliación de 2 en 2 (cada paso bilineal suaviza el anterior): sin los bloques que dejaba ampliar ×8 de golpe
+QImage GlassProvider::blurUp(const QImage &small, const QSize &full) {
+    if (small.isNull()) return small;
     QImage up = small;
     while (up.width() * 2 < full.width()) up = up.scaled(up.width() * 2, up.height() * 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
     return up.scaled(full, Qt::IgnoreAspectRatio, Qt::SmoothTransformation).convertToFormat(QImage::Format_ARGB32_Premultiplied);
+}
+
+QImage GlassProvider::blurred(const QImage &src, int r) { return blurUp(blurSmall(src, r), src.size()); }
+
+// Decodifica el fondo YA al tamaño de la pantalla (QImageReader escala al decodificar: un JPEG de 6K no se carga
+// entero) y lo recorta como sway «fill».
+QImage GlassProvider::loadCover(const QString &path, int sw, int sh) {
+    QImageReader rd(path);
+    rd.setAutoTransform(true);
+    const QSize s = rd.size();
+    if (s.isValid() && s.width() > 0 && s.height() > 0) {
+        const qreal k = qMax(qreal(sw) / s.width(), qreal(sh) / s.height());
+        if (k < 1) rd.setScaledSize(QSize(qCeil(s.width() * k), qCeil(s.height() * k)));
+    }
+    QImage src = rd.read();
+    if (src.isNull()) return src;
+    src = src.scaled(sw, sh, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+    return src.copy((src.width() - sw) / 2, (src.height() - sh) / 2, sw, sh);
+}
+
+// Caché en disco del desenfoque (~/.cache/bc/glass/): la clave incluye ruta, fecha del fondo, pantalla y radio
+QString GlassProvider::diskCachePath(const QString &key) {
+    const QString dir = QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + QStringLiteral("/bc/glass");
+    return dir + QLatin1Char('/') + QString::fromLatin1(QCryptographicHash::hash(key.toUtf8(), QCryptographicHash::Sha1).toHex()) + QStringLiteral(".png");
+}
+
+QImage GlassProvider::blurredBackground(const QString &path, int sw, int sh, int radius) {
+    const QString key = path + QLatin1Char('|') + QString::number(QFileInfo(path).lastModified().toSecsSinceEpoch())
+                        + QStringLiteral("|%1x%2|r%3").arg(sw).arg(sh).arg(radius);
+    const QString disk = diskCachePath(key);
+    QImage small(disk);
+    if (small.isNull()) {
+        QImage src = loadCover(path, sw, sh);
+        if (src.isNull()) src = loadCover(QStringLiteral(":/BCShell/assets/wallpaper-default.png"), sw, sh);
+        small = blurSmall(src, radius);
+        if (!small.isNull() && QDir().mkpath(QFileInfo(disk).absolutePath())) {
+            const QString tmp = disk + QStringLiteral(".tmp");
+            if (small.save(tmp, "PNG")) { QFile::remove(disk); QFile::rename(tmp, disk); }
+        }
+    }
+    return blurUp(small, QSize(sw, sh));
 }
 
 QImage GlassProvider::requestImage(const QString &id, QSize *size, const QSize &) {
@@ -44,18 +92,15 @@ QImage GlassProvider::requestImage(const QString &id, QSize *size, const QSize &
     const int x = p[0].toInt(), y = p[1].toInt(), w = qMax(1, p[2].toInt()), h = qMax(1, p[3].toInt());
     const int r = p[4].toInt(), sw = qMax(1, p[5].toInt()), sh = qMax(1, p[6].toInt());
     const QString path = wallpaperPath();
-    const QString key = path + QString::number(QFileInfo(path).lastModified().toSecsSinceEpoch()) + QString("@%1x%2").arg(sw).arg(sh);
+    // Radio del desenfoque según el nivel de BC Adaptive Renderer (px a 1080p: ultra 32 … mínimo 18)
+    const int radius = qMax(10, RenderEngine::blurPxAtomic() * sh / 1080);
+    const QString key = path + QString::number(QFileInfo(path).lastModified().toSecsSinceEpoch()) + QString("@%1x%2r%3").arg(sw).arg(sh).arg(radius);
     QImage blur;
     {
         QMutexLocker l(&m_lock);
         if (!m_blur.contains(key)) {
             if (m_blur.size() >= 4) m_blur.clear();
-            QImage src(path);
-            if (src.isNull()) src = QImage(":/BCShell/assets/wallpaper-default.png");
-            // Igual que sway («fill»): cubrir la pantalla recortando el sobrante centrado
-            src = src.scaled(sw, sh, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-            src = src.copy((src.width() - sw) / 2, (src.height() - sh) / 2, sw, sh);
-            m_blur.insert(key, blurred(src, qMax(14, sh / 28)));   // desenfoque amplio (~30 px) como los widgets de macOS: el fondo es solo luz y color
+            m_blur.insert(key, blurredBackground(path, sw, sh, radius));
         }
         blur = m_blur.value(key);
     }
@@ -88,7 +133,8 @@ QImage GlassProvider::requestImage(const QString &id, QSize *size, const QSize &
             pa.drawImage(QRect(0, 0, ox, h), out.copy(ox, 0, 1, h), QRect(0, 0, 1, h));
     }
     pa.end();
-    if (p.value(9) != "M") refract(out, r, p.value(8) == "L");   // «M»: ventana en movimiento, recorte rápido sin lente
+    // «M»: ventana en movimiento, recorte rápido sin lente; sin lente tampoco en los niveles Eficiente y Mínimo
+    if (p.value(9) != "M" && RenderEngine::lensAtomic()) refract(out, r, p.value(8) == "L");   // «M»: ventana en movimiento, recorte rápido sin lente
     {
         QImage mask(w, h, QImage::Format_ARGB32_Premultiplied);
         mask.fill(Qt::transparent);

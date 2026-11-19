@@ -93,7 +93,7 @@ class QuickTools : public QObject {
     Q_PROPERTY(bool softwareRender READ softwareRender CONSTANT)
 public:
     bool active() const { return m_mediaTimer.isActive(); }
-    static bool softwareRender() { return qEnvironmentVariable("QT_QUICK_BACKEND") == "software" || qEnvironmentVariable("QT_QUICK_BACKEND") == "softwarecontext"; }
+    static bool softwareRender() { return qEnvironmentVariable("QT_QUICK_BACKEND") == "software" || qEnvironmentVariable("QT_QUICK_BACKEND") == "softwarecontext"; }   // = Render.software (RenderEngine lo fija)
     static bool realBlur() { return qEnvironmentVariable("BC_COMPOSITOR") == "hyprland" || !qEnvironmentVariable("HYPRLAND_INSTANCE_SIGNATURE").isEmpty(); }
     void setActive(bool on) { if (on == active()) return; if (on) { refreshMedia(); m_mediaTimer.start(); } else m_mediaTimer.stop(); emit activeChanged(); }
     explicit QuickTools(QObject *parent = nullptr);
