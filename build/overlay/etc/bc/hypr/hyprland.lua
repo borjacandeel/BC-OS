@@ -80,29 +80,30 @@ hl.config({
 })
 
 ---------------- Animaciones (curvas tipo macOS: rápidas al empezar, suaves al terminar) ----------------
+-- «speed» va en décimas de segundo: 2,2 = 220 ms. macOS es casi instantáneo pero animado (150–300 ms); antes había 600 ms.
 hl.curve("mac",       { type = "bezier", points = { {0.25, 1.0}, {0.5, 1.0} } })      -- ease-out
 hl.curve("macIn",     { type = "bezier", points = { {0.42, 0.0}, {1.0, 1.0} } })      -- ease-in (salidas)
 hl.curve("macInOut",  { type = "bezier", points = { {0.42, 0.0}, {0.58, 1.0} } })
-hl.curve("muelle",    { type = "spring", mass = 1, stiffness = 210, damping = 22 })    -- rebote leve (abrir)
+hl.curve("muelle",    { type = "spring", mass = 1, stiffness = 420, damping = 35 })    -- rebote leve y rápido (abrir, ~0,2 s)
 hl.curve("lineal",    { type = "bezier", points = { {0, 0}, {1, 1} } })
 
-hl.animation({ leaf = "global",        enabled = true, speed = 6,   bezier = "mac" })
-hl.animation({ leaf = "windowsIn",     enabled = true, speed = 3.6, spring = "muelle",  style = "popin 88%" })
-hl.animation({ leaf = "windowsOut",    enabled = true, speed = 2.4, bezier = "macIn",   style = "popin 90%" })
-hl.animation({ leaf = "windowsMove",   enabled = true, speed = 4.2, spring = "muelle" })
-hl.animation({ leaf = "fadeIn",        enabled = true, speed = 2.6, bezier = "mac" })
-hl.animation({ leaf = "fadeOut",       enabled = true, speed = 2.2, bezier = "macIn" })
-hl.animation({ leaf = "fadeSwitch",    enabled = true, speed = 3,   bezier = "mac" })
-hl.animation({ leaf = "fadeShadow",    enabled = true, speed = 3,   bezier = "mac" })
-hl.animation({ leaf = "fadeDim",       enabled = true, speed = 3,   bezier = "mac" })
-hl.animation({ leaf = "layersIn",      enabled = true, speed = 2.8, bezier = "mac",     style = "popin 94%" })
-hl.animation({ leaf = "layersOut",     enabled = true, speed = 2.0, bezier = "macIn",   style = "fade" })
-hl.animation({ leaf = "fadeLayersIn",  enabled = true, speed = 2.4, bezier = "mac" })
-hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 2.0, bezier = "macIn" })
+hl.animation({ leaf = "global",        enabled = true, speed = 2.5, bezier = "mac" })
+hl.animation({ leaf = "windowsIn",     enabled = true, speed = 2.2, spring = "muelle",  style = "popin 88%" })
+hl.animation({ leaf = "windowsOut",    enabled = true, speed = 1.5, bezier = "macIn",   style = "popin 90%" })
+hl.animation({ leaf = "windowsMove",   enabled = true, speed = 2.0, spring = "muelle" })
+hl.animation({ leaf = "fadeIn",        enabled = true, speed = 1.6, bezier = "mac" })
+hl.animation({ leaf = "fadeOut",       enabled = true, speed = 1.3, bezier = "macIn" })
+hl.animation({ leaf = "fadeSwitch",    enabled = true, speed = 1.8, bezier = "mac" })
+hl.animation({ leaf = "fadeShadow",    enabled = true, speed = 1.8, bezier = "mac" })
+hl.animation({ leaf = "fadeDim",       enabled = true, speed = 1.8, bezier = "mac" })
+hl.animation({ leaf = "layersIn",      enabled = true, speed = 1.7, bezier = "mac",     style = "popin 94%" })
+hl.animation({ leaf = "layersOut",     enabled = true, speed = 1.2, bezier = "macIn",   style = "fade" })
+hl.animation({ leaf = "fadeLayersIn",  enabled = true, speed = 1.5, bezier = "mac" })
+hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.2, bezier = "macIn" })
 -- Cambio de escritorio: deslizamiento lateral como los Spaces de macOS
-hl.animation({ leaf = "workspaces",    enabled = true, speed = 4.4, bezier = "macInOut", style = "slide" })
+hl.animation({ leaf = "workspaces",    enabled = true, speed = 2.8, bezier = "macInOut", style = "slide" })
 -- Minimizar (escritorio especial): baja hacia el Dock
-hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 4.0, bezier = "mac", style = "slidevert" })
+hl.animation({ leaf = "specialWorkspace", enabled = true, speed = 2.6, bezier = "mac", style = "slidevert" })
 hl.animation({ leaf = "border",        enabled = false, speed = 1, bezier = "lineal" })
 hl.animation({ leaf = "zoomFactor",    enabled = true, speed = 5,   bezier = "mac" })
 

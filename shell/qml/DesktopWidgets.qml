@@ -170,7 +170,7 @@ Item {
                 Rectangle {
                     visible: modelData.hasValue; y: root.px(19); width: parent.width; height: root.px(4); radius: height / 2; color: Qt.rgba(1, 1, 1, 0.16)
                     Rectangle { width: parent.width * Math.max(0, Math.min(1, modelData.value)); height: parent.height; radius: parent.radius; color: Theme.label
-                                Behavior on width { NumberAnimation { duration: Theme.d(300) } } }
+                                Behavior on width { NumberAnimation { duration: Theme.d(220) } } }
                 }
             }
         }

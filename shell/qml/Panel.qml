@@ -474,7 +474,7 @@ LayerWindow {
         property real t: 0
         shown: path !== "" && !UiState.locked
         function show(p) { path = ""; path = p; slide.restart(); hideT.restart() }
-        NumberAnimation { id: slide; target: shotThumb; property: "t"; from: 0; to: 1; duration: Theme.d(320); easing.type: Easing.OutCubic }
+        NumberAnimation { id: slide; target: shotThumb; property: "t"; from: 0; to: 1; duration: Theme.d(240); easing.type: Easing.OutCubic }
         NumberAnimation { id: slideOut; target: shotThumb; property: "t"; to: 0; duration: Theme.d(260); easing.type: Easing.InCubic; onFinished: shotThumb.path = "" }
         Timer { id: hideT; interval: 5000; onTriggered: slideOut.start() }
         Item {

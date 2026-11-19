@@ -111,7 +111,7 @@ AppWindow {
         Rectangle { anchors.fill: parent; anchors.margins: -3; radius: height / 2; color: "transparent"; border.width: 3
                     border.color: Qt.rgba(Theme.accent.r, Theme.accent.g, Theme.accent.b, 0.45); opacity: 0
                     SequentialAnimation on opacity { id: glow; running: false
-                        NumberAnimation { to: 1; duration: Theme.d(90) } NumberAnimation { to: 0; duration: Theme.d(320); easing.type: Easing.OutQuad } } }
+                        NumberAnimation { to: 1; duration: Theme.d(90) } NumberAnimation { to: 0; duration: Theme.d(220); easing.type: Easing.OutQuad } } }
         onOnChanged: if (on) glow.restart()
         MouseArea { anchors.fill: parent; onClicked: sw.toggled(!sw.on) }
     }

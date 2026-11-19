@@ -173,35 +173,36 @@ QtObject {
     property color shadow: Qt.rgba(0, 0, 0, dark ? 0.45 : 0.18)
 
     // ---- Movimiento: duraciones (ms) y curvas ---------------------------------------------
+    // Duraciones cortas como macOS: casi instantáneas pero animadas (el creador las veía muy lentas en un equipo real).
     // Ninguna duración de Golden Gate está publicada: todas «sin confirmar», medidas a ojo sobre vídeos.
     readonly property bool reduced: AppConfig.reducedMotion || Settings.reducedMotion
     function d(ms) { return reduced ? 0 : Math.round(ms * Render.animScale) }   // BC Adaptive Renderer: duraciones según el nivel
-    readonly property int durMenuOpen: 120
-    readonly property int durMenuClose: 90
-    readonly property int durPopover: 220
-    readonly property int durSheet: 300
-    readonly property int durWindowOpen: 240
-    readonly property int durWindowClose: 200
-    readonly property int durMinimize: 500         // efecto «genio» hacia el Dock
-    readonly property int durRestore: 450
-    readonly property int durFullscreen: 600
+    readonly property int durMenuOpen: 100
+    readonly property int durMenuClose: 80
+    readonly property int durPopover: 160
+    readonly property int durSheet: 220
+    readonly property int durWindowOpen: 180
+    readonly property int durWindowClose: 150
+    readonly property int durMinimize: 340         // efecto «genio» hacia el Dock
+    readonly property int durRestore: 300
+    readonly property int durFullscreen: 380
     readonly property int durDockMagnify: 90
-    readonly property int durDockHide: 280
+    readonly property int durDockHide: 200
     readonly property int durDockBounceUp: 180
-    readonly property int durDockBounceDown: 520
+    readonly property int durDockBounceDown: 400
     readonly property int dockBounces: 2
-    readonly property int durMissionControl: 330
-    readonly property int durSpaceSwitch: 420
-    readonly property int durSwitcher: 120
-    readonly property int durSpotlight: 200
-    readonly property int durLaunchpad: 300
-    readonly property int durQuickLook: 280
-    readonly property int durControlCenter: 240
-    readonly property int durNotifyIn: 420
-    readonly property int durNotifyOut: 260
-    readonly property int durLock: 450
-    readonly property int durUnlock: 380
-    readonly property int durAppearance: 350
+    readonly property int durMissionControl: 250
+    readonly property int durSpaceSwitch: 300
+    readonly property int durSwitcher: 100
+    readonly property int durSpotlight: 150
+    readonly property int durLaunchpad: 220
+    readonly property int durQuickLook: 200
+    readonly property int durControlCenter: 180
+    readonly property int durNotifyIn: 300
+    readonly property int durNotifyOut: 200
+    readonly property int durLock: 320
+    readonly property int durUnlock: 280
+    readonly property int durAppearance: 260
     readonly property int durHover: 120
 
     // Curvas (Easing de Qt). Springs de AppKit aproximados con OutBack/OutCubic.

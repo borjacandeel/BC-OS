@@ -34,7 +34,7 @@ Item {
         property real t: 1
         visible: t < 1
         function play(px, py) { x = px; y = Math.max(dock.bs * 0.6, py); anim.restart() }   // dentro de la superficie del Dock
-        NumberAnimation { id: anim; target: poof; property: "t"; from: 0; to: 1; duration: Theme.d(420); easing.type: Easing.OutQuad }
+        NumberAnimation { id: anim; target: poof; property: "t"; from: 0; to: 1; duration: Theme.d(300); easing.type: Easing.OutQuad }
         Repeater {
             model: 7
             Rectangle {
@@ -280,7 +280,7 @@ Item {
         // Las ventanas minimizadas entran creciendo (no aparecen de golpe)
         property real grow: minimizedWindow ? 0 : 1
         Component.onCompleted: if (minimizedWindow) growIn.start()
-        NumberAnimation { id: growIn; target: cell; property: "grow"; to: 1; duration: Theme.d(320); easing.type: Easing.OutBack }
+        NumberAnimation { id: growIn; target: cell; property: "grow"; to: 1; duration: Theme.d(240); easing.type: Easing.OutBack }
         scale: grow; opacity: 0.4 + 0.6 * grow; transformOrigin: Item.Bottom
         width: sz; height: dock.plateH
         property real jump: 0
