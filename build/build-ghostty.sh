@@ -20,7 +20,7 @@ HOSTARCH="$(uname -m)"
 BUILD="blueprint-compiler gettext pkgconf git"
 LIBS="gtk4 libadwaita gtk4-layer-shell"
 NEW="$(sh "for p in $BUILD; do pacman -Qq \$p >/dev/null 2>&1 || echo \$p; done" | tr "\n" " ")"
-sh "pacman -S --needed --noconfirm --disable-sandbox $BUILD $LIBS"
+sh "for i in 1 2 3; do pacman -S --needed --noconfirm --disable-sandbox $BUILD $LIBS && exit 0; echo \"reintento \$i\"; sleep 20; done; exit 1"
 
 W="$R/tmp/ghostty-build"; rm -rf "$W"; mkdir -p "$W"
 git clone -q --depth 1 --branch "$GHOSTTY_TAG" https://github.com/ghostty-org/ghostty "$W/src"

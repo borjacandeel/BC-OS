@@ -11,7 +11,7 @@ bc_binfmt; bc_mount "$R"; trap 'bc_umount "$R"' EXIT
 sh() { bc_chroot "$R" bash -c "$*"; }
 BUILD="cmake gcc make python git"
 NEW="$(sh "for p in $BUILD; do pacman -Qq \$p >/dev/null 2>&1 || echo \$p; done" | tr "\n" " ")"
-sh "pacman -S --needed --noconfirm --disable-sandbox $BUILD"
+sh "for i in 1 2 3; do pacman -S --needed --noconfirm --disable-sandbox $BUILD && exit 0; echo \"reintento \$i\"; sleep 20; done; exit 1"
 rm -rf "$R/tmp/box64"; git clone -q --depth 1 --branch "$BOX64_TAG" https://github.com/ptitSeb/box64 "$R/tmp/box64" \
   || git clone -q --depth 1 https://github.com/ptitSeb/box64 "$R/tmp/box64"
 # ARM_DYNAREC: recompilación dinámica; genérico ARMv8 (vale para Apple Silicon en VM, Raspberry Pi 4/5, etc.)

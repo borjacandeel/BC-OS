@@ -11,7 +11,7 @@ sh() { bc_chroot "$R" bash -c "$*"; }
 BUILD="meson ninja pkgconf gcc scdoc git wayland-protocols"
 LIBS="scenefx wlroots0.20 json-c pcre2 cairo pango gdk-pixbuf2 libevdev libinput libxkbcommon"
 NEW="$(sh "for p in $BUILD; do pacman -Qq \$p >/dev/null 2>&1 || echo \$p; done" | tr "\n" " ")"
-sh "pacman -S --needed --noconfirm --disable-sandbox $BUILD $LIBS"
+sh "for i in 1 2 3; do pacman -S --needed --noconfirm --disable-sandbox $BUILD $LIBS && exit 0; echo \"reintento \$i\"; sleep 20; done; exit 1"
 # El clon se hace en el anfitrión (el chroot no tiene los certificados del proxy de CI/nube)
 rm -rf "$R/tmp/swayfx"; git clone -q --depth 1 --branch "$SWAYFX_TAG" https://github.com/WillPower3309/swayfx "$R/tmp/swayfx"
 sh "cd /tmp/swayfx && meson setup build --prefix=/opt/swayfx -Dwerror=false -Dman-pages=disabled -Dsd-bus-provider=libsystemd 2>&1 | tail -5 && ninja -C build && ninja -C build install"

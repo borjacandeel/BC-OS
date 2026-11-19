@@ -10,6 +10,11 @@ bc_rootfs() {
     curl -fSL -o "$t/alarm.tar.gz.md5" http://os.archlinuxarm.org/os/ArchLinuxARM-aarch64-latest.tar.gz.md5
     (cd "$t" && echo "$(cut -d' ' -f1 alarm.tar.gz.md5)  alarm.tar.gz" | md5sum -c -)
     bsdtar -xpf "$t/alarm.tar.gz" -C "$r"
+    # Varios mirrors: si el redirector (mirror.archlinuxarm.org) se cuelga, pacman pasa al siguiente
+    # (en CI una descarga «Operation too slow» tumbaba la imagen ARM entera)
+    printf '%s\n' 'Server = http://mirror.archlinuxarm.org/$arch/$repo' 'Server = http://de.mirror.archlinuxarm.org/$arch/$repo' \
+      'Server = http://de3.mirror.archlinuxarm.org/$arch/$repo' 'Server = http://eu.mirror.archlinuxarm.org/$arch/$repo' \
+      'Server = http://fl.us.mirror.archlinuxarm.org/$arch/$repo' 'Server = http://ca.us.mirror.archlinuxarm.org/$arch/$repo' > "$r/etc/pacman.d/mirrorlist"
   else
     curl -fSL -o "$t/boot.tar.zst" https://geo.mirror.pkgbuild.com/iso/latest/archlinux-bootstrap-x86_64.tar.zst
     curl -fSL -o "$t/sums" https://geo.mirror.pkgbuild.com/iso/latest/sha256sums.txt
