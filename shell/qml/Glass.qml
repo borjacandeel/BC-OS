@@ -41,11 +41,11 @@ Item {
 
     // Sombra difusa (dos capas suaves en lugar de un desenfoque costoso)
     Rectangle {
-        visible: g.shadow; anchors.fill: parent; anchors.margins: -1; anchors.topMargin: 3; anchors.bottomMargin: -6
+        visible: g.shadow && Render.shadows > 0; anchors.fill: parent; anchors.margins: -1; anchors.topMargin: 3; anchors.bottomMargin: -6
         radius: g.radius + 2; color: Theme.shadow; opacity: 0.35
     }
     Rectangle {
-        visible: g.shadow; anchors.fill: parent; anchors.margins: -6; anchors.topMargin: 2; anchors.bottomMargin: -14
+        visible: g.shadow && Render.shadows > 1; anchors.fill: parent; anchors.margins: -6; anchors.topMargin: 2; anchors.bottomMargin: -14
         radius: g.radius + 8; color: Theme.shadow; opacity: 0.12
     }
     // En movimiento (arrastrar la ventana): recortes rápidos sin lente (con sus esquinas redondeadas) cada fotograma
@@ -59,7 +59,7 @@ Item {
     // calcula en otro hilo y solo se muestra cuando está listo, así las animaciones (paneles que aparecen, Dock que se
     // amplía, ventanas que se mueven) no se frenan esperando al recorte. Como mucho uno cada 70 ms (16 ms moviendo).
     readonly property string want: !Quick.realBlur && g.width > 2 && g.height > 2
-        ? "image://glass/" + [g.gp.x, g.gp.y, Math.round(g.width), Math.round(g.height), Math.round(g.radius), Math.round(g.scrW), Math.round(g.scrH), g.version].join("_") + (g.leftOnly ? "_L" : "_R") + (g.moving || g.resizing || Quick.softwareRender ? "_M" : "")
+        ? "image://glass/" + [g.gp.x, g.gp.y, Math.round(g.width), Math.round(g.height), Math.round(g.radius), Math.round(g.scrW), Math.round(g.scrH), g.version].join("_") + (g.leftOnly ? "_L" : "_R") + (g.moving || g.resizing || !Render.lens ? "_M" : "")
         : ""
     property int front: 0
     property string asked: ""

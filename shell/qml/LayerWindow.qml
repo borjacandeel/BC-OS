@@ -50,6 +50,7 @@ Window {
     onScreenChanged: if (ready) { const v = visible; visible = false; apply(); visible = Qt.binding(() => w.shown) }
     Component.onCompleted: {
         apply()
+        Render.watchWindow(w)   // BC Adaptive Renderer mide sus fotogramas
         ready = true
         visible = Qt.binding(() => w.shown)
     }

@@ -682,6 +682,23 @@ AppWindow {
             }
             Timer { id: hzTimer; interval: 1500; onTriggered: Quick.listDisplayModes() }
             Hint { width: parent.width; text: qsTr("La resolución y la frecuencia elegidas se recuerdan y se aplican en cada inicio. «Automática» usa la nativa del monitor (o el tamaño de la ventana de la máquina virtual); «Máxima», la frecuencia más alta que admita.") }
+            // BC Adaptive Renderer: un único nivel de calidad para todo el sistema (panel, apps, login y compositor)
+            Section { text: qsTr("Calidad gráfica") }
+            Group {
+                Row2 {
+                    label: qsTr("Calidad"); value: ""
+                    PillSeg {
+                        anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                        readonly property var vals: ["auto", "ultra", "alto", "equilibrado", "eficiente", "minimo"]
+                        options: [qsTr("Automática"), qsTr("Ultra"), qsTr("Alta"), qsTr("Equilibrada"), qsTr("Eficiente"), qsTr("Mínima")]
+                        current: Math.max(0, vals.indexOf(Render.quality))
+                        onPicked: (i) => Render.setQuality(vals[i])
+                    }
+                }
+                Row2 { label: qsTr("Nivel en uso"); value: Render.tierName }
+                Row2 { label: qsTr("Gráficos"); value: Render.software ? Render.gpuSummary : Render.gpuSummary + " · " + (Render.backend === "vulkan" ? "Vulkan" : "OpenGL") }
+            }
+            Hint { width: parent.width; text: qsTr("«Automática» ajusta los efectos (cristal, desenfoque, sombras, animaciones) al equipo, a la batería y a la temperatura, y baja un nivel si se pierden fotogramas. Sin aceleración 3D no se puede subir por encima de «Eficiente».") }
         }
 
         // 13 Teclado

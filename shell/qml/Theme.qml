@@ -49,7 +49,7 @@ QtObject {
 
     // Movimiento
     readonly property bool reducedMotion: AppConfig.reducedMotion || Settings.reducedMotion
-    function dur(ms) { return reducedMotion ? 0 : ms }
+    function dur(ms) { return reducedMotion ? 0 : Math.round(ms * Render.animScale) }
     readonly property int easing: Easing.OutCubic
 
 // ============================================================================================
@@ -175,7 +175,7 @@ QtObject {
     // ---- Movimiento: duraciones (ms) y curvas ---------------------------------------------
     // Ninguna duración de Golden Gate está publicada: todas «sin confirmar», medidas a ojo sobre vídeos.
     readonly property bool reduced: AppConfig.reducedMotion || Settings.reducedMotion
-    function d(ms) { return reduced ? 0 : ms }
+    function d(ms) { return reduced ? 0 : Math.round(ms * Render.animScale) }   // BC Adaptive Renderer: duraciones según el nivel
     readonly property int durMenuOpen: 120
     readonly property int durMenuClose: 90
     readonly property int durPopover: 220

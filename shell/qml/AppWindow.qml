@@ -30,7 +30,7 @@ Window {
     onCloseRequested: { if (!canClose) { Sounds.play("error"); return } if (Theme.reducedMotion) Qt.quit(); else closeAnim.start() }
     ParallelAnimation {
         id: closeAnim
-        NumberAnimation { target: frame; property: "scale"; to: Quick.softwareRender ? 1 : (Theme.gg ? 0.92 : 0.94); duration: Theme.gg ? Theme.durWindowClose : 140; easing.type: Easing.InCubic }
+        NumberAnimation { target: frame; property: "scale"; to: !Render.scaleAnimations ? 1 : (Theme.gg ? 0.92 : 0.94); duration: Theme.gg ? Theme.durWindowClose : 140; easing.type: Easing.InCubic }
         NumberAnimation { target: frame; property: "opacity"; to: 0; duration: Theme.gg ? Theme.durWindowClose : 140 }
         onFinished: Qt.quit()
     }
@@ -44,7 +44,7 @@ Window {
     }
     ParallelAnimation {
         id: expandAnim
-        NumberAnimation { target: frame; property: "scale"; from: Quick.softwareRender ? 1 : 0.96; to: 1; duration: Theme.durFullscreen * 0.55; easing.type: Easing.OutCubic }
+        NumberAnimation { target: frame; property: "scale"; from: !Render.scaleAnimations ? 1 : 0.96; to: 1; duration: Theme.durFullscreen * 0.55; easing.type: Easing.OutCubic }
         NumberAnimation { target: frame; property: "opacity"; from: 0.82; to: 1; duration: Theme.durFullscreen * 0.4; easing.type: Easing.OutQuad }
     }
 
@@ -122,7 +122,7 @@ Window {
         Behavior on color { ColorAnimation { duration: Theme.d(Theme.durHover) } }
         clip: true
         // Por software se abre solo con fundido: escalar toda la ventana en cada fotograma cuesta mucha CPU
-        scale: Quick.softwareRender ? 1 : (Theme.gg ? 0.94 : 0.97)
+        scale: !Render.scaleAnimations ? 1 : (Theme.gg ? 0.94 : 0.97)
         opacity: 0
         transformOrigin: Item.Center
         Component.onCompleted: { scale = 1; opacity = 1 }
