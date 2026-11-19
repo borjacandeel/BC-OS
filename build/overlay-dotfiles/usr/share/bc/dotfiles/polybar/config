@@ -67,19 +67,15 @@ click-right = playerctl next
 click-middle = playerctl previous
 
 [module/pulseaudio]
-type = internal/pulseaudio
-; Clic izquierdo: menú de sonido (nivel, silencio, salida); rueda: subir/bajar; clic central: silenciar
-format-volume = %{A1:bc-menu-vol &:}<ramp-volume> <label-volume>%{A}
-format-muted = %{A1:bc-menu-vol &:}<label-muted>%{A}
-label-volume = %percentage%%
-ramp-volume-0 = 󰕿
-ramp-volume-1 = 󰖀
-ramp-volume-2 = 󰕾
-interval = 2
-label-muted = 󰖁 silencio
-label-muted-foreground = ${colors.dim}
-use-ui-max = false
+; Volumen con PipeWire (wpctl): siempre visible aunque no haya contexto de PulseAudio
+type = custom/script
+exec = bc-bar-vol
+interval = 1
+click-left = bc-menu-vol &
+click-middle = wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle
 click-right = pavucontrol &
+scroll-up = wpctl set-volume -l 1.0 @DEFAULT_AUDIO_SINK@ 5%+
+scroll-down = wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
 
 [module/time]
 type = internal/date

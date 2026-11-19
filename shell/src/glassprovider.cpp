@@ -31,8 +31,11 @@ QImage GlassProvider::blurred(const QImage &src, int r) {
     const int target = qMax(8, full.height() / qMax(2, r / 2));
     QImage small = src.convertToFormat(QImage::Format_RGB32);
     while (small.height() / 2 >= target) small = small.scaled(small.width() / 2, small.height() / 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    const QImage mid = small.scaled(small.width() * 4, small.height() * 4, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
-    return mid.scaled(full, Qt::IgnoreAspectRatio, Qt::SmoothTransformation).convertToFormat(QImage::Format_ARGB32_Premultiplied);
+    // Ampliación de 2 en 2 (cada paso bilineal suaviza el anterior): sin los bloques/pixelado que dejaba ampliar ×8
+    // de golpe en las barras laterales y paneles
+    QImage up = small;
+    while (up.width() * 2 < full.width()) up = up.scaled(up.width() * 2, up.height() * 2, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    return up.scaled(full, Qt::IgnoreAspectRatio, Qt::SmoothTransformation).convertToFormat(QImage::Format_ARGB32_Premultiplied);
 }
 
 QImage GlassProvider::requestImage(const QString &id, QSize *size, const QSize &) {

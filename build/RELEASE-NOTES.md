@@ -16,3 +16,5 @@
 - **Polybar mejorada**: la Wi-Fi muestra el nombre de la red; el menú indica a qué estás conectado, señal y candado por red, desconectar y volver a buscar; el volumen cambia de icono según el nivel; el calendario muestra la fecha completa, hoy resaltado y se mueve entre meses.
 - **Liquid Glass como macOS**: fondo muy difuminado (~30 px), tinte oscuro de serie en modo oscuro, filo luminoso fino y lente casi imperceptible; con Hyprland (GPU) el desenfoque es del compositor y va en tiempo real al mover ventanas.
 - **Ajustes ▸ Aspecto** como macOS: deslizador de Liquid Glass de casi transparente a opaco (de serie como los widgets de macOS), color de resaltado del texto y estilo de los widgets (por omisión, oscuro, traslúcido o tintado con el color de énfasis).
+- **Cristal sin pixelado**: el fondo difuminado de barras laterales, paneles y widgets se amplía de 2 en 2 (antes se veía a bloques en Ajustes y demás apps).
+- **Polybar**: el volumen ya se ve siempre (con PipeWire/wpctl): icono por nivel, porcentaje, clic para el menú, rueda para subir y bajar.

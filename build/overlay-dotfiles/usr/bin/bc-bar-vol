@@ -1,0 +1,8 @@
+#!/bin/sh
+# Polybar: volumen con wpctl (PipeWire), siempre visible: icono según el nivel y porcentaje; tachado si está en silencio
+v=$(wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null)
+[ -n "$v" ] || { echo "%{F#7F95A3}󰖁 sin audio%{F-}"; exit 0; }
+p=$(printf '%s' "$v" | awk '{printf "%d", $2*100}')
+if printf '%s' "$v" | grep -q MUTED; then echo "%{F#7F95A3}󰖁 ${p}% %{F-}"; exit 0; fi
+if [ "$p" -ge 66 ]; then i="󰕾"; elif [ "$p" -ge 33 ]; then i="󰖀"; elif [ "$p" -gt 0 ]; then i="󰕿"; else i="󰝟"; fi
+echo "$i $p%"
