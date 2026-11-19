@@ -14,6 +14,18 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - REGLA DE ORO (creador 2026-11-18): CADA cambio se documenta en README.md, build/RELEASE-NOTES.md y la web (bcos/index.html) en el mismo momento. Con capturas NUEVAS de lo nuevo (docs/escritorio/capturas y assets/projects/bcos de la web), sin dejar las viejas.
 - ARM64 únicamente. Base Arch Linux ARM.
 
+## Pendiente del creador 2026-11-19 (prueba en equipo físico, 0.9.22-beta, portátil con Hyprland)
+- [ ] Hyprland muestra dos avisos fijos en pantalla (bienvenida y escritorio): «Hyprland was started without start-hyprland» → arrancar con `start-hyprland` desde bc-session; y «XDG_CURRENT_DESKTOP parece gestionarse externamente; su valor actual es BC» → no exportarla antes de Hyprland (o que la ponga la propia config) / silenciar el aviso.
+- [ ] Wi-Fi: no deja conectarse; el menú de Wi-Fi falla (bug). Revisar menú de redes de la barra y Centro de control con NetworkManager real (contraseña, WPA, red oculta).
+- [ ] Barra de menús: icono de batería cargando con franja roja rara a la izquierda; icono de Wi-Fi tachado aunque haya red → revisar.
+- [ ] Terminal con Hyprland: doble borde/halo alrededor de la ventana (marco de cristal + sombra/esquinas del compositor) → un solo borde.
+- [ ] Mismos atajos en los dos entornos (BC OS con Hyprland/sway y Dotfiles bspwm):
+  - Súper(⌘)+W → cerrar ventana
+  - Súper+Intro → Terminal
+  - Súper+B → Firefox
+  - Súper+1…9 → ir al escritorio N (y Súper+Mayús+N mover la ventana)
+  Actualizar sxhkdrc, hyprland.lua, sway/config, la lista de atajos de Ajustes/README/web.
+
 ## Pendiente del creador 2026-11-17 (tarde)
 - [x] Recordatorios: con más de 2 se salen del widget (limitar filas al alto o «y N más»).
 - [x] Ajustes ▸ General: «Buscar actualizaciones» → minimenú con versión actual, novedades y botón Actualizar.
