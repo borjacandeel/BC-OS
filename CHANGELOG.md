@@ -4,6 +4,12 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 
 ## [Sin publicar]
 
+## [0.9.22-beta]
+### Corregido
+- nouveau: nivel Eficiente por defecto y Equilibrado como máximo al forzarlo (tirones en equipo físico).
+- Bucle de render «basic» (un contexto OpenGL) con nouveau o nivel bajo: menos hilos y memoria en el panel.
+- Ajustes ▸ Aspecto: color de resaltado con muestras, pastillas que caben, miniatura «Automático» redondeada.
+
 ## [0.9.21-beta]
 ### Cambiado
 - Paneles emergentes cargados al abrirse (`Lazy.qml`): apertura de Spotlight y demás de 12–19 ms a 3 ms; −21 MB de memoria.

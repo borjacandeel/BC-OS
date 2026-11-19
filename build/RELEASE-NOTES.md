@@ -1,12 +1,8 @@
 ## Novedades de BC OS @VERSION@
 
-- **Spotlight y todos los paneles emergentes abren al instante.** Centro de control, Centro de notificaciones, Launchpad, menús, emoji, Forzar salida y apagar se crean solo al abrirse; antes se reconstruían todos cada vez que se abría uno.
-  - Abrir uno pasa de 12–19 ms a 3 ms.
-- **BC Shell, más ligero:**
-  - usa un 10 % menos de memoria;
-  - gasta un 14–20 % menos de CPU al arrancar;
-  - el Dock ya no pierde fotogramas al abrir Aplicaciones.
-- **Spotlight más fluido al escribir:**
-  - hace una sola búsqueda por fotograma;
-  - no rehace la lista si los resultados no cambian;
-  - sin aceleración 3D no escala al aparecer.
+- **Más fluido con gráficas NVIDIA (controlador nouveau).** nouveau deja la gráfica a su velocidad mínima, así que ahora el nivel automático es «Eficiente»: sin lente ni genio, una sola sombra y animaciones algo más cortas. Si lo fuerzas en Ajustes, se queda como mucho en «Equilibrado». Antes se ponían efectos de gráfica rápida y las animaciones iban a tirones.
+- **Panel más ligero en equipos con GPU lenta.** El panel tiene muchas ventanas (barra, Dock, widgets, paneles emergentes). Con nouveau, o en los niveles Eficiente y Mínimo, todas comparten un solo hilo y un solo contexto de dibujo, en vez de uno por ventana. Antes había equipos con 25 hilos y 456 MB.
+- **Ajustes ▸ Aspecto:**
+  - el color de resaltado se elige con muestras de color y ya no pisa su etiqueta;
+  - las opciones en pastillas se estrechan si no caben;
+  - la miniatura «Automático» ya no sale cortada.

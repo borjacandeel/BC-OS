@@ -13,3 +13,5 @@ Sin aplicar: la web está en otro repositorio y el encargo del motor de render p
 Captura: `docs/escritorio/capturas/calidad-grafica.png`.
 
 **0.9.21-beta.** Spotlight y todos los paneles emergentes abren al instante (3 ms en vez de 12–19 ms). BC Shell usa un 10 % menos de memoria y un 14–20 % menos de CPU al arrancar, y el Dock ya no pierde fotogramas.
+
+**0.9.22-beta.** Más fluido con NVIDIA nouveau, panel más ligero en GPU lentas (un solo contexto de dibujo) y Ajustes ▸ Aspecto sin solapes.
