@@ -83,6 +83,16 @@ Entregado: 10 lugares color (`folder`, `user-home`, `user-desktop`, `folder-docu
 - Dispositivos (color 48 + symbolic): `drive-harddisk` (interno), `drive-removable-media` (externo), `drive-removable-media-usb`, `video-display` (monitor), `input-keyboard`, `input-mouse`, `printer`, `audio-headphones`, `phone`, `computer`.
 - Para FileGlyph.qml: `text-x-script`, `text-x-generic`, `image-x-generic`, `application-pdf`.
 
+### 2.5 Ampliación 2026-11-19 (HECHO): emblemas, discos y Bluetooth por tipo
+
+- Emblemas (categoría nueva `emblems`, color 48 con `@16` + symbolic): `emblem-symbolic-link` (alias), `emblem-readonly` y `emblem-locked` (candado).
+- MIME: `application-x-generic` (documento con etiqueta de extensión, `@16`), `application-x-cd-image` (imagen de disco).
+- Dispositivos y lugares: `media-optical` (color con `@16` + symbolic), `network-server` (lugares, color con `@16` + symbolic; disco de red). `drive-harddisk`, `drive-removable-media-usb` y `folder-remote` ya existían y cumplen.
+- Bluetooth por tipo (symbolic): nuevos `input-gaming` (mando) y `audio-speakers` (altavoz); `audio-headphones`, `input-mouse` e `input-keyboard` ya existían.
+- `user-home` (color): el símbolo grabado pasa de casa a silueta de persona.
+- Instantáneas: app `bc-restore` (violeta, capas de vidrio) y `document-revert-symbolic` (espejo de `view-refresh` con agujas).
+- Revisión de trazo symbolic: todos a 1.5 (solo el rayo de la batería usa 1, excepción de §3.2); `view-app-grid-symbolic` tenía puntos r 1.4 y pasa a 1.3 (§3.2: 0.9–1.3).
+
 ## 3. Tamaños necesarios (de tokens)
 
 - UI: 16, 20, 24, 32 (tokens `size.icon.ui`) + 48 para vista grande.

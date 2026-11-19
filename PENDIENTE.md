@@ -183,12 +183,12 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 77. Miniaturas de vista previa en tiempo real del contenido de documentos e imágenes
 - [~] 78. Iconos de carpetas en azul degradado con relieve sutil del tipo de contenido
 - [ ] 79. Efecto de brillo metálico o reflejo en iconos de utilidades del sistema
-- [ ] 80. Iconos de discos externos diferenciados (USB, red, imagen de disco)
-- [ ] 81. Icono de carpeta de usuario con silueta personalizada en azul
+- [x] 80. Iconos de discos externos diferenciados (USB, red, imagen de disco)
+- [x] 81. Icono de carpeta de usuario con silueta personalizada en azul
 - [x] 82. Iconos de documentos genéricos con esquina superior derecha doblada
-- [ ] 83. Insignia de extensión de archivo impresa con nitidez en los iconos de documentos
-- [ ] 84. Icono de alias con flecha curvada en la esquina inferior izquierda
-- [ ] 85. Icono de candado en archivos protegidos
+- [x] 83. Insignia de extensión de archivo impresa con nitidez en los iconos de documentos
+- [x] 84. Icono de alias con flecha curvada en la esquina inferior izquierda
+- [x] 85. Icono de candado en archivos protegidos
 - [ ] 86. Renderizado y suavizado de fuentes optimizado para pantallas HiDPI
 - [x] 87. Jerarquía tipográfica clara entre títulos, subtítulos y texto secundario gris
 - [x] 88. Truncado de nombres largos de archivo con puntos suspensivos en el medio
@@ -197,7 +197,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 91. Icono de batería en la barra de menús con relleno dinámico y rayo de carga
 - [~] 92. Icono de Wi-Fi con arcos que reflejan la intensidad real de señal
 - [~] 93. Icono de sonido con ondas según el volumen
-- [ ] 94. Iconos de dispositivos Bluetooth específicos (auriculares, ratón, teclado, mando)
+- [x] 94. Iconos de dispositivos Bluetooth específicos (auriculares, ratón, teclado, mando)
 - [ ] 95. Icono de instantáneas (copias) con reloj y flecha circular
 - [ ] 96. Icono de Vista previa con lupa sobre fotografías
 - [x] 97. Icono de Terminal con recuadro negro y prompt (>_)
@@ -306,6 +306,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 200. Consistencia absoluta de proporciones, sombras y materiales en todo el sistema
 
 ## En curso
+- [x] 2026-11-19 (creador: «todos los iconos que faltan», icon-designer): emblemas `emblem-symbolic-link`/`emblem-readonly`/`emblem-locked` (categoría `emblems`), `application-x-generic` (etiqueta de extensión), `application-x-cd-image`, `media-optical`, `network-server`, `input-gaming`, `audio-speakers`, `user-home` con silueta, app `bc-restore` + `document-revert-symbolic`; trazo symbolic revisado (todo 1.5; `view-app-grid` puntos 1.3). Lint 0/0. Falta: que el shell use los emblemas y `bc-restore` (Icon= en un .desktop de bc-restaurar) y rotular la extensión real sobre `application-x-generic`.
 - [x] 2026-11-17 (creador): 10 fondos «Bosques», arranque Plymouth animado, resolución en la bienvenida (VM), Ajustes General/Pantallas rehechos, CaskaydiaCove Nerd Font solo en terminales, login solo BC OS + Dotfiles. Pendiente: hypr-genie (plugin Hyprland) a valorar; verificar Plymouth en QEMU.
 - [x] 2026-11-17 Firefox con semáforo (bc-firefox.css por autoconfig) y esquinas 12 px; todas las apps Wayland con CSD (sway border csd, Qt adwaita); resolución recordada (bc-display); aviso de actualizaciones al arrancar → clic abre Terminal con sudo bc-actualizar (pacman -Syy + -Su); genio de macOS en dos fases también por software; barra lateral de Archivos desplazable.
 - [x] 2026-11-16 PC del padre (HP, GT 710, USB 2.0): esquinas en Firefox y apps externas → swayfx por GPU de serie si hay GPU real (nouveau incluida), Firefox con barra propia (CSD, pestañas en la barra); entrada de arranque «cargar en RAM» (copytoram). RGT1352 = monitor VGA secundario (HDMI principal) → pantalla principal digital (QML + bc-display). Foco solo al hacer clic (sway focus_follows_mouse no, Hyprland follow_mouse 2). Barra/Dock duplicados en la principal: Qt reasignaba la pantalla por posición (0,0) → x/y = virtualX/Y (verificado sway headless 2 salidas ARM). Con GPU real, Qt por OpenGL (CPU libre). Cristal de barras laterales fluido al arrastrar (IPC sway persistente a 60 Hz + fondo desplazado). Falta: probar en el PC real.

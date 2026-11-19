@@ -340,6 +340,31 @@ const out = {};
     `<circle cx="396" cy="704" r="92" fill="${W}"/><circle cx="672" cy="704" r="92" fill="${W}"/>` });
 }
 
+// ===== Restaurar instantáneas (bc-restore): esfera blanca con agujas recortadas y flecha circular hacia atrás =====
+// Flecha (blanco secundario .7): arco de 300° (r 216) en sentido antihorario que termina arriba con la punta
+// hacia la izquierda; el hueco queda arriba a la izquierda. Esfera r 132 para que el brazo interior no la toque.
+{
+  const base = { top: '#B49CFF', bottom: '#6B4FE0' };
+  const VI = '#6B4FE0';
+  const cx = 512, cy = 532;
+  const arrow = (r, arm) => {
+    const pt = (deg) => [cx + r * Math.cos((deg * Math.PI) / 180), cy + r * Math.sin((deg * Math.PI) / 180)];
+    const [sx, sy] = pt(285), [ex, ey] = pt(225);
+    // brazos a ±45° de la dirección contraria a la punta (0.966, 0.259)
+    const a1 = [sx + arm * 0.5, sy + arm * 0.866], a2 = [sx + arm * 0.866, sy - arm * 0.5];
+    return `M${f(a1[0])} ${f(a1[1])}L${f(sx)} ${f(sy)}L${f(a2[0])} ${f(a2[1])}M${f(sx)} ${f(sy)}A${r} ${r} 0 1 1 ${f(ex)} ${f(ey)}`;
+  };
+  const hands = (h, m) => `M${cx} ${cy - h}V${cy}L${f(cx + m * 0.866)} ${f(cy + m * 0.5)}`;
+  out['bc-restore'] = app({ ...base, glyph:
+    `<path d="${arrow(216, 96)}" ${STROKE(56, W, '.7')}/>` +
+    `<circle cx="${cx}" cy="${cy + 16}" r="132" ${SHADOW()}/><circle cx="${cx}" cy="${cy}" r="132" ${OBJ}/>` +
+    `<path d="${hands(76, 64)}" ${STROKE(56, VI)}/>` });
+  out['bc-restore@32'] = app({ ...base, gl: false, glyph:
+    `<path d="${arrow(216, 100)}" ${STROKE(64, W, '.7')}/><circle cx="${cx}" cy="${cy}" r="132" fill="${W}"/><path d="${hands(76, 64)}" ${STROKE(64, VI)}/>` });
+  out['bc-restore@16'] = app({ ...base, gl: false, glyph:
+    `<path d="${arrow(208, 112)}${hands(96, 76)}" ${STROKE(88)}/>` });
+}
+
 for (const [k, v] of Object.entries(out)) fs.writeFileSync(path.join(APPS, k + '.svg'), v);
 
 // ===== Pila de Descargas (color 48, lugares): hojas en abanico + tarjeta azul con flecha =====

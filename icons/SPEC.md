@@ -28,6 +28,7 @@ Categorías (`src/<kind>/<categoría>`), contexto Freedesktop y lote:
 | `places` | Places | Lugares y carpetas | C |
 | `mimetypes` | MimeTypes | Archivos y MIME | C |
 | `devices` | Devices | Dispositivos | C |
+| `emblems` | Emblems | Emblemas | C (symbolic y color) |
 
 Una categoría puede existir en varios `kind` (p.ej. `places` en `color` y en `symbolic`). Una categoría nueva se añade en `spec.mjs` (`CATEGORIES`) y en esta tabla.
 
@@ -89,6 +90,8 @@ Iconos de estado a la derecha de la barra, pensados para 16–18 px lógicos:
 - Carpetas (lote C): silueta original en azul del sistema, degradado `#7CC0FF`→`#3B9BFF`→`#1E7BF0` (pestaña y delantera con tonos distintos), con símbolo grabado del mismo lenguaje que los de UI (trazo 3, `#FFFFFF` opacidad .85 sobre delantera).
 - Colores solo de la paleta §6. MIME: el color del glifo identifica el tipo y no usa colores de estado: audio verde, código azul, vídeo violeta, paquete grafito; PDF conserva el rojo por convención universal.
 - Octógono de error: lados rectos, esquinas redondeadas con `Q` de radio nominal 6 (color) o 2.2 (symbolic).
+- Emblemas (`emblems`, color): insignia redonda que el gestor de archivos superpone en una esquina del icono. Halo `#000000` .12 r 19.5, aro blanco r 19 y disco r 16 con degradado de §6; glifo blanco 4.4. `emblem-symbolic-link` (alias): disco info `#6AA8FF`→`#1F63D6`, flecha que sube desde abajo a la izquierda y gira a la derecha (radio 6, punta de brazos 5 a 45°). `emblem-readonly` y `emblem-locked` (mismo dibujo): disco noche `#3A4660`→`#0B1220`, candado blanco (cuerpo 15×11.5 rx 3, arco 9 de ancho) con bocallave `#1B2742`. `@16`: sin halo, disco r 16.5, glifo 5–5.5 y sin bocallave. En symbolic, la misma metáfora a 1.5 (el candado añade un punto de bocallave r 1.1 para distinguirse de `system-lock-screen`).
+- Documento genérico con extensión (`application-x-generic`): etiqueta grafito `#5E6A80` en la misma caja que la de PDF (13,27 22×10 rx 2.5) con «.» (r 1.3) y un trazo blanco 2.4 que representa la extensión; el shell puede rotular encima la extensión real. Imagen de disco (`application-x-cd-image`): documento con disco grafito (r 9, agujero real por `evenodd`) y un brillo blanco .8.
 - Colores solo de la paleta §6. Se permiten `opacity`, `fill-opacity`, `stroke-opacity`, degradados lineales y radiales.
 
 ## 5. Resumen de reglas de formato (todos los kinds)
@@ -155,7 +158,7 @@ Familia común de saturación/luminosidad: tono claro arriba (L≈72%), oscuro a
 | rojo | `#FF8F87` | `#E8453C` | Reloj (`preferences-system-time`), Calendario (`x-office-calendar`, copia `bc-calendar`) |
 | naranja | `#FFA66B` | `#EB5B1E` | Recordatorios (`bc-reminders`); `#EB5B1E` es también el color de los operadores de la Calculadora |
 | ámbar | `#FFD27D` | `#F29A1F` | Notas (`accessories-notes`) |
-| violeta | `#B49CFF` | `#6B4FE0` | (libre) |
+| violeta | `#B49CFF` | `#6B4FE0` | Restaurar instantáneas (`bc-restore`, para `bc-restaurar`) |
 | índigo | `#8E9BFF` | `#3A45C4` | Editor (`accessories-text-editor`), Calculadora (`accessories-calculator`) |
 | magenta | `#FF8FC2` | `#D6336C` | Mission Control (`bc-mission-control`), Música (`multimedia-audio-player`, copia `bc-music`) |
 | papel | `#F5F5F7` | `#E4E9F2` | Calendario (`office-calendar`) |
@@ -175,7 +178,7 @@ Sobre "papel", "plata" y "niebla" el glifo usa `#0B1220`, `#1F63D6`, `#E8453C` o
 `dist/png/<tamaño>/<stem>.png`, `dist/icns/<stem>.icns` (tipos `icp4 icp5 icp6 ic07 ic08 ic09 ic10 ic11 ic12 ic13 ic14`, PNG embebido), tema Freedesktop `scalable/apps` + `<N>x<N>/apps`.
 
 ### 7.7 Glifo por capas de vidrio («Golden Gate», v0.2)
-Opcional para cualquier app y obligatorio en las apps del Dock rediseñadas desde la 0.2.0 (`system-file-manager`, `preferences-system`, `utilities-system-monitor`, `gnome-software`, `utilities-terminal`, `view-app-grid`, papeleras, `accessories-calculator`, `accessories-notes`, `multimedia-photo-viewer`, `x-office-calendar`, `bc-reminders`, `multimedia-audio-player`). Mantiene §7.1–7.4: mismo squircle, mismas sombras del cuerpo, una sola luz cenital. El glifo se compone, de abajo arriba, con como mucho estas capas:
+Opcional para cualquier app y obligatorio en las apps del Dock rediseñadas desde la 0.2.0 (`system-file-manager`, `preferences-system`, `utilities-system-monitor`, `gnome-software`, `utilities-terminal`, `view-app-grid`, papeleras, `accessories-calculator`, `accessories-notes`, `multimedia-photo-viewer`, `x-office-calendar`, `bc-reminders`, `multimedia-audio-player`, `bc-restore`). Mantiene §7.1–7.4: mismo squircle, mismas sombras del cuerpo, una sola luz cenital. El glifo se compone, de abajo arriba, con como mucho estas capas:
 
 1. **Placa de vidrio** (opcional, una): forma secundaria detrás del objeto. `fill="#FFFFFF" fill-opacity=".3"` (.16 sobre fondo "noche", .35 en piezas pequeñas) y borde de vidrio `stroke="#FFFFFF" stroke-opacity=".5" stroke-width="4"` (única excepción al trazo mínimo de §7.3; el lint la reconoce por ancho 4 y opacidad ≤ .6).
 2. **Sombra del objeto**: la silueta del objeto principal desplazada **+16 en Y**, `fill="#000000" fill-opacity=".16"` (.3 sobre "noche"). Un solo path (nunca piezas solapadas, que duplicarían la opacidad).

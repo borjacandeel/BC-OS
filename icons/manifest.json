@@ -51,7 +51,7 @@
       "label": "Acciones",
       "context": "Actions",
       "lote": "A",
-      "count": 43
+      "count": 44
     },
     {
       "id": "status",
@@ -72,28 +72,35 @@
       "label": "Apps del sistema",
       "context": "Apps",
       "lote": "B",
-      "count": 21
+      "count": 22
     },
     {
       "id": "places",
       "label": "Lugares y carpetas",
       "context": "Places",
       "lote": "C",
-      "count": 22
+      "count": 24
     },
     {
       "id": "mimetypes",
       "label": "Archivos y MIME",
       "context": "MimeTypes",
       "lote": "C",
-      "count": 12
+      "count": 14
     },
     {
       "id": "devices",
       "label": "Dispositivos",
       "context": "Devices",
       "lote": "C",
-      "count": 22
+      "count": 26
+    },
+    {
+      "id": "emblems",
+      "label": "Emblemas",
+      "context": "Emblems",
+      "lote": "C",
+      "count": 6
     }
   ],
   "icons": [
@@ -244,6 +251,33 @@
         48
       ],
       "file": "dist/svg/document-properties-symbolic.svg"
+    },
+    {
+      "name": "document-revert",
+      "label": "Restaurar",
+      "category": "actions",
+      "context": "Actions",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "document-revert-symbolic"
+      },
+      "tags": [
+        "restaurar",
+        "revertir",
+        "historial",
+        "instantánea",
+        "copia",
+        "revert"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/document-revert-symbolic.svg"
     },
     {
       "name": "document-save",
@@ -1349,6 +1383,39 @@
       "file": "dist/svg/bc-reminders.svg"
     },
     {
+      "name": "bc-restore",
+      "label": "Restaurar instantáneas",
+      "category": "apps",
+      "context": "Apps",
+      "kind": "app",
+      "viewBox": "0 0 1024 1024",
+      "variants": {
+        "regular": "bc-restore"
+      },
+      "tags": [
+        "instantáneas",
+        "copias",
+        "restaurar",
+        "snapshots",
+        "historial",
+        "bc-restaurar"
+      ],
+      "sizes": [
+        16,
+        32,
+        64,
+        128,
+        256,
+        512,
+        1024
+      ],
+      "hints": [
+        16,
+        32
+      ],
+      "file": "dist/svg/bc-restore.svg"
+    },
+    {
       "name": "gnome-software",
       "label": "Tienda",
       "category": "apps",
@@ -2035,6 +2102,38 @@
       "file": "dist/svg/input-mouse.svg"
     },
     {
+      "name": "media-optical",
+      "label": "Disco óptico",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "media-optical"
+      },
+      "tags": [
+        "cd",
+        "dvd",
+        "disco",
+        "óptico",
+        "imagen de disco",
+        "optical"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "hints": [
+        16
+      ],
+      "file": "dist/svg/media-optical.svg"
+    },
+    {
       "name": "phone",
       "label": "Móvil",
       "category": "devices",
@@ -2137,6 +2236,32 @@
         48
       ],
       "file": "dist/svg/audio-headphones-symbolic.svg"
+    },
+    {
+      "name": "audio-speakers",
+      "label": "Altavoz",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "audio-speakers-symbolic"
+      },
+      "tags": [
+        "altavoz",
+        "altavoces",
+        "speaker",
+        "audio",
+        "bluetooth"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/audio-speakers-symbolic.svg"
     },
     {
       "name": "camera-photo",
@@ -2267,6 +2392,32 @@
       "file": "dist/svg/drive-removable-media-usb-symbolic.svg"
     },
     {
+      "name": "input-gaming",
+      "label": "Mando",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "input-gaming-symbolic"
+      },
+      "tags": [
+        "mando",
+        "gamepad",
+        "juegos",
+        "bluetooth",
+        "controller"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/input-gaming-symbolic.svg"
+    },
+    {
       "name": "input-keyboard",
       "label": "Teclado",
       "category": "devices",
@@ -2313,6 +2464,33 @@
         48
       ],
       "file": "dist/svg/input-mouse-symbolic.svg"
+    },
+    {
+      "name": "media-optical",
+      "label": "Disco óptico",
+      "category": "devices",
+      "context": "Devices",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "media-optical-symbolic"
+      },
+      "tags": [
+        "cd",
+        "dvd",
+        "disco",
+        "óptico",
+        "imagen de disco",
+        "optical"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/media-optical-symbolic.svg"
     },
     {
       "name": "phone",
@@ -2691,6 +2869,179 @@
       "file": "dist/svg/dialog-warning-symbolic.svg"
     },
     {
+      "name": "emblem-locked",
+      "label": "Bloqueado",
+      "category": "emblems",
+      "context": "Emblems",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "emblem-locked"
+      },
+      "tags": [
+        "candado",
+        "bloqueado",
+        "protegido",
+        "locked",
+        "lock"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "hints": [
+        16
+      ],
+      "file": "dist/svg/emblem-locked.svg"
+    },
+    {
+      "name": "emblem-readonly",
+      "label": "Solo lectura",
+      "category": "emblems",
+      "context": "Emblems",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "emblem-readonly"
+      },
+      "tags": [
+        "candado",
+        "protegido",
+        "solo lectura",
+        "readonly",
+        "bloqueado"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "hints": [
+        16
+      ],
+      "file": "dist/svg/emblem-readonly.svg"
+    },
+    {
+      "name": "emblem-symbolic-link",
+      "label": "Alias",
+      "category": "emblems",
+      "context": "Emblems",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "emblem-symbolic-link"
+      },
+      "tags": [
+        "alias",
+        "enlace",
+        "acceso directo",
+        "symlink",
+        "link",
+        "flecha"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "hints": [
+        16
+      ],
+      "file": "dist/svg/emblem-symbolic-link.svg"
+    },
+    {
+      "name": "emblem-locked",
+      "label": "Bloqueado",
+      "category": "emblems",
+      "context": "Emblems",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "emblem-locked-symbolic"
+      },
+      "tags": [
+        "candado",
+        "bloqueado",
+        "protegido",
+        "locked",
+        "lock"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/emblem-locked-symbolic.svg"
+    },
+    {
+      "name": "emblem-readonly",
+      "label": "Solo lectura",
+      "category": "emblems",
+      "context": "Emblems",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "emblem-readonly-symbolic"
+      },
+      "tags": [
+        "candado",
+        "protegido",
+        "solo lectura",
+        "readonly",
+        "bloqueado"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/emblem-readonly-symbolic.svg"
+    },
+    {
+      "name": "emblem-symbolic-link",
+      "label": "Alias",
+      "category": "emblems",
+      "context": "Emblems",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "emblem-symbolic-link-symbolic"
+      },
+      "tags": [
+        "alias",
+        "enlace",
+        "acceso directo",
+        "symlink",
+        "link",
+        "flecha"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/emblem-symbolic-link-symbolic.svg"
+    },
+    {
       "name": "application-octet-stream",
       "label": "Archivo desconocido",
       "category": "mimetypes",
@@ -2744,6 +3095,35 @@
       "file": "dist/svg/application-pdf.svg"
     },
     {
+      "name": "application-x-cd-image",
+      "label": "Imagen de disco",
+      "category": "mimetypes",
+      "context": "MimeTypes",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "application-x-cd-image"
+      },
+      "tags": [
+        "imagen de disco",
+        "iso",
+        "img",
+        "disco",
+        "cd",
+        "dvd"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "file": "dist/svg/application-x-cd-image.svg"
+    },
+    {
       "name": "application-x-executable",
       "label": "Ejecutable",
       "category": "mimetypes",
@@ -2769,6 +3149,37 @@
         256
       ],
       "file": "dist/svg/application-x-executable.svg"
+    },
+    {
+      "name": "application-x-generic",
+      "label": "Documento",
+      "category": "mimetypes",
+      "context": "MimeTypes",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "application-x-generic"
+      },
+      "tags": [
+        "documento",
+        "archivo",
+        "extensión",
+        "genérico",
+        "file"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "hints": [
+        16
+      ],
+      "file": "dist/svg/application-x-generic.svg"
     },
     {
       "name": "audio-x-generic",
@@ -3849,6 +4260,38 @@
       "file": "dist/svg/folder-videos.svg"
     },
     {
+      "name": "network-server",
+      "label": "Servidor de red",
+      "category": "places",
+      "context": "Places",
+      "kind": "color",
+      "viewBox": "0 0 48 48",
+      "variants": {
+        "regular": "network-server"
+      },
+      "tags": [
+        "servidor",
+        "red",
+        "disco de red",
+        "nas",
+        "network",
+        "server"
+      ],
+      "sizes": [
+        16,
+        24,
+        32,
+        48,
+        64,
+        128,
+        256
+      ],
+      "hints": [
+        16
+      ],
+      "file": "dist/svg/network-server.svg"
+    },
+    {
       "name": "user-desktop",
       "label": "Escritorio",
       "category": "places",
@@ -4104,6 +4547,33 @@
         48
       ],
       "file": "dist/svg/folder-videos-symbolic.svg"
+    },
+    {
+      "name": "network-server",
+      "label": "Servidor de red",
+      "category": "places",
+      "context": "Places",
+      "kind": "symbolic",
+      "viewBox": "0 0 24 24",
+      "variants": {
+        "regular": "network-server-symbolic"
+      },
+      "tags": [
+        "servidor",
+        "red",
+        "disco de red",
+        "nas",
+        "network",
+        "server"
+      ],
+      "sizes": [
+        16,
+        20,
+        24,
+        32,
+        48
+      ],
+      "file": "dist/svg/network-server-symbolic.svg"
     },
     {
       "name": "user-desktop",

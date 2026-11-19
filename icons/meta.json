@@ -1665,5 +1665,132 @@
       "tasks"
     ],
     "category": "apps"
+  },
+  "emblem-symbolic-link": {
+    "es": "Alias",
+    "tags": [
+      "alias",
+      "enlace",
+      "acceso directo",
+      "symlink",
+      "link",
+      "flecha"
+    ],
+    "category": "emblems"
+  },
+  "emblem-readonly": {
+    "es": "Solo lectura",
+    "tags": [
+      "candado",
+      "protegido",
+      "solo lectura",
+      "readonly",
+      "bloqueado"
+    ],
+    "category": "emblems"
+  },
+  "emblem-locked": {
+    "es": "Bloqueado",
+    "tags": [
+      "candado",
+      "bloqueado",
+      "protegido",
+      "locked",
+      "lock"
+    ],
+    "category": "emblems"
+  },
+  "application-x-generic": {
+    "es": "Documento",
+    "tags": [
+      "documento",
+      "archivo",
+      "extensión",
+      "genérico",
+      "file"
+    ],
+    "category": "mimetypes"
+  },
+  "application-x-cd-image": {
+    "es": "Imagen de disco",
+    "tags": [
+      "imagen de disco",
+      "iso",
+      "img",
+      "disco",
+      "cd",
+      "dvd"
+    ],
+    "category": "mimetypes"
+  },
+  "media-optical": {
+    "es": "Disco óptico",
+    "tags": [
+      "cd",
+      "dvd",
+      "disco",
+      "óptico",
+      "imagen de disco",
+      "optical"
+    ],
+    "category": "devices"
+  },
+  "network-server": {
+    "es": "Servidor de red",
+    "tags": [
+      "servidor",
+      "red",
+      "disco de red",
+      "nas",
+      "network",
+      "server"
+    ],
+    "category": "places"
+  },
+  "input-gaming": {
+    "es": "Mando",
+    "tags": [
+      "mando",
+      "gamepad",
+      "juegos",
+      "bluetooth",
+      "controller"
+    ],
+    "category": "devices"
+  },
+  "audio-speakers": {
+    "es": "Altavoz",
+    "tags": [
+      "altavoz",
+      "altavoces",
+      "speaker",
+      "audio",
+      "bluetooth"
+    ],
+    "category": "devices"
+  },
+  "document-revert": {
+    "es": "Restaurar",
+    "tags": [
+      "restaurar",
+      "revertir",
+      "historial",
+      "instantánea",
+      "copia",
+      "revert"
+    ],
+    "category": "actions"
+  },
+  "bc-restore": {
+    "es": "Restaurar instantáneas",
+    "tags": [
+      "instantáneas",
+      "copias",
+      "restaurar",
+      "snapshots",
+      "historial",
+      "bc-restaurar"
+    ],
+    "category": "apps"
   }
 }

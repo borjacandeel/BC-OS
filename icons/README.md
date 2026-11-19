@@ -50,4 +50,4 @@ Para apps: copia `templates/app-template.svg`, cambia colores del degradado (SPE
 
 ## Estado
 
-Lote A (UI): navegación, acciones, estado/barra de menús y diálogos. Muestra de app: `utilities-terminal`. Lote B hecho (16 apps en `src/app/apps`, con hinting @32/@16). Lote C hecho (lugares, MIME, dispositivos). Detalle en AUDIT.md.
+Lote A (UI): navegación, acciones, estado/barra de menús y diálogos. Muestra de app: `utilities-terminal`. Lote B hecho (16 apps en `src/app/apps`, con hinting @32/@16). Lote C hecho (lugares, MIME, dispositivos). Emblemas (`emblems`: alias y candado), imagen de disco, servidor de red, mando, altavoz y `bc-restore` añadidos el 2026-11-19. Detalle en AUDIT.md.

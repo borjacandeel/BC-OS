@@ -25,6 +25,7 @@ export const CATEGORIES = {
   places: { context: 'Places', label: 'Lugares y carpetas', lote: 'C' },
   mimetypes: { context: 'MimeTypes', label: 'Archivos y MIME', lote: 'C' },
   devices: { context: 'Devices', label: 'Dispositivos', lote: 'C' },
+  emblems: { context: 'Emblems', label: 'Emblemas', lote: 'C' },
 };
 
 // Colores permitidos en kind color/app (hex en mayúsculas). Ver SPEC.md §6.
