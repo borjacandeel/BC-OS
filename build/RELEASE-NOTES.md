@@ -14,3 +14,4 @@
 - **Iconos nuevos** (propios, estilo macOS): alias y candado como emblemas sobre los archivos, discos ópticos y de red, imagen de disco, documento genérico, mando y altavoz Bluetooth, carpeta de usuario con silueta e icono de Instantáneas (nueva app en el Launchpad).
 - **Liquid Glass**: la lente solo curva el fondo en el filo; el interior coincide exactamente con lo que hay detrás (antes se desplazaba y no casaba).
 - **Polybar mejorada**: la Wi-Fi muestra el nombre de la red; el menú indica a qué estás conectado, señal y candado por red, desconectar y volver a buscar; el volumen cambia de icono según el nivel; el calendario muestra la fecha completa, hoy resaltado y se mueve entre meses.
+- **Liquid Glass como macOS**: fondo muy difuminado (~30 px), tinte oscuro de serie en modo oscuro, filo luminoso fino y lente casi imperceptible; con Hyprland (GPU) el desenfoque es del compositor y va en tiempo real al mover ventanas.

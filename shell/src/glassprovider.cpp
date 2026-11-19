@@ -52,7 +52,7 @@ QImage GlassProvider::requestImage(const QString &id, QSize *size, const QSize &
             // Igual que sway («fill»): cubrir la pantalla recortando el sobrante centrado
             src = src.scaled(sw, sh, Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
             src = src.copy((src.width() - sw) / 2, (src.height() - sh) / 2, sw, sh);
-            m_blur.insert(key, blurred(src, qMax(6, sh / 110)));   // desenfoque ligero (~6–10 px) como liquid-glass-react: se ve el fondo curvado
+            m_blur.insert(key, blurred(src, qMax(14, sh / 28)));   // desenfoque amplio (~30 px) como los widgets de macOS: el fondo es solo luz y color
         }
         blur = m_blur.value(key);
     }
@@ -124,7 +124,7 @@ void GlassProvider::refract(QImage &img, int radius, bool leftOnly) {
     // detrás (antes todo el interior se desplazaba y el fondo no casaba con el de fuera). En una franja junto al borde
     // (proporcional al radio) el fondo se curva hacia dentro, más cuanto más cerca del filo.
     const qreal rr0 = qMin<qreal>(radius, qMin(rw, h) / 2.0);
-    const qreal band = qBound<qreal>(6, rr0 * 0.75, 20);
+    const qreal band = qBound<qreal>(4, rr0 * 0.5, 12);
     auto sdf = [&](qreal x, qreal y) { return rrSdf(x - rw / 2.0, y - h / 2.0, rw / 2.0, h / 2.0, rr0); };
     QVector<float> mx(w * h, 0.f), my(w * h, 0.f);
     for (int y = 0; y < h; ++y) for (int x = 0; x < w; ++x) {
@@ -135,7 +135,7 @@ void GlassProvider::refract(QImage &img, int radius, bool leftOnly) {
         const qreal nl = std::hypot(nx, ny); if (nl < 1e-6) continue;
         nx /= nl; ny /= nl;                                 // normal hacia fuera
         const qreal t = 1 - d / band;
-        const qreal m = band * 0.85 * t * t;               // se toma el fondo de más adentro: el filo «aumenta»
+        const qreal m = band * 0.5 * t * t;               // se toma el fondo de más adentro: el filo «aumenta»
         mx[y * w + x] = float(-nx * m); my[y * w + x] = float(-ny * m);
     }
     const qreal kR = 1.0, kG = 0.92, kB = 0.84;            // leve separación de colores en el filo
@@ -165,8 +165,8 @@ void GlassProvider::refract(QImage &img, int radius, bool leftOnly) {
     ring.addRoundedRect(QRectF(0.75, 0.75, rw - 1.5, h - 1.5), qMax<qreal>(0, rr - 0.75), qMax<qreal>(0, rr - 0.75));
     QLinearGradient gr(QPointF(0, 0), QPointF(rw, h));   // 135°: de arriba a la izquierda a abajo a la derecha
     gr.setColorAt(0.0, QColor(255, 255, 255, 0));
-    gr.setColorAt(0.33, QColor(255, 255, 255, int(255 * 0.34)));
-    gr.setColorAt(0.66, QColor(255, 255, 255, int(255 * 0.62)));
+    gr.setColorAt(0.33, QColor(255, 255, 255, int(255 * 0.12)));
+    gr.setColorAt(0.66, QColor(255, 255, 255, int(255 * 0.22)));
     gr.setColorAt(1.0, QColor(255, 255, 255, 0));
     pa.setCompositionMode(QPainter::CompositionMode_Screen);
     pa.setPen(QPen(QBrush(gr), 1.5));
@@ -175,7 +175,7 @@ void GlassProvider::refract(QImage &img, int radius, bool leftOnly) {
     pa.drawPath(ring);
     // Brillo interior suave arriba (inset 0 1px 3px blanco 0,25)
     QLinearGradient top(QPointF(0, 0), QPointF(0, qMin<qreal>(8, h / 3.0)));
-    top.setColorAt(0, QColor(255, 255, 255, 50)); top.setColorAt(1, QColor(255, 255, 255, 0));
+    top.setColorAt(0, QColor(255, 255, 255, 22)); top.setColorAt(1, QColor(255, 255, 255, 0));
     pa.setPen(Qt::NoPen);
     pa.setBrush(top);
     QPainterPath inner; inner.addRoundedRect(QRectF(0, 0, rw, h), rr, rr);
