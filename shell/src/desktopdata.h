@@ -1,5 +1,6 @@
 #pragma once
 #include <QColor>
+#include <QFileInfo>
 #include <QObject>
 #include <QTimer>
 #include <QVariantList>
@@ -155,6 +156,7 @@ public:
     Q_INVOKABLE static bool roundedCorners();
     // La Tienda está instalando o quitando algo (barra de progreso en su icono del Dock)
     Q_INVOKABLE static bool storeBusy();
+    Q_INVOKABLE static bool rebootPending() { return QFileInfo::exists(QStringLiteral("/run/bc-reiniciar-pendiente")); }
     // ¿La franja superior del fondo es clara? (texto oscuro en la barra de menús, como macOS). "" = fondo por defecto
     Q_INVOKABLE static bool wallpaperTopLight(const QString &path);
     // Color medio del fondo (algo saturado): tinte ambiental del cristal, como macOS

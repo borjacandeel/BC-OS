@@ -54,6 +54,14 @@ install -m644 "$TOP"/assets/sounds/*.wav "$E2/usr/share/sounds/bc/"
 install -d "$E2/usr/share/plymouth/themes/bcos" "$E2/usr/share/bc/sessions"
 install -m644 "$HERE"/plymouth/bcos/* "$E2/usr/share/plymouth/themes/bcos/"
 install -m644 "$HERE"/overlay-dotfiles/usr/share/bc/sessions/*.desktop "$E2/usr/share/bc/sessions/"
+# Entorno Dotfiles (bspwm): scripts, menús de la barra y configuración de referencia (bc-dotfiles-setup la aplica)
+install -m755 "$HERE"/overlay-dotfiles/usr/bin/* "$E2/usr/bin/"
+install -d "$E2/usr/share/bc/dotfiles"; cp -a "$HERE/overlay-dotfiles/usr/share/bc/dotfiles/." "$E2/usr/share/bc/dotfiles/"
+[ -d "$HERE/overlay-dotfiles/etc/bc" ] && cp -a "$HERE/overlay-dotfiles/etc/bc/." "$E2/etc/bc/"
+# Servicio de controladores del equipo (primer arranque / tras actualizar en equipos reales)
+install -D -m644 "$O/etc/systemd/system/bc-drivers.service" "$E2/usr/lib/systemd/system/bc-drivers.service"
+# Tema de iconos propio de BC OS (emblemas, dispositivos, apps)
+[ -d "$TOP/icons/dist/theme/BC" ] && { install -d "$E2/usr/share/icons"; cp -a "$TOP/icons/dist/theme/BC" "$E2/usr/share/icons/BC"; }
 install -D -m644 "$O/usr/lib/tmpfiles.d/bc-greeter.conf" "$E2/usr/lib/tmpfiles.d/bc-greeter.conf"
 # fish: prompt con colores, saludo, temas (bc-tema) y abreviaturas de BC OS
 install -d "$E2/etc/fish/functions" "$E2/etc/fish/conf.d" "$E2/usr/share/fish/tools/web_config/themes"

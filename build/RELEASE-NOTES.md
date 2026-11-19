@@ -20,3 +20,4 @@
 - **Polybar**: el volumen ya se ve siempre (con PipeWire/wpctl): icono por nivel, porcentaje, clic para el menú, rueda para subir y bajar.
 - **bspwm usa la misma resolución, frecuencia y escala que BC OS** (Ajustes ▸ Pantallas), también los modos que el monitor no anuncia; la pantalla principal va primero.
 - **Volumen de polybar**: elige el nivel exacto (de 10 en 10, con barra), silencio, salida de audio y mezclador.
+- **Actualizar lo aplica todo**: `bc-actualizar` entrega también el entorno bspwm, el servicio de controladores y el tema de iconos; recarga servicios, iconos y fuentes, instala los controladores del equipo si faltan, renueva los dotfiles no tocados de cada usuario y al final pide reiniciar (y Ajustes ▸ General lo recuerda con un botón «Reiniciar» hasta que se haga).

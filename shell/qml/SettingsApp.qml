@@ -767,6 +767,10 @@ AppWindow {
                 property var list: []
                 Connections { target: Quick; function onUpdatesChecked(lines, ok) { upd.list = lines; upd.state = !ok ? "error" : (lines.length ? "hay" : "al-dia") } }
                 Row2 { label: qsTr("BC OS"); value: qsTr("Versión %1").arg(Quick.systemVersion()) }
+                // Tras actualizar: lo del arranque, controladores y servicios se aplica al reiniciar
+                Row2 { visible: Quick.rebootPending(); label: qsTr("Reinicia para terminar de aplicar la actualización"); value: ""
+                       SmallBtn { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                                  text: qsTr("Reiniciar"); onClicked: Launcher.run("systemctl", ["reboot"]) } }
                 Row2 { label: upd.state === "buscando" ? qsTr("Buscando actualizaciones…")
                               : upd.state === "al-dia" ? qsTr("BC OS está al día")
                               : upd.state === "hay" ? qsTr("%1 actualizaciones disponibles").arg(upd.list.length)

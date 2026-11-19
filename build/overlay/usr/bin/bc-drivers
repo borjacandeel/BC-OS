@@ -30,4 +30,4 @@ command -v powerprofilesctl >/dev/null 2>&1 && systemctl enable --now power-prof
 # Microcódigo y firmware nuevos: initramfs al día
 mkinitcpio -P || true
 systemctl disable bc-drivers.service
-echo "hecho"
+echo "hecho $(date)"
