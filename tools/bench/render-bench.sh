@@ -14,6 +14,8 @@ export QT_QPA_PLATFORM="offscreen:configfile=$SCR"
 echo "escenario,rep,arranque_ms,cpu_ms,rss_mb,frames,media_ms,p95_ms,p99_ms,perdidos" > "$OUT"
 run() { # escenario rep extra-env...
   local esc="$1" rep="$2"; shift 2
+  # BC_BENCH_ONLY=spotlight,dock: medir solo esos escenarios
+  [ -n "${BC_BENCH_ONLY:-}" ] && [[ ",$BC_BENCH_ONLY," != *",$esc,"* ]] && return
   local d; d="$(mktemp -d)"
   python3 - "$d" "$esc" "$rep" "$BIN" "$@" >> "$OUT" <<'P'
 import sys, glob, os, re, subprocess, time, resource

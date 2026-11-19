@@ -86,6 +86,7 @@ Item {
         return out
     }
     Connections { target: UiState; function onEmojiOpenChanged() { if (UiState.emojiOpen) { ep.query = ""; search.text = ""; search.forceActiveFocus() } } }
+    Component.onCompleted: if (UiState.emojiOpen) search.forceActiveFocus()   // se crea al abrirse (Lazy)
     function pick(e) {
         UiState.emojiOpen = false
         Quick.copyText(e)

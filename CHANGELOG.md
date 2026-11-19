@@ -16,6 +16,7 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 - Caché en disco del desenfoque del cristal y decodificación del fondo a resolución de pantalla.
 - `tools/bench/render-bench.sh`, pruebas `tst_render` y documentación en `docs/rendering-engine/`.
 ### Cambiado
+- Paneles emergentes cargados al abrirse (`Lazy.qml`): apertura de Spotlight y demás de 12–19 ms a 3 ms; −21 MB de memoria.
 - Theme, Glass, Genio, AppWindow y SlideIn usan los parámetros del motor en lugar de «¿es por software?».
 
 ### Añadido

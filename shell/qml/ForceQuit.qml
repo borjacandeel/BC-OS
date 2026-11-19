@@ -26,6 +26,7 @@ Item {
         apps = out; sel = 0
     }
     Connections { target: UiState; function onForceQuitOpenChanged() { if (UiState.forceQuitOpen) { fq.build(); card.forceActiveFocus() } } }
+    Component.onCompleted: if (UiState.forceQuitOpen) { fq.build(); card.forceActiveFocus() }   // se crea al abrirse (Lazy)
     function doQuit() {
         const a = apps[sel]; if (!a) return
         Processes.quit(a.pid, true)

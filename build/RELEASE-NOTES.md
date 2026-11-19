@@ -17,3 +17,4 @@
   - el fondo se decodifica al tamaño de la pantalla;
   - las animaciones son más cortas en los niveles bajos.
 - **Backend gráfico por proceso con reserva:** Vulkan → OpenGL → software, según lo que haya de verdad en el equipo.
+- **Spotlight y todos los paneles emergentes abren al instante:** cada panel se crea solo al abrirse (antes se reconstruían todos a la vez). Abrir uno pasa de 12–19 ms a 3 ms, y BC Shell usa un 10 % menos de memoria y un 14–20 % menos de CPU al arrancar.

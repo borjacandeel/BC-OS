@@ -48,9 +48,14 @@ Item {
             const g = out.slice(1).filter(r => r.kind === k)
             if (g.length) { grouped.push({ kind: "header", title: names[k] }); for (const r of g) grouped.push(r) }
         }
+        // Si no cambia nada (p. ej. la búsqueda de archivos devuelve lo mismo), no se rehace la lista
+        if (JSON.stringify(grouped) === JSON.stringify(results)) return
         results = grouped
         selected = grouped.length > 1 ? 1 : 0
     }
+    // Al escribir deprisa, una sola búsqueda por fotograma (antes, una por tecla: rehacía la lista entera cada vez)
+    property bool _pending: false
+    function refreshSoon() { if (_pending) return; _pending = true; Qt.callLater(() => { sp._pending = false; sp.refresh() }) }
     function stepSel(d) {
         let i = selected + d
         while (i >= 0 && i < results.length && results[i].kind === "header") i += d
@@ -77,7 +82,7 @@ Item {
         color: Theme.label; selectionColor: Theme.selection
         font.family: Theme.font; font.pixelSize: px(24); font.weight: Font.Normal
         focus: true
-        onTextChanged: { sp.refresh(); fileDelay.restart() }
+        onTextChanged: { sp.refreshSoon(); fileDelay.restart() }
         Keys.onEscapePressed: sp.done()
         Keys.onReturnPressed: sp.run(sp.results[sp.selected])
         Keys.onDownPressed: sp.stepSel(1)

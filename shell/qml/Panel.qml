@@ -560,26 +560,38 @@ LayerWindow {
                             Behavior on opacity { NumberAnimation { duration: Theme.dur(160) } } }
                 MouseArea { anchors.fill: parent; onClicked: UiState.closePopups() }
 
-                ControlCenterGG {
-                    id: centerGG
-                    Component.onCompleted: root.ccRef = centerGG
-                    visible: !UiState.classic && opacity > 0
-                    x: pop.width - pop.m - width
-                    y: Theme.px(6)
-                    opacity: UiState.centerOpen ? 1 : 0
-                    scale: UiState.centerOpen ? 1 : 0.96
-                    transformOrigin: Item.TopRight
-                    Behavior on opacity { NumberAnimation { duration: Theme.d(Theme.durControlCenter); easing.type: Theme.easeStandard } }
-                    Behavior on scale { NumberAnimation { duration: Theme.d(Theme.durControlCenter); easing.type: Theme.easeSpring } }
+                Lazy {
+                    id: lzCC; open: UiState.centerOpen && !UiState.classic
+                    sourceComponent: Item {
+                        width: pop.width; height: pop.height
+                        ControlCenterGG {
+                            id: centerGG
+                            Component.onCompleted: root.ccRef = centerGG
+                            visible: !UiState.classic && opacity > 0
+                            x: pop.width - pop.m - width
+                            y: Theme.px(6)
+                            opacity: lzCC.on ? 1 : 0
+                            scale: lzCC.on ? 1 : 0.96
+                            transformOrigin: Item.TopRight
+                            Behavior on opacity { NumberAnimation { duration: Theme.d(Theme.durControlCenter); easing.type: Theme.easeStandard } }
+                            Behavior on scale { NumberAnimation { duration: Theme.d(Theme.durControlCenter); easing.type: Theme.easeSpring } }
+                        }
+                    }
                 }
-                NotificationCenter {
-                    id: notifCenter
-                    x: pop.width - width - Theme.px(16) + (UiState.notifCenterOpen ? 0 : width / 3)
-                    y: Theme.px(6)
-                    opacity: UiState.notifCenterOpen ? 1 : 0
-                    visible: opacity > 0
-                    Behavior on x { NumberAnimation { duration: Theme.d(Theme.durNotifyIn); easing.type: Theme.easeEmphasized } }
-                    Behavior on opacity { NumberAnimation { duration: Theme.d(Theme.durNotifyOut) } }
+                Lazy {
+                    id: lzNC; open: UiState.notifCenterOpen
+                    sourceComponent: Item {
+                        width: pop.width; height: pop.height
+                        NotificationCenter {
+                            id: notifCenter
+                            x: pop.width - width - Theme.px(16) + (lzNC.on ? 0 : width / 3)
+                            y: Theme.px(6)
+                            opacity: lzNC.on ? 1 : 0
+                            visible: opacity > 0
+                            Behavior on x { NumberAnimation { duration: Theme.d(Theme.durNotifyIn); easing.type: Theme.easeEmphasized } }
+                            Behavior on opacity { NumberAnimation { duration: Theme.d(Theme.durNotifyOut) } }
+                        }
+                    }
                 }
                 Spotlight {
                     id: spotlight
@@ -588,133 +600,151 @@ LayerWindow {
                     y: Math.round(pop.height * 0.22)
                     visible: opacity > 0
                     opacity: UiState.spotlightOpen ? 1 : 0
-                    scale: UiState.spotlightOpen ? 1 : 0.97
+                    scale: UiState.spotlightOpen || !Render.scaleAnimations ? 1 : 0.97   // por software, sin escalar (CPU)
                     Behavior on opacity { NumberAnimation { duration: Theme.d(UiState.spotlightOpen ? Theme.durSpotlight : 150); easing.type: Theme.easeStandard } }
                     Behavior on scale { NumberAnimation { duration: Theme.d(Theme.durSpotlight); easing.type: Theme.easeStandard } }
                     onDone: UiState.closePopups()
                     Connections { target: UiState; function onSpotlightOpenChanged() { if (UiState.spotlightOpen) spotlight.reset() } }
                 }
                 SlideIn { target: spotlight; dy: -10; duration: Theme.durSpotlight; fade: false }
-                // Pila de Descargas (en rejilla, sobre su icono del Dock)
-                Item {
-                    id: stack
-                    visible: opacity > 0
-                    opacity: UiState.stackOpen ? 1 : 0
-                    Behavior on opacity { NumberAnimation { duration: Theme.d(UiState.stackOpen ? Theme.durPopover : 160) } }
-                    width: Theme.px(360); height: Theme.px(330)
-                    x: Math.min(pop.width - width - Theme.px(10), dockGG.minimizeTarget.x + dockGG.bs - width / 2)
-                    y: pop.height - height - dockGG.plateH - Theme.px(18)
-                    FileModel { id: dl; Component.onCompleted: place("downloads") }
-                    Connections { target: UiState; function onStackOpenChanged() { if (UiState.stackOpen) dl.reload() } }
-                    Glass { anchors.fill: parent; radius: Theme.px(18); tintBoost: 0.35; originY: UiState.topInset }
-                    Text { x: Theme.px(16); y: Theme.px(12); text: qsTr("Descargas"); color: Theme.label; font.family: Theme.font; font.pixelSize: Theme.px(13); font.weight: Font.Bold }
-                    GridView {
-                        x: Theme.px(8); y: Theme.px(38); width: parent.width - Theme.px(16); height: parent.height - Theme.px(80)
-                        cellWidth: width / 4; cellHeight: Theme.px(82); clip: true; model: dl
-                        delegate: Item {
-                            required property string name
-                            required property string filePath
-                            required property string kind
-                            width: GridView.view.cellWidth; height: GridView.view.cellHeight
-                            FileGlyph { anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(4); kind: parent.kind; path: parent.filePath; width: Theme.px(52); height: Theme.px(44) }
-                            Text { anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(54); width: parent.width - Theme.px(6); horizontalAlignment: Text.AlignHCenter
-                                   elide: Text.ElideMiddle; text: parent.name; color: Theme.label; font.family: Theme.font; font.pixelSize: Theme.px(11) }
-                            MouseArea { anchors.fill: parent; onClicked: { UiState.closePopups(); Quick.open(parent.filePath) } }
-                        }
-                    }
-                    Text { anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; anchors.bottomMargin: Theme.px(14)
-                           text: dl.count === 0 ? qsTr("La carpeta está vacía") : qsTr("Abrir en Archivos") + "  ›"; color: Theme.selection
-                           font.family: Theme.font; font.pixelSize: Theme.px(12)
-                           MouseArea { anchors.fill: parent; onClicked: { UiState.closePopups(); Launcher.launch("archivos", Files.placePath("downloads")) } } }
-                }
-                SlideIn { target: stack; dy: 14; duration: Theme.durPopover; fade: false }
-                // Galería de widgets («Editar widgets…» de macOS): añadir y quitar widgets del escritorio
-                Item {
-                    id: gallery
-                    visible: opacity > 0
-                    opacity: UiState.widgetGalleryOpen ? 1 : 0
-                    Behavior on opacity { NumberAnimation { duration: Theme.d(UiState.widgetGalleryOpen ? Theme.durPopover : 180) } }
-                    width: Math.min(pop.width - Theme.px(40), Theme.px(900)); height: Theme.px(230)
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    y: pop.height - height - Theme.px(90)
-                    readonly property var lay: { try { return JSON.parse(Settings.widgetLayout || "{}") } catch (e) { return {} } }
-                    readonly property var act: lay._activos || ["baterias", "app", "recordatorios"]
-                    Glass { anchors.fill: parent; radius: Theme.px(24); tintBoost: 0.35; originY: UiState.topInset }
-                    MouseArea { anchors.fill: parent }
-                    Text { x: Theme.px(24); y: Theme.px(16); text: qsTr("Widgets"); color: Theme.label; font.family: Theme.font; font.pixelSize: Theme.px(18); font.weight: Font.Bold }
-                    Rectangle { anchors.right: parent.right; anchors.rightMargin: Theme.px(18); y: Theme.px(14); width: Theme.px(64); height: Theme.px(26); radius: height / 2; color: Theme.selection
-                                Text { anchors.centerIn: parent; text: qsTr("Listo"); color: "white"; font.family: Theme.font; font.pixelSize: Theme.px(12); font.weight: Font.Bold }
-                                MouseArea { anchors.fill: parent; onClicked: UiState.closePopups() } }
-                    Row {
-                        x: Theme.px(24); y: Theme.px(56); spacing: Theme.px(14)
-                        Repeater {
-                            model: [ { k: "baterias", t: qsTr("Baterías"), i: "battery-level-80-symbolic" }, { k: "app", t: qsTr("Uso del equipo"), i: "power-profile-performance-symbolic" },
-                                     { k: "recordatorios", t: qsTr("Recordatorios"), i: "view-list-symbolic" }, { k: "calendario", t: qsTr("Calendario"), i: "office-calendar" },
-                                     { k: "reloj", t: qsTr("Reloj"), i: "preferences-system-time" } ]
-                            Item {
-                                required property var modelData
-                                readonly property bool on: gallery.act.indexOf(modelData.k) >= 0
-                                width: (gallery.width - Theme.px(48) - 4 * Theme.px(14)) / 5; height: Theme.px(150)
-                                Rectangle { anchors.fill: parent; radius: Theme.px(18); color: Theme.fill; border.width: parent.on ? 2 : 1; border.color: parent.on ? Theme.selection : Theme.separator }
-                                Icon { anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(30); name: modelData.i; size: Theme.px(40); color: Theme.label }
-                                Text { anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(88); text: modelData.t; color: Theme.label; font.family: Theme.font; font.pixelSize: Theme.px(13); font.weight: Font.DemiBold }
-                                Rectangle {
-                                    anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(114); width: Theme.px(26); height: width; radius: width / 2
-                                    color: parent.on ? Theme.fill : Theme.selection
-                                    Text { anchors.centerIn: parent; text: parent.parent.on ? "−" : "+"; color: parent.parent.on ? Theme.label : "white"; font.pixelSize: Theme.px(17); font.weight: Font.Bold }
+                Lazy {
+                    id: lzStack; open: UiState.stackOpen
+                    sourceComponent: Item {
+                        width: pop.width; height: pop.height
+                        // Pila de Descargas (en rejilla, sobre su icono del Dock)
+                        Item {
+                            id: stack
+                            visible: opacity > 0
+                            opacity: lzStack.on ? 1 : 0
+                            Behavior on opacity { NumberAnimation { duration: Theme.d(lzStack.on ? Theme.durPopover : 160) } }
+                            width: Theme.px(360); height: Theme.px(330)
+                            x: Math.min(pop.width - width - Theme.px(10), dockGG.minimizeTarget.x + dockGG.bs - width / 2)
+                            y: pop.height - height - dockGG.plateH - Theme.px(18)
+                            FileModel { id: dl; Component.onCompleted: place("downloads") }
+                            Connections { target: UiState; function onStackOpenChanged() { if (UiState.stackOpen) dl.reload() } }
+                            Glass { anchors.fill: parent; radius: Theme.px(18); tintBoost: 0.35; originY: UiState.topInset }
+                            Text { x: Theme.px(16); y: Theme.px(12); text: qsTr("Descargas"); color: Theme.label; font.family: Theme.font; font.pixelSize: Theme.px(13); font.weight: Font.Bold }
+                            GridView {
+                                x: Theme.px(8); y: Theme.px(38); width: parent.width - Theme.px(16); height: parent.height - Theme.px(80)
+                                cellWidth: width / 4; cellHeight: Theme.px(82); clip: true; model: dl
+                                delegate: Item {
+                                    required property string name
+                                    required property string filePath
+                                    required property string kind
+                                    width: GridView.view.cellWidth; height: GridView.view.cellHeight
+                                    FileGlyph { anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(4); kind: parent.kind; path: parent.filePath; width: Theme.px(52); height: Theme.px(44) }
+                                    Text { anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(54); width: parent.width - Theme.px(6); horizontalAlignment: Text.AlignHCenter
+                                           elide: Text.ElideMiddle; text: parent.name; color: Theme.label; font.family: Theme.font; font.pixelSize: Theme.px(11) }
+                                    MouseArea { anchors.fill: parent; onClicked: { UiState.closePopups(); Quick.open(parent.filePath) } }
                                 }
-                                MouseArea { anchors.fill: parent; onClicked: { if (!Settings.widgets) Settings.widgets = true; UiState.command("bc", (parent.on ? "widgetOff:" : "widgetOn:") + modelData.k) } }
+                            }
+                            Text { anchors.horizontalCenter: parent.horizontalCenter; anchors.bottom: parent.bottom; anchors.bottomMargin: Theme.px(14)
+                                   text: dl.count === 0 ? qsTr("La carpeta está vacía") : qsTr("Abrir en Archivos") + "  ›"; color: Theme.selection
+                                   font.family: Theme.font; font.pixelSize: Theme.px(12)
+                                   MouseArea { anchors.fill: parent; onClicked: { UiState.closePopups(); Launcher.launch("archivos", Files.placePath("downloads")) } } }
+                        }
+                        SlideIn { target: stack; dy: 14; duration: Theme.durPopover; fade: false }
+                    }
+                }
+                Lazy {
+                    id: lzGal; open: UiState.widgetGalleryOpen
+                    sourceComponent: Item {
+                        width: pop.width; height: pop.height
+                        // Galería de widgets («Editar widgets…» de macOS): añadir y quitar widgets del escritorio
+                        Item {
+                            id: gallery
+                            visible: opacity > 0
+                            opacity: lzGal.on ? 1 : 0
+                            Behavior on opacity { NumberAnimation { duration: Theme.d(lzGal.on ? Theme.durPopover : 180) } }
+                            width: Math.min(pop.width - Theme.px(40), Theme.px(900)); height: Theme.px(230)
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            y: pop.height - height - Theme.px(90)
+                            readonly property var lay: { try { return JSON.parse(Settings.widgetLayout || "{}") } catch (e) { return {} } }
+                            readonly property var act: lay._activos || ["baterias", "app", "recordatorios"]
+                            Glass { anchors.fill: parent; radius: Theme.px(24); tintBoost: 0.35; originY: UiState.topInset }
+                            MouseArea { anchors.fill: parent }
+                            Text { x: Theme.px(24); y: Theme.px(16); text: qsTr("Widgets"); color: Theme.label; font.family: Theme.font; font.pixelSize: Theme.px(18); font.weight: Font.Bold }
+                            Rectangle { anchors.right: parent.right; anchors.rightMargin: Theme.px(18); y: Theme.px(14); width: Theme.px(64); height: Theme.px(26); radius: height / 2; color: Theme.selection
+                                        Text { anchors.centerIn: parent; text: qsTr("Listo"); color: "white"; font.family: Theme.font; font.pixelSize: Theme.px(12); font.weight: Font.Bold }
+                                        MouseArea { anchors.fill: parent; onClicked: UiState.closePopups() } }
+                            Row {
+                                x: Theme.px(24); y: Theme.px(56); spacing: Theme.px(14)
+                                Repeater {
+                                    model: [ { k: "baterias", t: qsTr("Baterías"), i: "battery-level-80-symbolic" }, { k: "app", t: qsTr("Uso del equipo"), i: "power-profile-performance-symbolic" },
+                                             { k: "recordatorios", t: qsTr("Recordatorios"), i: "view-list-symbolic" }, { k: "calendario", t: qsTr("Calendario"), i: "office-calendar" },
+                                             { k: "reloj", t: qsTr("Reloj"), i: "preferences-system-time" } ]
+                                    Item {
+                                        required property var modelData
+                                        readonly property bool on: gallery.act.indexOf(modelData.k) >= 0
+                                        width: (gallery.width - Theme.px(48) - 4 * Theme.px(14)) / 5; height: Theme.px(150)
+                                        Rectangle { anchors.fill: parent; radius: Theme.px(18); color: Theme.fill; border.width: parent.on ? 2 : 1; border.color: parent.on ? Theme.selection : Theme.separator }
+                                        Icon { anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(30); name: modelData.i; size: Theme.px(40); color: Theme.label }
+                                        Text { anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(88); text: modelData.t; color: Theme.label; font.family: Theme.font; font.pixelSize: Theme.px(13); font.weight: Font.DemiBold }
+                                        Rectangle {
+                                            anchors.horizontalCenter: parent.horizontalCenter; y: Theme.px(114); width: Theme.px(26); height: width; radius: width / 2
+                                            color: parent.on ? Theme.fill : Theme.selection
+                                            Text { anchors.centerIn: parent; text: parent.parent.on ? "−" : "+"; color: parent.parent.on ? Theme.label : "white"; font.pixelSize: Theme.px(17); font.weight: Font.Bold }
+                                        }
+                                        MouseArea { anchors.fill: parent; onClicked: { if (!Settings.widgets) Settings.widgets = true; UiState.command("bc", (parent.on ? "widgetOff:" : "widgetOn:") + modelData.k) } }
+                                    }
+                                }
                             }
                         }
+                        SlideIn { target: gallery; dy: 30; duration: Theme.durPopover; fade: false }
                     }
                 }
-                SlideIn { target: gallery; dy: 30; duration: Theme.durPopover; fade: false }
-                // Popover del botón verde (macOS 27): «Mover y redimensionar», «Rellenar y organizar», pantalla completa
-                Item {
-                    id: tilePop
-                    visible: UiState.tilePop !== null
-                    width: Theme.px(232); height: tpCol.height + Theme.px(16)
-                    x: UiState.tilePop ? Math.min(pop.width - width - 8, UiState.tilePop.x) : 0
-                    y: UiState.tilePop ? UiState.tilePop.y - UiState.topInset + Theme.px(4) : 0
-                    Glass { anchors.fill: parent; radius: Theme.px(14); tintBoost: 0.4 }
-                    MouseArea { anchors.fill: parent }
-                    component TileBtn: Rectangle {
-                        property string how; property var cells: []   // [x, y, w, h] en fracciones del icono
-                        width: Theme.px(40); height: Theme.px(32); radius: Theme.px(8); color: tb.containsMouse ? Theme.fillHover : "transparent"
-                        Rectangle {
-                            anchors.centerIn: parent; width: Theme.px(26); height: Theme.px(20); radius: Theme.px(4); color: "transparent"
-                            border.width: Theme.px(2); border.color: Theme.label
-                            Repeater { model: parent.parent.cells
-                                       Rectangle { required property var modelData; x: Theme.px(3) + modelData[0] * (parent.width - Theme.px(6)); y: Theme.px(3) + modelData[1] * (parent.height - Theme.px(6))
-                                                   width: modelData[2] * (parent.width - Theme.px(6)); height: modelData[3] * (parent.height - Theme.px(6)); radius: Theme.px(1.5); color: Theme.label } }
+                Lazy {
+                    id: lzTile; open: UiState.tilePop !== null
+                    sourceComponent: Item {
+                        width: pop.width; height: pop.height
+                        // Popover del botón verde (macOS 27): «Mover y redimensionar», «Rellenar y organizar», pantalla completa
+                        Item {
+                            id: tilePop
+                            visible: UiState.tilePop !== null
+                            width: Theme.px(232); height: tpCol.height + Theme.px(16)
+                            x: UiState.tilePop ? Math.min(pop.width - width - 8, UiState.tilePop.x) : 0
+                            y: UiState.tilePop ? UiState.tilePop.y - UiState.topInset + Theme.px(4) : 0
+                            Glass { anchors.fill: parent; radius: Theme.px(14); tintBoost: 0.4 }
+                            MouseArea { anchors.fill: parent }
+                            component TileBtn: Rectangle {
+                                property string how; property var cells: []   // [x, y, w, h] en fracciones del icono
+                                width: Theme.px(40); height: Theme.px(32); radius: Theme.px(8); color: tb.containsMouse ? Theme.fillHover : "transparent"
+                                Rectangle {
+                                    anchors.centerIn: parent; width: Theme.px(26); height: Theme.px(20); radius: Theme.px(4); color: "transparent"
+                                    border.width: Theme.px(2); border.color: Theme.label
+                                    Repeater { model: parent.parent.cells
+                                               Rectangle { required property var modelData; x: Theme.px(3) + modelData[0] * (parent.width - Theme.px(6)); y: Theme.px(3) + modelData[1] * (parent.height - Theme.px(6))
+                                                           width: modelData[2] * (parent.width - Theme.px(6)); height: modelData[3] * (parent.height - Theme.px(6)); radius: Theme.px(1.5); color: Theme.label } }
+                                }
+                                MouseArea { id: tb; anchors.fill: parent; hoverEnabled: true; onClicked: { UiState.closePopups(); UiState.run("bc:tile:" + parent.how) } }
+                            }
+                            Column {
+                                id: tpCol; x: Theme.px(12); y: Theme.px(10); spacing: Theme.px(4)
+                                Text { text: qsTr("Mover y redimensionar"); color: Theme.labelSecondary; font.family: Theme.font; font.pixelSize: Theme.px(11); font.weight: Font.DemiBold }
+                                Row { spacing: Theme.px(12)
+                                      TileBtn { how: "left"; cells: [[0, 0, 0.5, 1]] }
+                                      TileBtn { how: "right"; cells: [[0.5, 0, 0.5, 1]] }
+                                      TileBtn { how: "top"; cells: [[0, 0, 1, 0.5]] }
+                                      TileBtn { how: "bottom"; cells: [[0, 0.5, 1, 0.5]] } }
+                                Rectangle { width: Theme.px(208); height: 1; color: Theme.separator }
+                                Text { text: qsTr("Rellenar y organizar"); color: Theme.labelSecondary; font.family: Theme.font; font.pixelSize: Theme.px(11); font.weight: Font.DemiBold }
+                                Row { spacing: Theme.px(12)
+                                      TileBtn { how: "fill"; cells: [[0, 0, 1, 1]] }
+                                      TileBtn { how: "center"; cells: [[0.2, 0.15, 0.6, 0.7]] }
+                                      TileBtn { how: "leftq"; cells: [[0, 0, 0.33, 1]] }
+                                      TileBtn { how: "rightq"; cells: [[0.33, 0, 0.67, 1]] } }
+                                Rectangle { width: Theme.px(208); height: 1; color: Theme.separator }
+                                Rectangle {
+                                    width: Theme.px(208); height: Theme.px(26); radius: Theme.px(6); color: fsm.containsMouse ? Theme.accent : "transparent"
+                                    Text { x: Theme.px(8); anchors.verticalCenter: parent.verticalCenter; text: qsTr("Pantalla completa"); color: fsm.containsMouse ? "white" : Theme.label
+                                           font.family: Theme.font; font.pixelSize: Theme.px(13) }
+                                    MouseArea { id: fsm; anchors.fill: parent; hoverEnabled: true; onClicked: { UiState.closePopups(); Sway.toggleFullscreen(Sway.focusedId) } }
+                                }
+                            }
                         }
-                        MouseArea { id: tb; anchors.fill: parent; hoverEnabled: true; onClicked: { UiState.closePopups(); UiState.run("bc:tile:" + parent.how) } }
-                    }
-                    Column {
-                        id: tpCol; x: Theme.px(12); y: Theme.px(10); spacing: Theme.px(4)
-                        Text { text: qsTr("Mover y redimensionar"); color: Theme.labelSecondary; font.family: Theme.font; font.pixelSize: Theme.px(11); font.weight: Font.DemiBold }
-                        Row { spacing: Theme.px(12)
-                              TileBtn { how: "left"; cells: [[0, 0, 0.5, 1]] }
-                              TileBtn { how: "right"; cells: [[0.5, 0, 0.5, 1]] }
-                              TileBtn { how: "top"; cells: [[0, 0, 1, 0.5]] }
-                              TileBtn { how: "bottom"; cells: [[0, 0.5, 1, 0.5]] } }
-                        Rectangle { width: Theme.px(208); height: 1; color: Theme.separator }
-                        Text { text: qsTr("Rellenar y organizar"); color: Theme.labelSecondary; font.family: Theme.font; font.pixelSize: Theme.px(11); font.weight: Font.DemiBold }
-                        Row { spacing: Theme.px(12)
-                              TileBtn { how: "fill"; cells: [[0, 0, 1, 1]] }
-                              TileBtn { how: "center"; cells: [[0.2, 0.15, 0.6, 0.7]] }
-                              TileBtn { how: "leftq"; cells: [[0, 0, 0.33, 1]] }
-                              TileBtn { how: "rightq"; cells: [[0.33, 0, 0.67, 1]] } }
-                        Rectangle { width: Theme.px(208); height: 1; color: Theme.separator }
-                        Rectangle {
-                            width: Theme.px(208); height: Theme.px(26); radius: Theme.px(6); color: fsm.containsMouse ? Theme.accent : "transparent"
-                            Text { x: Theme.px(8); anchors.verticalCenter: parent.verticalCenter; text: qsTr("Pantalla completa"); color: fsm.containsMouse ? "white" : Theme.label
-                                   font.family: Theme.font; font.pixelSize: Theme.px(13) }
-                            MouseArea { id: fsm; anchors.fill: parent; hoverEnabled: true; onClicked: { UiState.closePopups(); Sway.toggleFullscreen(Sway.focusedId) } }
-                        }
+                        SlideIn { target: tilePop; dy: -4; duration: Theme.durMenuOpen }
                     }
                 }
-                SlideIn { target: tilePop; dy: -4; duration: Theme.durMenuOpen }
                 // Menú contextual (Dock, escritorio, widgets…)
                 MenuPopup {
                     id: ctx
@@ -732,20 +762,24 @@ LayerWindow {
                     onActivated: (cmd) => { UiState.closePopups(); UiState.run(cmd) }
                 }
                 SlideIn { target: ctx; dy: -4; duration: Theme.durMenuOpen; fade: false }
-                ControlCenter {
-                    id: center
-                    scale: root.u
-                    transformOrigin: Item.TopRight
-                    x: pop.width - pop.m - width
-                    y: UiState.win ? pop.height - center.height * root.u - pop.m : pop.m + (Notifications.visible ? (80 + 10) * root.u : 0)
-                    opacity: UiState.centerOpen && UiState.classic ? 1 : 0
-                    visible: opacity > 0
-                    Behavior on opacity { NumberAnimation { duration: Theme.dur(160); easing.type: Theme.easing } }
+                Lazy {
+                    id: lzCCc; open: UiState.centerOpen && UiState.classic
+                    sourceComponent: Item {
+                        width: pop.width; height: pop.height
+                        ControlCenter {
+                            id: center
+                            scale: root.u
+                            transformOrigin: Item.TopRight
+                            x: pop.width - pop.m - width
+                            y: UiState.win ? pop.height - center.height * root.u - pop.m : pop.m + (Notifications.visible ? (80 + 10) * root.u : 0)
+                            opacity: lzCCc.on ? 1 : 0
+                            visible: opacity > 0
+                            Behavior on opacity { NumberAnimation { duration: Theme.dur(160); easing.type: Theme.easing } }
+                        }
+        SlideIn { target: center; dy: -12; fade: false }
+                    }
                 }
-                SlideIn { target: center; dy: -12; fade: false }
                 SlideIn { target: menu; dy: -6; duration: 150; fade: false }
-                SlideIn { target: launcherWrap; dy: -14; duration: 220 }
-                SlideIn { target: startMenu; dy: 28; duration: 240 }
                 MenuPopup {
                     id: menu
                     readonly property var all: UiState.menu === "system" ? AppMenus.systemItems
@@ -762,68 +796,106 @@ LayerWindow {
                     y: 4
                     onActivated: (cmd) => { UiState.closePopups(); UiState.run(cmd) }
                 }
-                Launchpad {
-                    id: launchpad
-                    visible: opacity > 0 && !UiState.classic
-                    opacity: UiState.launcherOpen ? 1 : 0
-                    Behavior on opacity { NumberAnimation { duration: Theme.d(UiState.launcherOpen ? Theme.durLaunchpad : 220); easing.type: Theme.easeStandard } }
-                    onDone: UiState.closePopups()
-                    onLaunch: (id, name) => { UiState.closePopups(); if (!Apps.launch(id)) Notifications.push("BC OS", name, qsTr("No se pudo abrir la aplicación"), "", 4000) }
-                    Connections { target: UiState; function onLauncherOpenChanged() { if (UiState.classic) return; if (UiState.launcherOpen) launchpad.reset(); else launchpad.leave() } }
-                }
-                Item {
-                    id: launcherWrap
-                    visible: UiState.launcherOpen && UiState.classic
-                    anchors.fill: parent
-                    LauncherPanel {
-                        id: launcher
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        y: Math.round(pop.height * 0.16)
-                        onLaunchRequested: (id, name) => {
-                            UiState.closePopups()
-                            if (!Apps.launch(id)) Notifications.push("BC OS", name, qsTr("No se pudo abrir la aplicación"), "", 4000)
+                Lazy {
+                    id: lzLP; open: UiState.launcherOpen && !UiState.classic
+                    sourceComponent: Item {
+                        width: pop.width; height: pop.height
+                        Launchpad {
+                            id: launchpad
+                            visible: opacity > 0 && !UiState.classic
+                            opacity: lzLP.on ? 1 : 0
+                            Behavior on opacity { NumberAnimation { duration: Theme.d(lzLP.on ? Theme.durLaunchpad : 220); easing.type: Theme.easeStandard } }
+                            Component.onCompleted: launchpad.reset()
+                            onDone: UiState.closePopups()
+                            onLaunch: (id, name) => { UiState.closePopups(); if (!Apps.launch(id)) Notifications.push("BC OS", name, qsTr("No se pudo abrir la aplicación"), "", 4000) }
+                            Connections { target: UiState; function onLauncherOpenChanged() { if (UiState.classic) return; if (UiState.launcherOpen) launchpad.reset(); else launchpad.leave() } }
                         }
-                        onCloseRequested: UiState.closePopups()
-                    }
-                    Connections { target: UiState; function onLauncherOpenChanged() { if (UiState.launcherOpen) launcher.reset() } }
-                }
-                Item {
-                    id: clipWrap
-                    visible: UiState.clipboardOpen
-                    anchors.fill: parent
-                    ClipboardPopup {
-                        id: clipboardPopup
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        y: Math.round(pop.height * 0.14)
-                        onCloseRequested: UiState.closePopups()
-                    }
-                    Connections { target: UiState; function onClipboardOpenChanged() { if (UiState.clipboardOpen) clipboardPopup.reset() } }
-                }
-                SlideIn { target: clipWrap; dy: -14; duration: 220 }
-                StartMenu {
-                    id: startMenu
-                    visible: UiState.startOpen
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    y: pop.height - height - 12
-                    onLaunchPinned: (k, n) => { UiState.closePopups(); root.launch(k, n) }
-                    onLaunchApp: (id, n) => { UiState.closePopups(); if (!Apps.launch(id)) Notifications.push("BC OS", n, qsTr("No se pudo abrir la aplicación"), "", 4000) }
-                    onCloseRequested: UiState.closePopups()
-                    Connections { target: UiState; function onStartOpenChanged() { if (UiState.startOpen) startMenu.reset() } }
-                }
-                ForceQuit { }
-                EmojiPicker { }
-                PowerDialog {
-                    id: powerDialog
-                    onCancelled: UiState.powerAction = ""
-                    onConfirmed: (a) => {
-                        UiState.powerAction = ""
-                        if (a === "poweroff") Power.poweroff()
-                        else if (a === "reboot") Power.reboot()
-                        else if (a === "suspend") Power.suspend()
-                        else if (a === "logout") Power.logout()
                     }
                 }
-                Connections { target: UiState; function onPowerActionChanged() { if (UiState.powerAction !== "") powerDialog.open(UiState.powerAction) } }
+                Lazy {
+                    id: lzLW; open: UiState.launcherOpen && UiState.classic
+                    sourceComponent: Item {
+                        width: pop.width; height: pop.height
+                        Item {
+                            id: launcherWrap
+                            visible: UiState.launcherOpen && UiState.classic
+                            anchors.fill: parent
+                            LauncherPanel {
+                                id: launcher
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                y: Math.round(pop.height * 0.16)
+                                onLaunchRequested: (id, name) => {
+                                    UiState.closePopups()
+                                    if (!Apps.launch(id)) Notifications.push("BC OS", name, qsTr("No se pudo abrir la aplicación"), "", 4000)
+                                }
+                                onCloseRequested: UiState.closePopups()
+                                Component.onCompleted: launcher.reset()
+                            }
+                            Connections { target: UiState; function onLauncherOpenChanged() { if (UiState.launcherOpen) launcher.reset() } }
+                        }
+        SlideIn { target: launcherWrap; dy: -14; duration: 220 }
+                    }
+                }
+                Lazy {
+                    id: lzClip; open: UiState.clipboardOpen
+                    sourceComponent: Item {
+                        width: pop.width; height: pop.height
+                        Item {
+                            id: clipWrap
+                            visible: UiState.clipboardOpen
+                            anchors.fill: parent
+                            ClipboardPopup {
+                                id: clipboardPopup
+                                anchors.horizontalCenter: parent.horizontalCenter
+                                y: Math.round(pop.height * 0.14)
+                                onCloseRequested: UiState.closePopups()
+                                Component.onCompleted: clipboardPopup.reset()
+                            }
+                            Connections { target: UiState; function onClipboardOpenChanged() { if (UiState.clipboardOpen) clipboardPopup.reset() } }
+                        }
+                        SlideIn { target: clipWrap; dy: -14; duration: 220 }
+                    }
+                }
+                Lazy {
+                    id: lzStart; open: UiState.startOpen
+                    sourceComponent: Item {
+                        width: pop.width; height: pop.height
+                        StartMenu {
+                            id: startMenu
+                            visible: UiState.startOpen
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            y: pop.height - height - 12
+                            onLaunchPinned: (k, n) => { UiState.closePopups(); root.launch(k, n) }
+                            onLaunchApp: (id, n) => { UiState.closePopups(); if (!Apps.launch(id)) Notifications.push("BC OS", n, qsTr("No se pudo abrir la aplicación"), "", 4000) }
+                            onCloseRequested: UiState.closePopups()
+                            Connections { target: UiState; function onStartOpenChanged() { if (UiState.startOpen) startMenu.reset() } }
+                            Component.onCompleted: startMenu.reset()
+                        }
+        SlideIn { target: startMenu; dy: 28; duration: 240 }
+                    }
+                }
+                Lazy { id: lzFQ; open: UiState.forceQuitOpen
+                       sourceComponent: Item { width: pop.width; height: pop.height; ForceQuit { opacity: lzFQ.on ? 1 : 0 } } }
+                Lazy { id: lzEmoji; open: UiState.emojiOpen
+                       sourceComponent: Item { width: pop.width; height: pop.height; EmojiPicker { opacity: lzEmoji.on ? 1 : 0 } } }
+                Lazy {
+                    id: lzPower; open: UiState.powerAction !== ""
+                    sourceComponent: Item {
+                        width: pop.width; height: pop.height
+                        PowerDialog {
+                            id: powerDialog
+                            Component.onCompleted: Qt.callLater(() => { if (UiState.powerAction !== "") powerDialog.open(UiState.powerAction) })
+                            onCancelled: UiState.powerAction = ""
+                            onConfirmed: (a) => {
+                                UiState.powerAction = ""
+                                if (a === "poweroff") Power.poweroff()
+                                else if (a === "reboot") Power.reboot()
+                                else if (a === "suspend") Power.suspend()
+                                else if (a === "logout") Power.logout()
+                            }
+                        }
+                    }
+                }
             }
         }
     }
