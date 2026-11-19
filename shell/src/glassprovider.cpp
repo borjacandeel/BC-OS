@@ -120,22 +120,25 @@ void GlassProvider::refract(QImage &img, int radius, bool leftOnly) {
         const qreal qx = qAbs(x) - ww + r, qy = qAbs(y) - hh + r;
         return qMin<qreal>(qMax(qx, qy), 0) + std::hypot(qMax<qreal>(qx, 0), qMax<qreal>(qy, 0)) - r;
     };
-    // Mapa: desplazamiento (dx, dy) en píxeles por píxel, normalizado por el máximo
-    QVector<float> mx(w * h), my(w * h);
-    qreal maxScale = 1;
+    // Lente SOLO en el filo, como Liquid Glass de macOS: el interior del cristal coincide exactamente con lo que hay
+    // detrás (antes todo el interior se desplazaba y el fondo no casaba con el de fuera). En una franja junto al borde
+    // (proporcional al radio) el fondo se curva hacia dentro, más cuanto más cerca del filo.
+    const qreal rr0 = qMin<qreal>(radius, qMin(rw, h) / 2.0);
+    const qreal band = qBound<qreal>(6, rr0 * 0.75, 20);
+    auto sdf = [&](qreal x, qreal y) { return rrSdf(x - rw / 2.0, y - h / 2.0, rw / 2.0, h / 2.0, rr0); };
+    QVector<float> mx(w * h, 0.f), my(w * h, 0.f);
     for (int y = 0; y < h; ++y) for (int x = 0; x < w; ++x) {
-        const qreal ux = (x + 0.5) / rw - 0.5, uy = (y + 0.5) / h - 0.5;
-        const qreal dist = rrSdf(ux, uy, 0.3, 0.2, 0.6);
-        const qreal disp = smoothStep(0.8, 0, dist - 0.15);
-        const qreal sc = smoothStep(0, 1, disp);
-        const qreal dx = (ux * sc + 0.5) * rw - (x + 0.5), dy = (uy * sc + 0.5) * h - (y + 0.5);
-        const qreal edge = qMin<qreal>(1, qMin(qMin<qreal>(x, y), qMin<qreal>(rw - x - 1, h - y - 1)) / 2.0);
-        mx[y * w + x] = float(dx * edge); my[y * w + x] = float(dy * edge);
-        maxScale = qMax(maxScale, qMax(qAbs(dx), qAbs(dy)));
+        const qreal cx = x + 0.5, cy = y + 0.5;
+        const qreal d = -sdf(cx, cy);                    // distancia al filo hacia dentro
+        if (d <= 0 || d >= band) continue;
+        qreal nx = sdf(cx + 1, cy) - sdf(cx - 1, cy), ny = sdf(cx, cy + 1) - sdf(cx, cy - 1);
+        const qreal nl = std::hypot(nx, ny); if (nl < 1e-6) continue;
+        nx /= nl; ny /= nl;                                 // normal hacia fuera
+        const qreal t = 1 - d / band;
+        const qreal m = band * 0.85 * t * t;               // se toma el fondo de más adentro: el filo «aumenta»
+        mx[y * w + x] = float(-nx * m); my[y * w + x] = float(-ny * m);
     }
-    // Escala del efecto: 70 px en una pastilla de ~70 px de alto; proporcional en piezas pequeñas
-    const qreal S = qMin<qreal>(70, 0.9 * qMin(rw, h));
-    const qreal kR = S / maxScale, kG = S * 0.9 / maxScale, kB = S * 0.8 / maxScale;
+    const qreal kR = 1.0, kG = 0.92, kB = 0.84;            // leve separación de colores en el filo
     auto px = [&](qreal x, qreal y) -> QRgb {
         const int ix = qBound(0, int(x), w - 1), iy = qBound(0, int(y), h - 1);
         return reinterpret_cast<const QRgb *>(src.constScanLine(iy))[ix];

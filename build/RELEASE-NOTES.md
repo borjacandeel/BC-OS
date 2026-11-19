@@ -12,3 +12,4 @@
 - **Ajustes ▸ General ▸ Motor gráfico**: Automático, Hyprland o sway.
 - **Barra de bspwm (polybar)**: cada módulo abre su menú con el tema de la barra (panel compacto bajo ella): Wi-Fi (redes, contraseña), Bluetooth (dispositivos), sonido (nivel, silencio, salida de audio y mezclador), batería y modo de energía, calendario en el reloj.
 - **Iconos nuevos** (propios, estilo macOS): alias y candado como emblemas sobre los archivos, discos ópticos y de red, imagen de disco, documento genérico, mando y altavoz Bluetooth, carpeta de usuario con silueta e icono de Instantáneas (nueva app en el Launchpad).
+- **Liquid Glass**: la lente solo curva el fondo en el filo; el interior coincide exactamente con lo que hay detrás (antes se desplazaba y no casaba).

@@ -102,6 +102,17 @@ Qué incluye (detalle técnico y decisiones en [`docs/escritorio/ESTADO.md`](doc
     <td colspan="2" align="center"><img src="docs/escritorio/capturas/23-instalador.jpg" alt="Instalar BC OS" width="80%"><br><sub><b>Instalar BC OS</b>: instalador gráfico al estilo de macOS (disco, cifrado, cuenta, región y progreso real); se abre solo en la ISO live.</sub></td>
   </tr>
   <tr>
+    <td width="50%"><img src="docs/escritorio/capturas/24-forzar-salida.jpg" alt="Forzar salida"><br><sub><b>Forzar salida</b> (Ctrl+Alt+Esc): las apps abiertas, como macOS.</sub></td>
+    <td width="50%"><img src="docs/escritorio/capturas/25-emoji.jpg" alt="Emoji y símbolos"><br><sub><b>Emoji y símbolos</b> (Ctrl+Súper+Espacio): categorías y búsqueda en español.</sub></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="docs/escritorio/capturas/26-notas-buscar.jpg" alt="Buscar en Notas"><br><sub><b>Notas ▸ Buscar</b> (Ctrl+F): resaltado amarillo con salto.</sub></td>
+    <td width="50%"><img src="docs/escritorio/capturas/27-archivos-emblemas.jpg" alt="Archivos con emblemas"><br><sub><b>Archivos</b>: emblemas de alias y candado, como Finder.</sub></td>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><img src="docs/escritorio/capturas/28-bspwm-polybar.jpg" alt="bspwm con polybar" width="70%"><br><sub><b>Dotfiles (bspwm)</b>: polybar con menús propios de Wi-Fi, sonido, Bluetooth, batería y calendario; terminal Alacritty.</sub></td>
+  </tr>
+  <tr>
     <td colspan="2" align="center"><img src="docs/escritorio/capturas/17-bienvenida-equipo.jpg" alt="Bienvenida: máquina virtual o equipo físico" width="70%"><br><sub><b>Primer arranque</b>: máquina virtual (ligero) o equipo físico (GPU, desenfoque real); se detecta solo.</sub></td>
   </tr>
 </table>
@@ -293,7 +304,7 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 | `0.3.x-alpha` | publicadas | **sway** (mosaico/flotante), menús globales por app, Dock con ventanas reales, Alacritty, animación de minimizar y swayfx experimental. |
 | `0.4.0-beta` / `0.4.1-beta` | publicadas (prerrelease) | Asistente de bienvenida, estilos, widgets, Modos, Flathub, fish, servicio de antivirus; resolución adaptable (`bc-display`), iconos Qogir, portapapeles (Súper+V). |
 | `0.5.0-beta` | prerrelease, en pruebas | Entorno **Dotfiles (bspwm)** elegible en el login. Verificado en QEMU; sin probar en VirtualBox. |
-| `0.9.19-beta` | en preparación | Genio más ligero (capa del tamaño justo), Forzar salida (Ctrl+Alt+Esc), pista de la contraseña en el login, buscar en Notas con resaltado amarillo, controles más fieles (marcas, brillo, selección), selector de emoji, pestañas con «+» en Archivos, barra de franjas en la Tienda, bspwm arreglado (Alacritty, menús de Wi-Fi, sonido, Bluetooth, batería y calendario en la barra), controladores al instalar, elegir motor gráfico, iconos nuevos (alias, candado, discos, Bluetooth, carpeta de usuario, Instantáneas). |
+| `0.9.19-beta` | en preparación | Genio más ligero (capa del tamaño justo), Forzar salida (Ctrl+Alt+Esc), pista de la contraseña en el login, buscar en Notas con resaltado amarillo, controles más fieles (marcas, brillo, selección), selector de emoji, pestañas con «+» en Archivos, barra de franjas en la Tienda, bspwm arreglado (Alacritty, menús de Wi-Fi, sonido, Bluetooth, batería y calendario en la barra), controladores al instalar, elegir motor gráfico, iconos nuevos (alias, candado, discos, Bluetooth, carpeta de usuario, Instantáneas), cristal alineado con el fondo (lente solo en el filo). |
 | `0.9.18-beta` | prerelease (solo ISO) | Sin microcortes en VirtualBox (cortes cada 2 s, cristal que se recalculaba con cualquier ajuste, sin lente ni genio sin GPU), Terminal que maximiza, más fluido en máquinas virtuales (sway ligero, genio 4× más barato), firmware de gráficas en PCs reales, cristal con tinte del fondo, fondos de día y noche, claro/oscuro con fundido, globos y progreso en el Dock, punto de micrófono/cámara, Reducir transparencia y Aumentar contraste, Mission Control crea escritorios. |
 | `0.9.17-beta` | prerelease | Liquid Glass nuevo (liquid-glass-react), esquinas siempre, Dock reordenable, miniaturas de minimizadas, fish con colores, Tienda que instala, NVIDIA/nouveau con sway, resolución nativa con Hyprland, yay, zoom, menús del escritorio, nube «poof», miniatura de captura, barras de desplazamiento y rebote como macOS, Firefox con amarillo y verde en sway, Hyprland con varias pantallas. |
 | `0.9.14-beta` | prerelease | Login como macOS (fondo desenfocado, apagar abajo) con la resolución del usuario, esquinas suavizadas en todo el cristal, genio sin escalones. |
