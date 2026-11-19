@@ -11,3 +11,5 @@ Sin aplicar: la web está en otro repositorio y el encargo del motor de render p
 - Más ligero en máquinas virtuales: el desenfoque se guarda en disco y el fondo se decodifica al tamaño de la pantalla.
 
 Captura: `docs/escritorio/capturas/calidad-grafica.png`.
+
+**0.9.21-beta.** Spotlight y todos los paneles emergentes abren al instante (3 ms en vez de 12–19 ms). BC Shell usa un 10 % menos de memoria y un 14–20 % menos de CPU al arrancar, y el Dock ya no pierde fotogramas.
