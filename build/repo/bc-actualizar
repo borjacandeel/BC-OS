@@ -13,9 +13,11 @@ OV="$OV --overwrite /etc/fish/functions/* --overwrite /etc/fish/conf.d/bcos.fish
 OV="$OV --overwrite /usr/share/icons/BC/* --overwrite /usr/lib/systemd/system/bc-* --overwrite /etc/systemd/system/bc-*"
 OV="$OV --overwrite /usr/lib/firefox/distribution/policies.json --overwrite /usr/lib/firefox/defaults/pref/bc-* --overwrite /usr/lib/firefox/bc*"
 # Huella del tema de arranque antes de actualizar: si cambia, se rehace el initramfs (el arranque animado va en él)
-ply0="$(cat /usr/share/plymouth/themes/bcos/* 2>/dev/null | md5sum)"
+ply0="${BC_PLY0:-$(cat /usr/share/plymouth/themes/bcos/* 2>/dev/null | md5sum)}"
 # Paquetes instalados antes: si al final no cambia nada, no hay que reiniciar (antes lo pedía siempre)
-pk0="$(pacman -Q | md5sum)"
+pk0="${BC_PK0:-$(pacman -Q | md5sum)}"
+self0="$(md5sum < "$0")"
+if [ -z "${BC_ACT_NUEVO:-}" ]; then
 pacman -Syy --noconfirm
 # Todos los archivos que traen los paquetes de BC (lista del repositorio [bc]) se pueden sobrescribir: así un archivo
 # que la imagen puso a mano y ahora llega en un paquete nunca bloquea la actualización (solo rutas de BC, nunca otras)
@@ -23,11 +25,28 @@ pacman -Fy >/dev/null 2>&1 || true
 for f in $(pacman -Flq bc-os bc-shell bc-core bc-escritorio yay 2>/dev/null | grep -v '/$'); do OV="$OV --overwrite /$f"; done
 if pacman -Qq bc-os >/dev/null 2>&1; then pacman -Su --noconfirm $OV "$@"
 else pacman -S --noconfirm --needed $OV bc-os "$@" && pacman -Su --noconfirm "$@"; fi
+fi
+# Si esta misma orden se ha actualizado, el resto lo hace la versión nueva (así lo nuevo, como el GRUB de BC OS, se
+# aplica en esta actualización y no en la siguiente)
+if [ -z "${BC_ACT_NUEVO:-}" ] && [ "$(md5sum < "$0")" != "$self0" ]; then
+  BC_ACT_NUEVO=1 BC_PK0="$pk0" BC_PLY0="$ply0" exec "$0" "$@"
+fi
 systemd-tmpfiles --create /usr/lib/tmpfiles.d/bc-greeter.conf 2>/dev/null || true
 if [ "$(cat /usr/share/plymouth/themes/bcos/* 2>/dev/null | md5sum)" != "$ply0" ] && command -v mkinitcpio >/dev/null 2>&1; then
   echo "Actualizando el arranque animado…"; plymouth-set-default-theme bcos 2>/dev/null; mkinitcpio -P >/dev/null 2>&1 || true
 fi
 # GRUB de BC OS: si el equipo arranca con GRUB, tema y entradas al día (microcódigo, opciones nuevas…)
+# Equipos instalados antes de 0.9.23 arrancan con systemd-boot: se pasa UNA vez al GRUB de BC OS (con su tema) si
+# es UEFI x86_64 sin Secure Boot y hay entradas de BC OS. systemd-boot sigue en el menú del firmware como respaldo.
+# Para no hacerlo nunca: sudo touch /etc/bc/sin-grub
+sb="$(od -An -t u1 /sys/firmware/efi/efivars/SecureBoot-8be4df61-93ca-11d2-aa0d-e0d1755f2a5c 2>/dev/null | awk '{print $NF}')"
+if [ ! -f /boot/grub/grub.cfg ] && [ -d /sys/firmware/efi ] && [ "$(uname -m)" = x86_64 ] && [ "${sb:-0}" != 1 ] \
+   && [ ! -e /etc/bc/sin-grub ] && [ ! -e /var/lib/bc/grub-intentado ] && ls /boot/loader/entries/bcos*.conf >/dev/null 2>&1 \
+   && command -v bc-grub >/dev/null 2>&1; then
+  mkdir -p /var/lib/bc; touch /var/lib/bc/grub-intentado
+  echo "Instalando el GRUB de BC OS (tema de arranque)…"
+  bc-grub instalar >/dev/null 2>&1 && { echo "GRUB de BC OS instalado."; REINICIAR=1; } || echo "Aviso: no se pudo instalar GRUB; se sigue arrancando con systemd-boot." >&2
+fi
 if [ -f /boot/grub/grub.cfg ] && command -v bc-grub >/dev/null 2>&1; then bc-grub configurar >/dev/null 2>&1 || true; fi
 # En el login solo BC OS y Dotfiles
 rm -f /usr/share/bc/sessions/bc-clasico.desktop
@@ -55,7 +74,7 @@ for h in /home/*; do
   u="$(stat -c %U "$h" 2>/dev/null)"; [ -n "$u" ] && [ "$u" != root ] && id "$u" >/dev/null 2>&1 || continue
   runuser -u "$u" -- env HOME="$h" bc-dotfiles-setup >/dev/null 2>&1 || true
 done
-if [ "$(pacman -Q | md5sum)" = "$pk0" ]; then
+if [ "$(pacman -Q | md5sum)" = "$pk0" ] && [ -z "${REINICIAR:-}" ]; then
   echo
   echo "BC OS ya estaba al día: no hay nada nuevo que instalar ni hace falta reiniciar."
   exit 0

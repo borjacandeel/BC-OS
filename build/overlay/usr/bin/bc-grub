@@ -43,6 +43,8 @@ configurar() {
 }
 
 instalar() {
+  # Sin entradas de BC OS no se toca nada (GRUB quedaría primero en el arranque sin menú)
+  ls "$BOOT"/loader/entries/bcos*.conf >/dev/null 2>&1 || { echo "bc-grub: no hay entradas de BC OS en $BOOT/loader/entries" >&2; exit 1; }
   command -v grub-install >/dev/null || pacman -S --noconfirm --needed grub efibootmgr
   if [ -d /sys/firmware/efi ]; then
     case "$(uname -m)" in aarch64) t=arm64-efi ;; *) t=x86_64-efi ;; esac
