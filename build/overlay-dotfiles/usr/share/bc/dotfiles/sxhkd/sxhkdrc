@@ -14,13 +14,10 @@ super + alt + {q,r}
 super + {_,shift + }w
 	bspc node -{c,k}
 
-# Ctrl+Q también cierra (como en el resto de BC OS)
-ctrl + q
+# Súper+Q también cierra (como en BC OS: todos los atajos van con Súper)
+super + q
 	bspc node -c
 
-# Ctrl + número: ir al escritorio · Ctrl+Mayús + número: llevar la ventana
-ctrl + {_,shift + }{1-9,0}
-	bspc {desktop -f,node -d} '^{1-9,10}'
 
 # alternar mosaico y monóculo
 super + m
@@ -42,15 +39,15 @@ super + ctrl + {m,x,y,z}
 super + {_,shift + }{h,j,k,l}
 	bspc node -{f,s} {west,south,north,east}
 
-# Ctrl + flechas: cambiar de ventana por dirección; con Mayús, moverla
-ctrl + {Left,Down,Up,Right}
+# Súper + flechas: cambiar de ventana por dirección; con Mayús, intercambiarla
+super + {Left,Down,Up,Right}
 	bspc node -f {west,south,north,east}
-ctrl + shift + {Left,Down,Up,Right}
+super + shift + {Left,Down,Up,Right}
 	bspc node -s {west,south,north,east}
 
 # foco por ruta
-super + {p,b,comma,period}
-	bspc node -f @{parent,brother,first,second}
+super + {p,comma,period}
+	bspc node -f @{parent,first,second}
 
 # siguiente / anterior en el escritorio
 super + {_,shift + }c
@@ -60,9 +57,9 @@ super + {_,shift + }c
 super + bracket{left,right}
 	bspc desktop -f {prev,next}.local
 
-# último nodo / escritorio
-super + {grave,Tab}
-	bspc {node,desktop} -f last
+# última ventana
+super + grave
+	bspc node -f last
 
 # historial de foco
 super + {o,i}
@@ -90,8 +87,8 @@ super + alt + {h,j,k,l}
 super + alt + shift + {h,j,k,l}
 	bspc node -z {right -20 0,top 0 20,bottom 0 -20,left 20 0}
 
-# mover una ventana flotante
-super + {Left,Down,Up,Right}
+# mover una ventana flotante (Súper+Alt+flechas; Súper+flechas cambia de ventana)
+super + alt + {Left,Down,Up,Right}
 	bspc node -v {-20 0,0 20,0 -20,20 0}
 
 #
@@ -99,23 +96,21 @@ super + {Left,Down,Up,Right}
 #
 super + Return
 	alacritty
-ctrl + Return
-	alacritty
 super + d
 	rofi -show drun -theme ~/.config/rofi/config.rasi
-ctrl + space
+# Súper+Espacio: buscar y abrir apps (como Spotlight en BC OS) · Súper+Tab: cambiar de ventana
+super + space
 	rofi -show drun -theme ~/.config/rofi/config.rasi
-ctrl + Tab
+super + Tab
 	rofi -show window -theme ~/.config/rofi/config.rasi
 super + e
 	pcmanfm ~/
-ctrl + b
-	firefox
 super + b
 	firefox
 super + x
 	bc-powermenu
-super + l
+# bloquear: Ctrl+Súper+Q, igual que en BC OS (Súper+L ya mueve el foco a la derecha)
+super + ctrl + q
 	xsecurelock
 super + F1
 	alacritty -e less /etc/bc/atajos-dotfiles.txt
