@@ -1,0 +1,38 @@
+#!/bin/sh
+# Inactividad como en macOS: apagar la pantalla (y bloquear) y reposo, con tiempos distintos con batería y con
+# corriente. Ajustes ▸ Batería y energía escribe ~/.config/bc/energia (minutos; 0 = nunca):
+#   pantalla_bat=3  pantalla_ac=10  reposo_bat=15  reposo_ac=0
+# Se vuelve a configurar solo al cambiar de batería a corriente o al cambiar los ajustes (sin cerrar sesión).
+# Respeta a las apps que impiden el reposo (vídeo a pantalla completa, llamadas): protocolo idle-inhibit.
+CFG="${XDG_CONFIG_HOME:-$HOME/.config}/bc/energia"
+val() { v="$(sed -n "s/^$1=\([0-9]*\)$/\1/p" "$CFG" 2>/dev/null | tail -n1)"; echo "${v:-$2}"; }
+enchufado() {
+  for d in /sys/class/power_supply/*; do
+    [ "$(cat "$d/type" 2>/dev/null)" = Mains ] && [ "$(cat "$d/online" 2>/dev/null)" = 1 ] && return 0
+  done
+  ls /sys/class/power_supply/BAT* >/dev/null 2>&1 && return 1 || return 0   # sin batería = sobremesa: «corriente»
+}
+if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
+  OFF="hyprctl eval 'hl.dispatch(hl.dsp.dpms({ action = \"off\" }))'"
+  ON="hyprctl eval 'hl.dispatch(hl.dsp.dpms({ action = \"on\" }))'"
+else
+  OFF="swaymsg 'output * power off'"; ON="swaymsg 'output * power on'"
+fi
+pid=; antes=
+while :; do
+  # Fin de la sesión (compositor cerrado): terminar, no quedarse relanzando swayidle
+  [ -n "$WAYLAND_DISPLAY" ] && [ ! -S "${XDG_RUNTIME_DIR:-/run/user/$(id -u)}/$WAYLAND_DISPLAY" ] && { kill "$pid" 2>/dev/null; exit 0; }
+  if enchufado; then P=$(val pantalla_ac 10); R=$(val reposo_ac 0); else P=$(val pantalla_bat 3); R=$(val reposo_bat 15); fi
+  ahora="$P/$R"
+  if [ "$ahora" != "$antes" ] || ! kill -0 "$pid" 2>/dev/null; then
+    [ -n "$pid" ] && kill "$pid" 2>/dev/null
+    set -- -w
+    # Al apagar la pantalla se bloquea (como macOS con «Pedir contraseña» inmediato)
+    [ "$P" -gt 0 ] && set -- "$@" timeout $((P * 60)) "bc-ctl lock; sleep 1; $OFF" resume "$ON"
+    [ "$R" -gt 0 ] && set -- "$@" timeout $((R * 60)) "systemctl suspend"
+    set -- "$@" before-sleep "bc-ctl lock" after-resume "$ON"
+    swayidle "$@" &
+    pid=$!; antes="$ahora"
+  fi
+  sleep 20
+done

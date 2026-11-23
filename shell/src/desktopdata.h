@@ -163,6 +163,9 @@ public:
     Q_INVOKABLE static QColor wallpaperAverage(const QString &path);
     Q_INVOKABLE static bool setRoundedCorners(bool on);
     // Motor gráfico (~/.config/bc/compositor): "" automático, "hyprland" o "sway"
+    // Inactividad (bc-idle): minutos hasta apagar la pantalla / reposo, con batería («_bat») o corriente («_ac»); 0 = nunca
+    Q_INVOKABLE static int energyPref(const QString &key, int def);
+    Q_INVOKABLE static bool setEnergyPref(const QString &key, int minutes);
     Q_INVOKABLE static QString compositorPref();
     Q_INVOKABLE static bool setCompositorPref(const QString &c);
     // Bloqueo a prueba de fallos: marca en $XDG_RUNTIME_DIR/bc-bloqueado mientras la pantalla está bloqueada.

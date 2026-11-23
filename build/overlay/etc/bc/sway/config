@@ -190,7 +190,8 @@ exec sh -c 'command -v VBoxClient >/dev/null && systemd-detect-virt -q --vm && V
 # Historial del portapapeles, bloqueo por inactividad y apagado de pantalla
 exec wl-paste --type text --watch cliphist store
 exec wl-paste --type image --watch cliphist store
-exec swayidle -w timeout 600 'bc-ctl lock' timeout 900 'swaymsg "output * power off"' resume 'swaymsg "output * power on"' before-sleep 'bc-ctl lock'
+# Inactividad: apagar pantalla, bloquear y reposo (Ajustes ▸ Batería y energía)
+exec bc-idle
 
 # Panel de BC Shell (barra, Dock, fondo, notificaciones); se relanza si termina
 # Si el panel se cae con la pantalla bloqueada, swaylock la protege al instante (bloqueo seguro ext-session-lock)

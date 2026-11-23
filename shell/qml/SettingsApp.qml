@@ -955,6 +955,31 @@ AppWindow {
                 Row2 { visible: SystemStatus.hasBattery; label: qsTr("Estado"); value: SystemStatus.batteryCharging ? qsTr("Cargando") : qsTr("Descargando") }
                 Row2 { visible: SystemStatus.hasBacklight; label: qsTr("Brillo de pantalla"); value: Math.round(SystemStatus.brightness * 100) + " %" }
             }
+            // Inactividad, como macOS: apagar la pantalla (se bloquea) y reposo; con batería y con corriente por separado
+            component EnergyRow: Row2 {
+                id: er
+                property string key; property int def: 0; property var mins: []
+                property int cur: Quick.energyPref(key, def)
+                value: ""
+                PillSeg {
+                    anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                    options: er.mins.map(m => m === 0 ? qsTr("Nunca") : (m < 60 ? m + " min" : (m / 60) + " h"))
+                    current: Math.max(0, er.mins.indexOf(er.cur))
+                    onPicked: (i) => { if (Quick.setEnergyPref(er.key, er.mins[i])) er.cur = er.mins[i] }
+                }
+            }
+            Section { visible: SystemStatus.hasBattery; text: qsTr("Con batería") }
+            Group {
+                visible: SystemStatus.hasBattery
+                EnergyRow { label: qsTr("Apagar la pantalla"); key: "pantalla_bat"; def: 3; mins: [1, 2, 3, 5, 10, 0] }
+                EnergyRow { label: qsTr("Reposo"); key: "reposo_bat"; def: 15; mins: [5, 10, 15, 30, 60, 0] }
+            }
+            Section { text: SystemStatus.hasBattery ? qsTr("Con el cargador conectado") : qsTr("Inactividad") }
+            Group {
+                EnergyRow { label: qsTr("Apagar la pantalla"); key: "pantalla_ac"; def: 10; mins: [2, 5, 10, 15, 30, 0] }
+                EnergyRow { label: qsTr("Reposo"); key: "reposo_ac"; def: 0; mins: [15, 30, 60, 120, 0] }
+            }
+            Hint { width: parent.width; text: qsTr("Al apagarse la pantalla, el equipo se bloquea. Los vídeos a pantalla completa y las llamadas evitan que se apague. Al cerrar la tapa del portátil entra en reposo.") }
         }
 
         // 4 Usuarios

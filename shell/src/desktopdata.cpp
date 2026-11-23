@@ -876,6 +876,30 @@ void QuickTools::copyText(const QString &text) {
     QProcess::startDetached(exe, {"--", text});
 }
 static QString compPath() { return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/bc/compositor"; }
+static QString energyPath() { return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/bc/energia"; }
+static bool energyKeyOk(const QString &k) { return k == "pantalla_bat" || k == "pantalla_ac" || k == "reposo_bat" || k == "reposo_ac"; }
+int QuickTools::energyPref(const QString &key, int def) {
+    QFile f(energyPath());
+    if (!energyKeyOk(key) || !f.open(QIODevice::ReadOnly)) return def;
+    int v = def;
+    for (const QString &l : QString::fromUtf8(f.readAll()).split('\n'))
+        if (l.startsWith(key + '=')) { bool ok = false; const int n = l.mid(key.size() + 1).trimmed().toInt(&ok); if (ok && n >= 0) v = n; }
+    return v;
+}
+bool QuickTools::setEnergyPref(const QString &key, int minutes) {
+    if (!energyKeyOk(key) || minutes < 0 || minutes > 600) return false;
+    QStringList lines;
+    QFile in(energyPath());
+    if (in.open(QIODevice::ReadOnly))
+        for (const QString &l : QString::fromUtf8(in.readAll()).split('\n', Qt::SkipEmptyParts))
+            if (!l.startsWith(key + '=')) lines << l;
+    lines << key + '=' + QString::number(minutes);
+    QDir().mkpath(QFileInfo(energyPath()).absolutePath());
+    QSaveFile f(energyPath());
+    if (!f.open(QIODevice::WriteOnly)) return false;
+    f.write(lines.join('\n').toUtf8() + '\n');
+    return f.commit();   // bc-idle lo relee en menos de 20 s
+}
 QString QuickTools::compositorPref() {
     QFile f(compPath());
     if (!f.open(QIODevice::ReadOnly)) return {};

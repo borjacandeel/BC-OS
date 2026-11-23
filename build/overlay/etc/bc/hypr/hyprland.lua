@@ -219,7 +219,7 @@ hl.on("hyprland.start", function()
     hl.exec_cmd("sh -c 'command -v VBoxClient >/dev/null && systemd-detect-virt -q --vm && VBoxClient --clipboard'")
     hl.exec_cmd("wl-paste --type text --watch cliphist store")
     hl.exec_cmd("wl-paste --type image --watch cliphist store")
-    hl.exec_cmd("swayidle -w timeout 600 'bc-ctl lock' timeout 900 'hyprctl dispatch \"hl.dsp.dpms({ action = \\\"off\\\" })\"' resume 'hyprctl dispatch \"hl.dsp.dpms({ action = \\\"on\\\" })\"' before-sleep 'bc-ctl lock'")
+    hl.exec_cmd("bc-idle")   -- inactividad: apagar pantalla, bloquear y reposo (Ajustes ▸ Batería y energía)
     -- Panel de BC Shell: se relanza si termina; si cae con la pantalla bloqueada, swaylock la protege
     hl.exec_cmd("sh -c 'while [ -n \"$HYPRLAND_INSTANCE_SIGNATURE\" ]; do bc-shell --panel; [ -f \"$XDG_RUNTIME_DIR/bc-bloqueado\" ] && swaylock -f -c 0B1020 -e -F; sleep 1; done'")
 end)
