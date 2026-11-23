@@ -35,6 +35,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] Animaciones al ritmo del monitor: bucle de render «threaded» (salvo nouveau); bc-display pone la frecuencia máxima.
 - [x] bc-hardware.service caía (226/NAMESPACE): CacheDirectory=bc.
 - [ ] Verificar en el portátil tras actualizar (fluidez a 120/144 Hz, Wi-Fi, avisos).
+- [x] Icono de Ethernet de la barra (`network-wired-symbolic`) rediseñado como «< ··· >» (icon-designer; build y lint OK).
 
 ## Pendiente del creador 2026-11-17 (tarde)
 - [x] Recordatorios: con más de 2 se salen del widget (limitar filas al alto o «y N más»).
