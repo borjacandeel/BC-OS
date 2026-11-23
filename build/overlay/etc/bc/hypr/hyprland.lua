@@ -79,6 +79,10 @@ hl.config({
         -- Sin avisos fijos arriba a la derecha: BC OS arranca Hyprland con start-hyprland y pone XDG_CURRENT_DESKTOP=BC
         -- a propósito (bc-session); Hyprland lo señalaba como problema en cada inicio
         disable_watchdog_warning = true,
+        -- Sin recarga automática: al actualizar, pacman sustituye este archivo y durante un instante no existe; Hyprland
+        -- lo recargaba justo entonces y mostraba «cannot open hyprland.lua: no such file». Los cambios se aplican al
+        -- reiniciar (bc-actualizar lo pide) o al momento con bc-render-apply.
+        disable_autoreload = true,
         disable_xdg_env_checks = true,
         disable_hyprland_guiutils_check = true,
         mouse_move_enables_dpms = true,
