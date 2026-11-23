@@ -8,7 +8,7 @@
 Sistema operativo Linux (ARM64 y x86_64) creado por <b>Borja Candel</b>, en español por defecto.</p>
 
 <p align="center">
-  <img alt="Versión" src="https://img.shields.io/badge/versi%C3%B3n-0.9.22--beta%20(prerelease)-2F7BFF">
+  <img alt="Versión" src="https://img.shields.io/badge/versi%C3%B3n-0.9.23--beta%20(prerelease)-2F7BFF">
   <img alt="Arquitectura" src="https://img.shields.io/badge/arquitectura-ARM64%20%7C%20x86__64-04111F">
   <img alt="Base" src="https://img.shields.io/badge/base-Arch%20Linux%20%2F%20ARM-1793D1">
   <img alt="Idioma" src="https://img.shields.io/badge/idioma-espa%C3%B1ol%20(es__ES)-C60B1E">
@@ -22,7 +22,7 @@ BC OS es un Linux ligero y en español para **ARM64** (sobre **Arch Linux ARM**)
   <br><sub>Escritorio Golden Gate: barra de menús, widgets de vidrio, iconos en el escritorio, aviso y Dock. Captura del shell en el anfitrión de desarrollo.</sub>
 </p>
 
-> **Estado honesto:** beta experimental. La **0.9.22-beta** sale para ARM64 y x86_64 (disco VDI e ISO live UEFI y BIOS) con **Hyprland** si hay cualquier GPU real y sway si no; la ISO x86_64 ya arranca en un PC real (BIOS, NVIDIA GT 710). Muchas piezas están compiladas y vistas en capturas, pero **pendientes de prueba real**. Ver [estado y pendientes](#estado-honesto-de-golden-gate).
+> **Estado honesto:** beta experimental. La **0.9.23-beta** sale para ARM64 y x86_64 (disco VDI e ISO live UEFI y BIOS) con **Hyprland** si hay cualquier GPU real y sway si no; la ISO x86_64 ya arranca en un PC real (BIOS, NVIDIA GT 710). Muchas piezas están compiladas y vistas en capturas, pero **pendientes de prueba real**. Ver [estado y pendientes](#estado-honesto-de-golden-gate).
 
 ---
 
@@ -289,7 +289,7 @@ En el login solo aparecen **BC OS** y **Dotfiles**. La sesión por defecto tambi
 
 ## Descargar y probar
 
-Imágenes publicadas: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Desde 0.9.17 cada release incluye solo las **ISO live** (`BC-OS-<versión>-x86_64.iso` y `-ARM64.iso`, para grabar en USB o usar en una máquina virtual) y `SHA256SUMS`; hasta 0.9.16 también había discos `.vdi.zip`. Última: **0.9.22-beta**.
+Imágenes publicadas: [**Releases**](https://github.com/borjacandeel/BC-OS/releases) (prerelease). Desde 0.9.17 cada release incluye solo las **ISO live** (`BC-OS-<versión>-x86_64.iso` y `-ARM64.iso`, para grabar en USB o usar en una máquina virtual) y `SHA256SUMS`; hasta 0.9.16 también había discos `.vdi.zip`. Última: **0.9.23-beta**.
 
 **Instalar en un disco (como macOS):** arranca la **ISO live** → se abre **Instalar BC OS** → elige el disco, tu cuenta y la
 región → **Instalar** → **Reiniciar**. También desde Terminal: `sudo bc-install`.
@@ -311,6 +311,7 @@ También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI
 | `0.3.x-alpha` | publicadas | **sway** (mosaico/flotante), menús globales por app, Dock con ventanas reales, Alacritty, animación de minimizar y swayfx experimental. |
 | `0.4.0-beta` / `0.4.1-beta` | publicadas (prerrelease) | Asistente de bienvenida, estilos, widgets, Modos, Flathub, fish, servicio de antivirus; resolución adaptable (`bc-display`), iconos Qogir, portapapeles (Súper+V). |
 | `0.5.0-beta` | prerrelease, en pruebas | Entorno **Dotfiles (bspwm)** elegible en el login. Verificado en QEMU; sin probar en VirtualBox. |
+| `0.9.23-beta` | prerelease (ISO y VDI) | Genio en la GPU, Hyprland fluido en gráficas integradas, animaciones casi instantáneas, capturas como macOS (⌘⇧3/4/5 y grabación), GRUB personalizado, energía (apagar pantalla y reposo), actualización automática diaria, barra lateral flotante, batería y Ethernet nuevos, atajos iguales en todos los entornos y muchos arreglos (foco, iconos de apps externas, Wi-Fi, controladores, servicios). |
 | `0.9.22-beta` | prerelease (solo ISO) | Más fluido con NVIDIA nouveau (nivel Eficiente; como mucho Equilibrado), panel con un solo contexto de dibujo en GPU lentas (menos hilos y memoria), Ajustes ▸ Aspecto sin solapes (color de resaltado con muestras, miniatura «Automático» entera). |
 | `0.9.21-beta` | prerelease (solo ISO) | Spotlight y todos los paneles emergentes abren al instante (cada uno se crea al abrirse: 3 ms en vez de 12–19 ms), −10 % de memoria y −14–20 % de CPU al arrancar, Dock sin fotogramas perdidos, Spotlight más fluido al escribir. |
 | `0.9.20-beta` | prerelease (solo ISO) | **BC Rendering Engine**: calidad gráfica automática para todo el sistema (BC Core detecta GPU, VM, batería y temperatura y elige Ultra/Alto/Equilibrado/Eficiente/Mínimo), baja sola si se pierden fotogramas, Ajustes ▸ Pantallas ▸ Calidad gráfica, efectos de Hyprland/swayfx según el nivel, desenfoque guardado en disco y fondo decodificado a tamaño de pantalla. |

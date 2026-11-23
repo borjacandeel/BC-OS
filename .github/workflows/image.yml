@@ -19,6 +19,10 @@ on:
         description: "Publicar como PRERELEASE en GitHub Releases"
         type: boolean
         default: false
+      vdi:
+        description: "Crear también el disco VDI (VirtualBox) además de la ISO"
+        type: boolean
+        default: false
 
 # contents: write es necesario SOLO para crear el release y subir los ficheros.
 permissions:
@@ -46,8 +50,8 @@ jobs:
     env:
       BC_ARCH: ${{ matrix.arch }}
       BC_ISO: "1"
-      # Solo ISO live (instalador), sin disco VDI: lo que pide el creador desde 0.9.17
-      BC_SOLO_ISO: "1"
+      # Solo ISO live (instalador) salvo que se pida también el disco VDI (entrada «vdi»)
+      BC_SOLO_ISO: ${{ inputs.vdi && '0' || '1' }}
     outputs:
       version: ${{ steps.v.outputs.version }}
       publicar: ${{ steps.v.outputs.publicar }}

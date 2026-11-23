@@ -4,6 +4,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 
 ## [Sin publicar]
 
+## [0.9.23-beta]
+Ver build/RELEASE-NOTES.md (genio en GPU, capturas, GRUB, energía, actualización automática, auditoría).
+
 ## [0.9.22-beta]
 ### Corregido
 - nouveau: nivel Eficiente por defecto y Equilibrado como máximo al forzarlo (tirones en equipo físico).
