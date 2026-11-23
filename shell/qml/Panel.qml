@@ -364,6 +364,21 @@ LayerWindow {
     }
     Timer { id: demoQ; interval: 300; onTriggered: spotlightRef.setText("a") }
     property var spotlightRef: null
+    // Ventana recién abierta = ventana activa (como macOS). Si se abría mientras un menú, Spotlight o Aplicaciones
+    // aún tenían el teclado (su fundido de salida), el compositor devolvía el foco a la ventana anterior.
+    property var _knownWins: null
+    Connections {
+        target: typeof Sway !== "undefined" ? Sway : null
+        function onWindowsChanged() {
+            const ids = {}, fresh = []
+            for (const w of Sway.windows) { ids[w.id] = true; if (root._knownWins && !root._knownWins[w.id] && !w.minimized) fresh.push(w) }
+            root._knownWins = ids
+            if (fresh.length && !fresh[fresh.length - 1].focused) newFocus.restartWith(fresh[fresh.length - 1].id)
+        }
+    }
+    Timer { id: newFocus; interval: 120; property int wid: -1
+            function restartWith(i) { wid = i; restart() }
+            onTriggered: if (wid >= 0) Sway.focusWindow(wid) }
     // Resultado de conectarse a una red Wi-Fi (antes no se avisaba: si fallaba, no se sabía por qué)
     Connections {
         target: Quick

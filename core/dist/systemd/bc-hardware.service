@@ -5,10 +5,10 @@ Documentation=https://github.com/borjacandeel/BC-OS
 [Service]
 Type=dbus
 BusName=org.bcos.Hardware
-# Caché del perfil gráfico (BC Adaptive Renderer): única ruta escribible
-ExecStartPre=/usr/bin/mkdir -p %h/.cache/bc
+# Caché del perfil gráfico (BC Adaptive Renderer): ~/.cache/bc, creada y abierta a escritura por systemd.
+# (Antes ReadWritePaths=%h/.cache/bc fallaba con 226/NAMESPACE si la carpeta no existía aún: servicio caído)
+CacheDirectory=bc
 ExecStart=/usr/bin/bc-hardware-service
-ReadWritePaths=%h/.cache/bc
 Restart=on-failure
 NoNewPrivileges=yes
 PrivateTmp=yes

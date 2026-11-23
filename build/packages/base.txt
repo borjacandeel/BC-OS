@@ -105,3 +105,5 @@ efibootmgr
 sbctl
 hyprland
 mesa-utils
+# Región Wi-Fi (sin él el kernel no carga regulatory.db)
+wireless-regdb

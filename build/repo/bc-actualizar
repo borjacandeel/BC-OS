@@ -14,6 +14,8 @@ OV="$OV --overwrite /usr/share/icons/BC/* --overwrite /usr/lib/systemd/system/bc
 OV="$OV --overwrite /usr/lib/firefox/distribution/policies.json --overwrite /usr/lib/firefox/defaults/pref/bc-* --overwrite /usr/lib/firefox/bc*"
 # Huella del tema de arranque antes de actualizar: si cambia, se rehace el initramfs (el arranque animado va en él)
 ply0="$(cat /usr/share/plymouth/themes/bcos/* 2>/dev/null | md5sum)"
+# Paquetes instalados antes: si al final no cambia nada, no hay que reiniciar (antes lo pedía siempre)
+pk0="$(pacman -Q | md5sum)"
 pacman -Syy --noconfirm
 # Todos los archivos que traen los paquetes de BC (lista del repositorio [bc]) se pueden sobrescribir: así un archivo
 # que la imagen puso a mano y ahora llega en un paquete nunca bloquea la actualización (solo rutas de BC, nunca otras)
@@ -34,9 +36,10 @@ gtk-update-icon-cache -q -f /usr/share/icons/hicolor 2>/dev/null || true
 gtk-update-icon-cache -q -f /usr/share/icons/BC 2>/dev/null || true
 fc-cache -f >/dev/null 2>&1 || true                     # fuentes nuevas (emoji en color…)
 # Controladores del equipo (solo en equipos reales): gráfica, firmware, energía; si ya se hizo, no repite
-if ! systemd-detect-virt -q --vm 2>/dev/null && ! grep -q "^hecho" /var/log/bc-drivers.log 2>/dev/null; then
-  systemctl enable bc-drivers.service >/dev/null 2>&1 || true
-  echo "Instalando los controladores de este equipo…"; /usr/bin/bc-drivers || true
+# (en cada actualización: solo instala lo que falte para ESTE equipo; si no falta nada, no tarda)
+if ! systemd-detect-virt -q --vm 2>/dev/null; then
+  echo "Comprobando los controladores de este equipo…"; /usr/bin/bc-drivers || true
+  tail -n 3 /var/log/bc-drivers.log 2>/dev/null | grep -E "faltan|AVISO" || true
 fi
 # Configuración de cada usuario: el entorno Dotfiles (bspwm) se renueva en los archivos que no ha cambiado
 set +f
@@ -44,6 +47,11 @@ for h in /home/*; do
   u="$(stat -c %U "$h" 2>/dev/null)"; [ -n "$u" ] && [ "$u" != root ] && id "$u" >/dev/null 2>&1 || continue
   runuser -u "$u" -- env HOME="$h" bc-dotfiles-setup >/dev/null 2>&1 || true
 done
+if [ "$(pacman -Q | md5sum)" = "$pk0" ]; then
+  echo
+  echo "BC OS ya estaba al día: no hay nada nuevo que instalar ni hace falta reiniciar."
+  exit 0
+fi
 # Lo que va en el arranque o en servicios del sistema solo se aplica al reiniciar
 touch /run/bc-reiniciar-pendiente 2>/dev/null || true   # Ajustes ▸ General lo avisa hasta que se reinicie
 echo

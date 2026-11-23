@@ -35,6 +35,6 @@ bc_rootfs_keys() {
 bc_packages() {
   local a="${1:-${BC_ARCH:-aarch64}}" here; here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
   local pk; pk="$(grep -v '^#' "$here/packages/base.txt" | grep -v '^$' | tr '\n' ' ')"
-  if [ "$a" = x86_64 ]; then pk="${pk//linux-aarch64/linux} virtualbox-guest-utils linux-firmware vulkan-intel vulkan-radeon vulkan-nouveau intel-media-driver libva-utils vulkan-tools intel-ucode amd-ucode"; fi
+  if [ "$a" = x86_64 ]; then pk="${pk//linux-aarch64/linux} virtualbox-guest-utils linux-firmware vulkan-intel vulkan-radeon vulkan-nouveau intel-media-driver libva-utils vulkan-tools intel-ucode amd-ucode sof-firmware"; fi
   echo "$pk"
 }

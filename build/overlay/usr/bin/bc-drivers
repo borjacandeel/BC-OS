@@ -15,16 +15,26 @@ for i in $(seq 60); do ping -c1 -W2 archlinux.org >/dev/null 2>&1 && break; slee
 ping -c1 -W2 archlinux.org >/dev/null 2>&1 || { echo "sin Internet: se reintenta en el próximo arranque"; exit 0; }
 GPU="$(lspci -nn 2>/dev/null | grep -iE 'vga|3d|display')"
 echo "GPU: $GPU"
-PK="linux-firmware linux-firmware-qcom linux-firmware-other"
+# Base para cualquier equipo: firmware, región Wi-Fi (sin wireless-regdb el kernel no carga regulatory.db y el Wi-Fi
+# va limitado), sonido de portátiles modernos (SOF), Bluetooth y utilidades de vídeo
+PK="linux-firmware linux-firmware-qcom linux-firmware-other wireless-regdb sof-firmware alsa-firmware alsa-ucm-conf bluez bluez-utils mesa mesa-utils vulkan-mesa-layers"
 REINST=""
-echo "$GPU" | grep -qi intel && PK="$PK mesa vulkan-intel intel-media-driver libva-utils"
-echo "$GPU" | grep -qiE 'amd|ati|radeon' && PK="$PK mesa vulkan-radeon libva-utils"
-echo "$GPU" | grep -qi nvidia && { PK="$PK mesa vulkan-nouveau"; REINST="linux-firmware-nvidia"; }
+echo "$GPU" | grep -qi intel && PK="$PK vulkan-intel intel-media-driver libva-intel-driver libva-utils"
+echo "$GPU" | grep -qiE 'amd|ati|radeon' && PK="$PK vulkan-radeon libva-utils"
+echo "$GPU" | grep -qi nvidia && { PK="$PK vulkan-nouveau linux-firmware-nvidia"; }
+# Wi-Fi Broadcom antiguo (BCM43xx sin firmware libre): controlador wl
+lspci -nn 2>/dev/null | grep -qiE "network.*broadcom|broadcom.*802\.11" && PK="$PK broadcom-wl"
 grep -qi intel /proc/cpuinfo && PK="$PK intel-ucode thermald"
 grep -qi amd /proc/cpuinfo && PK="$PK amd-ucode"
 ls /sys/class/power_supply/BAT* >/dev/null 2>&1 && PK="$PK power-profiles-daemon"
-pacman -Sy --noconfirm --needed $PK || exit 0
-[ -n "$REINST" ] && pacman -S --noconfirm $REINST
+# Solo lo que falte (cada equipo y cada actualización lo comprueba: si cambias de equipo o de gráfica, se completa)
+pacman -Sy --noconfirm >/dev/null 2>&1 || true
+# (los que no existen en esta arquitectura, p. ej. sof-firmware en ARM, se ignoran: si no, se reintentarían siempre)
+FALTA="$(for p in $(pacman -T $PK 2>/dev/null); do pacman -Si "$p" >/dev/null 2>&1 && echo "$p"; done | tr '\n' ' ')"
+if [ -z "$(echo "$FALTA" | tr -d ' ')" ]; then echo "todos los controladores ya están instalados"; echo "hecho $(date)"; systemctl disable bc-drivers.service 2>/dev/null; exit 0; fi
+echo "faltan: $FALTA"
+# (paquete a paquete si alguno no existe en esta arquitectura, para que no bloquee al resto)
+pacman -S --noconfirm --needed $FALTA || for p in $FALTA; do pacman -S --noconfirm --needed "$p" || echo "AVISO: no se pudo instalar $p"; done
 command -v thermald >/dev/null 2>&1 && systemctl enable --now thermald 2>/dev/null
 command -v powerprofilesctl >/dev/null 2>&1 && systemctl enable --now power-profiles-daemon 2>/dev/null
 # Microcódigo y firmware nuevos: initramfs al día

@@ -153,24 +153,59 @@ Item {
                        font.pixelSize: Math.round(9.5 * bar.s); font.weight: Font.Black }
             }
         }
-        // Batería con el porcentaje DENTRO del icono (captura)
+        // Batería como en macOS: contorno fino, relleno del color de la barra (rojo solo si queda poco y no carga), rayo
+        // dibujado (no el emoji de color, que se veía naranja y rojo) y el porcentaje discreto a la izquierda
         BarItem {
+            id: batItem
             visible: SystemStatus.hasBattery
-            width: Math.round(34 * bar.s) + Math.round(Theme.barStatusGap * bar.s)
+            readonly property int pct: Math.max(0, Math.min(100, SystemStatus.batteryPercent))
+            readonly property bool low: pct <= 20 && !SystemStatus.batteryCharging
+            width: batRow.width + Math.round(Theme.barStatusGap * bar.s)
             onClicked: UiState.toggleCenter()
-            Item {
+            Row {
+                id: batRow
                 anchors.centerIn: parent
-                width: Math.round(29 * bar.s); height: Math.round(13 * bar.s)
-                Rectangle {
-                    id: shell; width: parent.width - Math.round(3 * bar.s); height: parent.height; radius: Math.round(3.5 * bar.s)
-                    color: Qt.rgba(bar.ink.r, bar.ink.g, bar.ink.b, 0.35)
-                    Rectangle { width: parent.width * Math.max(0.06, SystemStatus.batteryPercent / 100); height: parent.height; radius: parent.radius
-                                color: SystemStatus.batteryPercent <= 10 ? "#FF453A" : SystemStatus.batteryCharging ? "#30D158" : bar.ink }
-                    Text { anchors.centerIn: parent; text: SystemStatus.batteryCharging ? "⚡" : SystemStatus.batteryPercent
-                           color: bar.ink.hslLightness > 0.5 ? "#101018" : "#ffffff"; font.family: Theme.font; font.pixelSize: Math.round(9 * bar.s); font.weight: Font.Black }
+                spacing: Math.round(5 * bar.s)
+                Text { anchors.verticalCenter: parent.verticalCenter; text: batItem.pct + " %"; color: bar.ink; opacity: 0.9
+                       font.family: Theme.font; font.pixelSize: Math.round(12 * bar.s); font.weight: Font.Medium }
+                Item {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: Math.round(26 * bar.s); height: Math.round(12.5 * bar.s)
+                    Rectangle {   // carcasa
+                        id: batBody
+                        width: parent.width - Math.round(2.5 * bar.s); height: parent.height; radius: Math.round(3.6 * bar.s)
+                        color: "transparent"; border.width: Math.max(1, Math.round(1 * bar.s)); border.color: Qt.rgba(bar.ink.r, bar.ink.g, bar.ink.b, 0.5)
+                        Rectangle {   // carga
+                            readonly property real inset: Math.max(2, Math.round(2 * bar.s))
+                            x: inset; y: inset; height: parent.height - 2 * inset
+                            width: Math.max(Math.round(2 * bar.s), (parent.width - 2 * inset) * batItem.pct / 100)
+                            radius: Math.max(1, parent.radius - inset + 0.5)
+                            color: batItem.low ? "#FF453A" : bar.ink
+                        }
+                        Canvas {   // rayo de carga, con un fino recorte del color del fondo para que se lea sobre el relleno
+                            visible: SystemStatus.batteryCharging
+                            anchors.centerIn: parent; width: Math.round(9 * bar.s); height: Math.round(13 * bar.s)
+                            property color ink: bar.ink
+                            onInkChanged: requestPaint()
+                            onVisibleChanged: if (visible) requestPaint()
+                            onPaint: {
+                                const c = getContext("2d"), w = width, h = height
+                                c.reset()
+                                c.beginPath()
+                                c.moveTo(w * 0.62, 0); c.lineTo(w * 0.08, h * 0.58); c.lineTo(w * 0.47, h * 0.58)
+                                c.lineTo(w * 0.36, h); c.lineTo(w * 0.92, h * 0.40); c.lineTo(w * 0.53, h * 0.40); c.closePath()
+                                c.lineJoin = "round"; c.lineWidth = Math.max(1.5, w * 0.16)
+                                c.strokeStyle = ink.hslLightness > 0.5 ? "#1c1c22" : "#ffffff"; c.stroke()
+                                c.fillStyle = ink; c.fill()
+                            }
+                        }
+                    }
+                    Rectangle {   // polo
+                        anchors.left: batBody.right; anchors.leftMargin: Math.round(1 * bar.s); anchors.verticalCenter: parent.verticalCenter
+                        width: Math.max(1, Math.round(1.5 * bar.s)); height: Math.round(4.5 * bar.s); radius: width / 2
+                        color: Qt.rgba(bar.ink.r, bar.ink.g, bar.ink.b, 0.5)
+                    }
                 }
-                Rectangle { anchors.left: shell.right; anchors.leftMargin: Math.round(1 * bar.s); anchors.verticalCenter: parent.verticalCenter
-                            width: Math.round(2 * bar.s); height: Math.round(5 * bar.s); radius: 1; color: Qt.rgba(bar.ink.r, bar.ink.g, bar.ink.b, 0.45) }
             }
         }
         // Red

@@ -73,6 +73,11 @@ hl.config({
         animate_manual_resizes = true,
         animate_mouse_windowdragging = true,
         focus_on_activate = true,
+        -- Sin avisos fijos arriba a la derecha: BC OS arranca Hyprland con start-hyprland y pone XDG_CURRENT_DESKTOP=BC
+        -- a propósito (bc-session); Hyprland lo señalaba como problema en cada inicio
+        disable_watchdog_warning = true,
+        disable_xdg_env_checks = true,
+        disable_hyprland_guiutils_check = true,
         mouse_move_enables_dpms = true,
         key_press_enables_dpms = true,
     },

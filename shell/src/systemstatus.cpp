@@ -110,8 +110,9 @@ void SystemStatus::run(const QString &program, const QStringList &args, std::fun
 }
 
 void SystemStatus::readBattery() {
+    const int p0 = m_batteryPercent; const bool c0 = m_batteryCharging, h0 = m_hasBattery;
     bool found = false;
-    const QDir d("/sys/class/power_supply");
+    const QDir d(qEnvironmentVariable("BC_POWER_SUPPLY_DIR", QStringLiteral("/sys/class/power_supply")));   // (otra carpeta: pruebas y capturas)
     for (const QString &n : d.entryList(QDir::Dirs | QDir::NoDotAndDotDot)) {
         if (readFile(d.filePath(n + "/type")) != "Battery") continue;
         found = true;
@@ -121,6 +122,8 @@ void SystemStatus::readBattery() {
         break;
     }
     m_hasBattery = found;
+    // Avisar si cambia (antes dependía de que otra lectura emitiera «changed»: la batería podía quedarse sin actualizar)
+    if (p0 != m_batteryPercent || c0 != m_batteryCharging || h0 != m_hasBattery) emit changed();
 }
 
 bool SystemStatus::cameraInUse() {

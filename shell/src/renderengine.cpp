@@ -72,10 +72,11 @@ QString RenderEngine::configureBackend() {
         // El panel tiene muchas superficies (barra, Dock, widgets, capas emergentes…): con el bucle «threaded» de Qt
         // cada una lleva su hilo, su contexto OpenGL y sus búferes. En un equipo real con nouveau eran 25 hilos y
         // 456 MB. Con GPU lenta (nouveau) o nivel bajo, bucle «basic»: un solo contexto compartido por todas.
-        const QString nivel = cached.value(QLatin1String("nivel")).toString();
         const QJsonArray g = cached.value(QLatin1String("gpus")).toArray();
         const bool nouveau = !g.isEmpty() && g.first().toObject().value(QLatin1String("controlador")).toString() == QLatin1String("nouveau");
-        if (!qEnvironmentVariableIsSet("QSG_RENDER_LOOP") && (nouveau || nivel == QLatin1String("eficiente") || nivel == QLatin1String("minimo")))
+        // (solo con nouveau: con «basic» las animaciones de Qt van por temporizador, no al ritmo del monitor, y a 120/144 Hz
+        // se notaban a saltos; con «threaded» cada ventana anima sincronizada con el refresco real de la pantalla)
+        if (!qEnvironmentVariableIsSet("QSG_RENDER_LOOP") && nouveau)
             qputenv("QSG_RENDER_LOOP", "basic");
     }
     else {

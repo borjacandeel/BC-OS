@@ -26,6 +26,16 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
   - Súper+1…9 → ir al escritorio N (y Súper+Mayús+N mover la ventana)
   Actualizar sxhkdrc, hyprland.lua, sway/config, la lista de atajos de Ajustes/README/web.
 
+## Pendiente del creador 2026-11-23 (portátil instalado)
+- [x] Batería de la barra minimalista como macOS (contorno, relleno, rayo dibujado, % al lado).
+- [x] Ventana recién abierta = activa (aunque un menú/Spotlight tuviera el teclado al abrirse).
+- [x] Avisos de Hyprland arriba a la derecha: misc.disable_watchdog_warning / disable_xdg_env_checks.
+- [x] bc-actualizar ya no pide reiniciar si no ha cambiado ningún paquete.
+- [x] Controladores en cada equipo: bc-drivers comprueba en cada actualización e instala solo lo que falte (firmware, wireless-regdb, SOF, Bluetooth, Vulkan/VA-API, Broadcom wl).
+- [x] Animaciones al ritmo del monitor: bucle de render «threaded» (salvo nouveau); bc-display pone la frecuencia máxima.
+- [x] bc-hardware.service caía (226/NAMESPACE): CacheDirectory=bc.
+- [ ] Verificar en el portátil tras actualizar (fluidez a 120/144 Hz, Wi-Fi, avisos).
+
 ## Pendiente del creador 2026-11-17 (tarde)
 - [x] Recordatorios: con más de 2 se salen del widget (limitar filas al alto o «y N más»).
 - [x] Ajustes ▸ General: «Buscar actualizaciones» → minimenú con versión actual, novedades y botón Actualizar.
