@@ -68,7 +68,21 @@ SwayControl::SwayControl(QObject *parent) : QObject(parent) {
     m_poll.start();
     if (m_hypr) { hyprConnect(); QTimer::singleShot(300, this, &SwayControl::refresh); return; }
     m_events.setProcessChannelMode(QProcess::SeparateChannels);
-    connect(&m_events, &QProcess::readyReadStandardOutput, this, [this] { m_events.readAllStandardOutput(); m_debounce.start(); });
+    connect(&m_events, &QProcess::readyReadStandardOutput, this, [this] {
+        const QByteArray d = m_events.readAllStandardOutput();
+        // sway: {"change": "urgent", "container": {"urgent": true, "app_id": …}}
+        for (const QByteArray &line : d.split('\n')) {
+            if (!line.contains("\"change\"") || !line.contains("urgent")) continue;
+            const QJsonObject ev = QJsonDocument::fromJson(line).object();
+            if (ev.value("change").toString() != "urgent") continue;
+            const QJsonObject c = ev.value("container").toObject();
+            if (c.value("urgent").toBool() && !c.value("focused").toBool()) {
+                const QString id = c.value("app_id").toString();
+                emit attention(id.isEmpty() ? c.value("window_properties").toObject().value("class").toString() : id);
+            }
+        }
+        m_debounce.start();
+    });
     connect(&m_events, &QProcess::finished, this, [this] {
         QTimer::singleShot(2000, this, [this] { m_events.start(m_exe, {"-t", "subscribe", "-m", "-r", "[\"window\",\"workspace\",\"input\"]"}); });
     });
@@ -259,6 +273,16 @@ void SwayControl::hyprConnect() {
         // Ventana nueva = ventana activa SIEMPRE (como macOS): foco de teclado y delante, aunque el teclado lo tuviera
         // la barra, el Dock o un menú al abrirse (antes había que hacer clic en ella para poder escribir)
         for (const QByteArray &line : d.split('\n')) {
+            // urgent>>DIRECCIÓN (sin 0x): la app de esa ventana pide atención
+            if (line.startsWith("urgent>>")) {
+                const QString a = "0x" + QString::fromLatin1(line.mid(8)).trimmed();
+                for (auto it = m_addr.cbegin(); it != m_addr.cend(); ++it) {
+                    if (it.value() != a || it.key() == m_focusedId) continue;
+                    for (const QVariant &v : std::as_const(m_windows))
+                        if (v.toMap().value("id").toInt() == it.key()) emit attention(v.toMap().value("appId").toString());
+                }
+                continue;
+            }
             if (!line.startsWith("openwindow>>")) continue;
             const QList<QByteArray> f = line.mid(12).split(',');
             if (f.size() < 2 || f.at(1).startsWith("special")) continue;   // minimizadas (escritorio especial): no

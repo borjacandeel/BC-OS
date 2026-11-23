@@ -111,7 +111,14 @@ Reminders::Reminders(QObject *parent, const QString &file) : QObject(parent), m_
     auto *w = new QFileSystemWatcher(this);
     w->addPath(QFileInfo(m_file).absolutePath());
     if (QFileInfo::exists(m_file)) w->addPath(m_file);
-    auto again = [this, w] { if (QFileInfo::exists(m_file) && !w->files().contains(m_file)) w->addPath(m_file); load(); emit changed(); };
+    // Solo avisa si la lista ha cambiado de verdad: la carpeta ~/.local/share/bc la tocan otras apps (Calendario…) y
+    // cada aviso rehacía el widget y redibujaba la capa del escritorio entera
+    auto again = [this, w] {
+        if (QFileInfo::exists(m_file) && !w->files().contains(m_file)) w->addPath(m_file);
+        const QVariantList before = m_items;
+        load();
+        if (m_items != before) emit changed();
+    };
     connect(w, &QFileSystemWatcher::fileChanged, this, again);
     connect(w, &QFileSystemWatcher::directoryChanged, this, again);
 }

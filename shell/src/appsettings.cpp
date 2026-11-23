@@ -39,9 +39,20 @@ void AppSettings::watch() {
     m_watch = new QFileSystemWatcher(this);
     m_watch->addPath(QFileInfo(file).absolutePath());
     if (QFileInfo::exists(file)) m_watch->addPath(file);
-    auto onChange = [this, file] {
-        QTimer::singleShot(60, this, [this, file] {
+    // Solo si bc-shell.conf ha cambiado de verdad (fecha o tamaño): la carpeta la tocan los archivos de bloqueo y
+    // temporales de QSettings y otras apps. Cada aviso reevaluaba TODO lo que depende de los ajustes en todas las
+    // superficies (barra, Dock, escritorio a pantalla completa) y se redibujaban enteras: tirones sin hacer nada.
+    auto stamp = [file] { const QFileInfo fi(file); return fi.exists() ? fi.lastModified().toMSecsSinceEpoch() * 31 + fi.size() : -1; };
+    m_stamp = stamp();
+    auto onChange = [this, file, stamp] {
+        if (m_reloadPending) return;
+        m_reloadPending = true;
+        QTimer::singleShot(60, this, [this, file, stamp] {
+            m_reloadPending = false;
             if (QFileInfo::exists(file) && !m_watch->files().contains(file)) m_watch->addPath(file);
+            const qint64 now = stamp();
+            if (now == m_stamp) return;
+            m_stamp = now;
             reload();
             emit changed();
         });
@@ -54,6 +65,8 @@ template <typename T> void AppSettings::store(const char *key, const T &v) {
     QSettings s("BC-OS", "bc-shell");
     s.setValue(key, v);
     s.sync();
+    const QFileInfo fi(s.fileName());
+    m_stamp = fi.exists() ? fi.lastModified().toMSecsSinceEpoch() * 31 + fi.size() : -1;
     emit changed();
 }
 

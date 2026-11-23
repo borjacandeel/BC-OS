@@ -64,6 +64,8 @@ signals:
     void chromeChanged();
     void workspacesChanged();
     void layoutChanged();
+    // Una app pide atención (ventana «urgente»: mensaje nuevo, descarga terminada…): el Dock rebota su icono
+    void attention(const QString &appId);
 
 private:
     void readMode();

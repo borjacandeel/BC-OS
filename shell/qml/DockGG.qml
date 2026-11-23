@@ -204,6 +204,7 @@ Item {
                 required property int index
                 cellIndex: index
                 kind: modelData.kind; icon: modelData.icon; name: modelData.name
+                appIdForAttention: modelData.appId || ""
                 running: modelData.kind !== "" ? dock.isRunning(modelData.kind) : Sway.appIds.indexOf(modelData.appId) >= 0
                 onActivated: {
                     if (modelData.kind === "lanzador") { UiState.toggleLaunchpad(); return }
@@ -292,6 +293,20 @@ Item {
         property real dragDy: 0
         z: ma.dragging ? 10 : 0
         function bounce() { if (!Theme.reduced) bounceAnim.restart() }
+        // macOS: la app que pide atención (mensaje nuevo, descarga terminada…) rebota su icono tres veces, más alto
+        property string appIdForAttention: ""
+        function attention() { if (!Theme.reduced && !bounceAnim.running) attentionAnim.restart() }
+        SequentialAnimation {
+            id: attentionAnim
+            loops: 3
+            NumberAnimation { target: cell; property: "jump"; to: dock.bs * 0.75; duration: Theme.d(260); easing.type: Easing.OutQuad }
+            NumberAnimation { target: cell; property: "jump"; to: 0; duration: Theme.d(320); easing.type: Easing.OutBounce }
+        }
+        Connections {
+            target: Sway
+            enabled: cell.appIdForAttention !== ""
+            function onAttention(appId) { if (appId === cell.appIdForAttention) cell.attention() }
+        }
         SequentialAnimation {
             id: bounceAnim
             loops: Theme.dockBounces

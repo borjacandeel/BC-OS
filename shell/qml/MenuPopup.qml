@@ -20,8 +20,12 @@ Item {
     // Atajos como en macOS: Ctrl→⌃, Mayús→⇧, Alt→⌥, Súper→⌘
     function glyphs(k) {
         if (!k) return ""
-        return k.replace(/Ctrl\+/g, "⌃").replace(/Mayús\+/g, "⇧").replace(/Alt\+/g, "⌥").replace(/Súper\+/g, "⌘")
-                .replace("Espacio", "␣").replace("Intro", "↩").replace("Supr", "⌦")
+        // Orden de macOS: ⌃ ⌥ ⇧ ⌘ y la tecla
+        const parts = k.split("+"), key = parts.pop(), mods = parts.join("+")
+        const order = [["Ctrl", "⌃"], ["Alt", "⌥"], ["Mayús", "⇧"], ["Súper", "⌘"]]
+        let out = ""
+        for (const m of order) if (mods.indexOf(m[0]) >= 0) out += m[1]
+        return out + key.replace("Espacio", "␣").replace("Intro", "↩").replace("Supr", "⌦").replace("Tab", "⇥").replace("Retroceso", "⌫").replace("Esc", "⎋")
     }
     // Ancho según el elemento más largo
     Row {

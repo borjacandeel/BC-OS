@@ -98,6 +98,8 @@ signals:
     void changed();
 
 private:
+    qint64 m_stamp = -1;
+    bool m_reloadPending = false;
     void dynamicWallpaper();
     bool m_reduced = false, m_solid = false, m_contrast = false;
     QString m_language = "es_ES";
