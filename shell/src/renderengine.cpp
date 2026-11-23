@@ -102,8 +102,8 @@ static QJsonObject localParams(int n, bool gpuReal) {
     static const P t[5] = {
         {false, false, 18, false, 0, 0.70, false, 96, 1, 0, 0},     // mínimo
         {false, false, 22, true, 1, 0.85, false, 160, 2, 4, 1},     // eficiente
-        {true, false, 26, true, 1, 1.0, true, 256, 4, 6, 2},        // equilibrado
-        {true, true, 30, true, 2, 1.0, true, 384, 6, 8, 3},         // alto
+        {true, false, 26, true, 1, 1.0, true, 256, 4, 5, 2},        // equilibrado
+        {true, true, 30, true, 2, 1.0, true, 384, 6, 6, 2},         // alto
         {true, true, 32, true, 2, 1.0, true, 512, 8, 10, 3},        // ultra
     };
     const P &p = t[qBound(0, n, 4)];

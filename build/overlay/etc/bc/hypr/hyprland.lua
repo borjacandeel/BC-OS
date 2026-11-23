@@ -44,7 +44,7 @@ hl.config({
         dim_inactive = false,
         shadow = {
             enabled = true,
-            range = 42,
+            range = 26,              -- (42 costaba mucho en gráficas integradas: sombras enormes en cada ventana)
             render_power = 3,
             offset = "0 12",
             color = 0x55000000,
@@ -52,8 +52,8 @@ hl.config({
         },
         blur = {
             enabled = true,          -- Liquid Glass real: desenfoque de lo que hay detrás
-            size = 10,               -- como los widgets de macOS: fondo muy difuminado (solo luz y color)
-            passes = 3,
+            size = 6,                -- fondo muy difuminado (solo luz y color); bc-render-apply lo sube con GPU dedicada
+            passes = 2,
             noise = 0.01,
             contrast = 1.08,
             brightness = 1.05,
@@ -61,7 +61,10 @@ hl.config({
             vibrancy_darkness = 0.0,
             popups = true,
             new_optimizations = true,
-            xray = false,
+            -- xray: el cristal desenfoca el FONDO DE PANTALLA (que Hyprland desenfoca una vez y guarda), no lo que hay
+            -- detrás en cada fotograma. Con «false» la capa de menús/paneles y la de widgets (pantalla completa)
+            -- recalculaban un desenfoque de pantalla entera por fotograma: una Intel HD 620 no pasaba de 30 fps.
+            xray = true,
         },
     },
     animations = { enabled = true },
@@ -102,7 +105,9 @@ hl.animation({ leaf = "fadeOut",       enabled = true, speed = 1.3, bezier = "ma
 hl.animation({ leaf = "fadeSwitch",    enabled = true, speed = 1.8, bezier = "mac" })
 hl.animation({ leaf = "fadeShadow",    enabled = true, speed = 1.8, bezier = "mac" })
 hl.animation({ leaf = "fadeDim",       enabled = true, speed = 1.8, bezier = "mac" })
-hl.animation({ leaf = "layersIn",      enabled = true, speed = 1.7, bezier = "mac",     style = "popin 94%" })
+-- Capas (barra, Dock, menús, paneles): solo fundido; escalar capas de pantalla completa costaba mucho a la GPU
+-- (los paneles BC ya hacen su propia entrada con escala dentro de la capa)
+hl.animation({ leaf = "layersIn",      enabled = true, speed = 1.7, bezier = "mac",     style = "fade" })
 hl.animation({ leaf = "layersOut",     enabled = true, speed = 1.2, bezier = "macIn",   style = "fade" })
 hl.animation({ leaf = "fadeLayersIn",  enabled = true, speed = 1.5, bezier = "mac" })
 hl.animation({ leaf = "fadeLayersOut", enabled = true, speed = 1.2, bezier = "macIn" })

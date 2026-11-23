@@ -61,7 +61,7 @@
 | Genio (solo con GPU) | sí | sí | sí | no | no |
 | Antialias | sí | sí | sí | no | no |
 | Texturas (MB) / capas offscreen | 512/8 | 384/6 | 256/4 | 160/2 | 96/1 |
-| Compositor: desenfoque tamaño×pasadas | 10×3 | 8×3 | 6×2 | 4×1 | — |
+| Compositor: desenfoque tamaño×pasadas | 10×3 | 6×2 (solo fondo) | 5×2 (solo fondo) | 4×1 (solo fondo) | — |
 
 **Nivel del hardware** (`nivel_base`):
 

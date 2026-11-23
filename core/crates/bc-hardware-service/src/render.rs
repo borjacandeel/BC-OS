@@ -417,8 +417,8 @@ pub fn parametros(n: Nivel, compositor: &str, gpu_real: bool) -> Parametros {
     let fx = compositor == "swayfx" || hypr;
     let (lente, aberr, blur, transl, sombras, anim, genio, tex, capas, cblur) = match n {
         Nivel::Ultra => (true, true, 32, true, 2, 1.0, true, 512, 8, (10, 3)),
-        Nivel::Alto => (true, true, 30, true, 2, 1.0, true, 384, 6, (8, 3)),
-        Nivel::Equilibrado => (true, false, 26, true, 1, 1.0, true, 256, 4, (6, 2)),
+        Nivel::Alto => (true, true, 30, true, 2, 1.0, true, 384, 6, (6, 2)),
+        Nivel::Equilibrado => (true, false, 26, true, 1, 1.0, true, 256, 4, (5, 2)),
         Nivel::Eficiente => (false, false, 22, true, 1, 0.85, false, 160, 2, (4, 1)),
         Nivel::Minimo => (false, false, 18, false, 0, 0.7, false, 96, 1, (0, 0)),
     };
@@ -685,7 +685,7 @@ mod tests {
     #[test]
     fn parametros_por_compositor() {
         let h = parametros(Nivel::Alto, "hyprland", true);
-        assert!(h.vidrio_blur_real && h.compositor_animaciones && h.compositor_blur == (8, 3));
+        assert!(h.vidrio_blur_real && h.compositor_animaciones && h.compositor_blur == (6, 2));
         let s = parametros(Nivel::Alto, "sway", true);
         assert!(!s.vidrio_blur_real && s.compositor_blur == (0, 0) && !s.compositor_sombras);
         let x = parametros(Nivel::Minimo, "x11", false);
