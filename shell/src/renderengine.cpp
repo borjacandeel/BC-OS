@@ -60,7 +60,8 @@ QString RenderEngine::configureBackend() {
     // Cadena de reserva: vulkan → opengl → software, según lo que haya de verdad
     const QString platform = qEnvironmentVariable("QT_QPA_PLATFORM");
     const bool offscreen = platform.startsWith(QLatin1String("offscreen")) || platform.startsWith(QLatin1String("minimal"));
-    const bool gpu = hasRenderNode() && !offscreen;
+    // BC_RENDER_FORCE=1: usar el backend pedido aunque no haya nodo de render (diagnóstico y pruebas con llvmpipe)
+    const bool gpu = (hasRenderNode() || qEnvironmentVariable("BC_RENDER_FORCE") == QLatin1String("1")) && !offscreen;
     QString b = want;
     if (b == QLatin1String("auto")) b = gpu ? QStringLiteral("opengl") : QStringLiteral("software");
     if (b == QLatin1String("vulkan") && !(gpu && hasVulkanIcd())) b = QStringLiteral("opengl");

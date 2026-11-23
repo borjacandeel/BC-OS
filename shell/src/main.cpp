@@ -33,6 +33,7 @@
 #include "launcher.h"
 #include "glassprovider.h"
 #include "genieitem.h"
+#include "geniemesh.h"
 #include "desktopdata.h"
 #include "renderengine.h"
 
@@ -131,6 +132,7 @@ int main(int argc, char *argv[]) {
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Batteries", &batteries);
     qmlRegisterType<FileBrowser>("BCShell", 1, 0, "FileModel");
     qmlRegisterType<GenieItem>("BCShell", 1, 0, "GenieItem");
+    qmlRegisterType<GenieMesh>("BCShell", 1, 0, "GenieMesh");   // genio en la GPU
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Reminders", &reminders);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Sounds", &sounds);
     qmlRegisterSingletonInstance("BCShell", 1, 0, "Processes", &processes);
@@ -252,7 +254,11 @@ int main(int argc, char *argv[]) {
             const QString prop = burst.section(':', 0, 0);
             static const QRegularExpression okProp("^[A-Za-z]+$");
             if (!okProp.match(prop).hasMatch()) { qCritical() << "BC_BURST inválido"; app.exit(7); return; }
-            const int n = qBound(1, burst.section(':', 1, 1).toInt(), 60);
+            const int n = qBound(1, burst.section(':', 1, 1).toInt(), 240);
+            // BC_FRAMES=1 (con BC_ANIM_SLOW=k, p. ej. 40): fotogramas exactos de 60 Hz. Las animaciones van k veces más
+            // lentas y se captura cada 16,67·k ms reales = cada 1/60 s de animación (fotograma-NNN.png + fotogramas.csv)
+            const bool fixed = qEnvironmentVariable("BC_FRAMES") == QLatin1String("1");
+            const double slow = qMax(1.0, qEnvironmentVariable("BC_ANIM_SLOW").toDouble());
             auto *t = new QElapsedTimer; t->start();
             // Se evalúa en el contexto del panel (tiene importado BCShell y su UiState)
             // «aviso»: un aviso de prueba que entra, dura 500 ms y sale (para ver las dos animaciones)
@@ -266,9 +272,11 @@ int main(int argc, char *argv[]) {
             ex.evaluate();
             if (ex.hasError()) { qCritical() << ex.error().toString(); app.exit(7); return; }
             auto *count = new int(0);
-            auto *tick = new QTimer(&app); tick->setInterval(qMax(1, qEnvironmentVariableIntValue("BC_BURST_MS")));
-            QObject::connect(tick, &QTimer::timeout, &app, [&, t, count, n, tick] {
-                const qint64 ms = t->elapsed();
+            // BC_FRAMES=1: fotogramas exactos de 60 Hz (fotograma-NNN.png) y coste de dibujar cada uno (fotogramas.csv)
+            auto *tick = new QTimer(&app); tick->setInterval(fixed ? int(16.667 * slow) : qMax(1, qEnvironmentVariableIntValue("BC_BURST_MS")));
+            QObject::connect(tick, &QTimer::timeout, &app, [&, t, count, n, tick, fixed, slow] {
+                QElapsedTimer cost; cost.start();
+                const qint64 ms = fixed ? qint64(t->elapsed() / slow) : t->elapsed();   // tiempo de ANIMACIÓN
                 // BC_BURST_SCOPE=<scope de LayerWindow> captura solo esa superficie (mucho más rápido que la compuesta)
                 QImage img;
                 const QString scope = qEnvironmentVariable("BC_BURST_SCOPE");
@@ -276,8 +284,15 @@ int main(int argc, char *argv[]) {
                     for (QWindow *w : QGuiApplication::topLevelWindows())
                         if (auto *qw = qobject_cast<QQuickWindow *>(w); qw && qw->isVisible() && qw->property("scope").toString() == scope) { img = qw->grabWindow(); break; }
                 } else img = grabComposite();
-                const QString base = p.value(oShot); const QString out = base.left(base.lastIndexOf('.')) + QString("-%1.png").arg(ms, 4, 10, QChar('0'));
+                const qint64 drawMs = cost.elapsed();
+                const QString base = p.value(oShot);
+                const QString out = fixed ? base.left(base.lastIndexOf('/') + 1) + QString("fotograma-%1.png").arg(*count + 1, 3, 10, QChar('0'))
+                                          : base.left(base.lastIndexOf('.')) + QString("-%1.png").arg(ms, 4, 10, QChar('0'));
                 img.save(out);
+                if (fixed) {
+                    QFile csv(base.left(base.lastIndexOf('/') + 1) + "fotogramas.csv");
+                    if (csv.open(QIODevice::Append)) csv.write(QString("%1,%2,%3\n").arg(*count + 1).arg(ms).arg(drawMs).toUtf8());
+                }
                 if (++*count >= n) { tick->stop(); app.exit(0); }
             });
             tick->start();

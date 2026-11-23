@@ -8,8 +8,8 @@ Column {
     width: 250
     property date now: new Date()
     readonly property var loc: Qt.locale(AppConfig.language)
-    Timer { interval: 1000; running: w.visible; repeat: true; triggeredOnStart: true
-            onTriggered: w.now = AppConfig.fixedTime !== "" ? new Date(AppConfig.fixedTime) : new Date() }
+    Timer { interval: 60050 - (Date.now() % 60000); running: w.visible; repeat: true; triggeredOnStart: true   // al minuto
+            onTriggered: { w.now = AppConfig.fixedTime !== "" ? new Date(AppConfig.fixedTime) : new Date(); interval = 60050 - (Date.now() % 60000) } }
     Binding { target: Monitor; property: "active"; value: w.visible; when: w.visible }
 
     component Card: Rectangle {

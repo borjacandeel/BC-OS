@@ -62,7 +62,8 @@ public:
     int blurPx() const { return param("vidrio_blur_px").toInt(); }
     bool translucency() const { return param("translucidez").toBool(); }
     int shadows() const { return param("sombras").toInt(); }
-    qreal animScale() const { return param("animaciones").toDouble(); }
+    // BC_ANIM_SLOW=N: animaciones N veces más lentas (diagnóstico, como la «cámara lenta» de macOS)
+    qreal animScale() const { const qreal k = qEnvironmentVariable("BC_ANIM_SLOW").toDouble(); return param("animaciones").toDouble() * (k > 0 ? k : 1.0); }
     bool genie() const { return param("genio").toBool() && !software(); }
     bool scaleAnimations() const { return !software() && tierIndex() >= 2; }
     bool antialias() const { return param("antialias").toBool(); }

@@ -10,11 +10,11 @@ Rectangle {
     readonly property var loc: Qt.locale(AppConfig.language)
 
     Timer {
-        interval: 1000
+        interval: 60050 - (Date.now() % 60000)   // al minuto (antes cada segundo)
         running: true
         repeat: true
         triggeredOnStart: true
-        onTriggered: bar.now = AppConfig.fixedTime !== "" ? new Date(AppConfig.fixedTime) : new Date()
+        onTriggered: { bar.now = AppConfig.fixedTime !== "" ? new Date(AppConfig.fixedTime) : new Date(); interval = 60050 - (Date.now() % 60000) }
     }
 
     Rectangle {

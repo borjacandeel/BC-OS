@@ -57,10 +57,20 @@ Item {
     function halfW(t) { return from.width / 2 + (iconSize / 2 - from.width / 2) * bend * smooth(t) }
     function centerX(t) { const cx = from.x + from.width / 2; return cx + (target.x - cx) * bend * smooth(t) }
     // Dibujado fila a fila en C++ con bordes suavizados (GenieItem): sin escalones ni pixelado
+    // Con GPU: malla deformada en la GPU (fluida a 60 fps en gráficas integradas); por software, fila a fila en C++
+    GenieMesh {
+        anchors.fill: parent
+        visible: g.source !== "" && !Render.software
+        source: Render.software ? "" : g.source
+        from: Qt.rect(g.from.x - g.offset.x, g.from.y - g.offset.y, g.from.width, g.from.height)
+        target: Qt.point(g.target.x - g.offset.x, g.target.y - g.offset.y)
+        iconSize: g.iconSize
+        progress: g.p
+    }
     GenieItem {
         anchors.fill: parent
-        visible: g.source !== ""
-        source: g.source
+        visible: g.source !== "" && Render.software
+        source: Render.software ? g.source : ""
         from: Qt.rect(g.from.x - g.offset.x, g.from.y - g.offset.y, g.from.width, g.from.height)
         target: Qt.point(g.target.x - g.offset.x, g.target.y - g.offset.y)
         iconSize: g.iconSize

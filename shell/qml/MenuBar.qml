@@ -13,8 +13,9 @@ Item {
     readonly property color ink: Quick.wallpaperTopLight(Settings.wallpaper) ? "#1D1D1F" : Theme.barText
 
     Timer {
-        interval: 1000; running: true; repeat: true; triggeredOnStart: true
-        onTriggered: bar.now = AppConfig.fixedTime !== "" ? new Date(AppConfig.fixedTime) : new Date()
+        // Reloj: se actualiza al cambiar el minuto (antes cada segundo: 60 redibujados por minuto sin cambiar nada)
+        interval: 60050 - (Date.now() % 60000); running: true; repeat: true; triggeredOnStart: true
+        onTriggered: { bar.now = AppConfig.fixedTime !== "" ? new Date(AppConfig.fixedTime) : new Date(); interval = 60050 - (Date.now() % 60000) }
     }
 
     // Formato de la captura: «Dom 15 nov 12:19 a.m.»

@@ -273,7 +273,7 @@ Item {
         id: clockW
         wid: "reloj"; baseH: Theme.widgetSmall; baseW: Theme.widgetSmall
         property date now: new Date()
-        Timer { interval: 1000; running: clockW.visible; repeat: true; triggeredOnStart: true; onTriggered: clockW.now = new Date() }
+        Timer { interval: 60050 - (Date.now() % 60000); running: clockW.visible; repeat: true; triggeredOnStart: true; onTriggered: { clockW.now = new Date(); interval = 60050 - (Date.now() % 60000) } }   // al minuto (antes cada segundo)
         Label { x: root.px(17); y: root.px(14)
                 text: { const s = clockW.now.toLocaleDateString(Qt.locale(AppConfig.language), "dddd"); return s.charAt(0).toUpperCase() + s.slice(1) }
                 color: "#FF3B30"; font.pixelSize: root.px(13); font.weight: Font.DemiBold }
