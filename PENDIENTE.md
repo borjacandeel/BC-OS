@@ -57,6 +57,8 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] Log: «for_window [shell=xdg_shell] … doesn't support client side decorations» → excluir bc-* de la regla CSD.
 - [x] Dock: arrastrar iconos como macOS, «Quitar del Dock», minimizadas con miniatura; fish con colores; bc-actualizar sin conflictos.
 
+## En curso 2026-11-23 noche (creador): categorías 2 (animaciones) y 3 (detalles visuales), todo a 60 fps mínimo, revisando cada apartado. Por tandas, con fotogramas y capturas antes/ahora.
+
 ## Animaciones de macOS a replicar (lista del creador, 73). Estado: [x] hecho · [~] parcial · [ ] falta
 ### Principales y de navegación
 - [x] 1 Genio (minimizar en curva al Dock)
