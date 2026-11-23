@@ -373,7 +373,8 @@ LayerWindow {
             const ids = {}, fresh = []
             for (const w of Sway.windows) { ids[w.id] = true; if (root._knownWins && !root._knownWins[w.id] && !w.minimized) fresh.push(w) }
             root._knownWins = ids
-            if (fresh.length && !fresh[fresh.length - 1].focused) newFocus.restartWith(fresh[fresh.length - 1].id)
+            // (con Hyprland lo hace SwayControl al recibir «openwindow», al instante; esto queda para sway)
+            if (!Sway.hyprland && fresh.length && !fresh[fresh.length - 1].focused) newFocus.restartWith(fresh[fresh.length - 1].id)
         }
     }
     Timer { id: newFocus; interval: 120; property int wid: -1

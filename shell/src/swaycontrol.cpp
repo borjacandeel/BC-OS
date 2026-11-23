@@ -239,6 +239,17 @@ void SwayControl::hyprConnect() {
     connect(&m_hyprEvents, &QLocalSocket::readyRead, this, [this] {
         const QByteArray d = m_hyprEvents.readAll();
         // workspace, openwindow, closewindow, movewindow, activewindow, fullscreen, changefloatingmode, activelayout…
+        // Ventana nueva = ventana activa SIEMPRE (como macOS): foco de teclado y delante, aunque el teclado lo tuviera
+        // la barra, el Dock o un menú al abrirse (antes había que hacer clic en ella para poder escribir)
+        for (const QByteArray &line : d.split('\n')) {
+            if (!line.startsWith("openwindow>>")) continue;
+            const QList<QByteArray> f = line.mid(12).split(',');
+            if (f.size() < 2 || f.at(1).startsWith("special")) continue;   // minimizadas (escritorio especial): no
+            const QString target = "address:0x" + QString::fromLatin1(f.at(0));
+            const QString lua = "hl.dispatch(hl.dsp.focus({ window = \"" + target + "\" })); "
+                                "hl.dispatch(hl.dsp.window.alter_zorder({ mode = \"top\", window = \"" + target + "\" }))";
+            QTimer::singleShot(40, this, [this, lua] { QProcess::startDetached(m_exe, {"eval", lua}); });
+        }
         if (!d.isEmpty()) m_debounce.start();
     });
     connect(&m_hyprEvents, &QLocalSocket::disconnected, this, [this, path] {
