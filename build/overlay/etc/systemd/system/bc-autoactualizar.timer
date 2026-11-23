@@ -1,0 +1,11 @@
+[Unit]
+Description=BC OS — buscar e instalar actualizaciones cada día
+
+[Timer]
+OnBootSec=15min
+OnUnitActiveSec=1d
+RandomizedDelaySec=30min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

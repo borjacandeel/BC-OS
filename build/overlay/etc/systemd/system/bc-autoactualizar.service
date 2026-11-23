@@ -1,0 +1,13 @@
+[Unit]
+Description=BC OS — actualización automática
+After=network-online.target
+Wants=network-online.target
+ConditionACPower=true
+# (no en la ISO live)
+ConditionKernelCommandLine=!archisobasedir
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bc-autoactualizar
+Nice=10
+IOSchedulingClass=idle

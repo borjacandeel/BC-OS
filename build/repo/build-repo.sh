@@ -52,6 +52,8 @@ install -m644 "$TOP"/assets/wallpapers/*.jpg "$E2/usr/share/bc/wallpapers/"
 install -m644 "$TOP"/assets/sounds/*.wav "$E2/usr/share/sounds/bc/"
 # También llegan con las actualizaciones: el arranque animado (Plymouth), las sesiones del login y su carpeta compartida
 install -d "$E2/usr/share/plymouth/themes/bcos" "$E2/usr/share/bc/sessions"
+# Tema de GRUB de BC OS (bc-grub lo copia a /boot/grub/themes)
+install -d "$E2/usr/share/grub/themes"; cp -a "$O/usr/share/grub/themes/bcos" "$E2/usr/share/grub/themes/bcos"
 install -m644 "$HERE"/plymouth/bcos/* "$E2/usr/share/plymouth/themes/bcos/"
 install -m644 "$HERE"/overlay-dotfiles/usr/share/bc/sessions/*.desktop "$E2/usr/share/bc/sessions/"
 # Entorno Dotfiles (bspwm): scripts, menús de la barra y configuración de referencia (bc-dotfiles-setup la aplica)
@@ -60,6 +62,8 @@ install -d "$E2/usr/share/bc/dotfiles"; cp -a "$HERE/overlay-dotfiles/usr/share/
 [ -d "$HERE/overlay-dotfiles/etc/bc" ] && cp -a "$HERE/overlay-dotfiles/etc/bc/." "$E2/etc/bc/"
 # Servicio de controladores del equipo (primer arranque / tras actualizar en equipos reales)
 install -D -m644 "$O/etc/systemd/system/bc-drivers.service" "$E2/usr/lib/systemd/system/bc-drivers.service"
+install -D -m644 "$O/etc/systemd/system/bc-autoactualizar.service" "$E2/usr/lib/systemd/system/bc-autoactualizar.service"
+install -D -m644 "$O/etc/systemd/system/bc-autoactualizar.timer" "$E2/usr/lib/systemd/system/bc-autoactualizar.timer"
 # Tema de iconos propio de BC OS (emblemas, dispositivos, apps)
 [ -d "$TOP/icons/dist/theme/BC" ] && { install -d "$E2/usr/share/icons"; cp -a "$TOP/icons/dist/theme/BC" "$E2/usr/share/icons/BC"; }
 install -D -m644 "$O/usr/lib/tmpfiles.d/bc-greeter.conf" "$E2/usr/lib/tmpfiles.d/bc-greeter.conf"

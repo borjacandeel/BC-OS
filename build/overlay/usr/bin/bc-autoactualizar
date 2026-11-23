@@ -1,0 +1,13 @@
+#!/bin/sh
+# Actualización automática de BC OS (temporizador bc-autoactualizar.timer, una vez al día y al poco de arrancar):
+# instala lo nuevo del repositorio [bc] y de Arch, aplica todo y, si hace falta reiniciar, avisa a cada persona con
+# sesión abierta. No reinicia nunca por su cuenta. Desactivar: sudo systemctl disable --now bc-autoactualizar.timer
+[ "$(id -u)" = 0 ] || exit 1
+systemd-inhibit --what=shutdown:sleep --who="BC OS" --why="Actualizando el sistema" bc-actualizar >/var/log/bc-autoactualizar.log 2>&1 || exit 0
+[ -e /run/bc-reiniciar-pendiente ] || exit 0
+for d in /run/user/*; do
+  uid="${d##*/}"; [ "$uid" -ge 1000 ] 2>/dev/null || continue
+  u="$(id -nu "$uid" 2>/dev/null)" || continue
+  runuser -u "$u" -- env DBUS_SESSION_BUS_ADDRESS="unix:path=$d/bus" notify-send -a "BC OS" -i system-software-update \
+    "BC OS se ha actualizado" "Reinicia el ordenador cuando puedas para aplicar todos los cambios." >/dev/null 2>&1 || true
+done

@@ -43,6 +43,10 @@ for fn in fish_prompt fish_greeting fish_title bc-tema; do install -D -m644 "$HE
 sed -i '/# BC OS: iniciar la sesión gráfica/,$d' "$S/.bash_profile"
 cat "$HERE/overlay/etc/skel/.bash_profile" >> "$S/.bash_profile"
 install -m755 "$HERE/overlay/usr/bin/bc-session" "$HERE/overlay/usr/bin/bc-wm-mode" "$HERE/overlay/usr/bin/bc-ctl" "$HERE/overlay/usr/bin/bc-terminal" "$HERE/overlay/usr/bin/bc-screenshot" "$HERE/overlay/usr/bin/bc-display" "$HERE/overlay/usr/bin/bc-appearance" "$R/usr/bin/"
+# TODAS las órdenes bc-* del sistema (antes una lista a mano: bc-render-apply, bc-idle y bc-grub no llegaban a la ISO)
+install -m755 "$HERE"/overlay/usr/bin/bc-* "$R/usr/bin/"
+# Tema de GRUB de BC OS (instalador, ISO BIOS y bc-grub)
+install -d "$R/usr/share/grub/themes"; cp -a "$HERE/overlay/usr/share/grub/themes/bcos" "$R/usr/share/grub/themes/"
 install -D -m644 "$HERE/overlay/etc/bc/sway/efectos.conf" "$R/etc/bc/sway/efectos.conf"
 # Hyprland (con aceleración 3D): animaciones fluidas tipo macOS
 install -D -m644 "$HERE/overlay/etc/bc/hypr/hyprland.lua" "$R/etc/bc/hypr/hyprland.lua"
@@ -217,6 +221,8 @@ install -m644 "$HERE/overlay/etc/pam.d/bc-lock" "$R/etc/pam.d/bc-lock"
 install -m644 "$HERE/overlay/etc/systemd/system/bc-login-fallback.path" "$HERE/overlay/etc/systemd/system/bc-login-fallback.service" "$R/etc/systemd/system/"
 install -m755 "$HERE/overlay/usr/bin/bc-drivers" "$R/usr/bin/bc-drivers"
 install -m644 "$HERE/overlay/etc/systemd/system/bc-drivers.service" "$R/etc/systemd/system/bc-drivers.service"
+install -m644 "$HERE/overlay/etc/systemd/system/bc-autoactualizar.service" "$HERE/overlay/etc/systemd/system/bc-autoactualizar.timer" "$R/etc/systemd/system/"
+sh "systemctl enable bc-autoactualizar.timer" || true
 sh "systemctl enable greetd.service bc-login-fallback.path && systemctl set-default graphical.target"
 sh "systemctl --global enable pipewire.socket pipewire-pulse.socket wireplumber.service"
 
