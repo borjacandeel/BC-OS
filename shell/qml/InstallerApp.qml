@@ -110,7 +110,9 @@ AppWindow {
             Rectangle {
                 y: 20; width: parent.width; height: 32; radius: 8; color: Theme.tileFill
                 border.width: inp.activeFocus ? 2 : 1; border.color: inp.activeFocus ? Theme.accent : Theme.hairline
-                TextInput { id: inp; x: 10; width: parent.width - 20; anchors.verticalCenter: parent.verticalCenter; color: Theme.textPrimary
+                TextInput {
+                    cursorDelegate: TextCursor {}
+                    id: inp; x: 10; width: parent.width - 20; anchors.verticalCenter: parent.verticalCenter; color: Theme.textPrimary
                             font.family: Theme.fontFamily; font.pixelSize: 13; clip: true; echoMode: fld.secret ? TextInput.Password : TextInput.Normal
                             selectByMouse: true
                             Text { visible: !parent.text; text: fld.placeholder; color: Theme.textSecondary; font: parent.font } }

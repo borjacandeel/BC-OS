@@ -43,6 +43,7 @@ Item {
             Glass { anchors.fill: parent; radius: height / 2; tintBoost: 0.55 }
             Icon { x: px(32); anchors.verticalCenter: parent.verticalCenter; name: "view-app-grid-symbolic"; size: px(24); color: Theme.labelSecondary }
             TextInput {
+                cursorDelegate: TextCursor {}
                 id: field; x: px(74); width: parent.width - px(110); anchors.verticalCenter: parent.verticalCenter
                 color: Theme.label; font.family: Theme.font; font.pixelSize: px(22); focus: true; selectionColor: Theme.selection
                 onTextChanged: { lp.all = Apps.search(text); grid.contentY = 0 }

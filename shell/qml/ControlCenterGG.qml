@@ -311,7 +311,9 @@ Item {
                     id: pw; visible: false; property string ssid
                     width: wifiCol.width; height: px(40)
                     Rectangle { anchors.fill: parent; anchors.margins: px(4); radius: px(8); color: Theme.controlBg; border.width: 1; border.color: Theme.selection
-                        TextInput { id: pwIn; anchors.fill: parent; anchors.leftMargin: px(10); verticalAlignment: TextInput.AlignVCenter; echoMode: TextInput.Password
+                        TextInput {
+                            cursorDelegate: TextCursor {}
+                            id: pwIn; anchors.fill: parent; anchors.leftMargin: px(10); verticalAlignment: TextInput.AlignVCenter; echoMode: TextInput.Password
                                     color: Theme.label; font.family: Theme.font; font.pixelSize: px(13)
                                     onAccepted: { Quick.connectWifi(pw.ssid, text); text = ""; pw.visible = false }
                                     Keys.onEscapePressed: { text = ""; pw.visible = false }

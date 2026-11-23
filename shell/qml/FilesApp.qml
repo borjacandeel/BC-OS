@@ -133,6 +133,7 @@ AppWindow {
                 clip: true
                 Icon { x: 8; anchors.verticalCenter: parent.verticalCenter; name: Icons.search; size: 14; color: Theme.textSecondary }
                 TextInput {
+                    cursorDelegate: TextCursor {}
                     id: search
                     x: 28; width: parent.width - 52; anchors.verticalCenter: parent.verticalCenter
                     text: Files.filter
@@ -709,6 +710,7 @@ AppWindow {
                     x: 20; y: 48; width: parent.width - 40; height: 30; radius: 7; color: Theme.tileFill
                     border.width: 2; border.color: Theme.accent
                     TextInput {
+                        cursorDelegate: TextCursor {}
                         id: nameInput
                         anchors.fill: parent; anchors.margins: 7
                         color: Theme.textPrimary; selectionColor: Theme.textSelection

@@ -59,7 +59,9 @@ AppWindow {
             anchors.right: parent.right; anchors.rightMargin: 12; anchors.verticalCenter: parent.verticalCenter
             width: 180; height: 26; radius: 7; color: Theme.tileFill
             Icon { x: 7; anchors.verticalCenter: parent.verticalCenter; name: Icons.search; size: 13; color: Theme.textSecondary }
-            TextInput { x: 26; width: parent.width - 32; anchors.verticalCenter: parent.verticalCenter; color: Theme.textPrimary
+            TextInput {
+                cursorDelegate: TextCursor {}
+                x: 26; width: parent.width - 32; anchors.verticalCenter: parent.verticalCenter; color: Theme.textPrimary
                         font.family: Theme.fontFamily; font.pixelSize: 12; clip: true; onTextChanged: win.query = text
                         Text { visible: !parent.text; text: qsTr("Buscar"); color: Theme.textSecondary; font: parent.font } }
         }

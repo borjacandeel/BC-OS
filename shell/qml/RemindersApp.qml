@@ -100,6 +100,7 @@ AppWindow {
                 visible: win.view === "all"; width: lv.width; height: visible ? 40 : 0
                 Rectangle { x: 8; anchors.verticalCenter: parent.verticalCenter; width: 20; height: 20; radius: 10; color: "transparent"; border.width: 1.5; border.color: Theme.hairline }
                 TextInput {
+                    cursorDelegate: TextCursor {}
                     id: input
                     x: 40; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 48
                     color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 13

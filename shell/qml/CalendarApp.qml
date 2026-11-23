@@ -135,11 +135,15 @@ AppWindow {
             MouseArea { anchors.fill: parent }
             Text { x: 18; y: 14; text: qsTr("Evento nuevo · %1").arg(win.editDate); color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 13; font.weight: Font.Bold }
             Rectangle { x: 18; y: 44; width: parent.width - 36; height: 30; radius: 7; color: Theme.tileFill
-                        TextInput { id: titleIn; anchors.fill: parent; anchors.leftMargin: 10; verticalAlignment: TextInput.AlignVCenter; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 13
+                        TextInput {
+                            cursorDelegate: TextCursor {}
+                            id: titleIn; anchors.fill: parent; anchors.leftMargin: 10; verticalAlignment: TextInput.AlignVCenter; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 13
                                     onAccepted: done.clicked()
                                     Text { visible: !parent.text; anchors.verticalCenter: parent.verticalCenter; text: qsTr("Título"); color: Theme.textSecondary; font: parent.font } } }
             Rectangle { x: 18; y: 82; width: 110; height: 30; radius: 7; color: Theme.tileFill
-                        TextInput { id: timeIn; anchors.fill: parent; anchors.leftMargin: 10; verticalAlignment: TextInput.AlignVCenter; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 13
+                        TextInput {
+                            cursorDelegate: TextCursor {}
+                            id: timeIn; anchors.fill: parent; anchors.leftMargin: 10; verticalAlignment: TextInput.AlignVCenter; color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 13
                                     inputMask: "99:99;_"; onAccepted: done.clicked()
                                     Text { visible: parent.text === ":"; anchors.verticalCenter: parent.verticalCenter; text: qsTr("Hora (opcional)"); color: Theme.textSecondary; font: parent.font } } }
             Row {

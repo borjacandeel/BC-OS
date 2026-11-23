@@ -110,6 +110,7 @@ Item {
             color: Theme.dark ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(0, 0, 0, 0.06)
             Text { x: px(10); anchors.verticalCenter: parent.verticalCenter; text: "⌕"; color: Theme.labelSecondary; font.pixelSize: px(15) }
             TextInput {
+                cursorDelegate: TextCursor {}
                 id: search
                 x: px(30); width: parent.width - px(40); anchors.verticalCenter: parent.verticalCenter
                 color: Theme.label; font.family: Theme.font; font.pixelSize: px(13); selectionColor: Theme.textSelection; clip: true

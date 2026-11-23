@@ -13,7 +13,13 @@ AppWindow {
     property var back: []
     property var fwd: []
     property bool nav: false
-    onPageChanged: { if (!nav) { back = back.concat([prevPage]).slice(-20); fwd = [] } prevPage = page }
+    onPageChanged: {
+        // Transición como macOS: la página nueva entra con un leve desplazamiento lateral y fundido (hacia la
+        // izquierda al ir adelante, a la derecha con «atrás»). Solo opacidad y traslación: la GPU no redibuja nada.
+        pageIn.dir = nav && fwd.length > 0 && fwd[0] === prevPage ? -1 : 1
+        if (!Theme.reduced) pageIn.restart()
+        if (!nav) { back = back.concat([prevPage]).slice(-20); fwd = [] } prevPage = page
+    }
     property int prevPage: page
     function goBack() { if (!back.length) return; nav = true; fwd = [page].concat(fwd); const p = back[back.length - 1]; back = back.slice(0, -1); page = p; nav = false }
     function goFwd() { if (!fwd.length) return; nav = true; back = back.concat([page]); const p = fwd[0]; fwd = fwd.slice(1); page = p; nav = false }
@@ -231,7 +237,9 @@ AppWindow {
             x: 10; y: 8; width: parent.width - 20; height: Theme.gg ? 30 : 28; radius: Theme.gg ? 15 : 8; color: Theme.tileFill
             border.width: Theme.gg ? 1 : 0; border.color: Theme.lightUi ? Qt.rgba(0, 0, 0, 0.08) : Qt.rgba(1, 1, 1, 0.10)
             Icon { x: 10; anchors.verticalCenter: parent.verticalCenter; name: Icons.search; size: 14; color: Theme.textSecondary }
-            TextInput { id: q; x: 30; width: parent.width - 36; anchors.verticalCenter: parent.verticalCenter; color: Theme.textPrimary
+            TextInput {
+                cursorDelegate: TextCursor {}
+                id: q; x: 30; width: parent.width - 36; anchors.verticalCenter: parent.verticalCenter; color: Theme.textPrimary
                         font.family: Theme.fontFamily; font.pixelSize: 13; onTextChanged: win.query = text.toLowerCase()
                         Text { visible: !parent.text; text: qsTr("Buscar"); color: Theme.textSecondary; font: parent.font } }
         }
@@ -297,9 +305,16 @@ AppWindow {
         }
     }
 
+    ParallelAnimation {
+        id: pageIn
+        property int dir: 1
+        NumberAnimation { target: pageShift; property: "x"; from: 18 * pageIn.dir; to: 0; duration: Theme.d(240); easing.type: Easing.OutCubic }
+        NumberAnimation { target: pageFlick; property: "opacity"; from: 0.25; to: 1; duration: Theme.d(200); easing.type: Easing.OutQuad }
+    }
     Flickable {
         id: pageFlick
         x: 254; y: 18; width: parent.width - 254 - 24; height: parent.height - 18 - 12
+        transform: Translate { id: pageShift }
         // Alto de la página visible (todas las páginas son hijas directas): así cualquier página larga se desplaza
         contentHeight: { let h = height; const ch = contentItem.children; for (let i = 0; i < ch.length; i++) if (ch[i].visible) h = Math.max(h, ch[i].y + ch[i].height + 16); return h }
         clip: true
@@ -584,7 +599,9 @@ AppWindow {
             Rectangle {
                 id: wpw; visible: false; property string ssid
                 width: parent.width; height: 40; radius: 10; color: Theme.tileFill; border.width: 2; border.color: Theme.accent
-                TextInput { id: wpwIn; anchors.fill: parent; anchors.leftMargin: 12; verticalAlignment: TextInput.AlignVCenter; echoMode: TextInput.Password
+                TextInput {
+                    cursorDelegate: TextCursor {}
+                    id: wpwIn; anchors.fill: parent; anchors.leftMargin: 12; verticalAlignment: TextInput.AlignVCenter; echoMode: TextInput.Password
                             color: Theme.textPrimary; font.family: Theme.fontFamily; font.pixelSize: 13
                             onAccepted: { Quick.connectWifi(wpw.ssid, text); text = ""; wpw.visible = false }
                             Text { visible: !parent.text; anchors.verticalCenter: parent.verticalCenter; text: qsTr("Contraseña de «%1»").arg(wpw.ssid); color: Theme.textSecondary; font: parent.font } }
@@ -1005,6 +1022,7 @@ AppWindow {
                     width: Math.min(260, parent.width * 0.5); height: 28; radius: 7; color: Theme.dark ? Qt.rgba(1, 1, 1, 0.08) : "white"
                     border.width: 1; border.color: hintIn.activeFocus ? Theme.accent : Theme.separator
                     TextInput {
+                        cursorDelegate: TextCursor {}
                         id: hintIn; anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8; verticalAlignment: TextInput.AlignVCenter
                         color: Theme.label; font.family: Theme.fontFamily; font.pixelSize: 13; clip: true; maximumLength: 120
                         selectByMouse: true; selectionColor: Theme.textSelection

@@ -76,6 +76,7 @@ Item {
     Glass { visible: sp.results.length > 0; y: sp.barH + px(12); width: parent.width; height: sp.listH + px(16); radius: px(28); tintBoost: 0.4 }
     Icon { x: px(24); y: (sp.barH - height) / 2; name: Icons.search; size: px(22); color: Theme.labelSecondary }
     TextInput {
+        cursorDelegate: TextCursor {}
         id: field
         x: px(58); width: parent.width - px(80); height: sp.barH
         verticalAlignment: TextInput.AlignVCenter

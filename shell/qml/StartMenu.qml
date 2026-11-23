@@ -24,6 +24,7 @@ Rectangle {
         color: Qt.rgba(1, 1, 1, 0.1)
         Icon { x: 14; anchors.verticalCenter: parent.verticalCenter; name: Icons.search; size: 20; color: Theme.textSecondary }
         TextInput {
+            cursorDelegate: TextCursor {}
             id: field
             anchors.left: parent.left; anchors.right: parent.right
             anchors.leftMargin: 44; anchors.rightMargin: 14

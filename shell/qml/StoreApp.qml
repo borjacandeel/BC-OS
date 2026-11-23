@@ -90,6 +90,7 @@ AppWindow {
                 width: parent.width; height: 28; radius: 8; color: Theme.tileFill
                 Icon { x: 8; anchors.verticalCenter: parent.verticalCenter; name: Icons.search; size: 14; color: Theme.textSecondary }
                 TextInput {
+                    cursorDelegate: TextCursor {}
                     id: field; x: 28; width: parent.width - 34; anchors.verticalCenter: parent.verticalCenter
                     color: Theme.textPrimary; selectionColor: Theme.textSelection; font.family: Theme.fontFamily; font.pixelSize: 13; clip: true
                     onAccepted: if (text !== "") win.go("search")
@@ -293,6 +294,7 @@ AppWindow {
             Rectangle {
                 x: 22; y: 84; width: parent.width - 44; height: 36; radius: 10; color: Theme.tileFill
                 TextInput {
+                    cursorDelegate: TextCursor {}
                     id: pwInput
                     anchors.fill: parent; anchors.margins: 9
                     echoMode: TextInput.Password; passwordCharacter: "•"

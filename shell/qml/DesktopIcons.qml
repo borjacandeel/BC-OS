@@ -113,6 +113,7 @@ Item {
                 width: Math.min(parent.width, lbl.implicitWidth + px(12)); height: lbl.height + px(3); radius: height / 2   // óvalo azul de macOS
                 color: desk.isSel(ic.name) ? Theme.selection : "transparent"
                 TextInput {
+                    cursorDelegate: TextCursor {}
                     id: ren; visible: desk.renaming === ic.index; anchors.centerIn: parent; width: desk.cellW - px(8)
                     horizontalAlignment: Text.AlignHCenter; color: "white"; selectionColor: Theme.textSelection; selectByMouse: true
                     font.family: Theme.font; font.pixelSize: px(12); font.weight: Font.Medium; clip: true

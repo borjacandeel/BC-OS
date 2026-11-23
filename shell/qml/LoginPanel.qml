@@ -83,6 +83,7 @@ Item {
             Behavior on color { ColorAnimation { duration: Theme.dur(160) } }
 
             TextInput {
+                cursorDelegate: TextCursor {}
                 id: pw
                 anchors.left: parent.left
                 anchors.right: go.left

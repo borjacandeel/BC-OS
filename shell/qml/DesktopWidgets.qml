@@ -210,6 +210,7 @@ Item {
                 Rectangle { x: root.px(10) - width / 2 + root.px(0); anchors.verticalCenter: parent.verticalCenter; width: root.px(Theme.reminderCircle); height: width; radius: width / 2
                             color: "transparent"; border.width: 1.5; border.color: Theme.labelTertiary }
                 TextInput {
+                    cursorDelegate: TextCursor {}
                     id: input; x: root.px(32); anchors.verticalCenter: parent.verticalCenter; width: parent.width - x
                     color: Theme.label; font.family: Theme.font; font.pixelSize: root.px(13); clip: true
                     Text { visible: !parent.text; text: qsTr("Nuevo recordatorio"); color: Theme.labelTertiary; font: parent.font }
