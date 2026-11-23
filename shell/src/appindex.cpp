@@ -1,4 +1,6 @@
 #include "appindex.h"
+#include <QMutex>
+#include <QMutexLocker>
 #include <QFileInfo>
 #include <QRegularExpression>
 #include <QDir>
@@ -64,6 +66,7 @@ QStringList AppIndex::commandFor(const QString &exec, bool terminal) {
 }
 
 void AppIndex::reload() {
+    clearIconCache();   // apps nuevas o desinstaladas: sus iconos pueden haber cambiado
     m_entries.clear();
     QHash<QString, Entry> byId;
     for (const QString &dir : m_dirs) {
@@ -91,8 +94,26 @@ bool AppIndex::isHiddenId(const QString &id) {
     return false;
 }
 
+// Caché de rutas de iconos: cada búsqueda sin caché son hasta ~100 consultas al disco (tamaños × formatos × temas)
+// en el hilo de la interfaz; se repetía en cada tecla de Spotlight/Launchpad y en cada fila de Archivos.
+static QMutex s_iconMutex;
+static QHash<QString, QString> s_iconCache;
+void AppIndex::clearIconCache() { QMutexLocker l(&s_iconMutex); s_iconCache.clear(); }
 QString AppIndex::resolveIcon(const QString &name, const QStringList &rootsIn) {
     if (name.isEmpty()) return {};
+    const QString key = rootsIn.isEmpty() ? name : name + QChar(1) + rootsIn.join(QChar(2));
+    {
+        QMutexLocker l(&s_iconMutex);
+        const auto it = s_iconCache.constFind(key);
+        if (it != s_iconCache.constEnd()) return it.value();
+    }
+    const QString found = resolveIconUncached(name, rootsIn);
+    QMutexLocker l(&s_iconMutex);
+    if (s_iconCache.size() > 4000) s_iconCache.clear();
+    s_iconCache.insert(key, found);
+    return found;
+}
+QString AppIndex::resolveIconUncached(const QString &name, const QStringList &rootsIn) {
     if (name.startsWith('/')) return QFileInfo(name).isFile() ? name : QString();
     static const QRegularExpression ok("^[A-Za-z0-9._+-]+$");
     if (!ok.match(name).hasMatch()) return {};   // nada de «..» ni separadores

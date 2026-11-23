@@ -304,17 +304,26 @@ void QuickTools::searchFiles(const QString &text) {
     if (t.size() < 2) { m_files.clear(); emit filesChanged(); return; }
     QString pat = t; pat.replace('[', "\\[").replace('*', "\\*").replace('?', "\\?");
     const QString home = QDir::homePath();
-    run("find", {home, "-maxdepth", "5", "-not", "-path", "*/.*", "-iname", "*" + pat + "*"}, [this, seq, home](int, const QString &o) {
+    // Una sola búsqueda a la vez: la anterior se mata (antes seguían recorriendo la carpeta personal en paralelo
+    // mientras se escribía, gastando la CPU que necesitan las animaciones)
+    if (m_searchProc) { m_searchProc->disconnect(this); m_searchProc->kill(); m_searchProc->deleteLater(); }
+    if (QStandardPaths::findExecutable("find").isEmpty()) return;
+    auto *p = new QProcess(this);
+    m_searchProc = p;
+    connect(p, &QProcess::finished, this, [this, p, seq, home](int) {
+        p->deleteLater();
         if (seq != m_searchSeq) return;
         QVariantList out;
-        for (const QString &p : o.split('\n', Qt::SkipEmptyParts)) {
-            if (p == home) continue;
-            const QFileInfo fi(p);
-            out.append(QVariantMap{{"path", p}, {"name", fi.fileName()}, {"dir", fi.isDir()}, {"parent", QString(fi.absolutePath()).replace(home, "~")}});
+        for (const QString &l : QString::fromUtf8(p->readAllStandardOutput()).split('\n', Qt::SkipEmptyParts)) {
+            if (l == home) continue;
+            const QFileInfo fi(l);
+            out.append(QVariantMap{{"path", l}, {"name", fi.fileName()}, {"dir", fi.isDir()}, {"parent", QString(fi.absolutePath()).replace(home, "~")}});
             if (out.size() >= 12) break;
         }
         m_files = out; emit filesChanged();
     });
+    QTimer::singleShot(8000, p, [p] { if (p->state() != QProcess::NotRunning) p->kill(); });
+    p->start("nice", {"-n", "10", "find", home, "-maxdepth", "5", "-not", "-path", "*/.*", "-iname", "*" + pat + "*"});
 }
 
 // Evaluador seguro de expresiones aritméticas (sin JavaScript eval): + - * / % ^ ( ) y coma decimal

@@ -7,6 +7,8 @@
 #include <QVariantMap>
 #include <QPoint>
 #include <functional>
+#include <QPointer>
+#include <QProcess>
 
 // Datos reales para los widgets del escritorio (Golden Gate).
 
@@ -208,6 +210,7 @@ private:
     void handleTree(const QByteArray &json);
     void pollWindow();
     int m_searchSeq = 0;
+    QPointer<QProcess> m_searchProc;
     QVariantMap m_media;
     int m_busy = 0;
     QTimer m_mediaTimer;

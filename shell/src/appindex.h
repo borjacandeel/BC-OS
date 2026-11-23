@@ -13,6 +13,7 @@ public:
     static bool isHiddenId(const QString &id);
     // Ruta de archivo del icono de una app (nombre del tema o ruta absoluta); vacía si no se encuentra. `roots` = carpetas de iconos.
     static QString resolveIcon(const QString &name, const QStringList &roots = {});
+    static void clearIconCache();
     Q_INVOKABLE QVariantList search(const QString &query) const;
     Q_INVOKABLE bool launch(const QString &id);
     Q_INVOKABLE void reload();
@@ -28,6 +29,7 @@ signals:
     void changed();
 
 private:
+    static QString resolveIconUncached(const QString &name, const QStringList &roots);
     QStringList m_dirs;
     QString m_lang;
     QList<Entry> m_entries;
