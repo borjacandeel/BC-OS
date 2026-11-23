@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Window
 import QtQuick.Shapes
 
 // Fondo vectorial por degradados; sin desenfoque por CPU.
@@ -94,6 +95,8 @@ Item {
         anchors.fill: parent
         source: root.source
         fillMode: Image.PreserveAspectCrop
+        // Decodificado al tamaño de la pantalla (un fondo 4K/6K completo en la GPU es memoria y subida de sobra)
+        sourceSize: Qt.size(Math.round(width * Screen.devicePixelRatio), Math.round(height * Screen.devicePixelRatio))
         asynchronous: true
         smooth: true
         visible: status === Image.Ready

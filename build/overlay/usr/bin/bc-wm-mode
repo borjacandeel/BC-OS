@@ -42,10 +42,11 @@ OUT="${XDG_RUNTIME_DIR:?sin XDG_RUNTIME_DIR}/bc-sway.conf"
 [ "$1" = init ] && exit 0
 # Hyprland: la configuración lee el modo al cargar; se recarga y se aplica a las ventanas abiertas
 if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
-  hyprctl dispatch 'hl.dsp.reload_config()' >/dev/null 2>&1
+  # (con Lua las órdenes van por «hyprctl eval»; «hyprctl dispatch 'hl.dsp…'» no hacía nada)
+  hyprctl reload >/dev/null 2>&1
   act=set; [ "$new" = tiling ] && act=unset
   for a in $(hyprctl -j clients 2>/dev/null | grep -o '"address": *"0x[0-9a-f]*"' | grep -o '0x[0-9a-f]*'); do
-    hyprctl dispatch "hl.dsp.window.float({ action = \"$act\", window = \"address:$a\" })" >/dev/null 2>&1
+    hyprctl eval "hl.dispatch(hl.dsp.window.float({ action = \"$act\", window = \"address:$a\" }))" >/dev/null 2>&1
   done
   exit 0
 fi
