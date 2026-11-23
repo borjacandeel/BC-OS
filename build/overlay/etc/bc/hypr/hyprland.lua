@@ -69,9 +69,9 @@ hl.config({
         },
     },
     animations = { enabled = true },
-    -- Render para gráficas modestas (Intel integradas…): triple búfer cuando hace falta (no se pierde un fotograma
-    -- entero si uno va justo) y sin gestión de color (solo sirve para HDR y cuesta en cada fotograma)
-    render = { new_render_scheduling = true, cm_enabled = false },
+    -- Sin gestión de color (solo sirve para HDR y cuesta en cada fotograma). El triple búfer automático
+    -- (new_render_scheduling) daba más tirones en la Intel HD 620 del creador que el doble búfer: desactivado.
+    render = { new_render_scheduling = false, cm_enabled = false },
     misc = {
         disable_hyprland_logo = true,
         disable_splash_rendering = true,
