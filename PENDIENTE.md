@@ -27,6 +27,10 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
   Actualizar sxhkdrc, hyprland.lua, sway/config, la lista de atajos de Ajustes/README/web.
 
 ## Pendiente del creador 2026-11-23 (portátil instalado)
+- [x] GRUB personalizado (tema bcos: fondo, logo, Inter, selección de cristal), de serie en el instalador; bc-grub instalar/configurar.
+- [x] Energía: apagar pantalla y reposo por inactividad (bc-idle) con ajustes.
+- [ ] Capturas como macOS: ⌘⇧3 pantalla, ⌘⇧4 zona/ventana, ⌘⇧5 panel con opciones y grabación.
+- [ ] Auditoría completa de TODO.
 - [x] Batería de la barra minimalista como macOS (contorno, relleno, rayo dibujado, % al lado).
 - [x] Ventana recién abierta = activa (aunque un menú/Spotlight tuviera el teclado al abrirse).
 - [x] Avisos de Hyprland arriba a la derecha: misc.disable_watchdog_warning / disable_xdg_env_checks.

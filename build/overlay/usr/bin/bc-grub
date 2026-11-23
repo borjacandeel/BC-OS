@@ -1,0 +1,67 @@
+#!/bin/sh
+# GRUB de BC OS con su tema (fondo azul noche, logo, Inter, selección de cristal).
+#   sudo bc-grub configurar        → tema + /boot/grub/grub.cfg con las entradas de BC OS (lo llama bc-actualizar)
+#   sudo bc-grub instalar [disco]  → instala GRUB (UEFI o BIOS), lo pone primero en el arranque y lo configura
+# Las entradas salen de /boot/loader/entries/bcos*.conf (las mismas que systemd-boot: núcleo, initrd y opciones).
+set -eu
+[ "$(id -u)" = 0 ] || [ -n "${BC_BOOT:-}" ] || exec sudo "$0" "$@"
+TEMA="${BC_GRUB_TEMA:-/usr/share/grub/themes/bcos}"
+BOOT="${BC_BOOT:-/boot}"   # (otra carpeta: pruebas)
+GRUBDIR="$BOOT/grub"
+TIMEOUT="${BC_GRUB_TIMEOUT:-5}"
+
+configurar() {
+  mkdir -p "$GRUBDIR/themes"
+  rm -rf "$GRUBDIR/themes/bcos"; cp -r "$TEMA" "$GRUBDIR/themes/bcos"
+  tmp="$GRUBDIR/grub.cfg.nuevo"
+  {
+    echo "# Generado por bc-grub (BC OS). Se rehace al actualizar: personaliza en /etc/bc/grub-extra.cfg"
+    echo "insmod part_gpt"; echo "insmod part_msdos"; echo "insmod fat"; echo "insmod ext2"
+    echo "insmod all_video"; echo "insmod gfxterm"; echo "insmod png"
+    echo "set gfxmode=auto"; echo "set gfxpayload=keep"
+    for f in inter-16 inter-22 inter-sb-22; do echo "loadfont \$prefix/themes/bcos/$f.pf2"; done
+    echo "terminal_output gfxterm"
+    echo "set theme=\$prefix/themes/bcos/theme.txt"
+    echo "set timeout_style=menu"; echo "set timeout=$TIMEOUT"; echo "set default=0"
+    hechos=""
+    for e in "$BOOT"/loader/entries/bcos.conf "$BOOT"/loader/entries/bcos-seguro.conf "$BOOT"/loader/entries/bcos*.conf; do
+      [ -f "$e" ] || continue
+      case " $hechos " in *" $e "*) continue ;; esac; hechos="${hechos:-} $e"
+      titulo="$(sed -n 's/^title[[:space:]]*//p' "$e" | head -n1)"; [ -n "$titulo" ] || titulo="BC OS"
+      nucleo="$(sed -n 's/^linux[[:space:]]*//p' "$e" | head -n1)"
+      initrd="$(sed -n 's/^initrd[[:space:]]*//p' "$e" | tr '\n' ' ')"
+      opciones="$(sed -n 's/^options[[:space:]]*//p' "$e" | head -n1)"
+      [ -n "$nucleo" ] || continue
+      printf 'menuentry "%s" {\n  linux %s %s\n  initrd %s\n}\n' "$titulo" "$nucleo" "$opciones" "$initrd"
+    done
+    [ -d /sys/firmware/efi ] && printf 'menuentry "Ajustes del firmware (UEFI)" {\n  fwsetup\n}\n'
+    [ -f /etc/bc/grub-extra.cfg ] && cat /etc/bc/grub-extra.cfg
+  } > "$tmp"
+  grep -q '^menuentry "' "$tmp" || { rm -f "$tmp"; echo "bc-grub: no hay entradas de BC OS en $BOOT/loader/entries" >&2; exit 1; }
+  mv "$tmp" "$GRUBDIR/grub.cfg"
+  echo "GRUB de BC OS configurado ($GRUBDIR/grub.cfg)."
+}
+
+instalar() {
+  command -v grub-install >/dev/null || pacman -S --noconfirm --needed grub efibootmgr
+  if [ -d /sys/firmware/efi ]; then
+    case "$(uname -m)" in aarch64) t=arm64-efi ;; *) t=x86_64-efi ;; esac
+    # Entrada propia en el firmware (primera en el orden) y copia en la ruta de respaldo EFI/BOOT
+    grub-install --target="$t" --efi-directory=/boot --boot-directory=/boot --bootloader-id="BC OS"
+    grub-install --target="$t" --efi-directory=/boot --boot-directory=/boot --removable >/dev/null 2>&1 || true
+  else
+    disco="${1:-}"
+    if [ -z "$disco" ]; then
+      part="$(findmnt -no SOURCE /boot 2>/dev/null || findmnt -no SOURCE /)"
+      disco="/dev/$(lsblk -no PKNAME "$part" | head -n1)"
+    fi
+    grub-install --target=i386-pc --boot-directory=/boot "$disco"
+  fi
+  configurar
+}
+
+case "${1:-configurar}" in
+  configurar) configurar ;;
+  instalar) shift; instalar "${1:-}" ;;
+  *) echo "Uso: bc-grub [configurar | instalar [disco]]" >&2; exit 2 ;;
+esac

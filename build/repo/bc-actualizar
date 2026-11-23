@@ -27,6 +27,8 @@ systemd-tmpfiles --create /usr/lib/tmpfiles.d/bc-greeter.conf 2>/dev/null || tru
 if [ "$(cat /usr/share/plymouth/themes/bcos/* 2>/dev/null | md5sum)" != "$ply0" ] && command -v mkinitcpio >/dev/null 2>&1; then
   echo "Actualizando el arranque animado…"; plymouth-set-default-theme bcos 2>/dev/null; mkinitcpio -P >/dev/null 2>&1 || true
 fi
+# GRUB de BC OS: si el equipo arranca con GRUB, tema y entradas al día (microcódigo, opciones nuevas…)
+if [ -f /boot/grub/grub.cfg ] && command -v bc-grub >/dev/null 2>&1; then bc-grub configurar >/dev/null 2>&1 || true; fi
 # En el login solo BC OS y Dotfiles
 rm -f /usr/share/bc/sessions/bc-clasico.desktop
 # --- Aplicar TODO lo nuevo ------------------------------------------------------------------------

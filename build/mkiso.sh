@@ -26,7 +26,8 @@ bc_chroot "$R" bash -c "mkinitcpio -c /etc/mkinitcpio-live.conf -k /boot/$KIMG -
 # x86_64: arranque BIOS (Legacy) además de UEFI, con el GRUB del propio sistema (PCs antiguos sin UEFI)
 if [ "$ARCH" = x86_64 ] && [ -d "$R/usr/lib/grub/i386-pc" ]; then
   bc_chroot "$R" grub-mkimage -d /usr/lib/grub/i386-pc -O i386-pc-eltorito -p /boot/grub -o /tmp/bc-eltorito.img \
-    biosdisk iso9660 part_gpt part_msdos fat search search_label configfile normal linux echo ls test all_video gfxterm
+    biosdisk iso9660 part_gpt part_msdos fat search search_label configfile normal linux echo ls test all_video gfxterm \
+    gfxmenu png font bitmap_scale vbe   # (tema de BC OS en el menú de arranque)
   mv "$R/tmp/bc-eltorito.img" "$T/eltorito.img"; cp "$R/usr/lib/grub/i386-pc/boot_hybrid.img" "$T/boot_hybrid.img"
 fi
 cp "$R/boot/initramfs-live.img" "$T/initramfs-live.img"; rm -f "$R/boot/initramfs-live.img" "$R/etc/mkinitcpio-live.conf"
@@ -68,8 +69,18 @@ mkdir -p "$T/iso/EFI"; cp "$T/efiboot.img" "$T/iso/EFI/efiboot.img"
 if [ -f "$T/eltorito.img" ]; then
   mkdir -p "$T/iso/boot/grub"; cp "$T/eltorito.img" "$T/iso/boot/grub/eltorito.img"
   cp "$R/boot/$KIMG" "$T/iso/boot/$KIMG"; cp "$T/initramfs-live.img" "$T/iso/boot/initramfs-live.img"
+  # Tema de BC OS (el mismo que el GRUB instalado: bc-grub)
+  [ -d "$R/usr/share/grub/themes/bcos" ] && { mkdir -p "$T/iso/boot/grub/themes"; cp -r "$R/usr/share/grub/themes/bcos" "$T/iso/boot/grub/themes/"; }
   cat > "$T/iso/boot/grub/grub.cfg" <<G
 search --no-floppy --label $LABEL --set=root
+set gfxmode=auto
+set gfxpayload=keep
+loadfont \$prefix/themes/bcos/inter-16.pf2
+loadfont \$prefix/themes/bcos/inter-22.pf2
+loadfont \$prefix/themes/bcos/inter-sb-22.pf2
+terminal_output gfxterm
+set theme=\$prefix/themes/bcos/theme.txt
+set timeout_style=menu
 set timeout=5
 set default=0
 menuentry "BC OS (live)" { linux /boot/$KIMG $OPTS; initrd /boot/initramfs-live.img; }
