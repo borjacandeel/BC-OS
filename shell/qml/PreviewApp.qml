@@ -71,7 +71,7 @@ AppWindow {
         y: -win.titlebarHeight; width: 180; height: parent.height + win.titlebarHeight
         color: Theme.gg ? "transparent" : Theme.sidebarFill
         SidebarGlass { anchors.fill: parent; active: win.active; z: -1 }
-        Rectangle { anchors.right: parent.right; width: 1; height: parent.height; color: Theme.hairline }
+        Rectangle { visible: !Theme.gg; anchors.right: parent.right; width: 1; height: parent.height; color: Theme.hairline }
         ListView {
             y: win.titlebarHeight + 8; x: 0; width: parent.width; height: parent.height - y - 8; clip: true; spacing: 6
             model: folder

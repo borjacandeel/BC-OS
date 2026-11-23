@@ -223,8 +223,9 @@ AppWindow {
         id: side
         width: 230; height: parent.height
         color: Theme.gg ? "transparent" : Qt.rgba(0.03, 0.06, 0.16, 0.45)
-        SidebarGlass { anchors.fill: parent; active: win.active; z: -1 }
-        Rectangle { anchors.right: parent.right; width: 1; height: parent.height; color: Theme.hairline }
+        // (sube hasta arriba: los semáforos quedan dentro del panel flotante, como en las demás apps)
+        SidebarGlass { anchors.fill: parent; anchors.topMargin: -win.titlebarHeight; active: win.active; z: -1 }
+        Rectangle { visible: !Theme.gg; anchors.right: parent.right; width: 1; height: parent.height; color: Theme.hairline }
         // Búsqueda
         Rectangle {
             x: 10; y: 8; width: parent.width - 20; height: Theme.gg ? 30 : 28; radius: Theme.gg ? 15 : 8; color: Theme.tileFill

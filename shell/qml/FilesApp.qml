@@ -164,7 +164,7 @@ AppWindow {
             y: -win.titlebarHeight; width: win.sideW; height: parent.height + win.titlebarHeight
             color: Theme.gg ? "transparent" : Theme.sidebarFill
             SidebarGlass { anchors.fill: parent; active: win.active; z: -1 }
-            Rectangle { anchors.right: parent.right; width: 1; height: parent.height; color: Theme.hairline }
+            Rectangle { visible: !Theme.gg; anchors.right: parent.right; width: 1; height: parent.height; color: Theme.hairline }   // Golden Gate: barra flotante, sin línea
             // Desplazable y recortada por encima de la esquina inferior: nada asoma por la esquina redondeada
             Flickable {
                 id: sideFlick

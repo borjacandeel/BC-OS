@@ -123,7 +123,16 @@ Item {
                           Text { anchors.verticalCenter: parent.verticalCenter; text: modelData.title; color: Theme.label; font.family: Theme.font; font.pixelSize: px(13)
                                  width: px(170); elide: Text.ElideRight } }
                 }
-                Text { visible: Reminders.pending === 0; text: qsTr("Todo hecho"); color: Theme.labelSecondary; font.family: Theme.font; font.pixelSize: px(13) }
+            }
+            // Sin pendientes: aviso centrado en la zona de la lista (antes quedaba arriba y dejaba un hueco)
+            Column {
+                visible: Reminders.pending === 0
+                x: px(140); width: parent.width - px(156); anchors.verticalCenter: parent.verticalCenter; spacing: px(6)
+                Rectangle { anchors.horizontalCenter: parent.horizontalCenter; width: px(28); height: width; radius: width / 2
+                            color: "transparent"; border.width: 1.5; border.color: Theme.labelTertiary
+                            Icon { anchors.centerIn: parent; name: "object-select-symbolic"; size: px(14); color: Theme.labelSecondary } }
+                Text { anchors.horizontalCenter: parent.horizontalCenter; text: qsTr("Todo hecho"); color: Theme.labelSecondary
+                       font.family: Theme.font; font.pixelSize: px(13); font.weight: Font.Medium }
             }
         }
         // «Editar widgets» y cerrar
