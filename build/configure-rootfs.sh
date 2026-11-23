@@ -223,7 +223,7 @@ sh "systemctl --global enable pipewire.socket pipewire-pulse.socket wireplumber.
 # Servicios mínimos
 sh "systemctl disable systemd-networkd systemd-networkd.socket systemd-networkd-wait-online 2>/dev/null || true"
 rm -f "$R"/etc/systemd/network/*.network
-sh "systemctl enable NetworkManager systemd-timesyncd systemd-resolved nftables sshd bluetooth"
+sh "systemctl enable NetworkManager NetworkManager-dispatcher systemd-timesyncd systemd-resolved nftables sshd bluetooth"
 install -D -m644 "$HERE/overlay/etc/ssh/sshd_config.d/10-bcos.conf" "$R/etc/ssh/sshd_config.d/10-bcos.conf"
 install -D -m644 "$HERE/overlay/etc/systemd/zram-generator.conf" "$R/etc/systemd/zram-generator.conf"
 install -D -m644 "$HERE/overlay/etc/nftables.conf" "$R/etc/nftables.conf"

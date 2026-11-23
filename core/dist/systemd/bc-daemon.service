@@ -1,4 +1,6 @@
 [Unit]
+# Solo para personas: no en el usuario del login (greetd), que no tiene carpeta personal (%h = «/»)
+ConditionUser=!@system
 Description=BC OS — Daemon coordinador
 Documentation=https://github.com/borjacandeel/BC-OS
 

@@ -36,6 +36,7 @@ echo "faltan: $FALTA"
 # (paquete a paquete si alguno no existe en esta arquitectura, para que no bloquee al resto)
 pacman -S --noconfirm --needed $FALTA || for p in $FALTA; do pacman -S --noconfirm --needed "$p" || echo "AVISO: no se pudo instalar $p"; done
 command -v thermald >/dev/null 2>&1 && systemctl enable --now thermald 2>/dev/null
+systemctl enable --now bluetooth.service 2>/dev/null
 command -v powerprofilesctl >/dev/null 2>&1 && systemctl enable --now power-profiles-daemon 2>/dev/null
 # Microcódigo y firmware nuevos: initramfs al día
 mkinitcpio -P || true

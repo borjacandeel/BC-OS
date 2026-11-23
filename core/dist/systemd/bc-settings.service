@@ -1,4 +1,6 @@
 [Unit]
+# Solo para personas: no en el usuario del login (greetd), que no tiene carpeta personal (%h = «/»)
+ConditionUser=!@system
 Description=BC OS — Servicio de ajustes
 Documentation=https://github.com/borjacandeel/BC-OS
 

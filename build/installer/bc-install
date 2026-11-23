@@ -367,6 +367,8 @@ do_config() {
   # Sin autologin del usuario por defecto en el sistema instalado
   run rm -f "$TARGET/etc/systemd/system/getty@tty1.service.d/autologin.conf"
   rmdir "$TARGET/etc/systemd/system/getty@tty1.service.d" 2>/dev/null || true
+  # greetd usa la consola 1: sin esto un agetty en tty1 se reiniciaba cada 10 s con errores de E/S
+  crun systemctl mask getty@tty1.service
 
   printf '%s\n' "$HOST_NAME" | put "$TARGET/etc/hostname"
   printf '127.0.0.1 localhost\n::1 localhost\n127.0.1.1 %s\n' "$HOST_NAME" | put "$TARGET/etc/hosts"
