@@ -6,6 +6,11 @@
 - Animaciones casi instantáneas como en macOS: las de Hyprland duran entre 120 y 280 ms (antes hasta 600 ms) y las del escritorio son un 25–40 % más cortas, al ritmo real del monitor.
 - Los relojes se actualizan una vez por minuto, no cada segundo, así que el escritorio no se redibuja sin motivo.
 - Spotlight y los paneles abren al instante.
+- Spotlight, Aplicaciones y Archivos buscan los iconos una sola vez (antes, hasta ~100 accesos a disco por icono al escribir o desplazarse).
+- La búsqueda de archivos de Spotlight no se acumula mientras escribes.
+- Con Hyprland, el panel no se satura cuando una app cambia su título sin parar (terminales, navegadores), y no se pierden aperturas ni cambios de foco.
+- Arrastrar y redimensionar ventanas va pegado al ratón.
+- Las apps BC no repiten la animación que ya hace Hyprland.
 
 **Nuevo**
 - **Capturas como en macOS**:
@@ -37,3 +42,4 @@
 - Servicios de BC Core estables.
 - Pantalla que se apaga por inactividad también en Hyprland.
 - La ISO incluye todas las órdenes de BC OS.
+- Cambiar entre ventanas flotantes y mosaico funciona en Hyprland.
