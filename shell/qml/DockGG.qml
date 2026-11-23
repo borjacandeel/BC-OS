@@ -157,7 +157,11 @@ Item {
     // Zona que recibe el puntero (el resto deja pasar los clics a las ventanas)
     readonly property rect inputRect: Settings.dockAutohide && !revealed
         ? Qt.rect(0, height - px(3), width, px(3))
-        : Qt.rect((width - realW) / 2, height - plateH - px(Theme.dockBottom) - (mag > 0 ? maxIcon - bs + px(30) : 0), realW, plateH + px(Theme.dockBottom) + (mag > 0 ? maxIcon - bs + px(30) : 0))
+        // Con la ampliación activa, zona FIJA del tamaño del Dock ampliado del todo: antes cambiaba en cada fotograma de
+        // la ampliación y el compositor tenía que procesar una región de entrada nueva 60 veces por segundo
+        : mag > 0 ? Qt.rect(Math.max(0, (width - baseW) / 2 - 2 * (maxIcon - bs)), height - plateH - px(Theme.dockBottom) - (maxIcon - bs) - px(30),
+                            Math.min(width, baseW + 4 * (maxIcon - bs)), plateH + px(Theme.dockBottom) + maxIcon - bs + px(30))
+                  : Qt.rect((width - realW) / 2, height - plateH - px(Theme.dockBottom), realW, plateH + px(Theme.dockBottom))
     // Punto de destino del «genio» al minimizar (centro del primer hueco de minimizadas)
     readonly property point minimizeTarget: Qt.point((width - baseW) / 2 + baseCenter(items.length + minimized.length), height - plateH / 2 - px(Theme.dockBottom))
 

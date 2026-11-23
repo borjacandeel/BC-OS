@@ -80,6 +80,8 @@ private:
     QTimer m_timer;
     bool m_audio = false, m_muted = false, m_hasWifi = false, m_wifiEnabled = false, m_online = false, m_wired = false;
     QSet<QString> m_running;
+    bool m_camBusy = false;
+    int m_tick = 0;
     bool m_hasBattery = false, m_batteryCharging = false, m_hasBacklight = false, m_btAvailable = false, m_btOn = false, m_dnd = false;
     double m_volume = 0, m_brightness = 0;
     int m_signal = -1, m_batteryPercent = 0;

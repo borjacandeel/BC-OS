@@ -69,13 +69,18 @@ hl.config({
         },
     },
     animations = { enabled = true },
+    -- Render para gráficas modestas (Intel integradas…): triple búfer cuando hace falta (no se pierde un fotograma
+    -- entero si uno va justo) y sin gestión de color (solo sirve para HDR y cuesta en cada fotograma)
+    render = { new_render_scheduling = true, cm_enabled = false },
     misc = {
         disable_hyprland_logo = true,
         disable_splash_rendering = true,
         force_default_wallpaper = 0,
         background_color = 0x04111F,
-        animate_manual_resizes = true,
-        animate_mouse_windowdragging = true,
+        -- Arrastrar y redimensionar con el ratón: la ventana va pegada al puntero 1:1, como macOS (con animación iba por
+        -- detrás del cursor con un muelle y se notaba lento)
+        animate_manual_resizes = false,
+        animate_mouse_windowdragging = false,
         focus_on_activate = true,
         -- Sin avisos fijos arriba a la derecha: BC OS arranca Hyprland con start-hyprland y pone XDG_CURRENT_DESKTOP=BC
         -- a propósito (bc-session); Hyprland lo señalaba como problema en cada inicio

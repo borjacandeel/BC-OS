@@ -68,6 +68,7 @@ private:
     void load(const QString &path);
     void refilter();
     QString m_path, m_filter, m_tagFilter;
+    QString m_appliedTag;   // filtro de etiqueta con el que se cargó la lista (para no recargar si no cambia nada)
     bool m_available = false;
     QFileInfoList m_all, m_items;
     QStringList m_history;

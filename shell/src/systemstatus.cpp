@@ -1,4 +1,7 @@
 #include "systemstatus.h"
+#include <QCoreApplication>
+#include <QPointer>
+#include <QThreadPool>
 #include <QTimer>
 #include <QDir>
 #include <QFile>
@@ -141,7 +144,20 @@ bool SystemStatus::cameraInUse() {
 
 void SystemStatus::refresh() {
     readBattery();
-    { const bool cam = cameraInUse(); if (cam != m_cam) { m_cam = cam; emit changed(); } }
+    // Cámara: recorre /proc/*/fd de todos los procesos; en un hilo aparte (antes bloqueaba el hilo que dibuja cada 5 s
+    // en equipos con webcam: un tirón periódico)
+    if (!m_camBusy) {
+        m_camBusy = true;
+        QPointer<SystemStatus> self(this);
+        QThreadPool::globalInstance()->start([self] {
+            const bool cam = cameraInUse();
+            QMetaObject::invokeMethod(qApp, [self, cam] {
+                if (!self) return;
+                self->m_camBusy = false;
+                if (cam != self->m_cam) { self->m_cam = cam; emit self->changed(); }
+            }, Qt::QueuedConnection);
+        });
+    }
     run("pactl", {"list", "short", "source-outputs"}, [this](int code, const QString &out) {
         const bool mic = code == 0 && !out.trimmed().isEmpty();
         if (mic != m_mic) { m_mic = mic; emit changed(); }
@@ -153,6 +169,8 @@ void SystemStatus::refresh() {
             emit changed();
         }
     });
+    // Red, Bluetooth y brillo cambian poco (y se refrescan al momento cuando BC los cambia): cada 15 s en vez de cada 5
+    if (m_tick++ % 3 != 0) return;
     run("nmcli", {"-t", "-f", "DEVICE,TYPE,STATE,CONNECTION", "device"}, [this](int code, const QString &out) {
         const Net n = code == 0 ? parseNmcliDevices(out) : Net();
         if (n.hasWifi != m_hasWifi || n.online != m_online || n.wired != m_wired || n.connection != m_connection) {
@@ -165,7 +183,8 @@ void SystemStatus::refresh() {
             const bool on = code == 0 && out.trimmed() == "enabled";
             if (on != m_wifiEnabled) { m_wifiEnabled = on; emit changed(); }
         });
-        run("nmcli", {"-t", "-f", "ACTIVE,SIGNAL,SSID", "device", "wifi"}, [this](int code, const QString &out) {
+        // «--rescan no»: sin esto nmcli escanea la radio cada ~30 s (cortes de latencia en el Wi-Fi)
+        run("nmcli", {"-t", "-f", "ACTIVE,SIGNAL,SSID", "device", "wifi", "list", "--rescan", "no"}, [this](int code, const QString &out) {
             const int s = code == 0 ? parseNmcliSignal(out) : -1;
             if (s != m_signal) { m_signal = s; emit changed(); }
         });
@@ -202,7 +221,7 @@ void SystemStatus::toggleMute() {
 void SystemStatus::setWifi(bool on) {
     m_wifiEnabled = on;
     emit changed();
-    run("nmcli", {"radio", "wifi", on ? "on" : "off"}, [this](int, const QString &) { refresh(); });
+    run("nmcli", {"radio", "wifi", on ? "on" : "off"}, [this](int, const QString &) { m_tick = 0; refresh(); });
 }
 
 void SystemStatus::setBrightness(double v) {
@@ -215,7 +234,7 @@ void SystemStatus::setBrightness(double v) {
 void SystemStatus::setBluetooth(bool on) {
     m_btOn = on;
     emit changed();
-    run("bluetoothctl", {"power", on ? "on" : "off"}, [this](int, const QString &) { refresh(); });
+    run("bluetoothctl", {"power", on ? "on" : "off"}, [this](int, const QString &) { m_tick = 0; refresh(); });
 }
 
 void SystemStatus::setDnd(bool on) {

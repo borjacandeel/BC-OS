@@ -26,8 +26,12 @@ Window {
     minimumWidth: Math.max(480, sidebarWidth + 460) + 2 * sh
     minimumHeight: 320 + 2 * sh
 
+    // Con Hyprland el compositor ya anima abrir, cerrar y maximizar (en la GPU, sincronizado con la pantalla): la app no
+    // anima nada por su cuenta. Antes había DOS animaciones superpuestas (la de la app dentro de la del compositor) y se
+    // veía a tirones y más lento.
+    readonly property bool compositorAnimates: typeof Quick !== "undefined" && Quick.realBlur
     onClosing: (c) => { c.accepted = false; win.closeRequested() }
-    onCloseRequested: { if (!canClose) { Sounds.play("error"); return } if (Theme.reducedMotion) Qt.quit(); else closeAnim.start() }
+    onCloseRequested: { if (!canClose) { Sounds.play("error"); return } if (Theme.reducedMotion || win.compositorAnimates) Qt.quit(); else closeAnim.start() }
     ParallelAnimation {
         id: closeAnim
         NumberAnimation { target: frame; property: "scale"; to: !Render.scaleAnimations ? 1 : (Theme.gg ? 0.92 : 0.94); duration: Theme.gg ? Theme.durWindowClose : 140; easing.type: Easing.InCubic }
@@ -39,7 +43,7 @@ Window {
     property int _lastVis: Window.Windowed
     onVisibilityChanged: (v) => {
         const big = v === Window.FullScreen || v === Window.Maximized, wasBig = _lastVis === Window.FullScreen || _lastVis === Window.Maximized
-        if (big !== wasBig && !Theme.reducedMotion && frame.opacity > 0.5 && !closeAnim.running) expandAnim.restart()
+        if (big !== wasBig && !Theme.reducedMotion && !win.compositorAnimates && frame.opacity > 0.5 && !closeAnim.running) expandAnim.restart()
         _lastVis = v
     }
     ParallelAnimation {
@@ -122,8 +126,8 @@ Window {
         Behavior on color { ColorAnimation { duration: Theme.d(Theme.durHover) } }
         clip: true
         // Por software se abre solo con fundido: escalar toda la ventana en cada fotograma cuesta mucha CPU
-        scale: !Render.scaleAnimations ? 1 : (Theme.gg ? 0.94 : 0.97)
-        opacity: 0
+        scale: !Render.scaleAnimations || win.compositorAnimates ? 1 : (Theme.gg ? 0.94 : 0.97)
+        opacity: win.compositorAnimates ? 1 : 0
         transformOrigin: Item.Center
         Component.onCompleted: { scale = 1; opacity = 1 }
         Behavior on scale { NumberAnimation { duration: Theme.dur(Theme.gg ? Theme.durWindowOpen : 220); easing.type: Theme.gg ? Theme.easeEmphasized : Easing.OutCubic } }

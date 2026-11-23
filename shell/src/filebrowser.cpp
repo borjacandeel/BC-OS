@@ -49,14 +49,27 @@ QString FileBrowser::kindFor(const QFileInfo &fi) {
 bool FileBrowser::canUp() const { return !QDir(m_path).isRoot(); }
 
 void FileBrowser::load(const QString &path) {
-    m_path = QDir::cleanPath(path);
-    QDir d(m_path);
-    m_available = d.exists() && d.isReadable();
+    const QString clean = QDir::cleanPath(path);
+    QDir d(clean);
+    const bool available = d.exists() && d.isReadable();
+    const QFileInfoList fresh = available ? d.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot,
+                                                            QDir::DirsFirst | QDir::IgnoreCase | QDir::Name)
+                                          : QFileInfoList();
+    // Recarga periódica (escritorio cada 4 s, papelera del Dock cada 5 s): si nada ha cambiado, no se toca el modelo.
+    // Antes se rehacía siempre: se recreaban todos los iconos y se redibujaba la capa entera (tirones a mitad de una
+    // animación).
+    if (clean == m_path && available == m_available && m_appliedTag == m_tagFilter && fresh.size() == m_all.size()) {
+        bool same = true;
+        for (int i = 0; i < fresh.size() && same; ++i)
+            same = fresh[i].fileName() == m_all[i].fileName() && fresh[i].lastModified() == m_all[i].lastModified()
+                   && fresh[i].size() == m_all[i].size();
+        if (same) return;
+    }
+    m_path = clean;
+    m_available = available;
+    m_appliedTag = m_tagFilter;
     beginResetModel();
-    m_all.clear();
-    if (m_available)
-        m_all = d.entryInfoList(QDir::AllEntries | QDir::NoDotAndDotDot,
-                                QDir::DirsFirst | QDir::IgnoreCase | QDir::Name);
+    m_all = fresh;
     m_items.clear();
     for (const auto &fi : std::as_const(m_all))
         if ((m_filter.isEmpty() || fi.fileName().contains(m_filter, Qt::CaseInsensitive))
