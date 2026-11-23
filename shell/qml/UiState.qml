@@ -71,12 +71,15 @@ QtObject {
     property string powerAction: ""
     property bool forceQuitOpen: false   // «Forzar salida de las aplicaciones»
     property bool emojiOpen: false       // «Emoji y símbolos»
+    property bool screenshotOpen: false  // panel de capturas (⌘⇧5)
+    property string shotMode: "seleccion"  // último modo del panel de capturas
+    property bool recording: false       // grabación de pantalla en curso (botón ⏹ en la barra)
     readonly property bool popupOpen: !locked && (centerOpen || launcherOpen || startOpen || clipboardOpen || menu !== "" || powerAction !== ""
-                                                  || notifCenterOpen || spotlightOpen || stackOpen || widgetGalleryOpen || contextItems.length > 0 || tilePop !== null || forceQuitOpen || emojiOpen)
+                                                  || notifCenterOpen || spotlightOpen || stackOpen || widgetGalleryOpen || contextItems.length > 0 || tilePop !== null || forceQuitOpen || emojiOpen || screenshotOpen)
     readonly property bool dim: launcherOpen || powerAction !== ""
 
     function closePopups() { centerOpen = false; centerPanel = ""; launcherOpen = false; startOpen = false; clipboardOpen = false; menu = ""; powerAction = ""
-                             notifCenterOpen = false; spotlightOpen = false; stackOpen = false; widgetGalleryOpen = false; contextItems = []; tilePop = null; forceQuitOpen = false; emojiOpen = false }
+                             notifCenterOpen = false; spotlightOpen = false; stackOpen = false; widgetGalleryOpen = false; contextItems = []; tilePop = null; forceQuitOpen = false; emojiOpen = false; screenshotOpen = false }
     function toggleNotifCenter() { if (locked) return; const o = notifCenterOpen; closePopups(); notifCenterOpen = !o }
     function openCenterPanel(name) { if (locked) return; closePopups(); centerOpen = true; centerPanel = name }
     function toggleSpotlight() { if (locked) return; const o = spotlightOpen; closePopups(); spotlightOpen = !o }

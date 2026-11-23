@@ -123,20 +123,20 @@ bindsym $mod+1 workspace number 1
 bindsym $mod+2 workspace number 2
 bindsym $mod+3 workspace number 3
 bindsym $mod+4 workspace number 4
-bindsym $mod+Shift+1 move container to workspace number 1
-bindsym $mod+Shift+2 move container to workspace number 2
-bindsym $mod+Shift+3 move container to workspace number 3
-bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Mod1+1 move container to workspace number 1
+bindsym $mod+Mod1+2 move container to workspace number 2
+bindsym $mod+Mod1+3 move container to workspace number 3
+bindsym $mod+Mod1+4 move container to workspace number 4
 bindsym $mod+5 workspace number 5
-bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+Mod1+5 move container to workspace number 5
 bindsym $mod+6 workspace number 6
-bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Mod1+6 move container to workspace number 6
 bindsym $mod+7 workspace number 7
-bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Mod1+7 move container to workspace number 7
 bindsym $mod+8 workspace number 8
-bindsym $mod+Shift+8 move container to workspace number 8
+bindsym $mod+Mod1+8 move container to workspace number 8
 bindsym $mod+9 workspace number 9
-bindsym $mod+Shift+9 move container to workspace number 9
+bindsym $mod+Mod1+9 move container to workspace number 9
 bindsym $mod+Ctrl+Right workspace next
 bindsym $mod+Ctrl+Left workspace prev
 
@@ -167,6 +167,12 @@ bindsym --locked XF86AudioLowerVolume exec sh -c 'wpctl set-volume @DEFAULT_AUDI
 bindsym --locked XF86AudioMute exec sh -c 'wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle; bc-ctl osd volume'
 bindsym --locked XF86MonBrightnessUp exec sh -c 'brightnessctl -c backlight set 5%+; bc-ctl osd brightness'
 bindsym --locked XF86MonBrightnessDown exec sh -c 'brightnessctl -c backlight set 5%-; bc-ctl osd brightness'
+# Capturas como macOS: ⌘⇧3 pantalla · ⌘⇧4 zona o ventana · ⌘⇧5 panel · con ⌃, solo al portapapeles
+bindsym $mod+Shift+3 exec bc-screenshot pantalla
+bindsym $mod+Shift+4 exec bc-screenshot area
+bindsym $mod+Shift+5 exec bc-ctl screenshot
+bindsym $mod+Ctrl+Shift+3 exec bc-screenshot -c pantalla
+bindsym $mod+Ctrl+Shift+4 exec bc-screenshot -c area
 bindsym Print exec bc-screenshot pantalla
 bindsym $mod+Shift+s exec bc-screenshot area
 bindsym Alt+Print exec bc-screenshot ventana

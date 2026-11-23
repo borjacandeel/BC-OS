@@ -1,18 +1,71 @@
 #!/bin/sh
-# Capturas de pantalla de BC OS. Uso: bc-screenshot [pantalla|area|ventana]  (por defecto: pantalla)
-# Guarda en ~/Imágenes y copia al portapapeles (wl-copy). «area» pide seleccionar con el ratón (slurp).
-DIR="$(xdg-user-dir PICTURES 2>/dev/null || echo "$HOME/Imágenes")"
-mkdir -p "$DIR"
-F="$DIR/captura-$(date +%F_%H-%M-%S).png"
-case "${1:-pantalla}" in
-  # Como macOS: la pantalla se oscurece y la zona elegida queda iluminada, con borde fino y medidas
-  area)    G="$(slurp -d -b 00000066 -c ffffffcc -s 00000000 -w 1)" || exit 0; grim -g "$G" "$F" ;;
+# Capturas y grabaciones de pantalla de BC OS, como en macOS:
+#   ⌘⇧3  bc-screenshot pantalla        ⌘⇧4  bc-screenshot area (arrastra una zona o haz clic en una ventana)
+#   ⌘⇧5  panel con todas las opciones   ⌃ además (⌘⌃⇧3 / ⌘⌃⇧4): solo al portapapeles
+#   bc-screenshot grabar-pantalla | grabar-area | detener   (grabación de vídeo con wf-recorder)
+# Opciones: -c solo portapapeles · -t SEG temporizador · -d CARPETA destino.
+# Se guarda como «Captura de pantalla AAAA-MM-DD a las HH.MM.SS.png» en el Escritorio (o donde diga
+# ~/.config/bc/capturas: escritorio, documentos, imagenes o portapapeles), con sonido, copia al portapapeles y la
+# miniatura flotante abajo a la derecha (pulsarla abre Vista previa).
+CLIP=0; TIMER=0; DEST=""
+while getopts "ct:d:" o; do case $o in c) CLIP=1 ;; t) TIMER="$OPTARG" ;; d) DEST="$OPTARG" ;; *) exit 2 ;; esac; done
+shift $((OPTIND - 1))
+MODO="${1:-pantalla}"
+RUN="${XDG_RUNTIME_DIR:-/tmp}"; REC="$RUN/bc-grabacion.pid"
+pref="$(cat "${XDG_CONFIG_HOME:-$HOME/.config}/bc/capturas" 2>/dev/null)"
+[ "$pref" = portapapeles ] && CLIP=1
+if [ -z "$DEST" ]; then
+  case "$pref" in
+    documentos) DEST="$(xdg-user-dir DOCUMENTS 2>/dev/null)" ;;
+    imagenes)   DEST="$(xdg-user-dir PICTURES 2>/dev/null)" ;;
+    *)          DEST="$(xdg-user-dir DESKTOP 2>/dev/null)" ;;
+  esac
+  [ -n "$DEST" ] && [ "$DEST" != "$HOME" ] || DEST="$HOME/Escritorio"
+fi
+mkdir -p "$DEST"
+sonido() { [ -f "/usr/share/sounds/bc/$1.wav" ] && { pw-play "/usr/share/sounds/bc/$1.wav" >/dev/null 2>&1 || paplay "/usr/share/sounds/bc/$1.wav" >/dev/null 2>&1; } & }
+# Ventanas visibles como cajas para slurp: clic = esa ventana, arrastrar = zona (⌘⇧4 y luego clic, como macOS)
+cajas() {
+  if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
+    ws="$(hyprctl -j activeworkspace | jq -r .id)"
+    hyprctl -j clients | jq -r --argjson ws "$ws" '.[] | select(.workspace.id == $ws and .mapped and (.hidden | not)) | "\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"'
+  elif [ -n "$SWAYSOCK" ]; then
+    swaymsg -t get_tree | jq -r '.. | select(.pid? and .visible?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"'
+  fi
+}
+elegir() { cajas | slurp -d -b 00000066 -c ffffffcc -s ffffff14 -B ffffff22 -w 1 2>/dev/null; }
+grabar() {
+  command -v wf-recorder >/dev/null || { notify-send -a "BC OS" "Grabación" "Falta wf-recorder (sudo pacman -S wf-recorder)"; exit 1; }
+  [ -f "$REC" ] && kill -0 "$(cat "$REC")" 2>/dev/null && exec "$0" detener
+  F="$DEST/Grabación de pantalla $(date +%F) a las $(date +%H.%M.%S).mp4"
+  if [ "$1" = area ]; then G="$(elegir)" || exit 0; wf-recorder -g "$G" -f "$F" >/dev/null 2>&1 &
+  else wf-recorder -f "$F" >/dev/null 2>&1 & fi
+  echo $! > "$REC"; echo "$F" > "$REC.archivo"
+  bc-ctl recording-on >/dev/null 2>&1   # botón ⏹ en la barra de menús
+  exit 0
+}
+case "$MODO" in
+  grabar-pantalla) grabar pantalla ;;
+  grabar-area) grabar area ;;
+  detener)
+    [ -f "$REC" ] && kill -INT "$(cat "$REC")" 2>/dev/null; sleep 0.5
+    F="$(cat "$REC.archivo" 2>/dev/null)"; rm -f "$REC" "$REC.archivo"
+    bc-ctl recording-off >/dev/null 2>&1
+    [ -n "$F" ] && notify-send -a "BC OS" "Grabación guardada" "$(basename "$F")" -i video-x-generic 2>/dev/null
+    exit 0 ;;
+esac
+[ "$TIMER" -gt 0 ] 2>/dev/null && sleep "$TIMER"
+F="$DEST/Captura de pantalla $(date +%F) a las $(date +%H.%M.%S).png"
+T="$RUN/bc-captura-$$.png"
+case "$MODO" in
+  area)    G="$(elegir)" || exit 0; [ -n "$G" ] || exit 0; grim -g "$G" "$T" ;;
   ventana) if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ]; then G="$(hyprctl -j activewindow | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')"
-           else G="$(swaymsg -t get_tree | jq -r '.. | select(.focused?==true) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')"; fi; grim -g "$G" "$F" ;;
-  *)       grim "$F" ;;
+           else G="$(swaymsg -t get_tree | jq -r '.. | select(.focused?==true) | .rect | "\(.x),\(.y) \(.width)x\(.height)"')"; fi; grim -g "$G" "$T" ;;
+  *)       grim "$T" ;;
 esac || exit 1
-[ -f /usr/share/sounds/bc/screenshot.wav ] && { pw-play /usr/share/sounds/bc/screenshot.wav >/dev/null 2>&1 || paplay /usr/share/sounds/bc/screenshot.wav >/dev/null 2>&1; } &
-command -v wl-copy >/dev/null 2>&1 && wl-copy < "$F"
-# Como macOS: miniatura flotante abajo a la derecha (pulsarla abre Vista previa); si el panel no responde, aviso
-bc-ctl thumb "$F" >/dev/null 2>&1 || { command -v notify-send >/dev/null 2>&1 && notify-send -a "BC OS" "Captura guardada" "$F" -i camera-photo; }
+sonido screenshot
+if [ "$CLIP" = 1 ]; then wl-copy --type image/png < "$T"; rm -f "$T"; exit 0; fi
+mv "$T" "$F"
+command -v wl-copy >/dev/null 2>&1 && wl-copy --type image/png < "$F"
+bc-ctl thumb "$F" >/dev/null 2>&1 || notify-send -a "BC OS" "Captura guardada" "$(basename "$F")" -i camera-photo 2>/dev/null
 echo "$F"

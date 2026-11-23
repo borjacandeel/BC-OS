@@ -900,6 +900,20 @@ bool QuickTools::setEnergyPref(const QString &key, int minutes) {
     f.write(lines.join('\n').toUtf8() + '\n');
     return f.commit();   // bc-idle lo relee en menos de 20 s
 }
+static QString capturePath() { return QStandardPaths::writableLocation(QStandardPaths::GenericConfigLocation) + "/bc/capturas"; }
+QString QuickTools::capturePref() {
+    QFile f(capturePath());
+    const QString v = f.open(QIODevice::ReadOnly) ? QString::fromUtf8(f.readAll()).trimmed() : QString();
+    return QStringList{"escritorio", "documentos", "imagenes", "portapapeles"}.contains(v) ? v : QStringLiteral("escritorio");
+}
+bool QuickTools::setCapturePref(const QString &where) {
+    if (!QStringList{"escritorio", "documentos", "imagenes", "portapapeles"}.contains(where)) return false;
+    QDir().mkpath(QFileInfo(capturePath()).absolutePath());
+    QSaveFile f(capturePath());
+    if (!f.open(QIODevice::WriteOnly)) return false;
+    f.write(where.toUtf8() + "\n");
+    return f.commit();
+}
 QString QuickTools::compositorPref() {
     QFile f(compPath());
     if (!f.open(QIODevice::ReadOnly)) return {};

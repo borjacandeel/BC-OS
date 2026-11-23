@@ -68,8 +68,16 @@ super + {o,i}
 	bspc wm -h on
 
 # ir al escritorio / enviar ventana (1-9, 0)
-super + {_,shift + }{1-9,0}
+super + {_,alt + }{1-9,0}
 	bspc {desktop -f,node -d} '^{1-9,10}'
+
+# Capturas como macOS (X11: maim): ⌘⇧3 pantalla · ⌘⇧4 zona · con ⌃, solo al portapapeles
+super + shift + 3
+	f="$(xdg-user-dir DESKTOP)/Captura de pantalla $(date +%F) a las $(date +%H.%M.%S).png"; maim -u "$f" && xclip -selection clipboard -t image/png < "$f" && notify-send "Captura guardada"
+super + shift + 4
+	f="$(xdg-user-dir DESKTOP)/Captura de pantalla $(date +%F) a las $(date +%H.%M.%S).png"; maim -s -u "$f" && xclip -selection clipboard -t image/png < "$f" && notify-send "Captura guardada"
+super + ctrl + shift + {3,4}
+	maim {_,-s }-u | xclip -selection clipboard -t image/png
 
 # presección
 super + ctrl + {h,j,k,l}

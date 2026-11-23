@@ -246,6 +246,9 @@ LayerWindow {
             else if (name === "close") root.closeAnimated(Sway.focusedId)
             else if (name === "forcequit") UiState.run("bc:forcequit")
             else if (name === "emoji") UiState.run("bc:emoji")
+            else if (name === "screenshot") { const o = UiState.screenshotOpen; UiState.closePopups(); UiState.screenshotOpen = !o }
+            else if (name === "recording-on") UiState.recording = true
+            else if (name === "recording-off") UiState.recording = false
             else if (name.indexOf("thumb:") === 0) shotThumb.show(name.substring(6))
             else if (name === "appearance") Settings.appearance = Theme.dark ? "light" : "dark"
             else if (name === "desktop") {
@@ -565,7 +568,7 @@ LayerWindow {
     LayerWindow {
         layer: "overlay"; edges: ["top", "bottom", "left", "right"]; scope: "bc-popups"
         margins: [UiState.topInset, 0, UiState.win ? UiState.taskH : 0, 0]
-        keyboard: (UiState.centerOpen && UiState.centerPanel === "wifi") || UiState.launcherOpen || UiState.clipboardOpen || UiState.startOpen || UiState.spotlightOpen || UiState.emojiOpen || UiState.forceQuitOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
+        keyboard: (UiState.centerOpen && UiState.centerPanel === "wifi") || UiState.launcherOpen || UiState.clipboardOpen || UiState.startOpen || UiState.spotlightOpen || UiState.emojiOpen || UiState.screenshotOpen || UiState.forceQuitOpen || UiState.powerAction !== "" ? "exclusive" : "ondemand"
         width: UiState.sw; height: UiState.sh
         // Al cerrar, la capa sigue visible un momento para que menús, Spotlight y paneles se desvanezcan
         shown: UiState.popupOpen || popHold.running
@@ -900,6 +903,8 @@ LayerWindow {
                 }
                 Lazy { id: lzFQ; open: UiState.forceQuitOpen
                        sourceComponent: Item { width: pop.width; height: pop.height; ForceQuit { opacity: lzFQ.on ? 1 : 0 } } }
+                Lazy { id: lzShot; open: UiState.screenshotOpen
+                       sourceComponent: Item { width: pop.width; height: pop.height; ScreenshotPanel { on: lzShot.on } } }
                 Lazy { id: lzEmoji; open: UiState.emojiOpen
                        sourceComponent: Item { width: pop.width; height: pop.height; EmojiPicker { opacity: lzEmoji.on ? 1 : 0 } } }
                 Lazy {
@@ -955,6 +960,8 @@ LayerWindow {
         else if (d === "power") UiState.openPower("poweroff")
         else if (d === "forzar") UiState.run("bc:forcequit")
         else if (d === "emoji") UiState.run("bc:emoji")
+        else if (d === "captura") UiState.screenshotOpen = true
+        else if (d === "grabando") UiState.recording = true
         else if (d === "launcher") UiState.toggleLauncher()
         else if (d === "centro") UiState.centerOpen = true
         else if (d === "bienvenida" || d === "bienvenida-fondo") UiState.welcomeOpen = true

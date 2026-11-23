@@ -166,6 +166,9 @@ public:
     // Inactividad (bc-idle): minutos hasta apagar la pantalla / reposo, con batería («_bat») o corriente («_ac»); 0 = nunca
     Q_INVOKABLE static int energyPref(const QString &key, int def);
     Q_INVOKABLE static bool setEnergyPref(const QString &key, int minutes);
+    // Dónde se guardan las capturas (bc-screenshot): escritorio, documentos, imagenes o portapapeles
+    Q_INVOKABLE static QString capturePref();
+    Q_INVOKABLE static bool setCapturePref(const QString &where);
     Q_INVOKABLE static QString compositorPref();
     Q_INVOKABLE static bool setCompositorPref(const QString &c);
     // Bloqueo a prueba de fallos: marca en $XDG_RUNTIME_DIR/bc-bloqueado mientras la pantalla está bloqueada.

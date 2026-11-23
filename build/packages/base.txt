@@ -107,3 +107,5 @@ hyprland
 mesa-utils
 # Región Wi-Fi (sin él el kernel no carga regulatory.db)
 wireless-regdb
+# Grabación de pantalla (⌘⇧5)
+wf-recorder

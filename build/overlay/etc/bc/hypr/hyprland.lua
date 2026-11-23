@@ -185,7 +185,7 @@ b("CTRL + right", hl.dsp.focus({ workspace = "m+1" }))
 for i = 1, 9 do
     b(mod .. " + " .. i,          hl.dsp.focus({ workspace = i }))
     b("CTRL + " .. i,             hl.dsp.focus({ workspace = i }))
-    b(mod .. " + SHIFT + " .. i,  hl.dsp.window.move({ workspace = i }))
+    b(mod .. " + ALT + " .. i,    hl.dsp.window.move({ workspace = i }))   -- (⌘⇧3/4/5 son las capturas, como macOS)
     b("CTRL + SHIFT + " .. i,     hl.dsp.window.move({ workspace = i }))
 end
 -- Selector de apps (⌘Tab)
@@ -206,6 +206,12 @@ b("XF86MonBrightnessDown", sh("sh -c 'brightnessctl -c backlight set 5%-; bc-ctl
 b("XF86AudioPlay", sh("playerctl play-pause"), { locked = true })
 b("XF86AudioNext", sh("playerctl next"), { locked = true })
 b("XF86AudioPrev", sh("playerctl previous"), { locked = true })
+-- Capturas como macOS: ⌘⇧3 pantalla · ⌘⇧4 zona o ventana (clic) · ⌘⇧5 panel · con ⌃, solo al portapapeles
+b(mod .. " + SHIFT + 3", sh("bc-screenshot pantalla"))
+b(mod .. " + SHIFT + 4", sh("bc-screenshot area"))
+b(mod .. " + SHIFT + 5", sh("bc-ctl screenshot"))
+b(mod .. " + CTRL + SHIFT + 3", sh("bc-screenshot -c pantalla"))
+b(mod .. " + CTRL + SHIFT + 4", sh("bc-screenshot -c area"))
 b("Print", sh("bc-screenshot pantalla"))
 b(mod .. " + SHIFT + S", sh("bc-screenshot area"))
 b("ALT + Print", sh("bc-screenshot ventana"))

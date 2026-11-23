@@ -12,11 +12,14 @@ Ventanas
   Súper+H J K L              Foco (con Mayús: intercambiar)
   Súper+flechas              Cambiar de ventana por dirección (con Mayús: intercambiar)
   Súper+M                    Mosaico ↔ monóculo    Súper+G                  Intercambiar con la mayor
-  Súper+1…0 (Mayús: enviar)  Escritorios           Súper+[ / ]              Escritorio anterior / siguiente
+  Súper+1…0 (Alt: enviar)    Escritorios           Súper+[ / ]              Escritorio anterior / siguiente
   Súper+Alt+H J K L          Redimensionar (con Mayús: contraer)
   Súper+Ctrl+H J K L / 1…9   Preselección de dirección / de proporción
   Súper+Alt+flechas          Mover una ventana flotante
   Súper+arrastrar            Mover (botón izq.) · redimensionar (botón der.)
+
+Capturas
+  Súper+Mayús+3 / 4          Pantalla / zona (con Ctrl: solo al portapapeles)
 
 Sesión
   Súper+Mayús+R              Recargar bspwm        Súper+Escape             Recargar los atajos

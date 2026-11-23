@@ -153,6 +153,15 @@ Item {
                        font.pixelSize: Math.round(9.5 * bar.s); font.weight: Font.Black }
             }
         }
+        // Grabación de pantalla en curso: botón ⏹ como en macOS (pulsar = detener y guardar)
+        BarItem {
+            visible: UiState.recording
+            width: Math.round(28 * bar.s)
+            onClicked: Launcher.run("bc-screenshot", ["detener"])
+            Rectangle { anchors.centerIn: parent; width: Math.round(16 * bar.s); height: width; radius: width / 2; color: "transparent"
+                        border.width: Math.max(1, Math.round(1.5 * bar.s)); border.color: bar.ink
+                Rectangle { anchors.centerIn: parent; width: Math.round(6 * bar.s); height: width; radius: Math.round(1 * bar.s); color: bar.ink } }
+        }
         // Batería como en macOS: contorno fino, relleno del color de la barra (rojo solo si queda poco y no carga), rayo
         // dibujado (no el emoji de color, que se veía naranja y rojo) y el porcentaje discreto a la izquierda
         BarItem {
