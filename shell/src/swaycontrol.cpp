@@ -55,6 +55,9 @@ SwayControl::SwayControl(QObject *parent) : QObject(parent) {
     m_debounce.setSingleShot(true);
     m_debounce.setInterval(80);
     connect(&m_debounce, &QTimer::timeout, this, &SwayControl::refresh);
+    m_slow.setSingleShot(true);
+    m_slow.setInterval(500);
+    connect(&m_slow, &QTimer::timeout, this, &SwayControl::refresh);
     m_poll.setInterval(10000);
     connect(&m_poll, &QTimer::timeout, this, &SwayControl::refresh);
     m_poll.start();
@@ -84,13 +87,21 @@ QVariantList SwayControl::parseTree(const QByteArray &json) {
     return out;
 }
 
+// Un evento que llega mientras se consulta el árbol no se pierde: se repite la consulta al acabar (antes el estado
+// quedaba viejo hasta el sondeo de 10 s: ventanas que no aparecían en el Dock o foco equivocado)
+void SwayControl::doneRefresh() {
+    m_busy = false;
+    if (m_dirty) { m_dirty = false; m_debounce.start(); }
+}
 void SwayControl::refresh() {
+    m_slow.stop();
+    if (m_busy) { m_dirty = true; return; }
     if (m_hypr) { refreshHypr(); return; }
-    if (!m_available || m_busy) return;
+    if (!m_available) return;
     m_busy = true;
     auto *p = new QProcess(this);
     connect(p, &QProcess::finished, this, [this, p](int code) {
-        m_busy = false;
+        doneRefresh();
         if (code == 0) {
             const QVariantList w = parseTree(p->readAllStandardOutput());
             QStringList ids;
@@ -250,7 +261,16 @@ void SwayControl::hyprConnect() {
                                 "hl.dispatch(hl.dsp.window.alter_zorder({ mode = \"top\", window = \"" + target + "\" }))";
             QTimer::singleShot(40, this, [this, lua] { QProcess::startDetached(m_exe, {"eval", lua}); });
         }
-        if (!d.isEmpty()) m_debounce.start();
+        // Solo el título cambió (terminal con progreso, navegador cargando): como mucho una consulta cada 0,5 s y sin
+        // retrasar las demás. El resto (abrir, cerrar, foco, escritorios…) a los 60 ms.
+        bool structural = false, title = false;
+        for (const QByteArray &line : d.split('\n')) {
+            if (line.isEmpty()) continue;
+            if (line.startsWith("windowtitle")) title = true;
+            else if (!line.startsWith("bell>>") && !line.startsWith("screencast>>")) structural = true;
+        }
+        if (structural) m_debounce.start();
+        else if (title && !m_slow.isActive() && !m_debounce.isActive()) m_slow.start();
     });
     connect(&m_hyprEvents, &QLocalSocket::disconnected, this, [this, path] {
         QTimer::singleShot(2000, this, [this, path] { m_hyprEvents.connectToServer(path); });
@@ -291,11 +311,11 @@ QVariantList SwayControl::parseHyprClients(const QByteArray &clients, QHash<int,
 }
 
 void SwayControl::refreshHypr() {
-    if (!m_available || m_busy) return;
+    if (!m_available) return;
     m_busy = true;
     auto *p = new QProcess(this);
     connect(p, &QProcess::finished, this, [this, p](int code) {
-        m_busy = false;
+        doneRefresh();
         if (code == 0) {
             QHash<int, QString> addr;
             const QVariantList w = parseHyprClients(p->readAllStandardOutput(), &addr);

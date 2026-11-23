@@ -11,8 +11,8 @@ Rectangle {
     readonly property var loc: Qt.locale(AppConfig.language)
 
     Rectangle { anchors.top: parent.top; width: parent.width; height: 1; color: Theme.hairline }
-    Timer { interval: 1000; running: true; repeat: true; triggeredOnStart: true
-            onTriggered: bar.now = AppConfig.fixedTime !== "" ? new Date(AppConfig.fixedTime) : new Date() }
+    Timer { interval: 60050 - (Date.now() % 60000); running: bar.visible; repeat: true; triggeredOnStart: true   // al minuto
+            onTriggered: { bar.now = AppConfig.fixedTime !== "" ? new Date(AppConfig.fixedTime) : new Date(); interval = 60050 - (Date.now() % 60000) } }
 
     // Centro: Inicio + fijadas
     Row {

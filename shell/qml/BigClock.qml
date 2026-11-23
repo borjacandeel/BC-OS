@@ -11,8 +11,8 @@ Item {
     height: col.height
 
     Timer {
-        interval: 1000; running: true; repeat: true; triggeredOnStart: true
-        onTriggered: root.now = AppConfig.fixedTime !== "" ? new Date(AppConfig.fixedTime) : new Date()
+        interval: 60050 - (Date.now() % 60000); running: root.visible; repeat: true; triggeredOnStart: true   // al minuto
+        onTriggered: { root.now = AppConfig.fixedTime !== "" ? new Date(AppConfig.fixedTime) : new Date(); interval = 60050 - (Date.now() % 60000) }
     }
     Column {
         id: col

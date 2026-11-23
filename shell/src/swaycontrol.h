@@ -83,7 +83,9 @@ private:
     QString m_focusedApp, m_focusedTitle;
     bool m_tiling = false;
     QProcess m_events;
-    QTimer m_debounce, m_poll;
+    QTimer m_debounce, m_poll, m_slow;
+    bool m_dirty = false;
+    void doneRefresh();
     QFileSystemWatcher m_watch;
     bool m_busy = false;
     QVariantList m_workspaces;
