@@ -383,7 +383,8 @@ do_config() {
   crun systemctl enable NetworkManager systemd-timesyncd systemd-resolved nftables
   # Controladores del equipo (gráfica, firmware, energía) en el primer arranque con Internet
   crun systemctl enable bc-drivers.service
-  crun systemctl enable bc-autoactualizar.timer || true   # se actualiza solo cada día (avisa si hay que reiniciar)
+  crun systemctl enable bc-autoactualizar.timer || true
+  crun systemctl enable bc-gpu-freq.service || true   # se actualiza solo cada día (avisa si hay que reiniciar)
   # Sesión gráfica igual que la imagen: greetd (bc-greeter) → bc-session (sway); respaldo en tty1 si el login gráfico falla
   if ((DRY)) || [[ -e "$TARGET/usr/lib/systemd/system/greetd.service" && -e "$TARGET/etc/greetd/config.toml" ]]; then
     crun systemctl enable greetd.service bc-login-fallback.path

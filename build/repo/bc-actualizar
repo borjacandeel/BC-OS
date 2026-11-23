@@ -59,6 +59,7 @@ systemctl is-enabled -q greetd 2>/dev/null && [ ! -e /etc/systemd/system/getty@t
 systemctl enable bluetooth.service NetworkManager-dispatcher.service >/dev/null 2>&1 || true
 # Actualizaciones automáticas diarias (equipos instalados antes de que existieran)
 systemctl enable bc-autoactualizar.timer >/dev/null 2>&1 || true
+systemctl enable --now bc-gpu-freq.service >/dev/null 2>&1 || true   # gráfica Intel: sin tirones (frecuencia mínima)
 gtk-update-icon-cache -q -f /usr/share/icons/hicolor 2>/dev/null || true
 gtk-update-icon-cache -q -f /usr/share/icons/BC 2>/dev/null || true
 fc-cache -f >/dev/null 2>&1 || true                     # fuentes nuevas (emoji en color…)

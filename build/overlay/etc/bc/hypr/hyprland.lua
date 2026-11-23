@@ -45,7 +45,7 @@ hl.config({
         dim_inactive = false,
         shadow = {
             enabled = true,
-            range = 26,              -- (42 costaba mucho en gráficas integradas: sombras enormes en cada ventana)
+            range = 14,              -- integradas (Intel HD 620): con 26 había tirones; bc-render-apply lo sube con GPU dedicada
             render_power = 3,
             offset = "0 12",
             color = 0x55000000,

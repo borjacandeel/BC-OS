@@ -6,6 +6,11 @@
 #include <QJsonObject>
 #include <QStandardPaths>
 #include <QRegularExpression>
+#include <QLocalSocket>
+#include <QFileInfo>
+#include <QProcess>
+#include <QTimer>
+#include <memory>
 
 namespace {
 void walk(const QJsonObject &n, bool inScratch, QVariantList &out, const QString &ws = QString(), const QString &outName = QString()) {
@@ -247,6 +252,7 @@ void SwayControl::hyprConnect() {
     QString rt = qEnvironmentVariable("XDG_RUNTIME_DIR");
     QString path = rt + "/hypr/" + sig + "/.socket2.sock";
     if (!QFileInfo::exists(path)) path = "/tmp/hypr/" + sig + "/.socket2.sock";
+    m_hyprReqPath = QFileInfo(path).absolutePath() + "/.socket.sock";
     connect(&m_hyprEvents, &QLocalSocket::readyRead, this, [this] {
         const QByteArray d = m_hyprEvents.readAll();
         // workspace, openwindow, closewindow, movewindow, activewindow, fullscreen, changefloatingmode, activelayout…
@@ -313,12 +319,11 @@ QVariantList SwayControl::parseHyprClients(const QByteArray &clients, QHash<int,
 void SwayControl::refreshHypr() {
     if (!m_available) return;
     m_busy = true;
-    auto *p = new QProcess(this);
-    connect(p, &QProcess::finished, this, [this, p](int code) {
+    hyprQuery("j/clients", [this](bool ok, const QByteArray &out) {
         doneRefresh();
-        if (code == 0) {
+        if (ok) {
             QHash<int, QString> addr;
-            const QVariantList w = parseHyprClients(p->readAllStandardOutput(), &addr);
+            const QVariantList w = parseHyprClients(out, &addr);
             m_addr = addr;
             QStringList ids; int fid = -1; QString fapp, ftitle;
             for (const QVariant &v : w) {
@@ -332,14 +337,13 @@ void SwayControl::refreshHypr() {
             }
             if (!m_chrome.isEmpty()) { m_chrome.clear(); emit chromeChanged(); }
         }
-        p->deleteLater();
     });
-    connect(p, &QProcess::errorOccurred, this, [this, p](QProcess::ProcessError e) { if (e == QProcess::FailedToStart) { m_busy = false; p->deleteLater(); } });
-    p->start(m_exe, {"-j", "clients"});
-    auto *q = new QProcess(this);
-    connect(q, &QProcess::finished, this, [this, q](int code) {
-        if (code == 0) {
-            const QJsonArray mons = QJsonDocument::fromJson(q->property("mons").toByteArray()).array();
+    // Monitores primero (escritorio visible de cada pantalla) y luego escritorios
+    hyprQuery("j/monitors", [this](bool okM, const QByteArray &monsJson) {
+      if (!okM) return;
+      hyprQuery("j/workspaces", [this, monsJson](bool okW, const QByteArray &wsJson) {
+        if (okW) {
+            const QJsonArray mons = QJsonDocument::fromJson(monsJson).array();
             QStringList visible; QString focusedMon;
             for (const QJsonValue &m : mons) {
                 const QJsonObject o = m.toObject();
@@ -347,7 +351,7 @@ void SwayControl::refreshHypr() {
                 if (o.value("focused").toBool()) { focusedMon = o.value("name").toString(); m_activeWs = o.value("activeWorkspace").toObject().value("name").toString(); }
             }
             QVariantList ws;
-            for (const QJsonValue &v : QJsonDocument::fromJson(q->readAllStandardOutput()).array()) {
+            for (const QJsonValue &v : QJsonDocument::fromJson(wsJson).array()) {
                 const QJsonObject o = v.toObject();
                 const QString name = o.value("name").toString();
                 if (name.startsWith("special:")) continue;
@@ -358,17 +362,12 @@ void SwayControl::refreshHypr() {
             std::sort(ws.begin(), ws.end(), [](const QVariant &a, const QVariant &b) { return a.toMap().value("num").toInt() < b.toMap().value("num").toInt(); });
             if (ws != m_workspaces) { m_workspaces = ws; emit workspacesChanged(); }
         }
-        q->deleteLater();
+      });
     });
-    // Monitores primero (escritorio visible de cada pantalla) y luego escritorios
-    auto *m = new QProcess(this);
-    connect(m, &QProcess::finished, this, [this, m, q](int) { q->setProperty("mons", m->readAllStandardOutput()); q->start(m_exe, {"-j", "workspaces"}); m->deleteLater(); });
-    m->start(m_exe, {"-j", "monitors"});
     if (++m_inputTick % 6 == 1) {
-        auto *d = new QProcess(this);
-        connect(d, &QProcess::finished, this, [this, d](int code) {
-            if (code == 0) {
-                const QJsonArray kbs = QJsonDocument::fromJson(d->readAllStandardOutput()).object().value("keyboards").toArray();
+        hyprQuery("j/devices", [this](bool ok, const QByteArray &out) {
+            if (ok) {
+                const QJsonArray kbs = QJsonDocument::fromJson(out).object().value("keyboards").toArray();
                 QString name;
                 for (const QJsonValue &k : kbs) if (k.toObject().value("main").toBool()) name = k.toObject().value("active_keymap").toString();
                 if (name.isEmpty() && !kbs.isEmpty()) name = kbs.first().toObject().value("active_keymap").toString();
@@ -377,10 +376,37 @@ void SwayControl::refreshHypr() {
                 for (auto it = map.cbegin(); it != map.cend(); ++it) if (name.startsWith(it.key())) l = it.value();
                 if (!name.isEmpty() && l != m_layout) { m_layout = l; emit layoutChanged(); }
             }
-            d->deleteLater();
         });
-        d->start(m_exe, {"-j", "devices"});
     }
+}
+
+// Consulta a Hyprland por su socket de órdenes («j/clients»…), sin lanzar hyprctl: cada proceso nuevo duplicaba el
+// panel entero (fork) en el hilo de la interfaz, tres veces por evento de ventanas. Si no hay socket, hyprctl.
+void SwayControl::hyprQuery(const QByteArray &req, std::function<void(bool, const QByteArray &)> done) {
+    if (m_hyprReqPath.isEmpty() || !QFileInfo::exists(m_hyprReqPath)) {
+        auto *p = new QProcess(this);
+        connect(p, &QProcess::finished, this, [p, done](int code) { done(code == 0, p->readAllStandardOutput()); p->deleteLater(); });
+        connect(p, &QProcess::errorOccurred, this, [p, done](QProcess::ProcessError e) { if (e == QProcess::FailedToStart) { done(false, {}); p->deleteLater(); } });
+        const int slash = req.indexOf('/');
+        p->start(m_exe, {"-j", QString::fromLatin1(req.mid(slash + 1))});
+        return;
+    }
+    auto *s = new QLocalSocket(this);
+    auto buf = std::make_shared<QByteArray>();
+    auto fired = std::make_shared<bool>(false);
+    auto finish = [s, buf, done, fired](bool ok) {
+        if (*fired) return;
+        *fired = true;
+        if (ok) *buf += s->readAll();
+        s->deleteLater();
+        done(ok && !buf->isEmpty(), *buf);
+    };
+    connect(s, &QLocalSocket::connected, s, [s, req] { s->write(req); s->flush(); });
+    connect(s, &QLocalSocket::readyRead, s, [s, buf] { *buf += s->readAll(); });
+    connect(s, &QLocalSocket::disconnected, s, [finish] { finish(true); });
+    connect(s, &QLocalSocket::errorOccurred, s, [finish](QLocalSocket::LocalSocketError e) { finish(e == QLocalSocket::PeerClosedError); });
+    QTimer::singleShot(3000, s, [finish] { finish(false); });
+    s->connectToServer(m_hyprReqPath);
 }
 
 // Órdenes de sway que usa BC Shell → llamadas Lua de Hyprland 0.57+ (hyprctl eval "hl.dispatch(…)")

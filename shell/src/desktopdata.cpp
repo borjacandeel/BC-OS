@@ -1,3 +1,5 @@
+#include <QDBusPendingCallWatcher>
+#include <QDBusPendingReply>
 #include <QImageReader>
 #include <QHash>
 #include "desktopdata.h"
@@ -60,9 +62,13 @@ void Batteries::refresh() {
         out.append(QVariantMap{{"name", name}, {"percent", cap.toInt()}, {"charging", readLine(d + "/status") == "Charging"},
                                {"kind", device ? kindFor(readLine(d + "/type"), name) : QString("laptop")}});
     }
-    // Bluetooth (BlueZ expone el nivel de batería de auriculares, ratones, etc.)
+    // Bluetooth (BlueZ expone el nivel de batería de auriculares, ratones, etc.). Asíncrono: antes la llamada bloqueaba
+    // el hilo de la interfaz hasta 1,5 s cada minuto (tirón visible en todas las animaciones del panel)
     QDBusMessage m = QDBusMessage::createMethodCall("org.bluez", "/", "org.freedesktop.DBus.ObjectManager", "GetManagedObjects");
-    QDBusMessage r = QDBusConnection::systemBus().call(m, QDBus::Block, 1500);
+    auto *w = new QDBusPendingCallWatcher(QDBusConnection::systemBus().asyncCall(m, 1500), this);
+    connect(w, &QDBusPendingCallWatcher::finished, this, [this, w, out]() mutable {
+        w->deleteLater();
+        const QDBusMessage r = w->reply();
     if (r.type() == QDBusMessage::ReplyMessage && !r.arguments().isEmpty()) {
         const QDBusArgument arg = r.arguments().first().value<QDBusArgument>();
         arg.beginMap();
@@ -93,6 +99,7 @@ void Batteries::refresh() {
         arg.endMap();
     }
     if (out != m_devices) { m_devices = out; emit changed(); }
+    });
 }
 
 // ---------------------------------------------------------------------------------------------

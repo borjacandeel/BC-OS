@@ -223,6 +223,8 @@ install -m755 "$HERE/overlay/usr/bin/bc-drivers" "$R/usr/bin/bc-drivers"
 install -m644 "$HERE/overlay/etc/systemd/system/bc-drivers.service" "$R/etc/systemd/system/bc-drivers.service"
 install -m644 "$HERE/overlay/etc/systemd/system/bc-autoactualizar.service" "$HERE/overlay/etc/systemd/system/bc-autoactualizar.timer" "$R/etc/systemd/system/"
 sh "systemctl enable bc-autoactualizar.timer" || true
+install -m644 "$HERE/overlay/etc/systemd/system/bc-gpu-freq.service" "$R/etc/systemd/system/"
+sh "systemctl enable bc-gpu-freq.service" || true   # gráfica Intel sin bajar a 300 MHz entre fotogramas (tirones)
 sh "systemctl enable greetd.service bc-login-fallback.path && systemctl set-default graphical.target"
 sh "systemctl --global enable pipewire.socket pipewire-pulse.socket wireplumber.service"
 

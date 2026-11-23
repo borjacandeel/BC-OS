@@ -64,6 +64,7 @@ install -d "$E2/usr/share/bc/dotfiles"; cp -a "$HERE/overlay-dotfiles/usr/share/
 install -D -m644 "$O/etc/systemd/system/bc-drivers.service" "$E2/usr/lib/systemd/system/bc-drivers.service"
 install -D -m644 "$O/etc/systemd/system/bc-autoactualizar.service" "$E2/usr/lib/systemd/system/bc-autoactualizar.service"
 install -D -m644 "$O/etc/systemd/system/bc-autoactualizar.timer" "$E2/usr/lib/systemd/system/bc-autoactualizar.timer"
+install -D -m644 "$O/etc/systemd/system/bc-gpu-freq.service" "$E2/usr/lib/systemd/system/bc-gpu-freq.service"
 # Tema de iconos propio de BC OS (emblemas, dispositivos, apps)
 [ -d "$TOP/icons/dist/theme/BC" ] && { install -d "$E2/usr/share/icons"; cp -a "$TOP/icons/dist/theme/BC" "$E2/usr/share/icons/BC"; }
 install -D -m644 "$O/usr/lib/tmpfiles.d/bc-greeter.conf" "$E2/usr/lib/tmpfiles.d/bc-greeter.conf"

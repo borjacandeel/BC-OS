@@ -14,17 +14,19 @@ NIVEL=$(printf '%s' "$P" | jq -r .nivel)
 # Misma tabla que BC Core (render.rs, parametros): se toma del nivel, así vale aunque el servicio no vea el compositor
 case "$NIVEL" in
   # XR: desenfocar solo el fondo de pantalla (barato, guardado) o todo lo de detrás en cada fotograma (GPU dedicada)
-  ultra) BS=10 BP=3 SH=true AN=true XR=false ;;
-  alto) BS=6 BP=2 SH=true AN=true XR=true ;;
-  equilibrado) BS=5 BP=2 SH=true AN=true XR=true ;;
-  eficiente) BS=4 BP=1 SH=true AN=true XR=true ;;
-  *) BS=0 BP=0 SH=false AN=false XR=true ;;
+  # SR: alcance de la sombra (px). Es lo que más cuesta en gráficas integradas (cada ventana pinta su sombra entera
+  # en cada fotograma): en la Intel HD 620 quitar sombras era lo único que se notaba
+  ultra) BS=10 BP=3 SH=true AN=true XR=false SR=28 ;;
+  alto) BS=6 BP=2 SH=true AN=true XR=true SR=20 ;;
+  equilibrado) BS=5 BP=2 SH=true AN=true XR=true SR=12 ;;
+  eficiente) BS=4 BP=1 SH=true AN=true XR=true SR=8 ;;
+  *) BS=0 BP=0 SH=false AN=false XR=true SR=0 ;;
 esac
 run() { if [ $DRY = 1 ]; then echo "$*"; else "$@" >/dev/null 2>&1; fi; }
 
 if [ -n "$HYPRLAND_INSTANCE_SIGNATURE" ] || pgrep -x Hyprland >/dev/null 2>&1; then
   if [ "$BS" -gt 0 ] 2>/dev/null; then BL="enabled = true, size = $BS, passes = $BP, xray = $XR"; else BL="enabled = false"; fi
-  run hyprctl eval "hl.config({ decoration = { blur = { $BL }, shadow = { enabled = $SH } }, animations = { enabled = $AN } })"
+  run hyprctl eval "hl.config({ decoration = { blur = { $BL }, shadow = { enabled = $SH, range = $SR } }, animations = { enabled = $AN } })"
   echo "bc-render-apply: Hyprland → $NIVEL (desenfoque $BS×$BP, sombras $SH, animaciones $AN)"
 elif [ -n "$SWAYSOCK" ] && swaymsg -t get_version 2>/dev/null | grep -qi swayfx; then
   if [ "$BS" -gt 0 ] 2>/dev/null; then run swaymsg "blur enable; blur_radius $BS; blur_passes $BP"; else run swaymsg "blur disable"; fi

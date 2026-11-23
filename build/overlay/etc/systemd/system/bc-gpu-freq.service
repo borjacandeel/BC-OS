@@ -1,0 +1,12 @@
+[Unit]
+Description=BC OS: frecuencia mínima de la gráfica Intel (sin tirones)
+After=systemd-modules-load.service systemd-udev-settle.service
+ConditionPathExistsGlob=/sys/class/drm/card*/device/driver
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/bc-gpu-freq
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

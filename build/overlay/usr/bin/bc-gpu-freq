@@ -1,0 +1,27 @@
+#!/bin/sh
+# Gráficas Intel integradas (i915/xe): sube la frecuencia MÍNIMA de la GPU para que no baje a ~300 MHz entre
+# fotogramas. Con el mínimo de fábrica la GPU tarda en subir cuando empieza una animación y se ven tirones y caídas a
+# 20–40 fps (wiki de Hyprland, «Low FPS/stutter/FPS drops on Intel iGPU»: subir el mínimo a ~500 MHz lo quita).
+# El máximo y el «boost» quedan en el valor de fábrica. Lo arranca bc-gpu-freq.service en cada inicio.
+#   bc-gpu-freq [MHz]   (por defecto 500, o la frecuencia eficiente RP1 si es mayor; nunca más que el máximo)
+# Para desactivarlo: sudo systemctl disable bc-gpu-freq.service
+[ "$(id -u)" = 0 ] || exec sudo "$0" "$@"
+want="${1:-500}"
+hecho=0
+for c in /sys/class/drm/card[0-9]*; do
+  [ -e "$c/device/driver" ] || continue
+  case "$(basename "$(readlink -f "$c/device/driver")")" in i915|xe) ;; *) continue ;; esac
+  # Rutas: antiguas (card/gt_*) y nuevas (card/gt/gt0/rps_*)
+  for d in "$c" "$c/gt/gt0"; do
+    if [ -w "$d/gt_min_freq_mhz" ]; then mn="$d/gt_min_freq_mhz"; mx="$d/gt_max_freq_mhz"; rp1="$d/gt_RP1_freq_mhz"
+    elif [ -w "$d/rps_min_freq_mhz" ]; then mn="$d/rps_min_freq_mhz"; mx="$d/rps_max_freq_mhz"; rp1="$d/rps_RP1_freq_mhz"
+    else continue; fi
+    max="$(cat "$mx" 2>/dev/null)"; eff="$(cat "$rp1" 2>/dev/null)"
+    v="$want"; [ -n "$eff" ] && [ "$eff" -gt "$v" ] 2>/dev/null && v="$eff"
+    [ -n "$max" ] && [ "$v" -gt "$max" ] 2>/dev/null && v="$max"
+    echo "$v" > "$mn" 2>/dev/null && { echo "bc-gpu-freq: $(basename "$c") mínimo $v MHz (máximo ${max:-?})"; hecho=1; }
+    break
+  done
+done
+[ "$hecho" = 1 ] || echo "bc-gpu-freq: no hay gráfica Intel que ajustar"
+exit 0
