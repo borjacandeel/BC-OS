@@ -14,6 +14,7 @@ local teclado = leer(home .. "/.config/bc/keyboard-layout") or "es"
 hl.env("XCURSOR_THEME", "McMojave-cursors")
 hl.env("XCURSOR_SIZE", "24")
 hl.env("QT_QPA_PLATFORM", "wayland")
+hl.env("ELECTRON_OZONE_PLATFORM_HINT", "auto")
 hl.env("XDG_CURRENT_DESKTOP", "BC")
 
 hl.config({

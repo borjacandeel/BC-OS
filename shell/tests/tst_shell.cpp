@@ -170,6 +170,21 @@ private slots:
         QCOMPARE(idx.search("inter").size(), 1);   // por comentario
         QCOMPARE(idx.search("zzz").size(), 0);
         QVERIFY(idx.launch("navegador.desktop"));
+        // Ventana → app: StartupWMClass (Electron), nombre sin «.desktop» e ID aproximado («claude» ↔ «claude-desktop»)
+        QFile c(t.filePath("apps/claude-desktop.desktop"));
+        QVERIFY(c.open(QIODevice::WriteOnly));
+        c.write("[Desktop Entry]\nType=Application\nName=Claude\nExec=/usr/bin/claude-desktop %u\nStartupWMClass=Claude\n");
+        c.close();
+        QFile v(t.filePath("apps/visual-studio-code.desktop"));
+        QVERIFY(v.open(QIODevice::WriteOnly));
+        v.write("[Desktop Entry]\nType=Application\nName=Visual Studio Code\nExec=code %F\n");
+        v.close();
+        idx.reload();
+        QCOMPARE(idx.infoFor("Claude").value("name").toString(), QString("Claude"));
+        QCOMPARE(idx.infoFor("claude-desktop").value("id").toString(), QString("claude-desktop.desktop"));
+        QCOMPARE(idx.infoFor("code").value("name").toString(), QString("Visual Studio Code"));
+        QCOMPARE(idx.infoFor("navegador").value("id").toString(), QString("navegador.desktop"));
+        QVERIFY(idx.infoFor("no-existe").isEmpty());
     }
     void tiendaPacman() {
         const auto r = PackageStore::parseSearch("extra/firefox 160.0-1 [installed]\n    Standalone web browser from mozilla.org\n"

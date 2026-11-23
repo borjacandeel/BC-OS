@@ -13,8 +13,10 @@ AppIndex::AppIndex(const QStringList &dirs, const QString &lang, QObject *parent
     if (m_dirs.isEmpty() && !qEnvironmentVariable("BC_APPS_DIRS").isEmpty())
         m_dirs = qEnvironmentVariable("BC_APPS_DIRS").split(':', Qt::SkipEmptyParts);
     if (m_dirs.isEmpty()) {
-        m_dirs << "/usr/share/applications" << "/usr/local/share/applications"
-               << QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation) + "/applications";
+        // también las apps de Flatpak (sistema y usuario): si no, no tenían nombre ni icono en el Dock
+        const QString data = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
+        m_dirs << "/usr/share/applications" << "/usr/local/share/applications" << "/var/lib/flatpak/exports/share/applications"
+               << data + "/flatpak/exports/share/applications" << data + "/applications";
     }
     if (m_lang.isEmpty()) m_lang = qEnvironmentVariable("LANG", "es_ES").section('.', 0, 0);
     reload();
@@ -41,6 +43,7 @@ bool AppIndex::parseDesktop(const QString &text, const QString &lang, Entry &out
         else if (k == "Hidden") hidden = v == "true";
         else if (k == "Terminal") out.terminal = v == "true";
         else if (k == "Categories") out.category = categoryFor(v);
+        else if (k == "StartupWMClass") out.wmClass = v;
     }
     if (!isApp || noDisplay || hidden || exec.isEmpty()) return false;
     out.name = localized.isEmpty() ? name : localized;
@@ -95,10 +98,16 @@ QString AppIndex::resolveIcon(const QString &name, const QStringList &rootsIn) {
     if (!ok.match(name).hasMatch()) return {};   // nada de «..» ni separadores
     QStringList roots = rootsIn;
     static const QString theme = qEnvironmentVariable("BC_ICON_THEME_DIR", "/usr/share/icons/MacOS-Like-Dark");
-    if (roots.isEmpty()) roots = {theme + "/apps/scalable", "/usr/share/icons/Qogir/scalable/apps", "/usr/share/icons/hicolor/scalable/apps",
-                                  "/usr/share/icons/hicolor/1024x1024/apps", "/usr/share/icons/hicolor/512x512/apps",
-                                  "/usr/share/icons/hicolor/256x256/apps", "/usr/share/icons/hicolor/192x192/apps", "/usr/share/icons/hicolor/128x128/apps",
-                                  "/usr/share/icons/hicolor/64x64/apps", "/usr/share/icons/hicolor/48x48/apps", "/usr/share/pixmaps"};
+    if (roots.isEmpty()) {
+        roots = {theme + "/apps/scalable", "/usr/share/icons/Qogir/scalable/apps"};
+        // hicolor del sistema, del usuario y de Flatpak, de mayor a menor (las apps de terceros suelen traer solo PNG)
+        const QString home = QDir::homePath();
+        for (const QString &base : {QStringLiteral("/usr/share/icons/hicolor"), home + "/.local/share/icons/hicolor",
+                                    QStringLiteral("/var/lib/flatpak/exports/share/icons/hicolor"), home + "/.local/share/flatpak/exports/share/icons/hicolor"})
+            for (const char *sz : {"scalable", "1024x1024", "512x512", "256x256", "192x192", "128x128", "96x96", "64x64", "48x48", "32x32", "24x24", "16x16"})
+                roots << base + '/' + QLatin1String(sz) + "/apps";
+        roots << home + "/.local/share/icons" << "/usr/share/pixmaps";
+    }
     for (const QString &r : roots)
         for (const char *ext : {".svg", ".png"}) {
             const QString p = r + '/' + name + ext;
@@ -144,11 +153,20 @@ QVariantMap AppIndex::infoFor(const QString &appId) const {
     QString a = appId.toLower();
     // Las terminales reales (ocultas en el lanzador) se presentan como «Terminal» de BC
     if (a == "com.mitchellh.ghostty" || a == "alacritty" || a == "foot") a = "bc-terminal";
+    auto info = [](const Entry &e) { return QVariantMap{{"id", e.id}, {"name", e.name}, {"icon", e.icon}, {"iconPath", resolveIcon(e.icon)}}; };
+    // 1) coincidencias exactas: StartupWMClass (Electron, Chrome…), nombre del .desktop SIN extensión (antes se comparaba
+    //    con «.desktop» incluido y apps como Claude o VS Code salían sin icono ni nombre), ID inverso y programa
     for (const Entry &e : m_entries) {
-        const QString id = e.id.toLower();
+        const QString id = e.id.toLower().chopped(e.id.endsWith(".desktop") ? 8 : 0);
         const QString prog = commandFor(e.exec, false).value(0).section('/', -1).toLower();
-        if (id == a || id.endsWith("." + a) || a.endsWith("." + id) || prog == a)
-            return {{"id", e.id}, {"name", e.name}, {"icon", e.icon}, {"iconPath", resolveIcon(e.icon)}};
+        if (e.wmClass.toLower() == a || id == a || id.endsWith("." + a) || a.endsWith("." + id) || prog == a) return info(e);
+    }
+    // 2) aproximadas: «claude» ↔ «claude-desktop», «code» ↔ «visual-studio-code», nombre visible igual al app_id
+    for (const Entry &e : m_entries) {
+        const QString id = e.id.toLower().chopped(e.id.endsWith(".desktop") ? 8 : 0);
+        const QString prog = commandFor(e.exec, false).value(0).section('/', -1).toLower();
+        if (e.name.toLower() == a || id.startsWith(a + "-") || id.endsWith("-" + a) || prog.startsWith(a + "-") || a.startsWith(id + "-"))
+            return info(e);
     }
     return {};
 }

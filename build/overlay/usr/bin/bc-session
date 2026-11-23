@@ -14,6 +14,13 @@ export XCURSOR_THEME=McMojave-cursors XCURSOR_SIZE=24
 export MOZ_GTK_TITLEBAR_DECORATION=client
 # Apps Qt de terceros: barra propia redondeada con los botones según GNOME (semáforo a la izquierda)
 export QT_WAYLAND_DECORATION=adwaita
+# Apps Electron (Claude, VS Code, Discord…) nativas en Wayland y con su propio marco: así tienen semáforo y se
+# pueden mover; sin esto salían sin barra de título (ni botones) con Hyprland
+export ELECTRON_OZONE_PLATFORM_HINT=auto
+for f in electron-flags.conf chromium-flags.conf chrome-flags.conf; do
+  c="${XDG_CONFIG_HOME:-$HOME/.config}/$f"
+  [ -e "$c" ] || printf '%s\n' '--ozone-platform-hint=auto' '--enable-features=WaylandWindowDecorations' > "$c" 2>/dev/null
+done
 # Apps Qt de terceros: iconos (MacOS-Like), diálogos y paleta desde GTK, como el resto del sistema (BC Shell no lo usa)
 [ -f /usr/lib/qt6/plugins/platformthemes/libqgtk3.so ] && export QT_QPA_PLATFORMTHEME=gtk3
 export LANG="${LANG:-es_ES.UTF-8}" XDG_CURRENT_DESKTOP=BC XDG_SESSION_TYPE=wayland QT_QPA_PLATFORM=wayland
