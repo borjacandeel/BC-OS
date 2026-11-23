@@ -29,8 +29,12 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 ## Pendiente del creador 2026-11-23 (portátil instalado)
 - [x] GRUB personalizado (tema bcos: fondo, logo, Inter, selección de cristal), de serie en el instalador; bc-grub instalar/configurar.
 - [x] Energía: apagar pantalla y reposo por inactividad (bc-idle) con ajustes.
-- [ ] Capturas como macOS: ⌘⇧3 pantalla, ⌘⇧4 zona/ventana, ⌘⇧5 panel con opciones y grabación.
-- [ ] Auditoría completa de TODO.
+- [x] Capturas como macOS: ⌘⇧3 pantalla, ⌘⇧4 zona/ventana, ⌘⇧5 panel con opciones y grabación.
+- [~] Auditoría completa de TODO + 60 fps en todo el SO (2026-11-23): barrido en ejecución de las 11 apps y 27 demos sin errores QML;
+      sin capas/shaders permanentes; temporizadores solo con la vista visible y relojes al minuto; recargas sin cambios evitadas
+      (escritorio, papelera); cámara fuera del hilo de dibujo; Hyprland: consultas agrupadas (título máx. 2/s, eventos no se pierden);
+      caché de iconos (antes ~100 accesos a disco por icono en cada tecla/fila); Spotlight sin find en paralelo; genio en GPU.
+      Falta: medir en el portátil (fps reales con GPU).
 - [x] Batería de la barra minimalista como macOS (contorno, relleno, rayo dibujado, % al lado).
 - [x] Ventana recién abierta = activa (aunque un menú/Spotlight tuviera el teclado al abrirse).
 - [x] Avisos de Hyprland arriba a la derecha: misc.disable_watchdog_warning / disable_xdg_env_checks.
