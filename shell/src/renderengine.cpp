@@ -1,4 +1,6 @@
 #include "renderengine.h"
+#include <QTimer>
+#include <cstdio>
 #include <QCoreApplication>
 #include <QDBusConnection>
 #include <QDBusMessage>
@@ -274,6 +276,21 @@ void RenderEngine::watch(QQuickWindow *w) {
     m->win = w;
     m_meters.append(m);
     connect(w, &QObject::destroyed, this, [this, m] { m_meters.removeOne(m); delete m; });
+    // BC_FRAME_LOG=1: cada segundo, cuántos fotogramas ha dibujado cada superficie (diagnóstico de redibujados)
+    if (qEnvironmentVariableIsSet("BC_FRAME_LOG")) {
+        auto *count = new QAtomicInt(0);
+        connect(w, &QQuickWindow::frameSwapped, w, [count] { count->ref(); }, Qt::DirectConnection);
+        auto *t = new QTimer(w);
+        connect(t, &QTimer::timeout, w, [w, count] {
+            const int n = count->fetchAndStoreRelaxed(0);
+            if (n > 0) {
+                const QString scope = w->property("scope").toString();
+                fprintf(stderr, "[fotogramas] %s %dx%d: %d/s\n", qPrintable(scope.isEmpty() ? w->title() : scope), w->width(), w->height(), n);
+            }
+        });
+        connect(w, &QObject::destroyed, [count] { delete count; });
+        t->start(1000);
+    }
     // Coste de cada fotograma: de sincronizar a terminar de dibujar (en el hilo de render si lo hay)
     connect(w, &QQuickWindow::beforeSynchronizing, w, [m] { m->t.start(); }, Qt::DirectConnection);
     connect(w, &QQuickWindow::afterRendering, w, [this, m] {
