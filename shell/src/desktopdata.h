@@ -188,7 +188,7 @@ signals:
     void windowPosChanged();
     void captured(const QString &tag, const QString &path, bool ok);
 private:
-    void run(const QString &prog, const QStringList &args, std::function<void(int, const QString &)> done);
+    void run(const QString &prog, const QStringList &args, std::function<void(int, const QString &)> done, int timeoutMs = 20000);
     QVariantList m_networks, m_bt, m_files;
     QStringList m_modes;
     QStringList m_rates;

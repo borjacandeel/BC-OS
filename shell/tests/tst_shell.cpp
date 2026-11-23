@@ -268,7 +268,8 @@ private slots:
         QVERIFY(w[1].toMap().value("minimized").toBool());
         const QString t = QString::number(id);
         QCOMPARE(SwayControl::translateToHyprland("[con_id=" + t + "] focus", addr, "1"),
-                 QStringList{"hl.dispatch(hl.dsp.focus({ window = [==[address:0x5a1b2c3d]==] }))"});
+                 (QStringList{"hl.dispatch(hl.dsp.focus({ window = [==[address:0x5a1b2c3d]==] }))",
+                              "hl.dispatch(hl.dsp.window.alter_zorder({ mode = \"top\", window = [==[address:0x5a1b2c3d]==] }))"}));
         QCOMPARE(SwayControl::translateToHyprland("[con_id=" + t + "] move scratchpad", addr, "1"),
                  QStringList{"hl.dispatch(hl.dsp.window.move({ workspace = \"special:minimized\", window = [==[address:0x5a1b2c3d]==] }))"});
         QCOMPARE(SwayControl::translateToHyprland("[con_id=" + t + "] floating enable, resize set 400 300, move absolute position 8 40", addr, "1").size(), 3);

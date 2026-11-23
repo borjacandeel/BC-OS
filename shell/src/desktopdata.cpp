@@ -200,7 +200,7 @@ QuickTools::QuickTools(QObject *parent) : QObject(parent) {
         if (m_winPos == before) { if (++m_still > 90) m_fastTimer.stop(); } else m_still = 0;
     });
 }
-void QuickTools::run(const QString &prog, const QStringList &args, std::function<void(int, const QString &)> done) {
+void QuickTools::run(const QString &prog, const QStringList &args, std::function<void(int, const QString &)> done, int timeoutMs) {
     if (QStandardPaths::findExecutable(prog).isEmpty()) { done(-1, QString()); return; }
     auto *p = new QProcess(this);
     ++m_busy; emit busyChanged();
@@ -210,7 +210,7 @@ void QuickTools::run(const QString &prog, const QStringList &args, std::function
     connect(p, &QProcess::errorOccurred, this, [this, p, done](QProcess::ProcessError e) {
         if (e != QProcess::FailedToStart) return; done(-1, QString()); p->deleteLater(); --m_busy; emit busyChanged();
     });
-    QTimer::singleShot(20000, p, [p] { if (p->state() != QProcess::NotRunning) p->kill(); });
+    QTimer::singleShot(timeoutMs, p, [p] { if (p->state() != QProcess::NotRunning) p->kill(); });
     p->start(prog, args);
 }
 QVariantList QuickTools::parseWifi(const QString &t) {
@@ -236,13 +236,16 @@ void QuickTools::connectWifi(const QString &ssid, const QString &pw) {
     // Un perfil guardado con una contraseña mala (intento anterior fallido) hace fallar «dev wifi connect» una y otra
     // vez: con contraseña nueva se borra antes; si el intento falla, también, para que el siguiente empiece limpio.
     auto attempt = [this, ssid, pw] {
-        QStringList a{"dev", "wifi", "connect", ssid};
+        // Conectar con WPA y obtener IP puede pasar de 20 s: nmcli espera hasta 40 s y aquí 50 (antes se cortaba a los 20,
+        // se daba por fallida una conexión que iba bien y se borraba su perfil)
+        QStringList a{"--wait", "40", "dev", "wifi", "connect", ssid};
         if (!pw.isEmpty()) a << "password" << pw;
         run("nmcli", a, [this, ssid](int code, const QString &) {
-            if (code != 0) QProcess::startDetached("nmcli", {"connection", "delete", "id", ssid});
+            // Solo se borra el perfil si nmcli dijo que falló (código 4: activación fallida o secretos incorrectos)
+            if (code > 0) QProcess::startDetached("nmcli", {"connection", "delete", "id", ssid});
             emit wifiResult(code == 0, ssid);
             scanWifi();
-        });
+        }, 50000);
     };
     if (pw.isEmpty()) attempt();
     else run("nmcli", {"connection", "delete", "id", ssid}, [attempt](int, const QString &) { attempt(); });

@@ -390,12 +390,16 @@ QStringList SwayControl::translateToHyprland(const QString &swayCmd, const QHash
     for (QString part : cmd.split(',', Qt::SkipEmptyParts)) {
         part = part.trimmed();
         QRegularExpressionMatch r;
-        if (part == "focus") { if (!target.isEmpty()) out << d("hl.dsp.focus({ window = " + luaStr(target) + " })"); }
+        // Enfocar y traer delante: con ventanas flotantes (las de BC OS) Hyprland enfocaba la ventana pero la dejaba
+        // detrás de las otras, y el Dock / Alt+Tab parecían no cambiar de app
+        if (part == "focus") { if (!target.isEmpty()) out << d("hl.dsp.focus({ window = " + luaStr(target) + " })")
+                                                          << d("hl.dsp.window.alter_zorder({ mode = \"top\", window = " + luaStr(target) + " })"); }
         else if (part == "kill") out << d("hl.dsp.window.close(" + (target.isEmpty() ? QString() : "{ window = " + luaStr(target) + " }") + ")");
         else if (part == "move scratchpad") out << d("hl.dsp.window.move({ workspace = \"special:minimized\"" + w + " })");
         else if (part == "scratchpad show") {
             out << d("hl.dsp.window.move({ workspace = " + ws(activeWs) + w + " })");
-            if (!target.isEmpty()) out << d("hl.dsp.focus({ window = " + luaStr(target) + " })");
+            if (!target.isEmpty()) out << d("hl.dsp.focus({ window = " + luaStr(target) + " })")
+                                       << d("hl.dsp.window.alter_zorder({ mode = \"top\", window = " + luaStr(target) + " })");
         }
         else if (part == "fullscreen toggle" || part == "fullscreen") out << d("hl.dsp.window.fullscreen({ action = \"toggle\"" + w + " })");
         else if (part == "floating enable") out << d("hl.dsp.window.float({ action = \"set\"" + w + " })");

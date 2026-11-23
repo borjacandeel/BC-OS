@@ -11,8 +11,10 @@ echo "== $(date) =="
 [ "$(id -u)" = 0 ] || { echo "hace falta root"; exit 1; }
 systemd-detect-virt -q --vm 2>/dev/null && { echo "máquina virtual: nada que instalar"; systemctl disable bc-drivers.service 2>/dev/null; exit 0; }
 # Esperar a la red (hasta 2 min)
-for i in $(seq 60); do ping -c1 -W2 archlinux.org >/dev/null 2>&1 && break; sleep 2; done
-ping -c1 -W2 archlinux.org >/dev/null 2>&1 || { echo "sin Internet: se reintenta en el próximo arranque"; exit 0; }
+# (por HTTPS, no con ping: muchas redes bloquean ICMP y entonces nunca se instalaba nada)
+enlinea() { curl -sfI --max-time 6 https://archlinux.org >/dev/null 2>&1 || ping -c1 -W2 archlinux.org >/dev/null 2>&1; }
+for i in $(seq 40); do enlinea && break; sleep 3; done
+enlinea || { echo "sin Internet: se reintenta en el próximo arranque"; exit 0; }
 GPU="$(lspci -nn 2>/dev/null | grep -iE 'vga|3d|display')"
 echo "GPU: $GPU"
 # Base para cualquier equipo: firmware, región Wi-Fi (sin wireless-regdb el kernel no carga regulatory.db y el Wi-Fi
