@@ -37,3 +37,28 @@ con `qt.scenegraph.time.renderloop`: **12–19 ms → 3 ms** (sincronización de
 
 - GPU real (OpenGL/Vulkan), Hyprland y swayfx: el entorno de desarrollo no tiene GPU.
 - VirtualBox y equipos físicos: pendiente de prueba con la ISO 0.9.20-beta.
+
+## 0.9.23 frente a 0.9.19 (2026-11-23)
+
+Mismo banco (`tools/bench/render-bench.sh`, ahora también con Centro de control, Notificaciones, Mission Control y
+10 s de reposo), software de Qt Quick, 1440×900, 3 repeticiones. Datos: `bench-0.9.19.csv` y `bench-0.9.23.csv`.
+Gráfico y capturas lado a lado: `comparacion/`.
+
+| Qué | 0.9.19 | 0.9.23 | Mejora |
+|---|---|---|---|
+| Fotogramas perdidos (>16,7 ms) en las ráfagas | 2,7 | 0 | −100 % |
+| Abrir Spotlight, Centro o un menú | 15,5 ms | 3 ms | −81 % |
+| Dock: p99 | 12 ms | 5,3 ms | −56 % |
+| Notificaciones: p99 | 12,7 ms | 6 ms | −53 % |
+| Centro de control: p99 | 12,3 ms | 7,7 ms | −37 % |
+| Arranque con caché: fotograma medio | 6,9 ms | 4,9 ms | −29 % |
+| Notificaciones: fotograma medio | 2,4 ms | 1,8 ms | −25 % |
+| CPU en reposo (10 s) | 687 ms | 532 ms | −23 % |
+| Dock: fotograma medio | 3,2 ms | 2,5 ms | −22 % |
+| CPU al arrancar (con caché) | 1021 ms | 801 ms | −22 % |
+| Spotlight: p99 | 14,3 ms | 11,7 ms | −18 % |
+| Mission Control: fotograma medio | 1,8 ms | 1,5 ms | −17 % |
+| Tiempo de arranque (con caché) | 2322 ms | 2047 ms | −12 % |
+| Memoria | 201 MB | 180 MB | −10 % |
+| Genio por software: fotograma medio | 5,5 ms | 6,2 ms | +14 % (con GPU va en la GPU; sin medir aquí) |
+| Arranque en frío: fotograma medio | 5,9 ms | 6,6 ms | +11 % (3 fotogramas: ruido) |

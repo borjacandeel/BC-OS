@@ -25,7 +25,9 @@ for kv in sys.argv[5:]:
     k, v = kv.split("=", 1); env[k] = v
 t0 = time.monotonic()
 env["QT_LOGGING_RULES"] = "qt.scenegraph.time.renderloop=true"
-r = subprocess.run(["timeout", "120", binp, "--no-splash", "--screenshot", d + "/f.png"], env=env,
+# «reposo»: 10 s con el escritorio quieto (sin captura): CPU gastada sin hacer nada
+cmd = ["timeout", "10", binp, "--no-splash"] if esc == "reposo" else ["timeout", "120", binp, "--no-splash", "--screenshot", d + "/f.png"]
+r = subprocess.run(cmd, env=env,
                    stdout=subprocess.DEVNULL, stderr=subprocess.PIPE, text=True, errors="replace")
 wall = int((time.monotonic() - t0) * 1000)
 ru = resource.getrusage(resource.RUSAGE_CHILDREN)
@@ -48,5 +50,9 @@ for r in $(seq "$N"); do
   run genio "$r" BC_BURST=genio:40 BC_BURST_MS=16
   run dock "$r" BC_BURST=launcherOpen:40 BC_BURST_MS=16
   run spotlight "$r" BC_BURST=spotlightOpen:40 BC_BURST_MS=16
+  run centro "$r" BC_BURST=centerOpen:40 BC_BURST_MS=16
+  run notificaciones "$r" BC_BURST=notifCenterOpen:40 BC_BURST_MS=16
+  run mission "$r" BC_BURST=missionOpen:40 BC_BURST_MS=16
+  run reposo "$r"
 done
 rm -rf "$CFG" "$SCR"
