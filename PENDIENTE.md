@@ -74,7 +74,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [~] 2 Efecto escala (minimizar lineal) — existía; hoy el genio es el único efecto (falta elegir en Ajustes)
 - [~] 3 Abrir y cerrar ventanas (zoom y desvanecimiento) — BC sí; externas solo con Hyprland
 - [ ] 4 Transición a pantalla completa (expansión y ocultar barras)
-- [ ] 5 Organizador Visual / Stage Manager
+- [x] 5 Organizador Visual / Stage Manager (Hyprland; Centro de control ▸ Editar controles ▸ Organizador visual)
 - [ ] 6 Ajuste en mosaico con marco translúcido al encajar en bordes
 - [ ] 7 Mostrar escritorio / Exposé (ventanas hacia fuera)
 - [~] 8 Liquid Glass interactivo (brillos especulares y refracción dinámica) — lente fija; falta dinámico
@@ -186,7 +186,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 38. Ventanas emergentes (Popovers) con flecha triangular apuntando al botón origen
 - [x] 39. Redimensionado de ventanas desde cualquier borde sin tiradores visibles
 - [~] 40. Guías visuales translúcidas al acoplar ventanas en mosaico (Window Tiling)
-- [ ] 41. Vista en perspectiva 3D de grupos de ventanas en Organizador Visual (Stage Manager)
+- [x] 41. Vista en perspectiva de las apps en la tira del Organizador visual
 - [ ] 42. Jerarquía visual limpia basada en espacios en blanco y alineación estricta
 - [x] 43. Separadores sutiles de 1 píxel con baja opacidad entre secciones
 - [x] 44. Contenedores agrupados con esquinas redondeadas dentro de Ajustes del Sistema
