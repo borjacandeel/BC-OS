@@ -271,6 +271,8 @@ int main(int argc, char *argv[]) {
             QQmlExpression ex(QQmlEngine::contextForObject(win), win, js);
             ex.evaluate();
             if (ex.hasError()) { qCritical() << ex.error().toString(); app.exit(7); return; }
+            // BC_BURST_CLOSE=1: se abre, se espera a que termine y se capturan los fotogramas del CIERRE
+            const bool closing = qEnvironmentVariable("BC_BURST_CLOSE") == QLatin1String("1") && js.startsWith("UiState.");
             auto *count = new int(0);
             // BC_FRAMES=1: fotogramas exactos de 60 Hz (fotograma-NNN.png) y coste de dibujar cada uno (fotogramas.csv)
             auto *tick = new QTimer(&app); tick->setInterval(fixed ? int(16.667 * slow) : qMax(1, qEnvironmentVariableIntValue("BC_BURST_MS")));
@@ -295,7 +297,14 @@ int main(int argc, char *argv[]) {
                 }
                 if (++*count >= n) { tick->stop(); app.exit(0); }
             });
-            tick->start();
+            if (closing) {
+                QTimer::singleShot(int(1200 * slow), &app, [&, t, tick, prop] {
+                    QQmlExpression off(QQmlEngine::contextForObject(win), win, "UiState." + prop + " = false");
+                    off.evaluate();
+                    t->restart();
+                    tick->start();
+                });
+            } else tick->start();
         });
         return app.exec();
     }

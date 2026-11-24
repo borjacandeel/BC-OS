@@ -572,7 +572,7 @@ LayerWindow {
         width: UiState.sw; height: UiState.sh
         // Al cerrar, la capa sigue visible un momento para que menús, Spotlight y paneles se desvanezcan
         shown: UiState.popupOpen || popHold.running
-        Timer { id: popHold; interval: Theme.reduced ? 1 : 260 }
+        Timer { id: popHold; interval: Theme.reduced ? 1 : Math.max(1, Theme.d(260)) }   // lo que dura el fundido de salida (sigue la escala de animación)
         Connections { target: UiState; function onPopupOpenChanged() { if (UiState.popupOpen) popHold.stop(); else popHold.restart() } }
         Loader {
             id: popLoader

@@ -12,7 +12,7 @@ Loader {
     property int hold: 480
     property bool on: false
     active: open || keep.running
-    Timer { id: keep; interval: lz.hold }
+    Timer { id: keep; interval: Math.max(1, Theme.d(lz.hold)) }
     onOpenChanged: {
         if (open) { keep.stop(); if (status === Loader.Ready) on = true }
         else { on = false; keep.restart() }
