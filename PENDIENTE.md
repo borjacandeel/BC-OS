@@ -63,6 +63,9 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] Panel sin procesos en el hilo de dibujo (Hyprland por socket, SystemStatus y QuickTools en hilos), baterías Bluetooth asíncronas, ajustes/recordatorios sin recargas falsas.
 - [x] (2026-11-24) Redibujado en reposo: reproducido en sway ARM con layer-shell — sin filtro TODAS las superficies ~2 fotogramas/s en reposo (expose repetidos del compositor, Qt redibuja entero en cada applyConfigure); con el filtro de RenderEngine, 0. Activado por defecto (BC_EXPOSE_ALL=1 lo quita). Spotlight/Centro de control verificados con capturas. Antes: no se reproduce en Xvfb ni en sway sin pantalla. Pedir al creador `bc-diagnostico-fps`. Candidato: «expose» repetidos de Qt Wayland tras cada configure de Hyprland → filtro en pruebas (BC_EXPOSE_FILTER=1), verificar en banco sway ARM (bcwork/tf3.sh).
 
+- [x] (2026-11-24) Animaciones del panel verificadas fotograma a fotograma, apertura y cierre (BC_FRAMES, BC_BURST_CLOSE=1): Spotlight, Centro de control, Centro de notificaciones (cruzaba media pantalla → arreglado), lanzador, Mission Control, portapapeles (aparecía de golpe → arreglado), capturas ⌘⇧5 (cruzaba la pantalla → arreglado), emoji, forzar salida, galería de widgets.
+- [ ] Esperando del creador: `bc-diagnostico-fps` y fps de Hyprland (debug:overlay) en el portátil tras `bc-actualizar` + reinicio.
+
 ## En curso 2026-11-23 noche (creador): categorías 2 (animaciones) y 3 (detalles visuales), todo a 60 fps mínimo, revisando cada apartado. Por tandas, con fotogramas y capturas antes/ahora.
 
 ## Animaciones de macOS a replicar (lista del creador, 73). Estado: [x] hecho · [~] parcial · [ ] falta
@@ -82,7 +85,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [~] 13 Abrir/cerrar Launchpad (zoom; falta desenfoque)
 - [ ] 14 Paginación en Launchpad
 - [x] 15 Abrir Centro de Control
-- [~] 16 Mission Control (elevación y agrupación)
+- [~] 16 Mission Control (apertura y cierre verificados fotograma a fotograma; falta agrupación por app)
 - [ ] 17 Exposé de aplicación
 - [~] 18 Cambio de escritorios (deslizamiento; fluido solo con Hyprland)
 - [x] 19 Selector de apps (Alt+Tab)
@@ -103,7 +106,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [~] 34 Galería / Cover Flow en Archivos
 - [ ] 35 Vuelo de archivos al Dock o carpetas
 - [ ] 36 Carpetas en Launchpad
-- [~] 37 Pilas del Dock (abanico/cuadrícula)
+- [~] 37 Pilas del Dock (abanico/cuadrícula) — cuadrícula con entrada verificada
 - [x] 38 Nube de humo «poof» al sacar un icono del Dock
 - [ ] 39 Smart Zoom con doble toque
 - [ ] 40 Deslizar historial atrás/adelante (navegador)
@@ -117,7 +120,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 47 Deslizar para actualizar
 - [x] 48 Rebote elástico al desplazar (rubberbanding)
 - [x] 49 HUD de volumen y brillo
-- [~] 50 Menús contextuales (aparición/desvanecimiento; rehacer aspecto)
+- [x] 50 Menús contextuales (aparición/desvanecimiento verificados fotograma a fotograma)
 - [~] 51 Popovers con flecha
 - [ ] 52 Temblor de iconos en Launchpad (reorganizar/borrar)
 - [ ] 53 Agitar el ratón para agrandar el cursor
@@ -189,7 +192,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 44. Contenedores agrupados con esquinas redondeadas dentro de Ajustes del Sistema
 - [~] 45. Cabeceras de sección flotantes y translúcidas al hacer scroll en listas largas
 - [ ] 46. Márgenes interiores generosos y simétricos en todos los cuadros de diálogo
-- [ ] 47. Alineación vertical perfecta entre el título de la ventana y los botones semáforo
+- [x] 47. Alineación vertical perfecta entre el título de la ventana y los botones semáforo (comprobado en capturas de Ajustes/Archivos)
 - [ ] 48. Espaciado uniforme entre botones de acción dentro de la barra de herramientas
 - [~] 49. Redondeo proporcional de esquinas internas respecto al radio de la ventana exterior
 - [ ] 50. Ventanas de inspección flotantes (HUD) con barra de título ultradelgada
