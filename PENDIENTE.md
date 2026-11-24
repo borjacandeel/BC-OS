@@ -73,7 +73,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 1 Genio (minimizar en curva al Dock)
 - [~] 2 Efecto escala (minimizar lineal) — existía; hoy el genio es el único efecto (falta elegir en Ajustes)
 - [~] 3 Abrir y cerrar ventanas (zoom y desvanecimiento) — BC sí; externas solo con Hyprland
-- [ ] 4 Transición a pantalla completa (expansión y ocultar barras)
+- [x] 4 Transición a pantalla completa (Hyprland: la ventana crece con windowsMove y muelle; la barra y el Dock quedan debajo)
 - [x] 5 Organizador Visual / Stage Manager (Hyprland; Centro de control ▸ Editar controles ▸ Organizador visual)
 - [ ] 6 Ajuste en mosaico con marco translúcido al encajar en bordes
 - [ ] 7 Mostrar escritorio / Exposé (ventanas hacia fuera)
@@ -83,7 +83,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 11 Ampliación del Dock
 - [~] 12 Ocultación automática del Dock (opción existe; revisar animación)
 - [~] 13 Abrir/cerrar Launchpad (zoom; falta desenfoque)
-- [ ] 14 Paginación en Launchpad
+- [x] 14 Paginación en Launchpad (páginas con puntos; rueda/panel táctil de una en una)
 - [x] 15 Abrir Centro de Control
 - [~] 16 Mission Control (apertura y cierre verificados fotograma a fotograma; falta agrupación por app)
 - [x] 17 Exposé de aplicación (Dock ▸ Mostrar todas las ventanas)

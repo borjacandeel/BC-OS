@@ -16,7 +16,7 @@ Item {
     readonly property int cols: 7
     signal launch(string id, string name)
     signal done()
-    function reset() { field.text = ""; cat = ""; all = Apps.search(""); grid.contentY = 0; field.forceActiveFocus() }
+    function reset() { field.text = ""; cat = ""; all = Apps.search(""); pager.currentIndex = 0; field.forceActiveFocus() }
 
     // Clic fuera: se cierra (el escritorio se ve detrás, sin oscurecer)
     MouseArea { anchors.fill: parent; onClicked: lp.done() }
@@ -46,7 +46,7 @@ Item {
                 cursorDelegate: TextCursor {}
                 id: field; x: px(74); width: parent.width - px(110); anchors.verticalCenter: parent.verticalCenter
                 color: Theme.label; font.family: Theme.font; font.pixelSize: px(22); focus: true; selectionColor: Theme.selection
-                onTextChanged: { lp.all = Apps.search(text); grid.contentY = 0 }
+                onTextChanged: { lp.all = Apps.search(text); pager.currentIndex = 0 }
                 Keys.onEscapePressed: lp.done()
                 Keys.onReturnPressed: if (lp.apps.length) lp.launch(lp.apps[0].id, lp.apps[0].name)
                 Text { visible: !parent.text; text: qsTr("Aplicaciones"); color: Theme.labelSecondary; font: parent.font }
@@ -76,31 +76,83 @@ Item {
                                                          : (Theme.dark ? Qt.rgba(1, 1, 1, cm.containsMouse ? 0.16 : 0.08) : Qt.rgba(0, 0, 0, cm.containsMouse ? 0.08 : 0.04))
                             Text { id: ct; anchors.centerIn: parent; text: modelData.t; color: Theme.label
                                    font.family: Theme.font; font.pixelSize: px(14); font.weight: Font.Medium }
-                            MouseArea { id: cm; anchors.fill: parent; hoverEnabled: true; onClicked: { lp.cat = modelData.k; grid.contentY = 0 } }
+                            MouseArea { id: cm; anchors.fill: parent; hoverEnabled: true; onClicked: { lp.cat = modelData.k; pager.currentIndex = 0 } }
                         }
                     }
                 }
             }
-            GridView {
+            // Páginas como el Launchpad de macOS: se pasa de una en una (rueda, panel táctil o puntos) con un
+            // deslizamiento suave
+            Item {
                 id: grid
-                x: px(18); y: px(64); width: parent.width - px(36); height: parent.height - px(72)
-                cellWidth: width / lp.cols; cellHeight: px(104)
-                clip: true; boundsBehavior: Flickable.StopAtBounds
-                model: lp.apps
-                delegate: Item {
-                    required property var modelData
-                    width: grid.cellWidth; height: grid.cellHeight
-                    Image {
-                        id: ic; anchors.horizontalCenter: parent.horizontalCenter; y: px(6)
-                        width: px(62); height: width; sourceSize: Qt.size(128, 128); smooth: true; mipmap: true; asynchronous: true
-                        source: modelData.iconPath ? "file://" + modelData.iconPath : (Quick.iconPath("application-x-executable") !== "" ? "file://" + Quick.iconPath("application-x-executable") : "qrc:/BCShell/apps/text-x-script.svg")
-                        scale: am.pressed ? 0.9 : (am.containsMouse ? 1.04 : 1)
-                        Behavior on scale { NumberAnimation { duration: Theme.d(Theme.durHover); easing.type: Theme.easeStandard } }
+                x: px(18); y: px(64); width: parent.width - px(36); height: parent.height - px(72) - px(22)
+                readonly property real cellW: width / lp.cols
+                readonly property real cellH: px(104)
+                readonly property int rowsPerPage: Math.max(1, Math.floor(height / cellH))
+                readonly property int perPage: lp.cols * rowsPerPage
+                readonly property int pages: Math.max(1, Math.ceil(lp.apps.length / perPage))
+                ListView {
+                    id: pager
+                    anchors.fill: parent
+                    orientation: ListView.Horizontal
+                    snapMode: ListView.SnapOneItem
+                    highlightRangeMode: ListView.StrictlyEnforceRange
+                    highlightMoveDuration: Theme.d(320)
+                    boundsBehavior: Flickable.StopAtBounds
+                    clip: true
+                    model: grid.pages
+                    delegate: Item {
+                        required property int index
+                        width: pager.width; height: pager.height
+                        Grid {
+                            columns: lp.cols
+                            Repeater {
+                                model: lp.apps.slice(index * grid.perPage, (index + 1) * grid.perPage)
+                                delegate: Item {
+                                    required property var modelData
+                                    width: grid.cellW; height: grid.cellH
+                                    Image {
+                                        id: ic; anchors.horizontalCenter: parent.horizontalCenter; y: px(6)
+                                        width: px(62); height: width; sourceSize: Qt.size(128, 128); smooth: true; mipmap: true; asynchronous: true
+                                        source: modelData.iconPath ? "file://" + modelData.iconPath : (Quick.iconPath("application-x-executable") !== "" ? "file://" + Quick.iconPath("application-x-executable") : "qrc:/BCShell/apps/text-x-script.svg")
+                                        scale: am.pressed ? 0.9 : (am.containsMouse ? 1.04 : 1)
+                                        Behavior on scale { NumberAnimation { duration: Theme.d(Theme.durHover); easing.type: Theme.easeStandard } }
+                                    }
+                                    Text { anchors.horizontalCenter: parent.horizontalCenter; anchors.top: ic.bottom; anchors.topMargin: px(8); width: parent.width - px(8)
+                                           horizontalAlignment: Text.AlignHCenter; elide: Text.ElideRight; text: modelData.name; color: Theme.label
+                                           font.family: Theme.font; font.pixelSize: px(13) }
+                                    MouseArea { id: am; anchors.fill: parent; hoverEnabled: true; onClicked: lp.launch(modelData.id, modelData.name) }
+                                }
+                            }
+                        }
                     }
-                    Text { anchors.horizontalCenter: parent.horizontalCenter; anchors.top: ic.bottom; anchors.topMargin: px(8); width: parent.width - px(8)
-                           horizontalAlignment: Text.AlignHCenter; elide: Text.ElideRight; text: modelData.name; color: Theme.label
-                           font.family: Theme.font; font.pixelSize: px(13) }
-                    MouseArea { id: am; anchors.fill: parent; hoverEnabled: true; onClicked: lp.launch(modelData.id, modelData.name) }
+                    // Rueda o panel táctil: una página por gesto
+                    property real wheelAcc: 0
+                    WheelHandler {
+                        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+                        onWheel: (ev) => {
+                            const d = Math.abs(ev.angleDelta.x) > Math.abs(ev.angleDelta.y) ? ev.angleDelta.x : ev.angleDelta.y
+                            pager.wheelAcc += d
+                            if (pager.wheelAcc <= -120) { pager.incrementCurrentIndex(); pager.wheelAcc = 0 }
+                            else if (pager.wheelAcc >= 120) { pager.decrementCurrentIndex(); pager.wheelAcc = 0 }
+                        }
+                    }
+                }
+            }
+            // Puntos de página
+            Row {
+                visible: grid.pages > 1
+                anchors.horizontalCenter: grid.horizontalCenter; anchors.top: grid.bottom; anchors.topMargin: px(6)
+                spacing: px(9)
+                Repeater {
+                    model: grid.pages
+                    Rectangle {
+                        required property int index
+                        width: px(7); height: width; radius: width / 2
+                        color: Theme.label; opacity: pager.currentIndex === index ? 0.9 : 0.3
+                        Behavior on opacity { NumberAnimation { duration: Theme.d(160) } }
+                        MouseArea { anchors.fill: parent; anchors.margins: -px(5); onClicked: pager.currentIndex = parent.index }
+                    }
                 }
             }
             Text { visible: lp.apps.length === 0; anchors.centerIn: grid; text: qsTr("Sin resultados"); color: Theme.labelSecondary

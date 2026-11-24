@@ -20,6 +20,7 @@ Llegan también a los equipos instalados con `sudo bc-actualizar` (después, rei
 - Nueva orden `bc-diagnostico-fps`: muestra cuántas veces por segundo dibuja cada parte del escritorio y si es el compositor quien lo provoca.
 
 **Detalles de macOS**
+- **Aplicaciones con páginas**, como el Launchpad: puntos abajo y una página por gesto de rueda o panel táctil.
 - **Exposé de app**: en el menú del Dock, «Mostrar todas las ventanas» abre Mission Control solo con las ventanas de esa app.
 - **Organizador visual (Stage Manager)** con Hyprland: la app activa queda sola en el centro y las demás pasan a una tira a la izquierda, con su miniatura en perspectiva. Se activa en el Centro de control ▸ Editar controles.
 - **Dock a la izquierda, abajo o a la derecha**: Ajustes ▸ Escritorio y Dock ▸ Posición en la pantalla. Los iconos quedan derechos y los widgets se apartan.
