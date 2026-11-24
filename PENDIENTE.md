@@ -61,7 +61,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - Medido por el creador: 40 fps con caídas a 20; sin desenfoque igual; sin sombras algo mejor; con debug:damage_blink TODA la pantalla parpadea en reposo; con bc-shell congelado (SIGSTOP) solo parpadea lo que toca → el panel redibuja una capa de pantalla completa.
 - [x] Frecuencia mínima de GPU Intel (bc-gpu-freq.service), sombras 14 px, new_render_scheduling=false.
 - [x] Panel sin procesos en el hilo de dibujo (Hyprland por socket, SystemStatus y QuickTools en hilos), baterías Bluetooth asíncronas, ajustes/recordatorios sin recargas falsas.
-- [ ] Causa exacta del redibujado de bc-desktop en Hyprland: no se reproduce en Xvfb ni en sway sin pantalla. Pedir al creador `bc-diagnostico-fps`. Candidato: «expose» repetidos de Qt Wayland tras cada configure de Hyprland → filtro en pruebas (BC_EXPOSE_FILTER=1), verificar en banco sway ARM (bcwork/tf3.sh).
+- [x] (2026-11-24) Redibujado en reposo: reproducido en sway ARM con layer-shell — sin filtro TODAS las superficies ~2 fotogramas/s en reposo (expose repetidos del compositor, Qt redibuja entero en cada applyConfigure); con el filtro de RenderEngine, 0. Activado por defecto (BC_EXPOSE_ALL=1 lo quita). Spotlight/Centro de control verificados con capturas. Antes: no se reproduce en Xvfb ni en sway sin pantalla. Pedir al creador `bc-diagnostico-fps`. Candidato: «expose» repetidos de Qt Wayland tras cada configure de Hyprland → filtro en pruebas (BC_EXPOSE_FILTER=1), verificar en banco sway ARM (bcwork/tf3.sh).
 
 ## En curso 2026-11-23 noche (creador): categorías 2 (animaciones) y 3 (detalles visuales), todo a 60 fps mínimo, revisando cada apartado. Por tandas, con fotogramas y capturas antes/ahora.
 

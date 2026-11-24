@@ -7,6 +7,9 @@ Llegan también a los equipos instalados con `sudo bc-actualizar` (después, rei
 - Sombras de las ventanas más ligeras en gráficas integradas (14 px en vez de 26), que era lo que más costaba. Con gráfica dedicada siguen grandes.
 - Hyprland sin triple búfer automático: iba más fluido en la Intel HD 620.
 - Sin animaciones dobles: Hyprland ya no funde los menús, Spotlight, Mission Control, avisos y demás capas que el escritorio anima por su cuenta.
+- **Causa principal de los tirones, corregida:** en reposo, el escritorio a pantalla completa, la barra y el Dock se redibujaban enteros varias veces por segundo. Cada aviso del compositor, aunque no cambiara nada, hacía que Qt redibujara toda la superficie. Ahora esos avisos repetidos se descartan.
+  - Medido en un compositor Wayland real: de ~2 redibujados por segundo por superficie a ninguno.
+  - Spotlight, el Centro de control y los menús se siguen dibujando igual.
 - El panel ya no reenvía a Hyprland la configuración entera de sus capas al abrir un menú. Cada envío hacía que se redibujaran el escritorio, la barra y el Dock.
 - Sway (máquinas virtuales): consultas al compositor por su socket, sin lanzar `swaymsg`.
 - El panel ya no lanza procesos desde el hilo que dibuja:

@@ -329,8 +329,10 @@ void RenderEngine::watch(QQuickWindow *w) {
     }, Qt::DirectConnection);
 }
 
-// «Expose» repetidos de Wayland (ver watch): en pruebas hasta verificarlo, BC_EXPOSE_FILTER=1 lo activa
-const bool RenderEngine::s_exposeFilter = qEnvironmentVariableIsSet("BC_EXPOSE_FILTER");
+// «Expose» repetidos de Wayland (ver watch). Medido en sway con layer-shell: sin filtro, TODAS las superficies del panel
+// (también el escritorio a pantalla completa) se redibujaban ~2 veces por segundo en reposo; con él, ninguna. Abrir y
+// cerrar Spotlight, el Centro de control y menús se dibuja igual. BC_EXPOSE_ALL=1 lo desactiva.
+const bool RenderEngine::s_exposeFilter = !qEnvironmentVariableIsSet("BC_EXPOSE_ALL");
 
 bool RenderEngine::eventFilter(QObject *o, QEvent *e) {
     if (e->type() == QEvent::Expose) {
