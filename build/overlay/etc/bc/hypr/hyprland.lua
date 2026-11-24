@@ -138,7 +138,10 @@ hl.window_rule({ name = "centrar",      match = { class = ".*", float = true }, 
 hl.window_rule({ name = "no-maximizar", match = { class = ".*" }, suppress_event = "maximize" })
 -- Superficies del panel (barra, Dock, menús, avisos): vidrio con el desenfoque del compositor
 hl.layer_rule({ name = "bc-vidrio", match = { namespace = "^bc-(popups|dock|notify|topbar|center|desktop)$" }, blur = true, ignore_alpha = 0.02 })
-hl.layer_rule({ name = "bc-capa-sin-anim", match = { namespace = "^bc-(wallpaper|desktop|chrome|full|hot)$" }, no_anim = true })
+-- Sin animación de Hyprland en las capas que BC Shell ya anima por su cuenta (menús, Spotlight, Mission Control,
+-- selector de apps, genio, avisos, volumen…): antes se veían DOS fundidos a la vez (más lentos que macOS) y Hyprland
+-- mezclaba una capa de pantalla completa en cada fotograma de la apertura.
+hl.layer_rule({ name = "bc-capa-sin-anim", match = { namespace = "^bc-(wallpaper|desktop|chrome|full|hot|hotcorner|popups|mission|switcher|genie|osd|notify|captura|tint|center)$" }, no_anim = true })
 
 ---------------- Gestos (siguen al dedo) ----------------
 hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
