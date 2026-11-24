@@ -42,8 +42,9 @@ LayerWindow {
 
     // Widgets (reloj, calendario, uso): columna derecha del fondo, bajo la barra superior
     // Golden Gate: widgets de escritorio a la izquierda (captura de referencia)
-    DesktopIcons { visible: !UiState.classic }
-    DesktopWidgets { visible: !UiState.classic && UiState.widgets }
+    // Con el Organizador visual se ocultan los elementos del escritorio (como macOS)
+    DesktopIcons { visible: !UiState.classic && !UiState.stageManager }
+    DesktopWidgets { visible: !UiState.classic && UiState.widgets && !UiState.stageManager }
     Widgets {
         visible: UiState.classic && UiState.widgets && !UiState.minimal
         scale: root.u
@@ -476,6 +477,17 @@ LayerWindow {
     // Dock Golden Gate: superficie a todo lo ancho (para ampliar sin recortes) que solo recibe el puntero en la placa
     Binding { target: UiState; property: "dockLeftInset"; value: dockWin.pos === "left" && !Settings.dockAutohide ? dockWin.thick - Theme.px(40) : 0 }
     Binding { target: UiState; property: "dockRightInset"; value: dockWin.pos === "right" && !Settings.dockAutohide ? dockWin.thick - Theme.px(40) : 0 }
+    // Organizador visual (Stage Manager): tira de apps a la izquierda
+    LayerWindow {
+        id: stageWin
+        layer: "top"; edges: ["left", "top", "bottom"]; scope: "bc-stage"
+        width: Theme.px(190); height: UiState.sh - UiState.topInset
+        exclusive: UiState.stageManager ? Theme.px(176) : 0
+        shown: Sway.hyprland && !UiState.classic && !UiState.locked && !UiState.splashing && (UiState.stageManager || stageHold.running)
+        Timer { id: stageHold; interval: Math.max(1, Theme.d(260)) }
+        Connections { target: UiState; function onStageManagerChanged() { if (!UiState.stageManager) stageHold.restart() } }
+        StageStrip { anchors.fill: parent }
+    }
     // Posición (Ajustes ▸ Escritorio y Dock): abajo, o a un lado con el Dock girado ±90° (iconos derechos)
     LayerWindow {
         id: dockWin

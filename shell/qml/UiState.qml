@@ -75,6 +75,7 @@ QtObject {
     property bool forceQuitOpen: false   // «Forzar salida de las aplicaciones»
     property bool emojiOpen: false       // «Emoji y símbolos»
     property bool screenshotOpen: false  // panel de capturas (⌘⇧5)
+    property bool stageManager: false    // Organizador visual (Stage Manager), solo con Hyprland
     property string shotMode: "seleccion"  // último modo del panel de capturas
     property bool recording: false       // grabación de pantalla en curso (botón ⏹ en la barra)
     readonly property bool popupOpen: !locked && (centerOpen || launcherOpen || startOpen || clipboardOpen || menu !== "" || powerAction !== ""

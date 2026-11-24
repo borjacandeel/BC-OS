@@ -141,7 +141,7 @@ hl.layer_rule({ name = "bc-vidrio", match = { namespace = "^bc-(popups|dock|noti
 -- Sin animación de Hyprland en las capas que BC Shell ya anima por su cuenta (menús, Spotlight, Mission Control,
 -- selector de apps, genio, avisos, volumen…): antes se veían DOS fundidos a la vez (más lentos que macOS) y Hyprland
 -- mezclaba una capa de pantalla completa en cada fotograma de la apertura.
-hl.layer_rule({ name = "bc-capa-sin-anim", match = { namespace = "^bc-(wallpaper|desktop|chrome|full|hot|hotcorner|popups|mission|switcher|genie|osd|notify|captura|tint|center)$" }, no_anim = true })
+hl.layer_rule({ name = "bc-capa-sin-anim", match = { namespace = "^bc-(wallpaper|desktop|chrome|full|hot|hotcorner|popups|mission|switcher|genie|osd|notify|captura|tint|center|stage)$" }, no_anim = true })
 
 ---------------- Gestos (siguen al dedo) ----------------
 hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })

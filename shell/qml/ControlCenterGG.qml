@@ -23,8 +23,9 @@ Item {
         { k: "noche", t: qsTr("Turno de noche"), i: "weather-clear-night-symbolic" },
         { k: "calculadora", t: qsTr("Calculadora"), i: "view-grid-symbolic" },
         { k: "notas", t: qsTr("Nota rápida"), i: "document-edit-symbolic" },
-        { k: "ajustes", t: qsTr("Ajustes del Sistema"), i: "preferences-system-symbolic" } ]
-    readonly property var extras: ["noche", "calculadora", "notas", "ajustes"]
+        { k: "ajustes", t: qsTr("Ajustes del Sistema"), i: "preferences-system-symbolic" } ].concat(Sway.hyprland ? [
+        { k: "organizador", t: qsTr("Organizador visual"), i: "view-sidebar-symbolic" } ] : [])
+    readonly property var extras: ["noche", "calculadora", "notas", "ajustes", "organizador"]
     readonly property var shownList: { try { const v = JSON.parse(Settings.ccModules || "null"); return Array.isArray(v) ? v : defaults } catch (e) { return defaults } }
     property bool editing: false
     onVisibleChanged: if (!visible) editing = false
@@ -239,10 +240,11 @@ Item {
             Repeater {
                 model: cc.catalog.filter(m => cc.extras.indexOf(m.k) >= 0 && cc.has(m.k))
                 Round { required property var modelData; key: modelData.k; icon: modelData.i
-                        on: modelData.k === "noche" && UiState.mode === "night"
+                        on: (modelData.k === "noche" && UiState.mode === "night") || (modelData.k === "organizador" && UiState.stageManager)
                         onClicked: {
                             const k = modelData.k
                             if (k === "noche") { Settings.mode = (UiState.mode === "night" ? "" : "night"); return }
+                            if (k === "organizador") { UiState.stageManager = !UiState.stageManager; return }
                             UiState.closePopups()
                             if (k === "calculadora") Launcher.run("bc-shell", ["--app", "calculator"])
                             else if (k === "notas") Launcher.run("bc-shell", ["--app", "notes"])
