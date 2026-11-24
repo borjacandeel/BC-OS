@@ -440,13 +440,15 @@ void SwayControl::refreshHypr() {
 void SwayControl::hyprEval(const QString &lua) {
     if (m_hyprReqPath.isEmpty() || !QFileInfo::exists(m_hyprReqPath)) { QProcess::startDetached(m_exe, {"eval", lua}); return; }
     hyprQuery("/eval " + lua.toUtf8(), [this, lua](bool ok, const QByteArray &out) {
-        if (!ok || !out.trimmed().startsWith("ok")) QProcess::startDetached(m_exe, {"eval", lua});
-    });
+        // Solo si no llegó (socket caído) o Hyprland no conoce la orden: repetir una orden que sí se ejecutó la
+        // duplicaría (y las de alternar, como pantalla completa, se anularían)
+        if (!ok || out.contains("unknown request")) QProcess::startDetached(m_exe, {"eval", lua});
+    }, true);
 }
 
 // Consulta a Hyprland por su socket de órdenes («j/clients»…), sin lanzar hyprctl: cada proceso nuevo duplicaba el
 // panel entero (fork) en el hilo de la interfaz, tres veces por evento de ventanas. Si no hay socket, hyprctl.
-void SwayControl::hyprQuery(const QByteArray &req, std::function<void(bool, const QByteArray &)> done) {
+void SwayControl::hyprQuery(const QByteArray &req, std::function<void(bool, const QByteArray &)> done, bool allowEmpty) {
     if (m_hyprReqPath.isEmpty() || !QFileInfo::exists(m_hyprReqPath)) {
         auto *p = new QProcess(this);
         connect(p, &QProcess::finished, this, [p, done](int code) { done(code == 0, p->readAllStandardOutput()); p->deleteLater(); });
@@ -458,12 +460,12 @@ void SwayControl::hyprQuery(const QByteArray &req, std::function<void(bool, cons
     auto *s = new QLocalSocket(this);
     auto buf = std::make_shared<QByteArray>();
     auto fired = std::make_shared<bool>(false);
-    auto finish = [s, buf, done, fired](bool ok) {
+    auto finish = [s, buf, done, fired, allowEmpty](bool ok) {
         if (*fired) return;
         *fired = true;
         if (ok) *buf += s->readAll();
         s->deleteLater();
-        done(ok && !buf->isEmpty(), *buf);
+        done(ok && (allowEmpty || !buf->isEmpty()), *buf);
     };
     connect(s, &QLocalSocket::connected, s, [s, req] { s->write(req); s->flush(); });
     connect(s, &QLocalSocket::readyRead, s, [s, buf] { *buf += s->readAll(); });

@@ -88,7 +88,7 @@ private:
     QTimer m_debounce, m_poll, m_slow;
     bool m_dirty = false;
     QString m_hyprReqPath;
-    void hyprQuery(const QByteArray &req, std::function<void(bool, const QByteArray &)> done);
+    void hyprQuery(const QByteArray &req, std::function<void(bool, const QByteArray &)> done, bool allowEmpty = false);
     void hyprEval(const QString &lua);
     void doneRefresh();
     QFileSystemWatcher m_watch;
