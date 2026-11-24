@@ -345,13 +345,26 @@ AppWindow {
                         }
                     }
                 }
-                // Columnas: carpetas de la ruta (hasta 3) + la actual + vista previa del elemento elegido
-                Row {
+                // Columnas como el Finder: todas las carpetas de la ruta + la actual + vista previa; al entrar en una
+                // carpeta la vista se desliza suavemente hasta la columna nueva (antes, como mucho 3 y de golpe)
+                Flickable {
+                    id: colFlick
                     visible: win.view === "columns" && !win.searchAll && !win.recents
                     anchors.fill: parent
-                    readonly property var anc: Files.crumbs.slice(Math.max(0, Files.crumbs.length - 3), Files.crumbs.length - 1)
+                    clip: true
+                    contentWidth: colRow.width; contentHeight: height
+                    flickableDirection: Flickable.HorizontalFlick
+                    boundsBehavior: Flickable.StopAtBounds
+                    function toEnd() { colScroll.to = Math.max(0, contentWidth - width); colScroll.restart() }
+                    onContentWidthChanged: toEnd()
+                    onWidthChanged: contentX = Math.max(0, contentWidth - width)
+                    NumberAnimation { id: colScroll; target: colFlick; property: "contentX"; duration: Theme.d(260); easing.type: Easing.OutCubic }
+                Row {
+                    id: colRow
+                    height: colFlick.height
+                    readonly property var anc: Files.crumbs.slice(Math.max(0, Files.crumbs.length - 12), Files.crumbs.length - 1)
                     Repeater {
-                        model: parent.anc
+                        model: colRow.anc
                         Rectangle {
                             id: colItem
                             required property var modelData
@@ -395,9 +408,10 @@ AppWindow {
                         }
                     }
                     Item {
-                        width: Math.max(0, parent.width - 230 - parent.anc.length * 210); height: parent.height
+                        width: Math.max(260, colFlick.width - 230 - colRow.anc.length * 210); height: parent.height
                         Preview { anchors.fill: parent; anchors.margins: 16; info: win.sel }
                     }
+                }
                 }
                 // Galería: vista previa grande y tira de miniaturas
                 Item {
