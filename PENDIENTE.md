@@ -76,7 +76,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 7 Mostrar escritorio / Exposé (ventanas hacia fuera)
 - [~] 8 Liquid Glass interactivo (brillos especulares y refracción dinámica) — lente fija; falta dinámico
 - [x] 9 Rebote al abrir apps en el Dock
-- [ ] 10 Rebote de notificación (app que requiere atención)
+- [x] 10 Rebote de notificación (app que requiere atención) — Dock rebota 3 veces con «urgent» (Hyprland y sway)
 - [x] 11 Ampliación del Dock
 - [~] 12 Ocultación automática del Dock (opción existe; revisar animación)
 - [~] 13 Abrir/cerrar Launchpad (zoom; falta desenfoque)
@@ -108,7 +108,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 39 Smart Zoom con doble toque
 - [ ] 40 Deslizar historial atrás/adelante (navegador)
 - [ ] 41 Vista general de pestañas (navegador)
-- [ ] 42 Transición lateral entre paneles de Ajustes
+- [x] 42 Transición lateral entre paneles de Ajustes
 - [ ] 43 Recuerdos animados en Fotos
 ### Microtransiciones y efectos de interfaz
 - [~] 44 Semáforo (reacción al pasar/pulsar)
@@ -121,7 +121,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [~] 51 Popovers con flecha
 - [ ] 52 Temblor de iconos en Launchpad (reorganizar/borrar)
 - [ ] 53 Agitar el ratón para agrandar el cursor
-- [ ] 54 Cursor de texto con parpadeo suave
+- [x] 54 Cursor de texto con parpadeo suave (TextCursor.qml, color de acento)
 - [ ] 55 Barra de pestañas compacta (navegador)
 - [x] 56 Interruptores con movimiento
 - [~] 57 Barras de progreso y anillos fluidos
@@ -171,11 +171,11 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 26. Reducción de transparencia limpia que convierte el cristal en tonos sólidos mate
 - [x] 27. Degradado imperceptible en el fondo de las barras laterales activas
 - [ ] 28. Efecto de capa de papel iluminado en vistas de lectura y documentos
-- [ ] 29. Sombras proyectadas dinámicas en los iconos del escritorio sobre el wallpaper
+- [x] 29. Sombras de contacto bajo los iconos del escritorio
 - [ ] 30. Brillo especular en el borde superior de las tarjetas del Centro de Notificaciones
 - [x] 31. Esquinas redondeadas continuas (Squircles) en todas las ventanas y paneles
 - [x] 32. Botones semáforo (rojo, amarillo y verde) en la esquina superior izquierda
-- [~] 33. Símbolos internos de los botones semáforo ocultos hasta acercar el cursor
+- [x] 33. Símbolos internos de los botones semáforo ocultos hasta acercar el cursor
 - [x] 34. Botones semáforo que se vuelven grises cuando la ventana pierde el foco
 - [x] 35. Barra de título unificada con la barra de herramientas
 - [x] 36. Ausencia de bordes laterales e inferiores gruesos en las ventanas
@@ -232,7 +232,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 87. Jerarquía tipográfica clara entre títulos, subtítulos y texto secundario gris
 - [x] 88. Truncado de nombres largos de archivo con puntos suspensivos en el medio
 - [ ] 89. Iconos multicolor o jerárquicos en barras laterales
-- [ ] 90. Símbolos de teclas modificadoras (⌘, ⌥, ⇧, ⌃) dibujados con precisión
+- [x] 90. Símbolos de teclas modificadoras (⌘, ⌥, ⇧, ⌃) en orden de macOS en los menús
 - [x] 91. Icono de batería en la barra de menús con relleno dinámico y rayo de carga
 - [~] 92. Icono de Wi-Fi con arcos que reflejan la intensidad real de señal
 - [~] 93. Icono de sonido con ondas según el volumen
@@ -297,7 +297,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 152. Selección de captura con zona iluminada y resto oscurecido
 - [~] 153. Anillo de enfoque alrededor de campos activos al navegar con Tab
 - [ ] 154. Animación de expansión del anillo de enfoque
-- [ ] 155. Cursor de texto fino con parpadeo suave
+- [x] 155. Cursor de texto fino con parpadeo suave
 - [ ] 156. Tiradores de selección de texto precisos
 - [~] 157. Botones píldora para acciones secundarias y filtros
 - [ ] 158. Steppers con flechas junto a campos numéricos
