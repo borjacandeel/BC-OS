@@ -169,7 +169,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 21. Efecto de profundidad atmosférica en Mission Control al oscurecer el escritorio
 - [~] 22. Capa translúcida con desenfoque de fondo al abrir Launchpad
 - [~] 23. Iluminación sutil en botones al pasar el cursor por encima (hover)
-- [~] 24. Sombras internas suaves dentro de campos de texto y barras de búsqueda
+- [x] 24. Sombras internas suaves dentro de campos de texto y barras de búsqueda (FieldInset)
 - [x] 25. Contraste elevado automático en bordes cuando se activa Aumentar Contraste
 - [x] 26. Reducción de transparencia limpia que convierte el cristal en tonos sólidos mate
 - [x] 27. Degradado imperceptible en el fondo de las barras laterales activas
@@ -298,8 +298,8 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 150. HUD translúcidos centrados para volumen y brillo
 - [x] 151. Miniatura flotante abajo a la derecha tras una captura
 - [x] 152. Selección de captura con zona iluminada y resto oscurecido
-- [~] 153. Anillo de enfoque alrededor de campos activos al navegar con Tab
-- [ ] 154. Animación de expansión del anillo de enfoque
+- [x] 153. Anillo de enfoque alrededor de campos activos (buscadores de las apps)
+- [x] 154. Animación del anillo de enfoque (entra encogiéndose hasta su sitio)
 - [x] 155. Cursor de texto fino con parpadeo suave
 - [ ] 156. Tiradores de selección de texto precisos
 - [~] 157. Botones píldora para acciones secundarias y filtros

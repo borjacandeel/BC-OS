@@ -24,6 +24,8 @@ Llegan también a los equipos instalados con `sudo bc-actualizar` (después, rei
 - Cursor de texto del color de acento con parpadeo suave en todos los campos.
 - Ajustes del Sistema: la página nueva entra con un leve deslizamiento.
 - Menús con los atajos en el orden de macOS (⌃⌥⇧⌘) y ⎋ para Esc.
+- Buscadores de las apps con relieve hundido y anillo de foco del color de acento.
+- Sombra suave bajo los iconos del escritorio.
 
 **Arreglos**
 - Animaciones revisadas fotograma a fotograma:
