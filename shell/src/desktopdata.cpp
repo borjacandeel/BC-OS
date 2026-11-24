@@ -1,3 +1,5 @@
+#include <QPointer>
+#include <QThreadPool>
 #include <QDBusPendingCallWatcher>
 #include <QDBusPendingReply>
 #include <QImageReader>
@@ -215,17 +217,27 @@ QuickTools::QuickTools(QObject *parent) : QObject(parent) {
     });
 }
 void QuickTools::run(const QString &prog, const QStringList &args, std::function<void(int, const QString &)> done, int timeoutMs) {
-    if (QStandardPaths::findExecutable(prog).isEmpty()) { done(-1, QString()); return; }
-    auto *p = new QProcess(this);
+    const QString exe = QStandardPaths::findExecutable(prog);
+    if (exe.isEmpty()) { done(-1, QString()); return; }
     ++m_busy; emit busyChanged();
-    connect(p, &QProcess::finished, this, [this, p, done](int code) {
-        done(code, QString::fromUtf8(p->readAllStandardOutput())); p->deleteLater(); --m_busy; emit busyChanged();
+    // En un hilo aparte (lanzar un proceso duplica el panel entero: en el hilo de la interfaz costaba fotogramas)
+    static QThreadPool *pool = [] { auto *tp = new QThreadPool(QCoreApplication::instance()); tp->setMaxThreadCount(3); return tp; }();
+    QPointer<QuickTools> self(this);
+    pool->start([self, exe, args, done, timeoutMs] {
+        QProcess p;
+        p.start(exe, args);
+        int code = -1;
+        QString out;
+        if (p.waitForStarted(3000)) {
+            if (p.waitForFinished(timeoutMs)) { code = p.exitStatus() == QProcess::NormalExit ? p.exitCode() : -1; out = QString::fromUtf8(p.readAllStandardOutput()); }
+            else { p.kill(); p.waitForFinished(1000); }
+        }
+        QMetaObject::invokeMethod(QCoreApplication::instance(), [self, done, code, out] {
+            if (!self) return;
+            done(code, out);
+            --self->m_busy; emit self->busyChanged();
+        }, Qt::QueuedConnection);
     });
-    connect(p, &QProcess::errorOccurred, this, [this, p, done](QProcess::ProcessError e) {
-        if (e != QProcess::FailedToStart) return; done(-1, QString()); p->deleteLater(); --m_busy; emit busyChanged();
-    });
-    QTimer::singleShot(timeoutMs, p, [p] { if (p->state() != QProcess::NotRunning) p->kill(); });
-    p->start(prog, args);
 }
 QVariantList QuickTools::parseWifi(const QString &t) {
     QVariantList out; QStringList seen;
