@@ -511,7 +511,7 @@ LayerWindow {
     LayerWindow {
         layer: "top"; edges: ["top", "right"]; margins: [UiState.topInset + Math.round(14 * root.u) - 16, Math.round(14 * root.u) - 20, 0, 0]; scope: "bc-notify"
         width: Math.round(321 * root.u) + 40; height: Math.round(80 * root.u) + 36
-        shown: (Notifications.visible || root.notifLeaving) && !UiState.locked && !UiState.splashing
+        shown: (Notifications.visible || root.notifLeaving) && !UiState.locked && !UiState.splashing && !UiState.centerOpen && !UiState.notifCenterOpen   // sin encimarse al Centro de control ni al de notificaciones
         // Margen alrededor de la tarjeta: la sombra y el brillo del cristal no se cortan en el borde de la superficie
         Item { x: 20; y: 16
         NotificationCard {
