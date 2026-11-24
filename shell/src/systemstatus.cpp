@@ -99,17 +99,26 @@ void SystemStatus::run(const QString &program, const QStringList &args, std::fun
     const QString key = exe + ' ' + args.join(' ');
     if (m_running.contains(key)) return;      // la consulta anterior aún no ha terminado (p. ej. nmcli colgado)
     m_running.insert(key);
-    auto *p = new QProcess(this);
-    connect(p, &QProcess::finished, this, [this, p, done, key](int code, QProcess::ExitStatus) {
-        m_running.remove(key);
-        done(code, QString::fromUtf8(p->readAllStandardOutput()));
-        p->deleteLater();
+    // En un hilo aparte: lanzar un proceso duplica el panel entero (fork) y, en el hilo de la interfaz, eso costaba un
+    // fotograma cada 5 s (volumen, micrófono) y varios cada 15 s (red, Bluetooth, brillo)
+    // Grupo propio (2 hilos): una orden colgada (nmcli) no ocupa los hilos del cristal y de las imágenes
+    static QThreadPool *pool = [] { auto *tp = new QThreadPool(QCoreApplication::instance()); tp->setMaxThreadCount(2); return tp; }();
+    QPointer<SystemStatus> self(this);
+    pool->start([self, exe, args, done, key] {
+        QProcess p;
+        p.start(exe, args);
+        int code = -1;
+        QString out;
+        if (p.waitForStarted(3000)) {
+            if (p.waitForFinished(10000)) { code = p.exitStatus() == QProcess::NormalExit ? p.exitCode() : -1; out = QString::fromUtf8(p.readAllStandardOutput()); }
+            else { p.kill(); p.waitForFinished(1000); }
+        }
+        QMetaObject::invokeMethod(QCoreApplication::instance(), [self, done, key, code, out] {
+            if (!self) return;
+            self->m_running.remove(key);
+            done(code, out);
+        }, Qt::QueuedConnection);
     });
-    connect(p, &QProcess::errorOccurred, this, [this, p, done, key](QProcess::ProcessError e) {
-        if (e == QProcess::FailedToStart) { m_running.remove(key); done(-1, {}); p->deleteLater(); }
-    });
-    QTimer::singleShot(10000, p, [p] { if (p->state() != QProcess::NotRunning) p->kill(); });
-    p->start(exe, args);
 }
 
 void SystemStatus::readBattery() {
