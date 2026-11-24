@@ -88,6 +88,9 @@ public:
     // Ventana de medida terminada (expuesta para pruebas): devuelve true si ha rebajado el nivel en local
     bool frameWindow(qreal meanMs, qreal droppedPct);
 
+protected:
+    bool eventFilter(QObject *o, QEvent *e) override;
+
 signals:
     void changed();
     void statsChanged();

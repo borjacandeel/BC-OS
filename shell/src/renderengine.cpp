@@ -1,4 +1,7 @@
 #include "renderengine.h"
+#include <QTime>
+#include <QGuiApplication>
+#include <QEvent>
 #include <QTimer>
 #include <cstdio>
 #include <QCoreApplication>
@@ -276,8 +279,19 @@ void RenderEngine::watch(QQuickWindow *w) {
     m->win = w;
     m_meters.append(m);
     connect(w, &QObject::destroyed, this, [this, m] { m_meters.removeOne(m); delete m; });
-    // BC_FRAME_LOG=1: cada segundo, cuántos fotogramas ha dibujado cada superficie (diagnóstico de redibujados)
-    if (qEnvironmentVariableIsSet("BC_FRAME_LOG")) {
+    // Wayland: cada «configure» del compositor (Hyprland reorganiza las capas al abrir, cerrar o enfocar ventanas,
+    // cambiar de escritorio…) llega a Qt como un «expose» y Qt Quick redibuja la superficie ENTERA aunque no haya
+    // cambiado nada; con la capa del escritorio (pantalla completa) eso era un redibujado de 1920×1080 y un recompuesto
+    // completo en el compositor cada vez. El compositor conserva nuestro último búfer: los «expose» repetidos con la
+    // ventana ya visible y del mismo tamaño se descartan. BC_EXPOSE_ALL=1 lo desactiva.
+    if (QGuiApplication::platformName().startsWith(QLatin1String("wayland")) && qEnvironmentVariableIsSet("BC_EXPOSE_FILTER"))   // en pruebas: BC_EXPOSE_FILTER=1
+        w->installEventFilter(this);
+    // BC_FRAME_LOG=1 (o el archivo $XDG_RUNTIME_DIR/bc-frame-log, que pone bc-diagnostico-fps): cada segundo, cuántos
+    // fotogramas ha dibujado cada superficie (diagnóstico de redibujados). Con el archivo, se escribe en
+    // $XDG_RUNTIME_DIR/bc-fotogramas.log con la hora.
+    static const QString rt = qEnvironmentVariable("XDG_RUNTIME_DIR");
+    static const bool toFile = !rt.isEmpty() && QFileInfo::exists(rt + QStringLiteral("/bc-frame-log"));
+    if (qEnvironmentVariableIsSet("BC_FRAME_LOG") || toFile) {
         auto *count = new QAtomicInt(0);
         connect(w, &QQuickWindow::frameSwapped, w, [count] { count->ref(); }, Qt::DirectConnection);
         auto *t = new QTimer(w);
@@ -285,7 +299,10 @@ void RenderEngine::watch(QQuickWindow *w) {
             const int n = count->fetchAndStoreRelaxed(0);
             if (n > 0) {
                 const QString scope = w->property("scope").toString();
-                fprintf(stderr, "[fotogramas] %s %dx%d: %d/s\n", qPrintable(scope.isEmpty() ? w->title() : scope), w->width(), w->height(), n);
+                const QByteArray line = QStringLiteral("[fotogramas] %1 %2 %3x%4: %5/s\n").arg(QTime::currentTime().toString(QStringLiteral("HH:mm:ss")),
+                    scope.isEmpty() ? w->title() : scope).arg(w->width()).arg(w->height()).arg(n).toUtf8();
+                if (toFile) { QFile f(rt + QStringLiteral("/bc-fotogramas.log")); if (f.open(QIODevice::Append)) f.write(line); }
+                else fputs(line.constData(), stderr);
             }
         });
         connect(w, &QObject::destroyed, [count] { delete count; });
@@ -306,6 +323,20 @@ void RenderEngine::watch(QQuickWindow *w) {
             QMetaObject::invokeMethod(this, [this, mean, dropped] { frameWindow(mean, dropped); }, Qt::QueuedConnection);
         }
     }, Qt::DirectConnection);
+}
+
+bool RenderEngine::eventFilter(QObject *o, QEvent *e) {
+    if (e->type() == QEvent::Expose) {
+        auto *w = static_cast<QQuickWindow *>(o);
+        const bool now = w->isExposed();
+        const QSize sz = w->size() * w->devicePixelRatio();
+        const QVariant prevSize = w->property("_bcExposedSize");
+        const bool was = w->property("_bcExposed").toBool();
+        w->setProperty("_bcExposed", now);
+        w->setProperty("_bcExposedSize", sz);
+        if (was && now && prevSize.toSize() == sz) return true;   // repetido: nada que redibujar
+    }
+    return QObject::eventFilter(o, e);
 }
 
 bool RenderEngine::frameWindow(qreal meanMs, qreal droppedPct) {

@@ -1,0 +1,25 @@
+#!/bin/sh
+# Diagnóstico de fluidez: cuántas veces por segundo dibuja cada superficie del panel (barra, Dock, escritorio…).
+# En reposo debería ser 0; si una superficie a pantalla completa se dibuja sin parar, ahí están los tirones.
+#   bc-diagnostico-fps [segundos]   (por defecto 20)
+S="${1:-20}"
+RT="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+LOG="$RT/bc-fotogramas.log"
+rm -f "$LOG"; touch "$RT/bc-frame-log"
+echo "Reiniciando el panel con el contador de fotogramas…"
+pkill -f "bc-shell --panel" 2>/dev/null
+sleep 6
+: > "$LOG"
+echo "Midiendo $S segundos: NO toques nada los primeros 10; después usa el sistema con normalidad."
+sleep "$S"
+rm -f "$RT/bc-frame-log"
+echo
+echo "=== Fotogramas por segundo de cada superficie (hora, superficie, tamaño, fotogramas) ==="
+if [ -s "$LOG" ]; then cat "$LOG"; else echo "(ninguna superficie se ha dibujado: el panel está en reposo)"; fi
+echo
+echo "Resumen (total de fotogramas por superficie):"
+awk '{gsub("/s","",$NF); n[$3" "$4]+=$NF} END {for (k in n) printf "  %-28s %d\n", k, n[k]}' "$LOG" 2>/dev/null | sort -k3 -nr
+echo
+echo "Volviendo al panel normal…"
+pkill -f "bc-shell --panel" 2>/dev/null
+exit 0
