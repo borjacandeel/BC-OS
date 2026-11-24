@@ -611,12 +611,16 @@ LayerWindow {
                         width: pop.width; height: pop.height
                         NotificationCenter {
                             id: notifCenter
-                            x: pop.width - width - Theme.px(16) + (lzNC.on ? 0 : width / 3)
+                            // Solo se anima un desplazamiento corto desde la derecha. Antes se animaba «x», que también cambiaba
+                            // al cargarse el panel (su ancho), y el panel cruzaba media pantalla desde la izquierda.
+                            property real shift: lzNC.on ? 0 : Theme.px(48)
+                            x: pop.width - width - Theme.px(16) + shift
                             y: Theme.px(6)
                             opacity: lzNC.on ? 1 : 0
                             visible: opacity > 0
-                            Behavior on x { NumberAnimation { duration: Theme.d(Theme.durNotifyIn); easing.type: Theme.easeEmphasized } }
-                            Behavior on opacity { NumberAnimation { duration: Theme.d(Theme.durNotifyOut) } }
+                            // Como macOS: sale rápido y frena al final
+                            Behavior on shift { NumberAnimation { duration: Theme.d(260); easing.type: Easing.OutCubic } }
+                            Behavior on opacity { NumberAnimation { duration: Theme.d(180); easing.type: Easing.OutQuad } }
                         }
                     }
                 }

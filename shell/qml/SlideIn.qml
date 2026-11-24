@@ -20,7 +20,9 @@ Item {
 
     Translate { id: tr }
     Scale { id: sc; origin.x: root.originX; origin.y: root.originY }
-    Component.onCompleted: if (target) target.transform = [sc, tr]
+    // Paneles que se crean ya visibles (carga perezosa con Lazy): la animación de entrada también al crearse
+    // (antes solo al cambiar la visibilidad y esos paneles aparecían de golpe: portapapeles, lanzador…)
+    Component.onCompleted: { if (target) { target.transform = [sc, tr]; if (target.visible) Qt.callLater(root.play) } }
 
     function play() { if (root.target && !Theme.reducedMotion) anim.restart() }
     Connections {
@@ -29,10 +31,11 @@ Item {
     }
     ParallelAnimation {
         id: anim
-        NumberAnimation { target: tr; property: "x"; from: root.dx; to: 0; duration: root.duration; easing.type: Easing.OutCubic }
-        NumberAnimation { target: tr; property: "y"; from: root.dy; to: 0; duration: root.duration; easing.type: Easing.OutCubic }
-        NumberAnimation { target: root.fade ? root.target : null; property: "opacity"; from: 0; to: 1; duration: root.duration * 0.8; easing.type: Easing.OutQuad }
-        NumberAnimation { target: sc; properties: "xScale,yScale"; from: root.fromScale; to: 1; duration: root.duration * 1.25
+        // Duraciones con Theme.d: siguen el nivel gráfico (BC Adaptive Renderer) como el resto de animaciones
+        NumberAnimation { target: tr; property: "x"; from: root.dx; to: 0; duration: Theme.d(root.duration); easing.type: Easing.OutCubic }
+        NumberAnimation { target: tr; property: "y"; from: root.dy; to: 0; duration: Theme.d(root.duration); easing.type: Easing.OutCubic }
+        NumberAnimation { target: root.fade ? root.target : null; property: "opacity"; from: 0; to: 1; duration: Theme.d(root.duration * 0.8); easing.type: Easing.OutQuad }
+        NumberAnimation { target: sc; properties: "xScale,yScale"; from: root.fromScale; to: 1; duration: Theme.d(root.duration * 1.25)
                           easing.type: Easing.OutBack; easing.overshoot: 0.7 }
     }
 }

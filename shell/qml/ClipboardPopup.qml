@@ -8,8 +8,10 @@ Rectangle {
     width: Math.min(460, UiState.sw - 40)
     height: Math.min(440, UiState.sh - 120)
     radius: 20
-    color: Theme.popupFill
-    border.width: 1; border.color: Theme.hairline
+    // Golden Gate: cristal como el resto de paneles (antes, caja gris plana)
+    color: Theme.gg ? "transparent" : Theme.popupFill
+    border.width: Theme.gg ? 0 : 1; border.color: Theme.hairline
+    Glass { visible: Theme.gg; anchors.fill: parent; radius: card.radius; tintBoost: 0.3; z: -1 }
 
     function reset() { Clipboard.refresh(); list.currentIndex = 0; list.forceActiveFocus() }
 
