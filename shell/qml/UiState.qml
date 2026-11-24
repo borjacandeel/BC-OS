@@ -75,7 +75,9 @@ QtObject {
     property bool forceQuitOpen: false   // «Forzar salida de las aplicaciones»
     property bool emojiOpen: false       // «Emoji y símbolos»
     property bool screenshotOpen: false  // panel de capturas (⌘⇧5)
-    property bool stageManager: false    // Organizador visual (Stage Manager), solo con Hyprland
+    property bool stageManager: false
+    property string missionApp: ""     // Exposé de app: Mission Control solo con las ventanas de esta app
+    onMissionOpenChanged: if (!missionOpen) missionApp = ""    // Organizador visual (Stage Manager), solo con Hyprland
     property string shotMode: "seleccion"  // último modo del panel de capturas
     property bool recording: false       // grabación de pantalla en curso (botón ⏹ en la barra)
     readonly property bool popupOpen: !locked && (centerOpen || launcherOpen || startOpen || clipboardOpen || menu !== "" || powerAction !== ""
@@ -112,6 +114,7 @@ QtObject {
             else if (arg === "lock") { closePopups(); locked = true }
             else if (arg === "center") toggleCenter()
             else if (arg === "mission") toggleMission()
+            else if (arg.indexOf("expose:") === 0) { closePopups(); missionApp = arg.substring(7); missionOpen = true }
             else if (arg === "spotlight") toggleSpotlight()
             else if (arg === "clipboard") toggleClipboard()
             else if (arg === "widgetGallery") { closePopups(); widgetGalleryOpen = true }

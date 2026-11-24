@@ -25,7 +25,8 @@ Item {
 
     onOpenChanged: {
         if (open) {
-            wins = Sway.windows.filter(w => !w.minimized && current && w.workspace === current.name && w.rectW > 0)
+            wins = Sway.windows.filter(w => !w.minimized && current && w.workspace === current.name && w.rectW > 0
+                                            && (UiState.missionApp === "" || w.appId === UiState.missionApp))
             shot = ""
             Quick.capture(tag, outName === "" ? "" : origin.x + "," + origin.y + " " + Math.round(width) + "x" + Math.round(height))
             t = 0
@@ -51,6 +52,7 @@ Item {
     // ---- Barra de Spaces ---------------------------------------------------------------------
     Row {
         id: spacesRow
+        visible: UiState.missionApp === ""   // Exposé de app: sin barra de escritorios, como macOS
         anchors.horizontalCenter: parent.horizontalCenter
         y: px(18) - (1 - mc.t) * px(140)
         spacing: px(18)

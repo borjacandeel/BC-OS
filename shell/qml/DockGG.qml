@@ -455,6 +455,8 @@ Item {
         const items = []
         const ws = Sway.windows.filter(w => w.appId === m.appId)
         for (const w of ws) items.push({ label: w.title || m.name, cmd: "sway:exec swaymsg '[con_id=" + w.id + "]' focus" })
+        // Exposé de app (macOS): todas las ventanas de esta app, en Mission Control
+        if (ws.filter(w => !w.minimized).length > 1) items.push({ label: qsTr("Mostrar todas las ventanas"), cmd: "bc:expose:" + m.appId })
         if (ws.length) items.push({ sep: true })
         if (m.pinned) items.push({ label: qsTr("Quitar del Dock"), cmd: "bc:dock:unpin:" + m.key })
         items.push({ label: qsTr("Opciones"), items: [

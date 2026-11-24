@@ -86,7 +86,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [ ] 14 Paginación en Launchpad
 - [x] 15 Abrir Centro de Control
 - [~] 16 Mission Control (apertura y cierre verificados fotograma a fotograma; falta agrupación por app)
-- [ ] 17 Exposé de aplicación
+- [x] 17 Exposé de aplicación (Dock ▸ Mostrar todas las ventanas)
 - [~] 18 Cambio de escritorios (deslizamiento; fluido solo con Hyprland)
 - [x] 19 Selector de apps (Alt+Tab)
 - [~] 20 Spotlight (expansión; falta resplandor) / app Siri
