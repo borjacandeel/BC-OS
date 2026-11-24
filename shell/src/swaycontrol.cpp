@@ -257,7 +257,7 @@ void SwayControl::command(const QString &cmd) {
     if (!m_available) return;
     if (m_hypr) {
         const QStringList d = translateToHyprland(cmd, m_addr, m_activeWs);
-        if (!d.isEmpty()) QProcess::startDetached(m_exe, {"eval", d.join("; ")});
+        if (!d.isEmpty()) hyprEval(d.join("; "));
         m_debounce.start();
         return;
     }
@@ -320,7 +320,7 @@ void SwayControl::hyprConnect() {
             const QString target = "address:0x" + QString::fromLatin1(f.at(0));
             const QString lua = "hl.dispatch(hl.dsp.focus({ window = \"" + target + "\" })); "
                                 "hl.dispatch(hl.dsp.window.alter_zorder({ mode = \"top\", window = \"" + target + "\" }))";
-            QTimer::singleShot(40, this, [this, lua] { QProcess::startDetached(m_exe, {"eval", lua}); });
+            QTimer::singleShot(40, this, [this, lua] { hyprEval(lua); });
         }
         // Solo el título cambió (terminal con progreso, navegador cargando): como mucho una consulta cada 0,5 s y sin
         // retrasar las demás. El resto (abrir, cerrar, foco, escritorios…) a los 60 ms.
@@ -433,6 +433,15 @@ void SwayControl::refreshHypr() {
             }
         });
     }
+}
+
+// Orden Lua para Hyprland por su socket (como «hyprctl eval», sin lanzar un proceso justo cuando se abre una ventana).
+// Si Hyprland no responde «ok», se repite con hyprctl.
+void SwayControl::hyprEval(const QString &lua) {
+    if (m_hyprReqPath.isEmpty() || !QFileInfo::exists(m_hyprReqPath)) { QProcess::startDetached(m_exe, {"eval", lua}); return; }
+    hyprQuery("/eval " + lua.toUtf8(), [this, lua](bool ok, const QByteArray &out) {
+        if (!ok || !out.trimmed().startsWith("ok")) QProcess::startDetached(m_exe, {"eval", lua});
+    });
 }
 
 // Consulta a Hyprland por su socket de órdenes («j/clients»…), sin lanzar hyprctl: cada proceso nuevo duplicaba el

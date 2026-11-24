@@ -89,6 +89,7 @@ private:
     bool m_dirty = false;
     QString m_hyprReqPath;
     void hyprQuery(const QByteArray &req, std::function<void(bool, const QByteArray &)> done);
+    void hyprEval(const QString &lua);
     void doneRefresh();
     QFileSystemWatcher m_watch;
     bool m_busy = false;
