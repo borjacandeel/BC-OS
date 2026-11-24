@@ -302,6 +302,18 @@ región → **Instalar** → **Reiniciar**. También desde Terminal: `sudo bc-in
 
 También se prueba sin VirtualBox con QEMU (`qemu-system-aarch64 -M virt` + UEFI AAVMF); ver [`docs/development/BUILD.md`](docs/development/BUILD.md). También hay **ISO live** (arranca en RAM, con el instalador `sudo bc-install`). En la bienvenida elige **Máquina virtual**.
 
+### Requisitos
+
+| | Mínimos | Recomendados |
+|---|---|---|
+| Procesador | 64 bits, x86_64 o ARM64, 2 núcleos | 4 núcleos o más |
+| Memoria | 4 GB de RAM | 8 GB de RAM |
+| Disco | 20 GB libres | SSD con 40 GB libres |
+| Gráfica | Cualquiera: sin aceleración 3D funciona con el escritorio por software (sin desenfoque real) | Con aceleración 3D (Intel HD 620 o superior, AMD o NVIDIA): Hyprland con desenfoque real y animaciones al ritmo del monitor |
+| Pantalla | 1280×800 | 1920×1080 a 60 Hz o más |
+| Arranque | UEFI (en x86_64 también BIOS) | UEFI |
+| Internet | — | Para las actualizaciones automáticas |
+
 ## Versiones
 
 | Versión | Estado | Qué trae |
