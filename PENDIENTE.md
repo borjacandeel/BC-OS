@@ -57,6 +57,12 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] Log: «for_window [shell=xdg_shell] … doesn't support client side decorations» → excluir bc-* de la regla CSD.
 - [x] Dock: arrastrar iconos como macOS, «Quitar del Dock», minimizadas con miniatura; fish con colores; bc-actualizar sin conflictos.
 
+## Tirones en el portátil (Intel HD 620, Hyprland) — 2026-11-23/24
+- Medido por el creador: 40 fps con caídas a 20; sin desenfoque igual; sin sombras algo mejor; con debug:damage_blink TODA la pantalla parpadea en reposo; con bc-shell congelado (SIGSTOP) solo parpadea lo que toca → el panel redibuja una capa de pantalla completa.
+- [x] Frecuencia mínima de GPU Intel (bc-gpu-freq.service), sombras 14 px, new_render_scheduling=false.
+- [x] Panel sin procesos en el hilo de dibujo (Hyprland por socket, SystemStatus y QuickTools en hilos), baterías Bluetooth asíncronas, ajustes/recordatorios sin recargas falsas.
+- [ ] Causa exacta del redibujado de bc-desktop en Hyprland: no se reproduce en Xvfb ni en sway sin pantalla. Pedir al creador `bc-diagnostico-fps`. Candidato: «expose» repetidos de Qt Wayland tras cada configure de Hyprland → filtro en pruebas (BC_EXPOSE_FILTER=1), verificar en banco sway ARM (bcwork/tf3.sh).
+
 ## En curso 2026-11-23 noche (creador): categorías 2 (animaciones) y 3 (detalles visuales), todo a 60 fps mínimo, revisando cada apartado. Por tandas, con fotogramas y capturas antes/ahora.
 
 ## Animaciones de macOS a replicar (lista del creador, 73). Estado: [x] hecho · [~] parcial · [ ] falta

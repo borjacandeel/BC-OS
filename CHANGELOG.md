@@ -4,6 +4,9 @@ Formato basado en [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/). V
 
 ## [Sin publicar]
 
+## [Sin publicar] (llega con bc-actualizar)
+Ver build/RELEASE-NOTES.md: sin tirones en gráficas Intel (frecuencia mínima, sombras, panel sin procesos en el hilo de dibujo), rebote del Dock, cursor de texto, transición de Ajustes, GRUB al actualizar, bc-diagnostico-fps.
+
 ## [0.9.23-beta]
 Ver build/RELEASE-NOTES.md (genio en GPU, capturas, GRUB, energía, actualización automática, auditoría).
 
