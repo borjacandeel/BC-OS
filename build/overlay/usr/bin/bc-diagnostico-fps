@@ -17,8 +17,10 @@ echo
 echo "=== Fotogramas por segundo de cada superficie (hora, superficie, tamaño, fotogramas) ==="
 if [ -s "$LOG" ]; then cat "$LOG"; else echo "(ninguna superficie se ha dibujado: el panel está en reposo)"; fi
 echo
-echo "Resumen (total de fotogramas por superficie):"
-awk '{gsub("/s","",$NF); n[$3" "$4]+=$NF} END {for (k in n) printf "  %-28s %d\n", k, n[k]}' "$LOG" 2>/dev/null | sort -k3 -nr
+echo "Resumen por superficie (fotogramas dibujados · avisos «expose» del compositor):"
+awk '{for (i = 1; i <= NF; i++) { if ($i ~ /\/s$/) { v = $i; gsub("/s", "", v); n[$3" "$4] += v } if ($i ~ /\)$/) { e = $i; gsub("\\)", "", e); x[$3" "$4] += e } } }
+     END {for (k in n) printf "  %-28s %6d fotogramas · %d expose\n", k, n[k], x[k]}' "$LOG" 2>/dev/null | sort -k3 -nr
+echo "(Si una superficie grande tiene casi tantos «expose» como fotogramas, es el compositor quien la hace redibujar.)"
 echo
 echo "Volviendo al panel normal…"
 pkill -f "bc-shell --panel" 2>/dev/null

@@ -90,6 +90,7 @@ public:
 
 protected:
     bool eventFilter(QObject *o, QEvent *e) override;
+    static const bool s_exposeFilter;
 
 signals:
     void changed();
