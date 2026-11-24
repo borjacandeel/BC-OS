@@ -7,7 +7,7 @@ class AppIndex : public QObject {
     Q_OBJECT
     Q_PROPERTY(int count READ count NOTIFY changed)
 public:
-    struct Entry { QString id, name, exec, icon, comment, category, wmClass; bool terminal = false; };
+    struct Entry { QString id, name, exec, icon, comment, category, wmClass; bool terminal = false; bool flatpak = false; };
     explicit AppIndex(const QStringList &dirs = QStringList(), const QString &lang = QString(), QObject *parent = nullptr);
     int count() const { return m_entries.size(); }
     static bool isHiddenId(const QString &id);

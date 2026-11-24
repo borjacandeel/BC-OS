@@ -16,10 +16,23 @@ Item {
     readonly property int cols: 7
     signal launch(string id, string name)
     signal done()
-    function reset() { field.text = ""; cat = ""; all = Apps.search(""); pager.currentIndex = 0; field.forceActiveFocus() }
+    function reset() { editing = false; removing = null; field.text = ""; cat = ""; all = Apps.search(""); pager.currentIndex = 0; field.forceActiveFocus() }
+    // Mantener pulsado un icono: los iconos tiemblan y las apps Flatpak muestran ✕ para borrarlas (como las de la App
+    // Store en macOS). Clic fuera o Esc: termina.
+    property bool editing: false
+    property var removing: null
+    Keys.onEscapePressed: { if (removing) removing = null; else if (editing) editing = false; else done() }
+    function removeApp(a) {
+        removing = null
+        const id = a.id.replace(/\.desktop$/, "")
+        Launcher.run("flatpak", ["uninstall", "-y", "--noninteractive", id])
+        all = all.filter(x => x.id !== a.id)
+        reloadSoon.restart()
+    }
+    Timer { id: reloadSoon; interval: 6000; onTriggered: { Apps.reload(); lp.all = Apps.search(field.text) } }
 
-    // Clic fuera: se cierra (el escritorio se ve detrás, sin oscurecer)
-    MouseArea { anchors.fill: parent; onClicked: lp.done() }
+    // Clic fuera: se cierra (el escritorio se ve detrás, sin oscurecer); en modo edición, solo termina la edición
+    MouseArea { anchors.fill: parent; onClicked: { if (lp.editing) { lp.editing = false; lp.removing = null } else lp.done() } }
 
     property real zoom: 1
     onVisibleChanged: if (visible) { zoomOut.stop(); zoom = 0.94; zoomIn.restart() }
@@ -109,8 +122,17 @@ Item {
                             Repeater {
                                 model: lp.apps.slice(index * grid.perPage, (index + 1) * grid.perPage)
                                 delegate: Item {
+                                    id: cell
                                     required property var modelData
+                                    required property int index
                                     width: grid.cellW; height: grid.cellH
+                                    // Temblor de macOS: giro leve alterno, desfasado entre iconos vecinos
+                                    SequentialAnimation on rotation {
+                                        running: lp.editing && !Theme.reduced; loops: Animation.Infinite
+                                        NumberAnimation { to: cell.index % 2 ? 1.6 : -1.6; duration: 110; easing.type: Easing.InOutSine }
+                                        NumberAnimation { to: cell.index % 2 ? -1.6 : 1.6; duration: 110; easing.type: Easing.InOutSine }
+                                    }
+                                    Connections { target: lp; function onEditingChanged() { if (!lp.editing) cell.rotation = 0 } }
                                     Image {
                                         id: ic; anchors.horizontalCenter: parent.horizontalCenter; y: px(6)
                                         width: px(62); height: width; sourceSize: Qt.size(128, 128); smooth: true; mipmap: true; asynchronous: true
@@ -121,7 +143,17 @@ Item {
                                     Text { anchors.horizontalCenter: parent.horizontalCenter; anchors.top: ic.bottom; anchors.topMargin: px(8); width: parent.width - px(8)
                                            horizontalAlignment: Text.AlignHCenter; elide: Text.ElideRight; text: modelData.name; color: Theme.label
                                            font.family: Theme.font; font.pixelSize: px(13) }
-                                    MouseArea { id: am; anchors.fill: parent; hoverEnabled: true; onClicked: lp.launch(modelData.id, modelData.name) }
+                                    MouseArea { id: am; anchors.fill: parent; hoverEnabled: true
+                                                onClicked: { if (lp.editing) return; lp.launch(modelData.id, modelData.name) }
+                                                onPressAndHold: lp.editing = true }
+                                    // ✕ para borrar (solo apps Flatpak)
+                                    Rectangle {
+                                        visible: lp.editing && cell.modelData.flatpak === true
+                                        x: ic.x - px(6); y: ic.y - px(6); width: px(22); height: width; radius: width / 2
+                                        color: Theme.dark ? "#5A5A5E" : "#8E8E93"; border.width: 1; border.color: Qt.rgba(0, 0, 0, 0.25)
+                                        Text { anchors.centerIn: parent; text: "✕"; color: "white"; font.pixelSize: px(11); font.weight: Font.Bold }
+                                        MouseArea { anchors.fill: parent; anchors.margins: -px(4); onClicked: lp.removing = cell.modelData }
+                                    }
                                 }
                             }
                         }
@@ -157,6 +189,32 @@ Item {
             }
             Text { visible: lp.apps.length === 0; anchors.centerIn: grid; text: qsTr("Sin resultados"); color: Theme.labelSecondary
                    font.family: Theme.font; font.pixelSize: px(15) }
+        }
+    }
+
+    // Confirmación al borrar (como macOS)
+    Rectangle {
+        visible: lp.removing !== null
+        anchors.centerIn: parent
+        width: px(300); height: dcol.height + px(32); radius: px(18)
+        color: Theme.popupFill; border.width: 1; border.color: Theme.hairline
+        MouseArea { anchors.fill: parent }
+        Column {
+            id: dcol; x: px(16); y: px(16); width: parent.width - px(32); spacing: px(12)
+            Text { width: parent.width; wrapMode: Text.Wrap; horizontalAlignment: Text.AlignHCenter; color: Theme.label
+                   font.family: Theme.font; font.pixelSize: px(14); font.weight: Font.Bold
+                   text: lp.removing ? qsTr("¿Eliminar «%1»?").arg(lp.removing.name) : "" }
+            Text { width: parent.width; wrapMode: Text.Wrap; horizontalAlignment: Text.AlignHCenter; color: Theme.labelSecondary
+                   font.family: Theme.font; font.pixelSize: px(12); text: qsTr("Se borrará la app y sus datos.") }
+            Row {
+                anchors.horizontalCenter: parent.horizontalCenter; spacing: px(10)
+                Rectangle { width: px(120); height: px(30); radius: px(15); color: Theme.fill
+                            Text { anchors.centerIn: parent; text: qsTr("Cancelar"); color: Theme.label; font.family: Theme.font; font.pixelSize: px(13) }
+                            MouseArea { anchors.fill: parent; onClicked: lp.removing = null } }
+                Rectangle { width: px(120); height: px(30); radius: px(15); color: "#FF3B30"
+                            Text { anchors.centerIn: parent; text: qsTr("Eliminar"); color: "white"; font.family: Theme.font; font.pixelSize: px(13); font.weight: Font.DemiBold }
+                            MouseArea { anchors.fill: parent; onClicked: lp.removeApp(lp.removing) } }
+            }
         }
     }
 }

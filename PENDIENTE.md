@@ -122,7 +122,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 49 HUD de volumen y brillo
 - [x] 50 Menús contextuales (aparición/desvanecimiento verificados fotograma a fotograma)
 - [~] 51 Popovers con flecha
-- [ ] 52 Temblor de iconos en Launchpad (reorganizar/borrar)
+- [x] 52 Temblor de iconos en Launchpad (mantener pulsado; ✕ en apps Flatpak con confirmación)
 - [ ] 53 Agitar el ratón para agrandar el cursor
 - [x] 54 Cursor de texto con parpadeo suave (TextCursor.qml, color de acento)
 - [ ] 55 Barra de pestañas compacta (navegador)

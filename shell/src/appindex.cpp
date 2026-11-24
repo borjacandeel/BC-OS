@@ -78,6 +78,7 @@ void AppIndex::reload() {
             Entry e;
             if (!parseDesktop(QString::fromUtf8(file.readAll()), m_lang, e)) { byId.remove(f); continue; }
             e.id = f;
+            e.flatpak = dir.contains(QLatin1String("/flatpak/"));   // se puede borrar desde Aplicaciones (como las de la App Store)
             byId.insert(f, e);  // la ruta posterior (usuario) pisa a la del sistema
         }
     }
@@ -154,7 +155,7 @@ QVariantList AppIndex::search(const QString &query) const {
     std::stable_sort(hits.begin(), hits.end(), [](const Scored &a, const Scored &b) { return a.score > b.score; });
     for (const Scored &h : hits)
         out.append(QVariantMap{{"id", h.e->id}, {"name", h.e->name}, {"icon", h.e->icon}, {"comment", h.e->comment},
-                               {"iconPath", resolveIcon(h.e->icon)}, {"category", h.e->category}});
+                               {"iconPath", resolveIcon(h.e->icon)}, {"category", h.e->category}, {"flatpak", h.e->flatpak}});
     return out;
 }
 

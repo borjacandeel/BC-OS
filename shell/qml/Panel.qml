@@ -877,7 +877,7 @@ LayerWindow {
                             visible: opacity > 0 && !UiState.classic
                             opacity: lzLP.on ? 1 : 0
                             Behavior on opacity { NumberAnimation { duration: Theme.d(lzLP.on ? Theme.durLaunchpad : 220); easing.type: Theme.easeStandard } }
-                            Component.onCompleted: launchpad.reset()
+                            Component.onCompleted: { launchpad.reset(); if (AppConfig.demo === "launchpad-editar") Qt.callLater(() => launchpad.editing = true) }
                             onDone: UiState.closePopups()
                             onLaunch: (id, name) => { UiState.closePopups(); if (!Apps.launch(id)) Notifications.push("BC OS", name, qsTr("No se pudo abrir la aplicación"), "", 4000) }
                             Connections { target: UiState; function onLauncherOpenChanged() { if (UiState.classic) return; if (UiState.launcherOpen) launchpad.reset(); else launchpad.leave() } }
@@ -997,7 +997,7 @@ LayerWindow {
         else if (d === "notif") UiState.notifCenterOpen = true
         else if (d === "spotlight") UiState.spotlightOpen = true
         else if (d === "spotlight-q") { UiState.spotlightOpen = true; demoQ.start() }
-        else if (d === "launchpad") UiState.launcherOpen = true
+        else if (d === "launchpad" || d === "launchpad-editar") UiState.launcherOpen = true
         else if (d === "menu") UiState.menu = "system"
         else if (d === "light") Settings.appearance = "light"
         else if (d === "widgets") UiState.widgetGalleryOpen = true
