@@ -6,12 +6,15 @@ Llegan también a los equipos instalados con `sudo bc-actualizar` (después, rei
 - La gráfica Intel ya no baja a ~300 MHz entre fotogramas: su frecuencia mínima sube a 500 MHz (servicio `bc-gpu-freq`). Es el arreglo que recomienda la wiki de Hyprland para los tirones y las caídas a 20–40 fps en gráficas Intel integradas.
 - Sombras de las ventanas más ligeras en gráficas integradas (14 px en vez de 26), que era lo que más costaba. Con gráfica dedicada siguen grandes.
 - Hyprland sin triple búfer automático: iba más fluido en la Intel HD 620.
+- Sin animaciones dobles: Hyprland ya no funde los menús, Spotlight, Mission Control, avisos y demás capas que el escritorio anima por su cuenta.
+- El panel ya no reenvía a Hyprland la configuración entera de sus capas al abrir un menú. Cada envío hacía que se redibujaran el escritorio, la barra y el Dock.
+- Sway (máquinas virtuales): consultas al compositor por su socket, sin lanzar `swaymsg`.
 - El panel ya no lanza procesos desde el hilo que dibuja:
   - consulta a Hyprland por su socket;
   - volumen, red, Bluetooth, brillo y música, en un hilo aparte;
   - el widget de baterías ya no bloquea la interfaz hasta 1,5 s cada minuto.
 - Los ajustes y los recordatorios solo se recargan si cambian de verdad.
-- Nueva orden `bc-diagnostico-fps`: muestra cuántas veces por segundo dibuja cada parte del escritorio.
+- Nueva orden `bc-diagnostico-fps`: muestra cuántas veces por segundo dibuja cada parte del escritorio y si es el compositor quien lo provoca.
 
 **Detalles de macOS**
 - El Dock rebota el icono de una app que pide atención (mensaje nuevo, descarga terminada…).
