@@ -20,6 +20,7 @@ Llegan también a los equipos instalados con `sudo bc-actualizar` (después, rei
 - Nueva orden `bc-diagnostico-fps`: muestra cuántas veces por segundo dibuja cada parte del escritorio y si es el compositor quien lo provoca.
 
 **Detalles de macOS**
+- **Dock a la izquierda, abajo o a la derecha**: Ajustes ▸ Escritorio y Dock ▸ Posición en la pantalla. Los iconos quedan derechos y los widgets se apartan.
 - El Dock rebota el icono de una app que pide atención (mensaje nuevo, descarga terminada…).
 - Cursor de texto del color de acento con parpadeo suave en todos los campos.
 - Ajustes del Sistema: la página nueva entra con un leve deslizamiento.
