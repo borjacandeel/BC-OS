@@ -57,8 +57,10 @@ Item {
         id: bar
         focus: true
         anchors.horizontalCenter: parent.horizontalCenter
-        y: parent.height - height - sp.px(120) + (sp.on ? 0 : sp.px(12))
-        Behavior on y { NumberAnimation { duration: Theme.d(Theme.durPopover); easing.type: Theme.easeEmphasized } }
+        // Solo se anima el desplazamiento corto (no «y», que cambia al cargarse el panel y lo haría cruzar la pantalla)
+        property real shift: sp.on ? 0 : sp.px(12)
+        y: parent.height - height - sp.px(120) + shift
+        Behavior on shift { NumberAnimation { duration: Theme.d(Theme.durPopover); easing.type: Easing.OutCubic } }
         width: row.width + sp.px(20); height: sp.px(56)
         Keys.onEscapePressed: UiState.closePopups()
         Keys.onReturnPressed: sp.go()
