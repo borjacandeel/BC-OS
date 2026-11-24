@@ -31,7 +31,7 @@ set(BC_QML_FILES
     qml/LoginPanel.qml qml/PowerButton.qml qml/PowerDialog.qml qml/BigClock.qml qml/LockScreen.qml
     qml/Splash.qml qml/AppWindow.qml qml/MonitorApp.qml qml/SettingsApp.qml qml/LauncherPanel.qml qml/StoreApp.qml
     qml/Glass.qml qml/MenuBar.qml qml/DesktopWidgets.qml qml/DockGG.qml qml/ControlCenterGG.qml
-    qml/NotificationCenter.qml qml/Spotlight.qml qml/Launchpad.qml qml/Genie.qml qml/MissionControl.qml qml/AppSwitcher.qml qml/DesktopIcons.qml qml/CalculatorApp.qml qml/NotesApp.qml qml/PreviewApp.qml qml/RemindersApp.qml qml/CalendarApp.qml qml/SidebarGlass.qml qml/MusicApp.qml qml/InstallerApp.qml qml/TextCursor.qml)
+    qml/NotificationCenter.qml qml/Spotlight.qml qml/Launchpad.qml qml/Genie.qml qml/MissionControl.qml qml/AppSwitcher.qml qml/DesktopIcons.qml qml/CalculatorApp.qml qml/NotesApp.qml qml/PreviewApp.qml qml/RemindersApp.qml qml/CalendarApp.qml qml/SidebarGlass.qml qml/MusicApp.qml qml/InstallerApp.qml qml/TextCursor.qml qml/FieldInset.qml)
 set(BC_GREETER_QML qml/Greeter.qml qml/LoginPanel.qml qml/PowerButton.qml qml/PowerDialog.qml qml/BigClock.qml
     qml/Theme.qml qml/Icons.qml qml/IconCache.qml qml/Icon.qml qml/Wallpaper.qml qml/Brand.qml qml/UiState.qml qml/AppMenus.qml qml/TextCursor.qml)
 foreach(f ${BC_QML_FILES} qml/Greeter.qml)

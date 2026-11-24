@@ -132,6 +132,7 @@ AppWindow {
                 width: Math.max(30, Math.min(220, win.width - 2 * win.sh - win.sideW - 470)); height: 28; radius: 8; color: Theme.tileFill
                 clip: true
                 Icon { x: 8; anchors.verticalCenter: parent.verticalCenter; name: Icons.search; size: 14; color: Theme.textSecondary }
+                FieldInset { radius: parent.radius; focused: search.activeFocus }   // hundido y anillo de foco, como macOS
                 TextInput {
                     cursorDelegate: TextCursor {}
                     id: search

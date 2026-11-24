@@ -89,6 +89,7 @@ AppWindow {
             Rectangle {
                 width: parent.width; height: 28; radius: 8; color: Theme.tileFill
                 Icon { x: 8; anchors.verticalCenter: parent.verticalCenter; name: Icons.search; size: 14; color: Theme.textSecondary }
+                FieldInset { radius: parent.radius; focused: false }   // hundido y anillo de foco, como macOS
                 TextInput {
                     cursorDelegate: TextCursor {}
                     id: field; x: 28; width: parent.width - 34; anchors.verticalCenter: parent.verticalCenter

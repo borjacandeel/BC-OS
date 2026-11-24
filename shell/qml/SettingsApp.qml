@@ -237,6 +237,7 @@ AppWindow {
             x: 10; y: 8; width: parent.width - 20; height: Theme.gg ? 30 : 28; radius: Theme.gg ? 15 : 8; color: Theme.tileFill
             border.width: Theme.gg ? 1 : 0; border.color: Theme.lightUi ? Qt.rgba(0, 0, 0, 0.08) : Qt.rgba(1, 1, 1, 0.10)
             Icon { x: 10; anchors.verticalCenter: parent.verticalCenter; name: Icons.search; size: 14; color: Theme.textSecondary }
+            FieldInset { radius: parent.radius; focused: q.activeFocus }   // hundido y anillo de foco, como macOS
             TextInput {
                 cursorDelegate: TextCursor {}
                 id: q; x: 30; width: parent.width - 36; anchors.verticalCenter: parent.verticalCenter; color: Theme.textPrimary
