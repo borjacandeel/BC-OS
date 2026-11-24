@@ -25,6 +25,7 @@ Llegan también a los equipos instalados con `sudo bc-actualizar` (después, rei
 - Ajustes del Sistema: la página nueva entra con un leve deslizamiento.
 - Menús con los atajos en el orden de macOS (⌃⌥⇧⌘) y ⎋ para Esc.
 - Buscadores de las apps con relieve hundido y anillo de foco del color de acento.
+- Archivos ▸ Columnas como el Finder: todas las carpetas de la ruta y desplazamiento suave a la columna nueva.
 - Sombra suave bajo los iconos del escritorio.
 
 **Arreglos**

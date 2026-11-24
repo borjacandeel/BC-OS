@@ -102,7 +102,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 30 Captura de pantalla → miniatura flotante abajo a la derecha
 - [x] 31 Hojas de diálogo (Sheets)
 - [~] 32 Vista rápida (zoom de expansión)
-- [ ] 33 Desplazamiento en columnas del Finder
+- [x] 33 Desplazamiento en columnas del Finder (todas las carpetas de la ruta, deslizamiento suave)
 - [~] 34 Galería / Cover Flow en Archivos
 - [ ] 35 Vuelo de archivos al Dock o carpetas
 - [ ] 36 Carpetas en Launchpad
