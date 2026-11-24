@@ -282,6 +282,9 @@ private slots:
                  SwayControl::translateToHyprland("[con_id=" + t + "] focus", addr, "1"));
         QCOMPARE(SwayControl::translateToHyprland("exec swaymsg '[app_id=\"foot\"]' kill", addr, "1").size(), 1);
         QVERIFY(!SwayControl::translateToHyprland("exec swaymsg workspace next", addr, "1").isEmpty());
+        // Todas las órdenes de los menús tienen traducción en Hyprland
+        for (const char *c : {"floating toggle", "fullscreen toggle", "kill", "move scratchpad", "exec xdg-open https://example.org"})
+            QVERIFY2(!SwayControl::translateToHyprland(QString::fromLatin1(c), addr, "1").isEmpty(), c);
     }
     void arbolDeSway() {
         const QByteArray j = R"({"type":"root","nodes":[{"type":"output","nodes":[
