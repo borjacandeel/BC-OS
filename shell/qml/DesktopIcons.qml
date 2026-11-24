@@ -104,6 +104,9 @@ Item {
             width: desk.cellW; height: desk.cellH
             Rectangle { anchors.horizontalCenter: parent.horizontalCenter; y: px(2); width: px(68); height: px(62); radius: px(6)
                         color: desk.isSel(ic.name) ? Qt.rgba(1, 1, 1, 0.16) : "transparent"; border.width: desk.isSel(ic.name) ? 1 : 0; border.color: Qt.rgba(1, 1, 1, 0.3) }
+            // Sombra de contacto bajo el icono, como en el escritorio de macOS (dos óvalos difusos: sin efectos ni capas)
+            Rectangle { anchors.horizontalCenter: parent.horizontalCenter; y: px(57); width: px(48); height: px(8); radius: height / 2; color: Qt.rgba(0, 0, 0, 0.18) }
+            Rectangle { anchors.horizontalCenter: parent.horizontalCenter; y: px(58); width: px(36); height: px(5); radius: height / 2; color: Qt.rgba(0, 0, 0, 0.22) }
             FileGlyph { visible: ic.kind !== "imagen" || dthumb.status !== Image.Ready; anchors.horizontalCenter: parent.horizontalCenter; y: px(6); kind: ic.kind; path: ic.filePath; width: px(64); height: px(54) }
             Rectangle { visible: dthumb.status === Image.Ready; anchors.centerIn: dthumb; width: dthumb.paintedWidth + px(4); height: dthumb.paintedHeight + px(4); color: "white"; radius: px(2) }
             Image { id: dthumb; visible: status === Image.Ready; anchors.horizontalCenter: parent.horizontalCenter; y: px(8); width: px(60); height: px(52)
