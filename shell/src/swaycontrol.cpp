@@ -11,6 +11,7 @@
 #include <QProcess>
 #include <QTimer>
 #include <memory>
+#include <cstring>
 
 namespace {
 void walk(const QJsonObject &n, bool inScratch, QVariantList &out, const QString &ws = QString(), const QString &outName = QString()) {
@@ -118,11 +119,10 @@ void SwayControl::refresh() {
     if (m_hypr) { refreshHypr(); return; }
     if (!m_available) return;
     m_busy = true;
-    auto *p = new QProcess(this);
-    connect(p, &QProcess::finished, this, [this, p](int code) {
+    query("get_tree", [this](const QByteArray &tree) {
         doneRefresh();
-        if (code == 0) {
-            const QVariantList w = parseTree(p->readAllStandardOutput());
+        if (!tree.isEmpty()) {
+            const QVariantList w = parseTree(tree);
             QStringList ids;
             int fid = -1;
             QString fapp, ftitle;
@@ -150,29 +150,60 @@ void SwayControl::refresh() {
                 emit windowsChanged();
             }
         }
-        p->deleteLater();
     });
-    connect(p, &QProcess::errorOccurred, this, [this, p](QProcess::ProcessError e) {
-        if (e != QProcess::FailedToStart) return;
-        m_busy = false; p->deleteLater();
-    });
-    QTimer::singleShot(5000, p, [this, p] { if (p->state() != QProcess::NotRunning) { m_busy = false; p->kill(); } });
-    p->start(m_exe, {"-t", "get_tree", "-r"});
     query("get_workspaces", [this](const QByteArray &j) {
+        if (j.isEmpty()) return;
         const QVariantList ws = parseWorkspaces(j);
         if (ws != m_workspaces) { m_workspaces = ws; emit workspacesChanged(); }
     });
     if (++m_inputTick % 6 == 1) query("get_inputs", [this](const QByteArray &j) {
+        if (j.isEmpty()) return;
         const QString l = parseLayout(j);
         if (l != m_layout) { m_layout = l; emit layoutChanged(); }
     });
 }
 
+// Consulta a sway por su socket IPC (sin lanzar swaymsg: cada proceso duplicaba el panel en el hilo de la interfaz y
+// con ventanas externas abiertas se consultaba cada 600 ms). Si no hay socket, swaymsg. Sin respuesta: done(vacío).
 void SwayControl::query(const QString &type, std::function<void(const QByteArray &)> done) {
-    auto *q = new QProcess(this);
-    connect(q, &QProcess::finished, this, [q, done](int code) { if (code == 0) done(q->readAllStandardOutput()); q->deleteLater(); });
-    connect(q, &QProcess::errorOccurred, q, [q](QProcess::ProcessError e) { if (e == QProcess::FailedToStart) q->deleteLater(); });
-    q->start(m_exe, {"-t", type, "-r"});
+    static const QHash<QString, quint32> types{{"get_workspaces", 1}, {"get_tree", 4}, {"get_inputs", 100}};
+    const QString sock = qEnvironmentVariable("SWAYSOCK");
+    if (sock.isEmpty() || !types.contains(type)) {
+        auto *q = new QProcess(this);
+        connect(q, &QProcess::finished, this, [q, done](int code) { done(code == 0 ? q->readAllStandardOutput() : QByteArray()); q->deleteLater(); });
+        connect(q, &QProcess::errorOccurred, q, [q, done](QProcess::ProcessError e) { if (e == QProcess::FailedToStart) { done({}); q->deleteLater(); } });
+        q->start(m_exe, {"-t", type, "-r"});
+        return;
+    }
+    auto *s = new QLocalSocket(this);
+    auto buf = std::make_shared<QByteArray>();
+    auto fired = std::make_shared<bool>(false);
+    auto finish = [s, done, fired](const QByteArray &payload) {
+        if (*fired) return;
+        *fired = true;
+        s->disconnect();
+        s->abort();
+        s->deleteLater();
+        done(payload);
+    };
+    const quint32 t = types.value(type);
+    connect(s, &QLocalSocket::connected, s, [s, t] {
+        QByteArray msg("i3-ipc");
+        const quint32 len = 0;
+        msg.append(reinterpret_cast<const char *>(&len), 4).append(reinterpret_cast<const char *>(&t), 4);
+        s->write(msg);
+        s->flush();
+    });
+    connect(s, &QLocalSocket::readyRead, s, [s, buf, finish] {
+        *buf += s->readAll();
+        if (buf->size() < 14) return;
+        quint32 len;
+        memcpy(&len, buf->constData() + 6, 4);
+        if (buf->size() >= 14 + int(len)) finish(buf->mid(14, len));
+    });
+    connect(s, &QLocalSocket::errorOccurred, s, [finish](QLocalSocket::LocalSocketError) { finish({}); });
+    QTimer::singleShot(5000, s, [finish] { finish({}); });
+    s->connectToServer(sock);
 }
 
 QVariantList SwayControl::parseWorkspaces(const QByteArray &json) {
