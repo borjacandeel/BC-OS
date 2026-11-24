@@ -32,6 +32,7 @@ Llegan también a los equipos instalados con `sudo bc-actualizar` (después, rei
   - el portapapeles y el lanzador ya no aparecen de golpe;
   - las animaciones de entrada siguen el nivel gráfico del equipo.
 - El portapapeles tiene cristal como el resto de paneles.
+- Con Hyprland, el menú del Dock (ir a una ventana, Ocultar, Salir) y «Escritorio siguiente» funcionan: antes no hacían nada.
 - El aviso emergente ya no queda encimado al Centro de control.
 - El widget de música del Centro de control vuelve a mostrar lo que suena.
 - Al actualizar, los equipos con systemd-boot pasan una vez al GRUB de BC OS con su tema (UEFI x86_64 sin Secure Boot). Para evitarlo: `sudo touch /etc/bc/sin-grub`.
