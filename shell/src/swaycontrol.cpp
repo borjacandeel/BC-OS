@@ -492,7 +492,9 @@ QStringList SwayControl::translateToHyprland(const QString &swayCmd, const QHash
     auto ws = [](const QString &n) { bool num = false; n.toInt(&num); return num ? n : luaStr(n); };
     if (cmd.startsWith("exec ")) {
         const QString e = cmd.mid(5).trimmed();
-        if (e.startsWith("swaymsg")) return {};   // órdenes internas de sway: aquí no aplican
+        // «exec swaymsg '[con_id=5]' focus» (menú del Dock, «Escritorio siguiente»…): se traduce la orden de sway que
+        // lleva dentro (antes se descartaba y en Hyprland esas opciones no hacían nada)
+        if (e.startsWith("swaymsg")) { QString inner = e.mid(7).trimmed(); inner.remove('\''); return inner.isEmpty() ? QStringList() : translateToHyprland(inner, addr, activeWs); }
         return {d("hl.dsp.exec_cmd(" + luaStr(e) + ")")};
     }
     if (cmd.startsWith("output ") && cmd.contains(" bg ")) {

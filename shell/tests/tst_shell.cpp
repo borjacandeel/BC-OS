@@ -277,6 +277,11 @@ private slots:
         QCOMPARE(SwayControl::translateToHyprland("exec bc-shell --app files", addr, "1"),
                  QStringList{"hl.dispatch(hl.dsp.exec_cmd([==[bc-shell --app files]==]))"});
         QCOMPARE(SwayControl::translateToHyprland("kill", addr, "1"), QStringList{"hl.dispatch(hl.dsp.window.close())"});
+        // Menú del Dock: «exec swaymsg '[con_id=N]' focus» se traduce a la orden de dentro (antes se descartaba)
+        QCOMPARE(SwayControl::translateToHyprland("exec swaymsg '[con_id=" + t + "]' focus", addr, "1"),
+                 SwayControl::translateToHyprland("[con_id=" + t + "] focus", addr, "1"));
+        QCOMPARE(SwayControl::translateToHyprland("exec swaymsg '[app_id=\"foot\"]' kill", addr, "1").size(), 1);
+        QVERIFY(!SwayControl::translateToHyprland("exec swaymsg workspace next", addr, "1").isEmpty());
     }
     void arbolDeSway() {
         const QByteArray j = R"({"type":"root","nodes":[{"type":"output","nodes":[
