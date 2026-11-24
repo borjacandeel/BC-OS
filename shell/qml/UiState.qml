@@ -25,6 +25,9 @@ QtObject {
     property real sw: scr ? scr.width : 1280
     property real sh: scr ? scr.height : 800
     property bool splashing: false
+    // Hueco que deja el Dock a un lado (los widgets e iconos del escritorio se apartan); lo fija Panel.qml
+    property real dockLeftInset: 0
+    property real dockRightInset: 0
     property var minShots: ({})          // id de ventana minimizada → captura (miniatura en el Dock)
     property rect trashRect: Qt.rect(0, 0, 0, 0)   // Papelera del Dock en coordenadas de pantalla (soltar archivos)
     property bool trashHover: false

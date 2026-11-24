@@ -45,12 +45,12 @@ Item {
         for (const k of active) {
             const h = heights[k] || Theme.widgetMediumH, small = smalls.indexOf(k) >= 0
             if (small && half) {
-                if (k === id) return Qt.point(px(x + Theme.widgetSmall + Theme.widgetGap), px(rowY))
+                if (k === id) return Qt.point(px(x + Theme.widgetSmall + Theme.widgetGap) + UiState.dockLeftInset, px(rowY))
                 half = false; y = rowY + h + Theme.widgetGap; continue
             }
             if (half) { half = false; y = rowY + Theme.widgetSmall + Theme.widgetGap }
             if (y + h > maxY && y > Theme.widgetY) { x += Theme.widgetW + Theme.widgetGap; y = Theme.widgetY }
-            if (k === id) return Qt.point(px(x), px(y))
+            if (k === id) return Qt.point(px(x) + UiState.dockLeftInset, px(y))
             if (small) { half = true; rowY = y } else y += h + Theme.widgetGap
         }
         return Qt.point(px(Theme.widgetX), px(Theme.widgetY))

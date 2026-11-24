@@ -16,6 +16,13 @@ Item {
     readonly property real plateH: bs + 2 * padY
     readonly property real sepW: px(Theme.dockSeparatorGap) * 2 + px(Theme.dockSeparatorW)
     readonly property real maxIcon: bs * (1 + Theme.dockMagnify)
+    // Dock a un lado (Ajustes ▸ Escritorio y Dock ▸ Posición): el Panel gira el Dock entero ±90° y aquí se enderezan
+    // iconos y etiquetas; abajo, «turn» es 0
+    property real turn: 0
+    readonly property bool vertical: turn !== 0
+    // A la derecha: además se refleja (para que el primer icono quede arriba, como macOS) y cada icono se vuelve a reflejar
+    property bool mirrored: false
+    transform: Scale { origin.x: dock.width / 2; origin.y: dock.height / 2; yScale: dock.mirrored ? -1 : 1 }
     signal launch(string kind, string name)
     signal launchDesktop(string id, string name)
 
@@ -316,6 +323,8 @@ Item {
         Item {
             id: art
             width: cell.sz; height: cell.sz
+            rotation: -dock.turn   // con el Dock a un lado, el icono se queda derecho
+            transform: Scale { origin.x: art.width / 2; origin.y: art.height / 2; xScale: dock.mirrored ? -1 : 1 }
             anchors.bottom: parent.bottom; anchors.bottomMargin: dock.padY + cell.jump - cell.dragDy
             opacity: ma.dragging && dock.dragOut ? 0.45 : 1
             // Ventana minimizada: su miniatura real (captura) y el icono de la app pequeño en la esquina, como macOS
@@ -382,7 +391,11 @@ Item {
         // Nombre sobre el icono al pasar (vidrio)
         Item {
             visible: ma.containsMouse && !ma.dragging
-            anchors.horizontalCenter: art.horizontalCenter; y: art.y - height - px(10)
+            // Con el Dock a un lado, la etiqueta queda al costado del icono y derecha (centro a medio ancho del borde)
+            anchors.horizontalCenter: art.horizontalCenter; y: art.y - px(10) - (dock.vertical ? width / 2 + height / 2 : height)
+            rotation: -dock.turn
+            transform: Scale { origin.x: lblBox.width / 2; origin.y: lblBox.height / 2; xScale: dock.mirrored ? -1 : 1 }
+            id: lblBox
             width: lbl.implicitWidth + px(20); height: px(26)
             Glass { anchors.fill: parent; radius: height / 2; tintBoost: 0.4; shadow: false }
             Text { id: lbl; anchors.centerIn: parent; text: cell.name; color: Theme.label; font.family: Theme.font; font.pixelSize: px(13) }

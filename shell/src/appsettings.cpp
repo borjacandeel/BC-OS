@@ -131,6 +131,8 @@ void AppSettings::reload() {
     m_glass = qBound(0.0, s.value("cristal", 0.4).toDouble(), 1.0);
     m_highlight = s.value("resaltado", "").toString();
     m_widgetStyle = s.value("estiloWidgets", "").toString();
+    m_dockPosition = s.value("dockPosicion", "bottom").toString();
+    if (m_dockPosition != "left" && m_dockPosition != "right") m_dockPosition = "bottom";
     m_dockAutohide = s.value("dockOcultar", false).toBool();
     m_dockMagnify = s.value("dockAmpliar", true).toBool();
     m_dockSize = qBound(32, s.value("dockTamano", 49).toInt(), 96);
@@ -180,6 +182,11 @@ void AppSettings::setHighlight(const QString &c) {
     static const QRegularExpression ok("^(#[0-9A-Fa-f]{6})?$");
     if (!ok.match(c).hasMatch() || c == m_highlight) return;
     m_highlight = c; store("resaltado", c);
+}
+void AppSettings::setDockPosition(const QString &p) {
+    const QString v = (p == "left" || p == "right") ? p : QStringLiteral("bottom");
+    if (v == m_dockPosition) return;
+    m_dockPosition = v; store("dockPosicion", v);
 }
 void AppSettings::setWidgetStyle(const QString &st) {
     const QString v = (st == "oscuro" || st == "traslucido" || st == "tintado") ? st : QString();

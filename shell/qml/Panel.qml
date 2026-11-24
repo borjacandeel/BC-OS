@@ -90,6 +90,11 @@ LayerWindow {
             root.seenWins = now
         }
     }
+    // Destino del genio en la pantalla: el hueco de minimizadas del Dock (también con el Dock girado a un lado)
+    function dockTarget() {
+        const p = dockGG.mapToItem(null, dockGG.minimizeTarget.x, dockGG.minimizeTarget.y)
+        return Qt.point(p.x + dockWin.originX, p.y + dockWin.originY + (dockWin.side ? UiState.topInset : 0))
+    }
     function fadeIn(id) {
         if (Sway.hyprland) return   // Hyprland anima la apertura
         fading[id] = 0.35
@@ -122,9 +127,9 @@ LayerWindow {
         const shot = genieShots[id]
         if (!shot || UiState.classic || Theme.reduced || !Render.genie) { Sway.command("[con_id=" + id + "] scratchpad show"); return }
         geniePending = { id: id, rect: shot.rect, back: true }
-        fxBox(shot.rect, Qt.point(dockGG.minimizeTarget.x + dockWin.originX, dockGG.minimizeTarget.y + dockWin.originY), dockGG.bs)
+        fxBox(shot.rect, root.dockTarget(), dockGG.bs)
         genieWin.shown = true
-        genie.run("file://" + shot.path, shot.rect, Qt.point(dockGG.minimizeTarget.x + dockWin.originX, dockGG.minimizeTarget.y + dockWin.originY), dockGG.bs, true)
+        genie.run("file://" + shot.path, shot.rect, root.dockTarget(), dockGG.bs, true)
     }
     Connections {
         target: Quick
@@ -146,9 +151,9 @@ LayerWindow {
             if (!ok) { Sway.minimizeWindow(g.id); root.geniePending = null; return }
             const s = Object.assign({}, root.genieShots); s[g.id] = { path: path, rect: g.rect }; root.genieShots = s
             const ms = Object.assign({}, UiState.minShots); ms[g.id] = "file://" + path; UiState.minShots = ms
-            fxBox(g.rect, Qt.point(dockGG.minimizeTarget.x + dockWin.originX, dockGG.minimizeTarget.y + dockWin.originY), dockGG.bs)
+            fxBox(g.rect, root.dockTarget(), dockGG.bs)
             genieWin.shown = true
-            genie.run("file://" + path, g.rect, Qt.point(dockGG.minimizeTarget.x + dockWin.originX, dockGG.minimizeTarget.y + dockWin.originY), dockGG.bs, false)
+            genie.run("file://" + path, g.rect, root.dockTarget(), dockGG.bs, false)
         }
     }
     // Superficie del genio/cierre del tamaño justo (de la ventana al icono del Dock), no a pantalla completa: mucho menos
@@ -272,7 +277,7 @@ LayerWindow {
     function tile(how) {
         const id = Sway.focusedId
         if (id < 0) return
-        const top = UiState.topInset, bottom = Settings.dockAutohide ? 0 : dockWin.exclusive
+        const top = UiState.topInset, bottom = Settings.dockAutohide || dockWin.side ? 0 : dockWin.exclusive
         const W = UiState.sw, H = UiState.sh - top - bottom, g = Theme.px(8)
         let r
         if (how === "left") r = [g, top + g, W / 2 - 1.5 * g, H - 2 * g]
@@ -469,16 +474,35 @@ LayerWindow {
     }
 
     // Dock Golden Gate: superficie a todo lo ancho (para ampliar sin recortes) que solo recibe el puntero en la placa
+    Binding { target: UiState; property: "dockLeftInset"; value: dockWin.pos === "left" && !Settings.dockAutohide ? dockWin.thick - Theme.px(40) : 0 }
+    Binding { target: UiState; property: "dockRightInset"; value: dockWin.pos === "right" && !Settings.dockAutohide ? dockWin.thick - Theme.px(40) : 0 }
+    // Posición (Ajustes ▸ Escritorio y Dock): abajo, o a un lado con el Dock girado ±90° (iconos derechos)
     LayerWindow {
         id: dockWin
-        layer: "top"; edges: ["bottom", "left", "right"]; scope: "bc-dock"
+        readonly property string pos: Settings.dockPosition
+        readonly property bool side: pos === "left" || pos === "right"
+        readonly property real thick: Math.round(dockGG.plateH + dockGG.maxIcon - dockGG.bs + Theme.px(60))
+        layer: "top"; scope: "bc-dock"
+        edges: pos === "left" ? ["left", "top", "bottom"] : pos === "right" ? ["right", "top", "bottom"] : ["bottom", "left", "right"]
         exclusive: Settings.dockAutohide ? 0 : Math.round(dockGG.plateH + Theme.px(Theme.dockBottom) + Theme.px(4))
-        width: UiState.sw; height: Math.round(dockGG.plateH + dockGG.maxIcon - dockGG.bs + Theme.px(60))
-        inputRect: dockGG.inputRect
+        width: side ? thick : UiState.sw
+        height: side ? UiState.sh - UiState.topInset : thick
+        // Zona del puntero en coordenadas de la superficie (con el Dock girado, su rectángulo girado)
+        inputRect: {
+            const r = dockGG.inputRect
+            if (!side || r.width <= 0) return r
+            const m = dockGG.mapToItem(dockWin.contentItem, r.x, r.y, r.width, r.height)
+            return Qt.rect(Math.floor(m.x), Math.floor(m.y), Math.ceil(m.width), Math.ceil(m.height))
+        }
         shown: !UiState.classic && !UiState.splashing && !UiState.locked && !UiState.win && !UiState.missionOpen
         DockGG {
             id: dockGG
-            anchors.fill: parent
+            turn: dockWin.pos === "left" ? 90 : dockWin.pos === "right" ? -90 : 0
+            mirrored: dockWin.pos === "right"
+            rotation: turn
+            width: dockWin.side ? dockWin.height : dockWin.width
+            height: dockWin.side ? dockWin.width : dockWin.height
+            x: (dockWin.width - width) / 2; y: (dockWin.height - height) / 2
             onLaunch: (k, n) => root.launch(k, n)
             onLaunchDesktop: (id, n) => { if (!Apps.launch(id)) Notifications.push("BC OS", n, qsTr("No se pudo abrir la aplicación"), "", 4000) }
         }
@@ -509,7 +533,8 @@ LayerWindow {
 
     // Notificación emergente
     LayerWindow {
-        layer: "top"; edges: ["top", "right"]; margins: [UiState.topInset + Math.round(14 * root.u) - 16, Math.round(14 * root.u) - 20, 0, 0]; scope: "bc-notify"
+        // Con el Dock a la derecha, los avisos se apartan para no taparlo
+        layer: "top"; edges: ["top", "right"]; margins: [UiState.topInset + Math.round(14 * root.u) - 16, Math.round(14 * root.u) - 20 + (dockWin.pos === "right" && !Settings.dockAutohide ? dockWin.thick - Theme.px(40) : 0), 0, 0]; scope: "bc-notify"
         width: Math.round(321 * root.u) + 40; height: Math.round(80 * root.u) + 36
         shown: (Notifications.visible || root.notifLeaving) && !UiState.locked && !UiState.splashing && !UiState.centerOpen && !UiState.notifCenterOpen   // sin encimarse al Centro de control ni al de notificaciones
         // Margen alrededor de la tarjeta: la sombra y el brillo del cristal no se cortan en el borde de la superficie
@@ -649,8 +674,12 @@ LayerWindow {
                             opacity: lzStack.on ? 1 : 0
                             Behavior on opacity { NumberAnimation { duration: Theme.d(lzStack.on ? Theme.durPopover : 160) } }
                             width: Theme.px(360); height: Theme.px(330)
-                            x: Math.min(pop.width - width - Theme.px(10), dockGG.minimizeTarget.x + dockGG.bs - width / 2)
-                            y: pop.height - height - dockGG.plateH - Theme.px(18)
+                            // Junto a su icono: encima con el Dock abajo; al lado con el Dock a la izquierda o la derecha
+                            x: dockWin.pos === "left" ? dockWin.thick - Theme.px(30)
+                               : dockWin.pos === "right" ? pop.width - width - dockWin.thick + Theme.px(30)
+                               : Math.min(pop.width - width - Theme.px(10), dockGG.minimizeTarget.x + dockGG.bs - width / 2)
+                            y: dockWin.side ? Math.max(Theme.px(10), Math.min(pop.height - height - Theme.px(10), root.dockTarget().y - UiState.topInset - height / 2))
+                               : pop.height - height - dockGG.plateH - Theme.px(18)
                             FileModel { id: dl; Component.onCompleted: place("downloads") }
                             Connections { target: UiState; function onStackOpenChanged() { if (UiState.stackOpen) dl.reload() } }
                             Glass { anchors.fill: parent; radius: Theme.px(18); tintBoost: 0.35; originY: UiState.topInset }

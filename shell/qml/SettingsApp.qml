@@ -491,6 +491,12 @@ AppWindow {
                 }
             }
             Group {
+                Row2 { label: qsTr("Posición en la pantalla"); value: ""
+                       PillSeg { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
+                                 readonly property var vals: ["left", "bottom", "right"]
+                                 options: [qsTr("Izquierda"), qsTr("Abajo"), qsTr("Derecha")]
+                                 current: Math.max(0, vals.indexOf(Settings.dockPosition))
+                                 onPicked: (i) => Settings.dockPosition = vals[i] } }
                 Row2 { label: qsTr("Ampliación"); value: ""
                        Switch { anchors.right: parent.right; anchors.rightMargin: 10; anchors.verticalCenter: parent.verticalCenter
                                 on: Settings.dockMagnify; onToggled: (v) => Settings.dockMagnify = v } }

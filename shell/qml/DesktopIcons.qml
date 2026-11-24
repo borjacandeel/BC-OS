@@ -22,7 +22,7 @@ Item {
     function defaultPos(i) {
         const rows = Math.max(1, Math.floor((height - UiState.topInset - px(120)) / cellH))
         const col = Math.floor(i / rows), row = i % rows
-        return Qt.point(width - px(16) - (col + 1) * cellW, UiState.topInset + px(12) + row * cellH)
+        return Qt.point(width - px(16) - UiState.dockRightInset - (col + 1) * cellW, UiState.topInset + px(12) + row * cellH)
     }
     function savePos(name, x, y) {
         const l = Object.assign({}, layout); l["icono:" + name] = [Math.round(x / s), Math.round(y / s)]
