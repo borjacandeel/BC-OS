@@ -270,7 +270,7 @@ Leer SIEMPRE antes de cualquier acción. Actualizar SIEMPRE antes de empezar alg
 - [x] 122. Separadores horizontales limpios en menús largos
 - [ ] 123. Búsqueda dentro del menú Ayuda que señala la opción en los menús
 - [~] 124. Previsualización enriquecida en el panel derecho de Spotlight
-- [x] 125. Dock a la izquierda o derecha manteniendo su estética (Ajustes ▸ Escritorio y Dock ▸ Posición; falta probar ampliación con ratón en Wayland real)
+- [x] 125. Dock a la izquierda o derecha manteniendo su estética (Ajustes ▸ Escritorio y Dock ▸ Posición; colocación verificada en sway con layer-shell y ampliación con puntero real en X)
 - [x] 126. Nube de humo (Poof) al sacar un icono del Dock
 - [x] 127. Progreso de descarga sobre el icono en el Dock
 - [~] 128. Marco de selección translúcido al arrastrar en el escritorio
